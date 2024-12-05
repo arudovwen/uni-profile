@@ -1,0 +1,40 @@
+.carousel__pagination-button::after {
+  background-color: rgba(217, 217, 217, 0.5);
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+}
+.carousel__pagination-button--active::after,
+.carousel__pagination-button:hover::after {
+  background-color: rgba(217, 217, 217);
+}
+.carousel__item {
+  min-height: 200px;
+  width: 100%;
+}
+.dp__input {
+  background-color: var(--dp-background-color);
+  border-radius: 8px !important;
+  font-family: "Rubik";
+  border: 1px solid #d0d5dd !important;
+  font-weight: 500;
+  width: 100%;
+  font-size: 14px !important;
+  color: #344054 !important;
+  padding-top:7px !important;
+  padding-bottom: 7px !important;
+}
+
+.dp__input::placeholder {
+  font-family: "Rubik";
+  font-size: 14px !important;
+  color: #344054 !important;
+}
+
+.deco,
+.deco2 {
+  background-image: url("/assets/images/Background\ pattern\ decorative.png");
+  background-size:contain;
+  background-position: top left;
+  background-repeat: no-repeat;
+}

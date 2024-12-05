@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`SearchComponent > renders correctly 1`] = `
+Screen {
+  "availHeight": 768,
+  "availWidth": 1024,
+  "colorDepth": 24,
+  "height": 768,
+  "pixelDepth": 24,
+  "width": 1024,
+}
+`;
