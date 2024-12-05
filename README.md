@@ -1,4 +1,4 @@
-# Matta Trade
+# Matta Universal Profile
 
 ## Description
 This project is built using Nuxt.js, a progressive JavaScript framework, focusing on the development of user interfaces.
