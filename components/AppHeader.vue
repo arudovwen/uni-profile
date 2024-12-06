@@ -1,72 +1,85 @@
 <template>
- <div class="bg-white"> <div
-    class="container box-border py-4 hidden bg-white border-b border-gray-200 lg:flex flex-row items-center justify-between order-0 flex-grow-0"
-  >
-   <div class="flex gap-x-6 items-center">
-    <AppLogo />
-    <div class="w-[425px]">
-      <Textinput
-        icon-position="left"
-        icon="mage:search"
-        classInput="!shadow-none !border-none !bg-[#F2F4F7] !text-base"
-      />
-    </div>
-   </div>
-    <div class="flex flex-row justify-start items-center p-0 gap-5 w-[268px]">
-     
+  <div class="bg-white">
+    <div
+      class="container box-border py-4 bg-white border-b border-gray-200 flex items-center justify-between"
+    >
+      <div class="flex gap-x-6 items-center">
+        <AppLogo className="w-[80px] h-auto lg:w-[124px] " />
+        <div class="w-[425px] hidden lg:inline">
+          <Textinput
+            icon-position="left"
+            icon="mage:search"
+            classInput="!shadow-none !border-none !bg-[#F2F4F7] !text-base"
+          />
+        </div>
+      </div>
+      <div class="flex flex-row justify-start items-center p-0 gap-5">
         <!-- Your content here -->
         <AppMenu />
-      
-      <Menu as="div" class="relative">
-        <MenuButton class="outline-none">
-          <div
-            class="box-border flex flex-row items-center p-2 gap-3 w-[220px] border border-gray-200 rounded-[12px]"
-          >
-            <!-- Content goes here -->
+
+        <Menu as="div" class="relative">
+          <MenuButton class="outline-none">
             <div
-              class="w-[38px] h-[38px] text-sm whitespace-nowrap bg-gray-200 flex rounded-[50%] uppercase items-center justify-center font-medium truncate"
+              class="box-border flex flex-row items-center lg:p-2 lg:gap-3 lg:w-[220px] lg:border lg:border-gray-200 rounded-[12px]"
             >
-              <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
-              <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
-            </div>
-            <div class="flex flex-col items-start p-0 w-[103px]">
-              <p
-                class="h-[20px] w-fit font-medium text-[14px] leading-[20px] text-[#344054] flex-none order-0 flex-grow-0"
-              >
-                {{ authStore?.loggedUser?.fullName }}
-              </p>
-              <p
-                class="font-normal text-[12px] leading-[18px] text-gray-600 flex-none order-1 flex-grow-0 capitalize w-[120px] truncate"
-              >
-                {{ authStore?.loggedUser?.email }}
-              </p>
-            </div>
-            <div
-              class="flex flex-row items-start p-0 w-[32px] h-[32px] flex-none order-2 flex-grow-0"
-            >
+              <!-- Content goes here -->
               <div
-                class="flex flex-row flex-wrap justify-center items-center content-center p-1.5 w-[32px] h-[32px] rounded-[6px] flex-none order-0 flex-grow-0"
+                class="w-[38px] h-[38px] text-sm whitespace-nowrap bg-gray-200 flex rounded-[50%] uppercase items-center justify-center font-medium truncate"
               >
-                <AppIcon icon="flowbite:angle-down-outline" />
+                <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
+                <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
+              </div>
+              <div
+                class="flex flex-col items-start p-0 lg:w-[103px] hidden lg:inline"
+              >
+                <p
+                  class="h-[20px] w-fit font-medium text-[14px] leading-[20px] text-[#344054] flex-none order-0 flex-grow-0"
+                >
+                  {{ authStore?.loggedUser?.fullName }}
+                </p>
+                <p
+                  class="font-normal text-[12px] leading-[18px] text-gray-600 flex-none order-1 flex-grow-0 capitalize w-[120px] truncate"
+                >
+                  {{ authStore?.loggedUser?.email }}
+                </p>
+              </div>
+              <div
+                class="hidden lg:flex flex-row items-start p-0 w-[32px] h-[32px] flex-none order-2 flex-grow-0"
+              >
+                <div
+                  class="flex flex-row flex-wrap justify-center items-center content-center p-1.5 w-[32px] h-[32px] rounded-[6px] flex-none order-0 flex-grow-0"
+                >
+                  <AppIcon icon="flowbite:angle-down-outline" />
+                </div>
               </div>
             </div>
-          </div>
-        </MenuButton>
-        <MenuItems
-          class="absolute z-[999] bg-white shadow right-0 min-w-[150px] w-[213px] rounded-lg overflow-hidden mt-2"
-        >
-          <div
-            @click="isSigniningOut = true"
-            class="'group flex w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+          </MenuButton>
+          <MenuItems
+            class="absolute z-[999] divide-y divide-gray-100 bg-white shadow right-0 min-w-[150px] w-[213px] rounded-lg overflow-hidden mt-2"
           >
-            Sign Out
-          </div>
-        </MenuItems>
-      </Menu>
+            <MenuItem>
+              <div
+                class="'group  w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+              >
+                <span class="block font-medium text-xs"> {{ authStore?.loggedUser?.fullName }}</span>
+                <span class="block font-normal text-xs w-[180px] truncate"> {{ authStore?.loggedUser?.email }} </span>
+              </div></MenuItem
+            >
+            <MenuItem>
+              <div
+                @click="isSigniningOut = true"
+                class="'group flex w-full items-center rounded-md text-sm px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+              >
+              <AppIcon icon="lets-icons:sign-out-circle-light" icon-class="text-base" />  Sign Out
+              </div></MenuItem
+            >
+          </MenuItems>
+        </Menu>
 
-      <!-- Your child elements go here -->
+        <!-- Your child elements go here -->
+      </div>
     </div>
-  </div></div>
+  </div>
 
   <ModalCenter v-if="isSigniningOut">
     <template #default>

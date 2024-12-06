@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mx-auto max-w-[640px]">
+  <div class="w-full mx-auto max-w-[640px]  px-4 lg:px-0">
     <div class="mb-6">
       <HeaderComponent
         title="Personal info"
@@ -18,7 +18,7 @@
             <FileUploadToo v-model="photo" accept="jpg, jpeg,png" />
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
           <Textinput
             placeholder=""
             label="First name"
@@ -50,7 +50,7 @@
               :isCumpulsory="true"
               icon="fe:mail"
               icon-position="left"
-              :disabled="contactEmail"
+              :disabled="!!contactEmail"
             />
           </div>
           <FormGroup

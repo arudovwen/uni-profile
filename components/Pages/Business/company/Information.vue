@@ -1,6 +1,6 @@
 <template>
   <form @submit.prevent="onSubmit" class="w-full mt-6">
-    <div class="grid grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
       <Textinput
         placeholder=""
         label="Company name"
@@ -35,7 +35,7 @@
         v-bind="emailAtt"
         v-model="companyEmail"
         :error="errors.companyEmail"
-        disabled
+        :disabled="!!companyEmail"
         :isCumpulsory="true"
         icon="fe:mail"
         icon-position="left"

@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full mx-auto max-w-[940px]">
+  <div class="w-full mx-auto max-w-[940px]  px-4 lg:px-0">
     <!-- Top bar   -->
 
-    <div class="mb-6 flex justify-between items-center">
+    <div class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0">
       <HeaderComponent
         title="Settlements account"
         subtext="Account where your funds would be paid into"

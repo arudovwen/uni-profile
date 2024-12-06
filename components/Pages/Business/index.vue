@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6">
+  <div class="lg:px-6">
     <!-- Top bar   -->
     <div class="flex gap-x-10 py-10 flex-col lg:flex-row gap-y-6 md:gap-y-0">
       <div class="">
