@@ -30,11 +30,11 @@ jobs:
     #- run: npm ci
     - run: npm install -f
     - run: npm run generate --if-present
-    #- run: npm test
+    #- run: npm test 
     
     - name: Archive production artifacts (Windows)
       run: |
-            xcopy C:\oxide-frontend-runner\_work\Oxide.Finance.Frontend\Oxide.Finance.Frontend\.output\public C:\inetpub\wwwroot\Dev.Oxide.FrontEnd /E /I /Y # Adjust "public" to match your build output folder
+            xcopy C:\profile-frontend-runner\_work\Dev.Profile.FrontEnd\Dev.Profile.FrontEnd\.output\public C:\inetpub\wwwroot\Dev.Profile.FrontEnd /E /I /Y # Adjust "public" to match your build output folder
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
