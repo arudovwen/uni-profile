@@ -13,7 +13,7 @@ onBeforeMount(() => {
   });
   console.log("🚀 ~ onBeforeMount ~ cookie:", cookie.value);
 
-  if (cookie.value) {
+  if (cookie.value && !authStore.isLoggedIn) {
     authStore.setLoggedUser(cookie.value);
     authStore.setHasPin(cookie.value?.hasTransactionPIN);
   }

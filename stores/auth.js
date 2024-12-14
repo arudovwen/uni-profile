@@ -51,9 +51,9 @@ export const useAuthStore = defineStore(
     }
 
     const logOut = () => {
+      const authCookie = useCookie('auth')
       localStorage.clear();
-      setLoggedUser(null);
-      setHasPin(false);
+      authCookie.value = null
       window.location.href = "/auth/login";
     };
     return {
