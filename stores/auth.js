@@ -74,7 +74,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
+      storage: persistedState.cookies,
     },
   }
 );

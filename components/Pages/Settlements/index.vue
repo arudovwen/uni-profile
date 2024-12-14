@@ -1,8 +1,10 @@
 <template>
-  <div class="w-full mx-auto max-w-[940px]  px-4 lg:px-0">
+  <div class="w-full mx-auto max-w-[940px] px-4 lg:px-0">
     <!-- Top bar   -->
 
-    <div class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0">
+    <div
+      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+    >
       <HeaderComponent
         title="Settlements account"
         subtext="Account where your funds would be paid into"
@@ -35,26 +37,25 @@
             <tbody>
               <tr v-for="item in financeData" :key="item">
                 <td
-                  class="capitalize text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap"
+                  class="capitalize flex gap-x-2 items-center text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap"
                 >
-                  {{ item.financeRequestNo }}
+                  <span> {{ item.accountName }} </span
+                  ><span
+                    v-if="item.isPrimaryAccount"
+                    class="bg-gray-100 text-xs font-medium px-[6px] py-[3px] rounded"
+                    >Primary</span
+                  >
                 </td>
                 <td
                   :class="item.status == 3 ? 'opacity-25' : ''"
                   class="capitalize text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap max-w-[260px] truncate"
                 >
-                  {{ item.customer || "-" }}
+                  {{ item.accountNumber || "-" }}
                 </td>
                 <td
                   class="capitalize text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap"
                 >
-                  -
-                </td>
-
-                <td
-                  class="capitalize text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap max-w-[260px] truncate"
-                >
-                  -
+                  {{ item.bankName }}
                 </td>
 
                 <td
@@ -62,7 +63,7 @@
                 >
                   <Menu class="relative" as="div">
                     <MenuButton
-                      :id="`${item.productName}+option`"
+                      :id="`${item.accountName}+option`"
                       class="outline-none"
                     >
                       <AppIcon icon="heroicons:ellipsis-vertical-solid" />
@@ -70,13 +71,6 @@
                     <MenuItems
                       class="absolute z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-2 right-0 min-w-[180px] rounded-xl overflow-hidden"
                     >
-                      <div
-                        class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap flex gap-x-1 items-center"
-                        @click="openRequest(item)"
-                      >
-                        <AppIcon icon="akar-icons:pencil" /> Edit
-                      </div>
-
                       <div
                         class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap flex gap-x-1 items-center"
                       >
@@ -110,7 +104,7 @@
         <AppLoader />
       </div>
 
-      <div class="p-5" v-if="financeData.length">
+      <!-- <div class="p-5" v-if="financeData.length">
         <PaginationSimple
           :total="queryParams.totalCount"
           :current="queryParams.PageNumber"
@@ -118,16 +112,19 @@
           :pageRange="5"
           @page-changed="queryParams.PageNumber = $event"
         />
-      </div>
+      </div> -->
     </div>
 
     <div>
       <div class="mb-6">
         <FormGroup label="How do you want to get your earnings" name="earings">
-        <div class="grid gap-y-[6px]">
-            <Checkbox v-model="settlementValue" label="Settle to my bank account" />
-            <Checkbox  v-model="settlementValue" label="Settle to my wallet" />
-        </div>
+          <div class="grid gap-y-[6px]">
+            <Checkbox
+              v-model="settlementValue"
+              label="Settle to my bank account"
+            />
+            <Checkbox v-model="settlementValue" label="Settle to my wallet" />
+          </div>
         </FormGroup>
       </div>
       <AppButton
@@ -157,7 +154,7 @@ definePageMeta({
   layout: "dashboard",
 });
 import AppIcon from "~/components/AppIcon";
-import { Menu, MenuButton, MenuItems } from "@headlessui/vue";;
+import { Menu, MenuButton, MenuItems } from "@headlessui/vue";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
 import { viewSettlement } from "~/services/settlementservice";
@@ -169,13 +166,13 @@ const isPrimaryOpen = ref(false);
 const detail = ref(null);
 const authStore = useAuthStore();
 
-const theads = ["account name", "account number", "bank", "type", ""];
+const theads = ["account name", "account number", "bank", ""];
 const financeData = ref([]);
 
 onMounted(() => {
-    getFinanceData();
+  getFinanceData();
 });
-const settlementValue = ref(null)
+const settlementValue = ref(null);
 const queryParams = reactive({
   Search: "",
   SortOrder: "",
@@ -214,9 +211,8 @@ const handleDelete = () => {
     }
   });
 };
-function handleSuccess(){
-  getFinanceData()
-
+function handleSuccess() {
+  getFinanceData();
 }
 watch(
   () => [queryParams.Search],
@@ -231,15 +227,6 @@ watch(
   }
 );
 
-provide("handleSuccess", handleSuccess)
+provide("handleSuccess", handleSuccess);
 provide("isOpen", isOpen);
 </script>
-
-<style lang="scss" scoped>
-.bg-img {
-  background-image: url("~/assets/img/bee.svg");
-  background-repeat: no-repeat;
-  background-position-x: center;
-  background-position-y: bottom;
-}
-</style>

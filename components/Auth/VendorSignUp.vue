@@ -8,7 +8,7 @@
           Get Started
         </h1>
         <p class="mb-8 text-base darks:text-white/80">
-          Create an Oxide Account
+          Create an Account
         </p>
       </div>
       <div class="mb-8 flex gap-x-1 items-center w-full">
