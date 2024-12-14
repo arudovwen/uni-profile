@@ -18,7 +18,6 @@ export const useAuthStore = defineStore(
 
     function setLoggedUser(data) {
       loggedUser.value = data;
-      cookie.value = data
     }
 
     function setHasPin(data) {
@@ -48,9 +47,8 @@ export const useAuthStore = defineStore(
     }
 
     const logOut = () => {
-      const authCookie = useCookie('auth')
       localStorage.clear();
-      authCookie.value = null
+      clearCookies()
       window.location.href = "/auth/login";
     };
     return {
@@ -79,6 +77,8 @@ export const useAuthStore = defineStore(
       storage: persistedState.cookiesWithOptions({
         domain: cookieDomain,
         path: "/",
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",  
       }),
     },
   }
