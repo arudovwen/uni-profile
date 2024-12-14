@@ -1,13 +1,10 @@
 import { defineStore } from "pinia";
 
-
+const cookieDomain = process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
 export const useAuthStore = defineStore(
   "auth",
   () => {
-    const cookie = useCookie("MATTA_AUTH", {
-      domain: ".matta.trade",
-      path: "/",
-    });
+
     const loggedUser = ref("");
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
@@ -79,7 +76,10 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.cookies,
+      storage: persistedState.cookiesWithOptions({
+        domain: cookieDomain,
+        path: "/",
+      }),
     },
   }
 );
