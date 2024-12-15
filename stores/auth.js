@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 
-const cookieDomain = process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
+const cookieDomain =
+  process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
 export const useAuthStore = defineStore(
   "auth",
   () => {
-
     const loggedUser = ref("");
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
@@ -47,9 +47,11 @@ export const useAuthStore = defineStore(
     }
 
     const logOut = () => {
+      setLoggedUser(null);
       localStorage.clear();
-      clearCookies()
-      window.location.href = "/auth/login";
+      clearCookies().then(() => {
+        window.location.href = "/auth/login";
+      });
     };
     return {
       updateUser,
@@ -78,7 +80,7 @@ export const useAuthStore = defineStore(
         domain: cookieDomain,
         path: "/",
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",  
+        sameSite: "Lax",
       }),
     },
   }
