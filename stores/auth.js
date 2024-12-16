@@ -23,7 +23,6 @@ export const useAuthStore = defineStore(
     function setHasPin(data) {
       hasPin.value = data;
     }
-
     function setAccessToken(value) {
       let userInfo = { ...loggedUser?.value, access_token: value };
       setLoggedUser(userInfo);
