@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 const cookieDomain =
   process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
 export const useAuthStore = defineStore(
-  "auth",
+  "matta_auth",
   () => {
     const loggedUser = ref("");
     const hasPin = ref(false);
