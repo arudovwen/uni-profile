@@ -11,6 +11,9 @@ export async function loginUser2FA(user, config = {}) {
 export async function confirm2FA(user, config = {}) {
   return await ssoPost(`${urls.CONFIRM_2FA}`, user, config);
 }
+export async function logoutUser(user, config = {}) {
+  return await ssoPost(urls.LOGIN_OUT, user, config);
+}
 export async function logOut() {
   const authStore = useAuthStore();
   // googleLogout();

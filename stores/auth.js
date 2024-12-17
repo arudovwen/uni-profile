@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { logoutUser } from "~/services/authservices";
 
 const cookieDomain =
   process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
@@ -45,12 +46,14 @@ export const useAuthStore = defineStore(
       setLoggedUser(userInfo);
     }
 
-    const logOut = () => {
-      setLoggedUser(null);
-      localStorage.clear();
-      clearCookies().then(() => {
-        window.location.href = "/auth/login";
-      });
+    const logOut = async () => {
+      const response = await logoutUser({ refreshToken: refresh_token.value });
+      if (response.status === 200) {
+        localStorage.clear();
+        clearCookies().then(() => {
+          window.location.href = "/auth/login";
+        });
+      }
     };
     return {
       updateUser,
