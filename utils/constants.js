@@ -42,7 +42,7 @@ export const AppsObject = {
     appId: 4,
     logo: Orbital,
   },
-  4: {
+  5: {
     label: "Mattapedia",
     url:
       process.env.NODE_ENV === "production"
