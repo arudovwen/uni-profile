@@ -179,18 +179,18 @@ const handleFinalSubmit = async (token) => {
         authStore.setLoggedUser(res.data.data);
         const appResponse = await onboardUser(res.data.data);
         console.log("🚀 ~ .then ~ appResponse:", appResponse);
-        // if (
-        //   route.query.redirected_from &&
-        //   route.query.redirected_from !== "/"
-        // ) {
-        //   isLoading.value = false;
-        //   window.location.replace(route.query.redirected_from);
-        //   return;
-        // }
-        // toast.success("Login successful");
+        if (
+          route.query.redirected_from &&
+          route.query.redirected_from !== "/"
+        ) {
+          isLoading.value = false;
+          window.location.replace(route.query.redirected_from);
+          return;
+        }
+        toast.success("Login successful");
 
         isLoading.value = false;
-        // window.location.replace(`/`);
+        window.location.replace(`/`);
       }
     })
 
