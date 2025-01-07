@@ -62,16 +62,30 @@ axiosApi.interceptors.response.use(
     }
   }
 );
+axiosSSO.interceptors.response.use(
+  response => response,
+  async (error) => {
+    if (error?.response?.status === 403) {
+      try {
+        const newAccessToken = await handleTokenRefresh();
+        error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+        return axiosSSO.request(error.config);
+      } catch (refreshError) {
+        handleRefreshError(refreshError);
+        return Promise.reject(refreshError);
+      }
+    } else {
+      return Promise.reject(error);
+    }
+  }
+);
 
 // Handle errors when refreshing token
 const handleRefreshError = (error) => {
   const authStore = useAuthStore();
-  if (window.location.pathname !== "/checkout") {
-    // Uncomment to show a toast message
-    // toast.info("Your session has expired");
     authStore.setLoggedUser(null);
     window.location.href = `/auth/login?info=session_expired&redirected_from=${window.location.href}`;
-  }
+  
 };
 
 // General API methods
