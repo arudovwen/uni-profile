@@ -177,8 +177,8 @@ const handleFinalSubmit = async (token) => {
     .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
-        const appResponse = await onboardUser(res.data.data);
-        console.log("🚀 ~ .then ~ appResponse:", appResponse);
+        // const appResponse = await onboardUser(res.data.data);
+        // console.log("🚀 ~ .then ~ appResponse:", appResponse);
         if (
           route.query.redirected_from &&
           route.query.redirected_from !== "/"
