@@ -7,9 +7,7 @@
         >
           Get Started
         </h1>
-        <p class="mb-8 text-base darks:text-white/80">
-          Create an Account
-        </p>
+        <p class="mb-8 text-base darks:text-white/80">Create an Account</p>
       </div>
       <div class="mb-8 flex gap-x-1 items-center w-full">
         <div class="w-full">
@@ -18,6 +16,28 @@
             @submit.prevent="onSubmit"
             class="grid w-full grid-cols-1 lg:grid-cols-2 gap-x-[18px] gap-y-5"
           >
+            <div
+              v-if="app == 1"
+              class="lg:col-span-2 flex flex-col gap-4 lg:flex-row justify-between"
+            >
+              <user-type-card
+                :active="userType === 0"
+                @click="setFieldValue('userType', 0)"
+                icon-active="AuthClientIconActive"
+                icon-inactive="AuthClientIcon"
+                title="Clients"
+                description="Need a logistics and fulfillment partner"
+              />
+              <user-type-card
+                :active="userType === 1"
+                @click="setFieldValue('userType', 1)"
+                icon-active="AuthVendorIconActive"
+                icon-inactive="AuthVendorIcon"
+                title="Vendors"
+                description="Become a fulfillment service provider"
+              />
+            </div>
+
             <div>
               <Textinput
                 placeholder="First Name"
@@ -109,16 +129,9 @@
             >
               Already have an account?
               <NuxtLink
-                v-if="main"
-                to="/auth/login"
+                :to="handleRouting(route, '/auth/login')"
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
-              >
-              <span
-                v-else
-                @click="emits('toggleAuth', 'login')"
-                class="font-semibold text-[#2176FF] cursor-pointer"
-                >Login</span
               >
             </span>
           </form>
@@ -153,6 +166,7 @@ import {
   confirmemail,
 } from "~/services/authservices";
 import { getUserInfo } from "~/services/userservices";
+import UserTypeCard from "./UserTypeCard.vue";
 
 const props = defineProps({
   main: {
@@ -162,6 +176,7 @@ const props = defineProps({
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
 const { type } = route.params;
+const { app, redirected_from } = route.query;
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
@@ -175,9 +190,12 @@ const formValues = {
   confirmPassword: "",
   companyName: "",
   userType: 0,
+  business_UserType: 0,
 };
 const step = ref(1);
 const schema = yup.object({
+  userType: yup.mixed(),
+  business_UserType: yup.mixed(),
   email: yup
     .string()
     .required("Email is required")
@@ -201,30 +219,34 @@ const schema = yup.object({
     ),
 });
 
-const { handleSubmit, defineField, errors, values, meta, setFieldValue } =
-  useForm({
-    validationSchema: schema,
-    initialValues: formValues,
-  });
+const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
+  validationSchema: schema,
+  initialValues: formValues,
+});
 
 const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
 const [firstName, firstNameAtt] = defineField("firstName");
 const [lastName, lastNameAtt] = defineField("lastName");
 const [phone, phoneAtt] = defineField("phone");
+const [userType] = defineField("userType");
 const [companyName, companyNameAtt] = defineField("companyName");
-const [userType, userTypeAtt] = defineField("userType");
 const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  registerUser({ ...values, confirmPassword: values.password })
+  AppsObject[app]
+    .registerUrl({
+      ...values,
+      confirmPassword: values.password,
+      phoneNumber: values.phone,
+    })
     .then((res) => {
       if (res.status === 200) {
         isVerifyPin.value = true;
         step.value = 2;
         isLoading.value = false;
-        setquery(router, route.path, { email: values.email });
+        setQuery(router, route.path, { email: values.email, ...route.query });
       }
     })
     .catch((err) => {
@@ -239,23 +261,31 @@ const onSubmit = handleSubmit((values) => {
     });
 });
 
-watch(values, () => {
-  console.log(values);
-});
-
 const handleFinalSubmit = (code) => {
   isLoading.value = true;
-  confirmemail({ code, email: email.value || route.query.email })
+  AppsObject[app]
+    .confirmRegisterUrl({ code, email: email.value || route.query.email })
     .then((res) => {
       if (res.status === 200) {
         isVerified.value = true;
         authStore.setLoggedUser(res.data.data);
         authStore.setHasPin(res.data.data.hasTransactionPIN);
+        if (app == 1) {
+          getUserInfo().then((res) => {
+            authStore.setLoggedUser({
+              ...authStore.loggedUser,
+              accountType: res.data.data?.userType,
+            });
+            toast.success("Sign up successful");
+
+            isLoading.value = false;
+            window.location.replace(redirected_from);
+            return;
+          });
+        }
         toast.success("Login successful");
         isLoading.value = false;
-        window.location.replace(`/`);
-
-        // });
+        window.location.replace(redirected_from);
       }
     })
 

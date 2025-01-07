@@ -39,7 +39,9 @@
           />
         </div>
         <span class="block text-sm text-primary-500 darks:text-white/80 mb-10">
-          <NuxtLink to="/auth/forgot-password" class="font-medium"
+          <NuxtLink
+            :to="handleRouting(route, '/auth/forgot-password')"
+            class="font-medium"
             >Forgot password?</NuxtLink
           >
         </span>
@@ -58,16 +60,9 @@
         >
           Don’t have an account?
           <NuxtLink
-            to="/auth/register"
-            v-if="main"
+            :to="handleRouting(route, '/auth/register')"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
-          >
-          <span
-            v-else
-            @click="emits('toggleAuth', 'register')"
-            class="font-medium text-primary-500 cursor-pointer"
-            >Sign Up</span
           >
         </span>
       </form>
@@ -169,31 +164,33 @@ const onSubmit = handleSubmit((values) => {
       }
     });
 });
-// const sendData = (data) => {
-//   if (window.opener) {
-//     window.opener.postMessage(JSON.stringify(data), "*");
-//     window.close()
-//   }
-// };
-const handleFinalSubmit = (token) => {
+const onboardUser = async (data) => {
+  if (data?.subApps.includes(parseInt(app))) {
+    return true;
+  }
+  AppsObject[app]?.onboarding({ email: data.email, accessToken: data.jwToken });
+
+};
+const handleFinalSubmit = async (token) => {
   isLoading.value = true;
   loginUser2FA({ token, email: formValues.email })
-    .then((res) => {
+    .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
-        // sendData(res.data.data);
-        if (
-          route.query.redirected_from &&
-          route.query.redirected_from !== "/"
-        ) {
-          isLoading.value = false;
-          window.location.replace(route.query.redirected_from);
-          return;
-        }
-        toast.success("Login successful");
+        const appResponse = await onboardUser(res.data.data);
+        console.log("🚀 ~ .then ~ appResponse:", appResponse);
+        // if (
+        //   route.query.redirected_from &&
+        //   route.query.redirected_from !== "/"
+        // ) {
+        //   isLoading.value = false;
+        //   window.location.replace(route.query.redirected_from);
+        //   return;
+        // }
+        // toast.success("Login successful");
 
         isLoading.value = false;
-        window.location.replace(`/`);
+        // window.location.replace(`/`);
       }
     })
 

@@ -9,7 +9,6 @@ definePageMeta({
 });
 const route = useRoute();
 const { app } = route.params;
-
 const auth = useAuthStore();
 
 onMounted(() => {

@@ -6,6 +6,8 @@ const API_URL = "https://dev.gateway.oxide.matta.trade/api/";
 const SSO_URL = "https://dev.sso.matta.trade/api/";
 const WALLET_URL = "https://dev.wallets.matta.trade/api/";
 const Matta_URL = "https://dev.gateway.matta.trade/api/";
+const DELTALOG_URL = "https://dev.gateway.deltalog.co/api/";
+const ORBITAL_URL = "https://dev.market.matta.trade/api/";
 
 const createAxiosInstance = (baseURL) => {
   const instance = Axios.create({ baseURL });
@@ -25,6 +27,8 @@ const axiosApi = createAxiosInstance(API_URL);
 const axiosSSO = createAxiosInstance(SSO_URL);
 const mattaApi = createAxiosInstance(Matta_URL);
 const walletApi = createAxiosInstance(WALLET_URL)
+const deltaApi = createAxiosInstance(DELTALOG_URL);
+const orbitalAPi = createAxiosInstance(ORBITAL_URL);
 
 // Handle token refresh logic
 const handleTokenRefresh = async () => {
@@ -117,3 +121,18 @@ export const walletGet = (url, config = {}) => walletApi.get(url,);
 export const walletPost = (url, data, config = {}) => walletApi.post(url, data, config);
 export const walletPut = (url, data, config = {}) => walletApi.put(url, data,);
 export const walletDelete = (url, config = {}) => walletApi.delete(url, config);
+
+
+// General API methods for deltalog
+export const deltaGet = (url, config = {}) => deltaApi.get(url);
+export const deltaPost = (url, data, config = {}) =>
+  deltaApi.post(url, data, config);
+export const deltaPut = (url, data, config = {}) => deltaApi.put(url, data);
+export const delataDelete = (url, config = {}) => deltaApi.delete(url, config);
+
+// General API methods for ORBITAL
+export const orbitalGet = (url, config = {}) => orbitalAPi.get(url);
+export const orbitalPost = (url, data, config = {}) =>
+  orbitalAPi.post(url, data, config);
+export const orbitalPut = (url, data, config = {}) => orbitalAPi.put(url, data);
+export const orbitalDelete = (url, config = {}) => orbitalAPi.delete(url, config);

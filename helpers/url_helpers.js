@@ -15,6 +15,15 @@ const urls = {
   SOCIAL_LOGIN: "v1/account/sociallogin",
   RESEND_2FA_OTP: "v1/account/resend-2fa-code",
 
+  OXIDE_FLUX_REGISTER: "/v1/onboarding/sign-up",
+  OXIDE_CONFIRM_EMAIL: "v1/onboarding/confirm-email",
+  OXIDE_ONBOARDING_SIGNUP: "v1/onboarding/sign-up-with-matta-account",
+
+  FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
+
+  ORBITAL_REGISTER: "/v1/register",
+  ORBITAL_CONFIRM_EMAIL: "v1/register/confirm-email",
+
   //Customers
   CUSTOMERS: "v1/customers",
 

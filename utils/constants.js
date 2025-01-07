@@ -3,6 +3,20 @@ import Oxide from "@/assets/apps/oxide.png";
 import Flux from "@/assets/apps/flu.png";
 import Orbital from "@/assets/apps/orbital.png";
 import Mattapedia from "@/assets/apps/mattapedia.png";
+import {
+  fluxConfirmemail,
+  fluxOnboardingSignup,
+  fluxRegisterUser,
+  mattaConfirmemail,
+  mattaOnboardingSignup,
+  mattaRegisterUser,
+  orbitalConfirmemail,
+  orbitalOnboardingSignup,
+  orbitalRegisterUser,
+  oxideConfirmemail,
+  oxideOnboardingSignup,
+  oxideRegisterUser,
+} from "~/services/authservices";
 
 export const AppsObject = {
   1: {
@@ -13,6 +27,13 @@ export const AppsObject = {
         : "http://localhost:3000",
     appId: 1,
     logo: Flux,
+    authBgUrl: "/images/heavy-duty.png",
+    authText: "Move, Store, and Distribute with Flux",
+    authSubText:
+      "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
+    registerUrl: fluxRegisterUser,
+    confirmRegisterUrl: fluxConfirmemail,
+    onboarding: fluxOnboardingSignup,
   },
   3: {
     label: "Oxide",
@@ -22,6 +43,13 @@ export const AppsObject = {
         : "http://localhost:3001",
     appId: 3,
     logo: Oxide,
+    authBgUrl: "/images/oxide.png",
+    authText: "Payments, Financing, and Cross-border Payments",
+    authSubText:
+      "Seamless payments and financing for Africa's Manufacturing Industry",
+    registerUrl: oxideRegisterUser,
+    confirmRegisterUrl: oxideConfirmemail,
+    onboarding: oxideOnboardingSignup,
   },
   0: {
     label: "Matta",
@@ -31,16 +59,29 @@ export const AppsObject = {
         : "http://localhost:3002",
     appId: 0,
     logo: Matta,
+    authBgUrl: "/images/heavy-duty.png",
+    authText: "",
+    authSubText: "",
+    registerUrl: mattaRegisterUser,
+    confirmRegisterUrl: mattaConfirmemail,
+    onboarding: mattaOnboardingSignup,
   },
   4: {
     label: "Orbital",
-   
+
     url:
       process.env.NODE_ENV === "production"
         ? "https://dev.orbital.matta.trade"
         : "http://localhost:3040",
     appId: 4,
     logo: Orbital,
+    authBgUrl: "/images/orbital.png",
+    authText: "Move, Store, and Distribute with Orbital",
+    authSubText:
+      "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
+    registerUrl: orbitalRegisterUser,
+    confirmRegisterUrl: orbitalConfirmemail,
+    onboarding: orbitalOnboardingSignup,
   },
   5: {
     label: "Mattapedia",
@@ -50,6 +91,10 @@ export const AppsObject = {
         : "http://localhost:3003",
     appId: 5,
     logo: Mattapedia,
+    authBgUrl: "/images/heavy-duty.png",
+    authText: "",
+    authSubText: "",
+    registerUrl: "",
   },
 };
 export const countryCodes = {

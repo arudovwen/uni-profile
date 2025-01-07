@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { apiPost, ssoPost } from "../helpers/api_helpers";
+import { apiPost, deltaPost, mattaPost, orbitalPost, ssoPost } from "../helpers/api_helpers";
 
 //Authentication
 export async function loginUser(user, config = {}) {
@@ -50,4 +50,44 @@ export async function sociallogin(data) {
 }
 export async function sendMessage(data) {
   return await apiPost(urls.CONTACT_USER, data);
+}
+
+export async function oxideConfirmemail(data, config = {}) {
+  return await apiPost(`${urls.OXIDE_CONFIRM_EMAIL}`, data, config);
+}
+export async function oxideRegisterUser(user, config = {}) {
+  return await apiPost(urls.OXIDE_FLUX_REGISTER, user, config);
+}
+export async function oxideOnboardingSignup(user, config = {}) {
+  return await apiPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);
+}
+
+export async function fluxConfirmemail(data, config = {}) {
+  return await ssoPost(`${urls.FLUX_CONFIRM_EMAIL}`, data, config);
+}
+export async function fluxRegisterUser(data, config = {}) {
+  return await deltaPost(`${urls.OXIDE_FLUX_REGISTER}`, data, config);
+}
+export async function fluxOnboardingSignup(user, config = {}) {
+  return await deltaPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);
+}
+
+export async function orbitalConfirmemail(data, config = {}) {
+  return await orbitalPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
+}
+export async function orbitalRegisterUser(user, config = {}) {
+  return await orbitalPost(urls.ORBITAL_REGISTER, user, config);
+}
+export async function orbitalOnboardingSignup(user, config = {}) {
+  return await orbitalPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);
+}
+
+export async function mattaConfirmemail(data, config = {}) {
+  return await mattaPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
+}
+export async function mattaRegisterUser(user, config = {}) {
+  return await mattaPost(urls.ORBITAL_REGISTER, user, config);
+}
+export async function mattaOnboardingSignup(user, config = {}) {
+  return await mattaPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);
 }
