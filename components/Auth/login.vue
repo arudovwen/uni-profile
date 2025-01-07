@@ -4,7 +4,7 @@
       <h1
         class="text-[#182230] darks:text-white mb-4 text-3xl font-medium w-full"
       >
-        Log In
+        Log In {{ AppsObject[app]?.label ?? "" }}
       </h1>
       <p class="mb-8 text-base text-[#475467] darks:text-white/80">
         Welcome Back! Please enter your details
@@ -136,6 +136,9 @@ const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
 const route = useRoute();
 const router = useRouter();
+
+const { app } = route.query;
+
 const onSubmit = handleSubmit((values) => {
   formValues.email = values.email;
   formValues.password = values.password;
@@ -166,12 +169,19 @@ const onSubmit = handleSubmit((values) => {
       }
     });
 });
+// const sendData = (data) => {
+//   if (window.opener) {
+//     window.opener.postMessage(JSON.stringify(data), "*");
+//     window.close()
+//   }
+// };
 const handleFinalSubmit = (token) => {
   isLoading.value = true;
   loginUser2FA({ token, email: formValues.email })
     .then((res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
+        // sendData(res.data.data);
         if (
           route.query.redirected_from &&
           route.query.redirected_from !== "/"
@@ -181,9 +191,9 @@ const handleFinalSubmit = (token) => {
           return;
         }
         toast.success("Login successful");
+
         isLoading.value = false;
         window.location.replace(`/`);
-  
       }
     })
 

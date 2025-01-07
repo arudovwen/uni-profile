@@ -1,3 +1,57 @@
+import Matta from "@/assets/apps/mat.png";
+import Oxide from "@/assets/apps/oxide.png";
+import Flux from "@/assets/apps/flu.png";
+import Orbital from "@/assets/apps/orbital.png";
+import Mattapedia from "@/assets/apps/mattapedia.png";
+
+export const AppsObject = {
+  1: {
+    label: "Flux",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "https://dev.deltalog.co"
+        : "http://localhost:3000",
+    appId: 1,
+    logo: Flux,
+  },
+  3: {
+    label: "Oxide",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "https://dev.oxide.matta.trade"
+        : "http://localhost:3001",
+    appId: 3,
+    logo: Oxide,
+  },
+  0: {
+    label: "Matta",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "https://dev.matta.trade"
+        : "http://localhost:3002",
+    appId: 0,
+    logo: Matta,
+  },
+  4: {
+    label: "Orbital",
+   
+    url:
+      process.env.NODE_ENV === "production"
+        ? "https://dev.orbital.matta.trade"
+        : "http://localhost:3040",
+    appId: 4,
+    logo: Orbital,
+  },
+  4: {
+    label: "Mattapedia",
+    url:
+      process.env.NODE_ENV === "production"
+        ? "https://dev.mattapedia.matta.trade"
+        : "http://localhost:3003",
+    appId: 5,
+    logo: Mattapedia,
+  },
+};
 export const countryCodes = {
   "+1": "United States (+1)",
   "+44": "United Kingdom (+44)",

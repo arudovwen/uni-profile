@@ -1,9 +1,9 @@
 <template>
   <div class="">
     <div
-      class="bg-[#FFFFFF] grid grid-cols-1 xl:grid-cols-12 h-screen w-screen bg-contain bg-center max-w-[1980px] mx-auto"
+      class="bg-[#FFFFFF] grid items-center h-screen w-screen bg-contain bg-center max-w-[1980px] mx-auto"
     >
-      <div
+      <!-- <div
         class="relative hidden xl:flex items-center xl:col-span-6 flex-row justify-center px-6 py-10 w-full"
       >
         <div
@@ -34,16 +34,19 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
       <div
-        class="bg-white px-6 xl:px-10 flex flex-col xl:col-span-6 xl:justify-center h-full overflow-y-auto"
+        class="bg-white px-6"
       >
-        <div class="pt-6 pb-2 z-10 xl:hidden">
-          <AppLogo />
+        <div class="pt-6 pb-2 z-10 ">
+        
         </div>
         <div
-          class="flex-1 flex flex-col justify-start mt-12 xl:mt-auto xl:justify-center"
+          class="flex justify-center flex-col  max-w-[450px] mx-auto"
         >
+       <div class="mb-12">
+        <AppLogo />
+       </div>
           <slot />
         </div>
       </div>

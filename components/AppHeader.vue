@@ -27,13 +27,13 @@
                 class="w-[38px] h-[38px] text-sm whitespace-nowrap bg-gray-200 flex rounded-[50%] uppercase items-center justify-center font-medium truncate"
               >
                 <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
-                <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
+                <span>{{ authStore.loggedUser?.lastName.slice(0, 1) }}</span>
               </div>
               <div
                 class="flex flex-col items-start p-0 lg:w-[103px] hidden lg:inline"
               >
                 <p
-                  class="h-[20px] w-fit font-medium text-[14px] leading-[20px] text-[#344054] flex-none order-0 flex-grow-0"
+                  class="h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left  w-[120px] truncate whitespace-nowrap"
                 >
                   {{ authStore?.loggedUser?.fullName }}
                 </p>
@@ -61,7 +61,7 @@
               <div
                 class="'group  w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
               >
-                <span class="block font-medium text-xs"> {{ authStore?.loggedUser?.fullName }}</span>
+                <span class="block font-medium text-xs  w-[180px] truncate whitespace-nowrap"> {{ authStore?.loggedUser?.fullName }}</span>
                 <span class="block font-normal text-xs w-[180px] truncate"> {{ authStore?.loggedUser?.email }} </span>
               </div></MenuItem
             >

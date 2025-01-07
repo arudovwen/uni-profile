@@ -7,6 +7,7 @@ export const useAuthStore = defineStore(
   "matta_auth",
   () => {
     const loggedUser = ref("");
+    const authUsers = ref([]);
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
     const isLoggedIn = computed(() => !!loggedUser.value);
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore(
 
     function setLoggedUser(data) {
       loggedUser.value = data;
+      saveAuthUser(data);
     }
 
     function setHasPin(data) {
@@ -45,11 +47,25 @@ export const useAuthStore = defineStore(
       let userInfo = { ...loggedUser?.value, ...data };
       setLoggedUser(userInfo);
     }
-
+    function saveAuthUser(obj) {
+      const exists = authUsers.value.some(
+        (existingObj) => existingObj.access_token === obj.access_token
+      );
+      if (exists) {
+        return;
+      }
+      authUsers.value.push(obj);
+    }
+    function removeObjectByToken(access_token) {
+      authUsers.value = authUsers.value.filter(
+        (obj) => obj.access_token !== access_token
+      );
+    }
     const logOut = async () => {
       const response = await logoutUser({ refreshToken: refresh_token.value });
       if (response.status === 200) {
         localStorage.clear();
+        removeObjectByToken(access_token.value);
         clearCookies().then(() => {
           window.location.href = "/auth/login";
         });
@@ -73,7 +89,7 @@ export const useAuthStore = defineStore(
       businessId,
       language,
       setHasPin,
-      hasPin,
+      hasPin,authUsers
     };
   },
   {

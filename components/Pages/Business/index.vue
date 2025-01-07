@@ -6,45 +6,50 @@
         <ul
           class="custom-shadow bg-white rounded-lg overflow-hidden w-[200px] grid gap-y-1"
         >
-          <li
-            class="text-sm font-semibold py-2 px-3 border-l-2"
-            @click="
-              active = tab.value;
-              title = tab.name;
-              subtext = tab.subtext;
-            "
-            :class="
-              active === tab.value
-                ? 'bg-[#F5FAFF]  border-primary-500 text-primary-500'
-                : 'border-transparent text-[#667085]'
-            "
-            v-for="tab in tabs"
-            :key="tab.name"
-          >
-            {{ tab.name }}
+          <li v-for="tab in tabs" :key="tab.name">
+            <button
+              type="button"
+              class="text-sm font-semibold py-2 px-3 border-l-2 w-full text-left"
+              @click="
+                active = tab.value;
+                title = tab.name;
+                subtext = tab.subtext;
+              "
+              :class="
+                active === tab.value
+                  ? 'bg-[#F5FAFF]  border-primary-500 text-primary-500'
+                  : 'border-transparent text-[#667085]'
+              "
+            >
+              {{ tab.name }}
+            </button>
           </li>
         </ul>
       </div>
-      <div v-if="!isLoading" class="flex-1">
+      <div class="flex-1">
         <div class="max-w-[640px] w-full mx-auto">
           <div class="mb-6">
             <HeaderComponent :title="title" :subtext="subtext" />
           </div>
           <div class="bg-white rounded-lg py-6 border border-[#E9EAEB]">
-            <div v-if="active === 1" class="w-full">
-              <PagesBusinessCompanyInformation />
+            <div class="flex justify-center p-10" v-if="isLoading">
+              <AppLoader />
             </div>
-            <div v-if="active === 2" class="w-full">
-              <div class="w-full"><PagesBusinessCompanyDocuments /></div>
-            </div>
-            <div v-if="active === 3" class="w-full">
-              <div class="w-full"><PagesBusinessCompanyDirectors /></div>
+            <div v-if="!isLoading">
+              <div v-if="active === 1" class="w-full">
+                <PagesBusinessCompanyInformation />
+              </div>
+              <div v-if="active === 2" class="w-full">
+                <div class="w-full"><PagesBusinessCompanyDocuments /></div>
+              </div>
+              <div v-if="active === 3" class="w-full">
+                <div class="w-full"><PagesBusinessCompanyDirectors /></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <AppLoader v-if="isLoading" />
   </div>
 </template>
 
@@ -79,43 +84,43 @@ const isLoading = ref(true);
 function getData() {
   getBusinessProfile()
     .then((res) => {
-      isLoading.value = false;
+      if (res.status === 200) {
+        const { companyDocuments = [], ...companyProfile } = res.data.data;
+        const formatDocuments = (documents) => {
+          return documents.map((doc) => ({
+            ...doc,
+            urls:
+              doc.urls.length > 0
+                ? doc.urls.map((urlItem) => ({
+                    url: urlItem?.url || urlItem || "",
+                  }))
+                : [{ url: doc.url || "" }],
+          }));
+        };
 
-      const { companyDocuments = [], ...companyProfile } = res.data.data;
+        const tempData = {
+          ...companyProfile,
+          companyDocuments:
+            companyDocuments.length > 0
+              ? formatDocuments(companyDocuments)
+              : KybDocumentDefault,
+        };
 
-      const formatDocuments = (documents) => {
-        return documents.map((doc) => ({
-          ...doc,
-          urls:
-            doc.urls.length > 0
-              ? doc.urls.map((urlItem) => ({
-                  url: urlItem?.url || urlItem || "",
-                }))
-              : [{ url: doc.url || "" }],
-        }));
-      };
-
-      const tempData = {
-        ...companyProfile,
-        companyDocuments:
-          companyDocuments.length > 0
-            ? formatDocuments(companyDocuments)
-            : KybDocumentDefault,
-      };
-
-      companyInfo.value = tempData;
-      Object.keys(tempData).forEach((key) => {
-        form[key] = tempData[key];
-      });
-      form.dateofIncorporation = res.data.data.dateOfIncorporation;
-      if (companyDocuments.length > 0) {
-        const formattedDocData = formatDocuments(companyDocuments);
-        formData.kyb.companyDocuments =
-          res.data.data.country.toLowerCase() === "nigeria"
-            ? formattedDocData
-            : formattedDocData.filter((doc) =>
-                [0, 4].includes(doc.documentType)
-              );
+        companyInfo.value = tempData;
+        Object.keys(tempData).forEach((key) => {
+          form[key] = tempData[key];
+        });
+        form.dateofIncorporation = res.data.data.dateOfIncorporation;
+        if (companyDocuments.length > 0) {
+          const formattedDocData = formatDocuments(companyDocuments);
+          formData.kyb.companyDocuments =
+            res.data.data.country.toLowerCase() === "nigeria"
+              ? formattedDocData
+              : formattedDocData.filter((doc) =>
+                  [0, 4].includes(doc.documentType)
+                );
+        }
+        isLoading.value = false;
       }
     })
 
@@ -144,11 +149,11 @@ const tabs = [
     value: 3,
   },
 ];
-watch(active,()=>{
-  const current = tabs.find(i=>i.value === active.value)
-  title.value = current.name
-  subtext.value = current.subtext
-})
+watch(active, () => {
+  const current = tabs.find((i) => i.value === active.value);
+  title.value = current.name;
+  subtext.value = current.subtext;
+});
 provide("active", active);
 provide("companyInfo", companyInfo);
 provide("getData", getData);

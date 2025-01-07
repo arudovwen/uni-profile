@@ -1,13 +1,20 @@
 <template>
   <NuxtLink to="/">
-    <img src="/logo.png" alt="Oxide" :class="className" />
+    <img
+      :src="AppsObject[app]?.logo || '/logo.png'"
+      :alt="AppsObject[app]?.label"
+      :class="className"
+    />
   </NuxtLink>
 </template>
 
 <script setup>
+const route = useRoute();
+const { app } = route.query;
+
 defineProps({
   className: {
-    default: "w-[124px] h-auto",
+    default: "w-auto h-8",
     type: String,
   },
   dark: {
