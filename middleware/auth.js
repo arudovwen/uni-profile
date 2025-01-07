@@ -1,4 +1,5 @@
 export default defineNuxtRouteMiddleware((to, from) => {
+  console.log("🚀 ~ defineNuxtRouteMiddleware ~ to:", to);
   const authStore = useAuthStore();
 
   // Avoid infinite redirect to homepage if already on the homepage
@@ -13,8 +14,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
     // Only redirect to login if the current route is not the login page
     if (to.path !== "/auth/login") {
       abortNavigation(); // Stop the current navigation
-      return navigateTo(`/auth/login?redirected_from=${to.path}`);
+      return navigateTo(
+        `/auth/login?${new URLSearchParams({
+          redirected_from: to.path,
+          ...to.query,
+        })}`
+      );
     }
   }
-
 });
