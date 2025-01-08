@@ -13,7 +13,7 @@ const auth = useAuthStore();
 
 onMounted(() => {
   if (auth.access_token) {
-    window.location.href = `${AppsObject[app]?.url}/auth/validate/${auth.access_token}`;
+    window.location.href = `${AppsObject[app]?.url}/auth/validate/${encodeURIComponent(auth.access_token)}`;
   }
 });
 </script>
