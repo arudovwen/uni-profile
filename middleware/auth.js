@@ -1,5 +1,4 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log("🚀 ~ defineNuxtRouteMiddleware ~ to:", to);
   const authStore = useAuthStore();
 
   // Avoid infinite redirect to homepage if already on the homepage

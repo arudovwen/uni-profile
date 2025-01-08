@@ -62,12 +62,14 @@ export const useAuthStore = defineStore(
       );
     }
     const logOut = async () => {
-      const response = await logoutUser({ refreshToken: refresh_token.value });
+      const response = await logoutUser({token:access_token.value, refreshToken: refresh_token.value });
       if (response.status === 200) {
         localStorage.clear();
         removeObjectByToken(access_token.value);
         clearCookies().then(() => {
+          loggedUser.value = null
           window.location.href = "/auth/login";
+
         });
       }
     };
