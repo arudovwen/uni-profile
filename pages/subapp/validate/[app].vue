@@ -14,7 +14,6 @@ const auth = useAuthStore();
 onMounted(() => {
   if (auth.access_token) {
    const encodededToken = encodeURIComponent(auth.access_token)
-    console.log("🚀 ~ onMounted ~ encodededToken:", encodededToken)
     window.location.href = `${AppsObject[app]?.url}/auth/validate/app?token=${encodededToken}`;
   }
 });
