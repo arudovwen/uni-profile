@@ -43,7 +43,7 @@
             />
           </div>
           <NuxtLink
-             :to="handleRouting(route, '/auth/login')"
+             :to="handleRouting(route, `/auth/${app && `/${app}`}`)"
             class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           >
             <AppIcon icon="eva:arrow-back-fill" />
@@ -51,7 +51,7 @@
           </NuxtLink>
         </form>
         <div class="pt-5" v-if="isSent">
-          <NuxtLink  :to="handleRouting(route, '/auth/login')" class="w-full">
+          <NuxtLink  :to="handleRouting(route, `/auth/login${app && `/${app}`}`)" class="w-full">
             <AppButton
               text="Return to Login"
               btnClass="btn-primary !py-3 w-full !normal-case"
@@ -74,6 +74,7 @@ import { toast } from "vue3-toastify";
 import { forgotPassword } from "~/services/authservices";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
+const {app} = useRoute().params
 const title1 = "Forgot password";
 const title2 = "Check your email";
 const text1 =

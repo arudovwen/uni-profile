@@ -60,14 +60,6 @@
               btnClass="btn-primary !py-3"
             />
           </div>
-          <!-- <span
-            class="flex items-center text-center text-sm text-[#182230] darks:text-white/80 gap-x-1 justify-center"
-          >
-            Have an account?
-            <NuxtLink to="/auth/login" class="font-semibold text-[#2176FF]"
-              >Sign in</NuxtLink
-            >
-          </span> -->
         </form>
         <div v-else class="grid gap-y-[22px] mb-9">
           <AppButton
@@ -79,7 +71,7 @@
           />
         </div>
         <NuxtLink
-          to="/auth/login"
+          :to="`/auth/login${app && `/${app}`}`"
           class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           @click="emit('close')"
         >
@@ -110,7 +102,11 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import { loginUser2FA, resend2FA, resetPassword } from "~/services/authservices";
+import {
+  loginUser2FA,
+  resend2FA,
+  resetPassword,
+} from "~/services/authservices";
 import TickCircle from "@/assets/images/svgs/tick-circle.svg";
 import SecuritySafeIcon from "~/components/Auth/SecuritySafeIcon.vue";
 import CircleTick from "~/components/Auth/CircleTick.vue";
@@ -134,7 +130,7 @@ const formValues = {
   token: route.query.code,
   email: route.query.email,
 };
-
+const { app } = route.params;
 const schema = yup.object({
   password: yup
     .string()
@@ -167,7 +163,7 @@ const onSubmit = handleSubmit((values) => {
 
         setTimeout(() => {
           toast.success("Password Reset successful");
-          router.push("/auth/login");
+          router.push(`/auth/login${app && `/${app}`}`);
         }, 2000);
       }
     })
@@ -204,10 +200,9 @@ const verifyOtp = (token) => {
     });
 };
 
-
 onMounted(() => {
   console.log("Ypp");
-  
+
   resend2FA({ email: route.query.email }).then((res) => {
     if (res.status === 200) {
     }

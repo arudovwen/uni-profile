@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-const { app } = useRoute().query;
+const { app } = useRoute().params;
 </script>
 
 <style scoped lang="scss">

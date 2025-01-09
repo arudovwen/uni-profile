@@ -129,7 +129,7 @@
             >
               Already have an account?
               <NuxtLink
-                :to="handleRouting(route, '/auth/login')"
+                :to="handleRouting(route, `/auth/login${app && `/${app}`}`)"
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
               >
@@ -175,8 +175,8 @@ const props = defineProps({
 });
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
-const { type } = route.params;
-const { app, redirected_from } = route.query;
+const { type, app } = route.params;
+const { redirected_from } = route.query;
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);

@@ -26,8 +26,8 @@
               <div
                 class="w-[38px] h-[38px] text-sm whitespace-nowrap bg-gray-200 flex rounded-[50%] uppercase items-center justify-center font-medium truncate"
               >
-                <span>{{ authStore.loggedUser?.firstName.slice(0, 1) }}</span>
-                <span>{{ authStore.loggedUser?.lastName.slice(0, 1) }}</span>
+                <span>{{ authStore.loggedUser?.firstName?.slice(0, 1) }}</span>
+                <span>{{ authStore.loggedUser?.lastName?.slice(0, 1) }}</span>
               </div>
               <div
                 class="flex flex-col items-start p-0 lg:w-[103px] hidden lg:inline"

@@ -73,8 +73,8 @@
                         <span
                           class="h-10 w-10 rounded-full flex items-center justify-center text-white bg-[#f90] font-semibold"
                         >
-                          {{ authStore.userInfo?.firstName.slice(0, 1) }}
-                          {{ authStore.userInfo?.lastName.slice(0, 1) }}</span
+                          {{ authStore.userInfo?.firstName?.slice(0, 1) }}
+                          {{ authStore.userInfo?.lastName?.slice(0, 1) }}</span
                         >
                         <div class="flex-1">
                           <span

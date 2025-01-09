@@ -56,11 +56,12 @@
           />
         </div>
         <span
+          v-if="app !== 5"
           class="flex items-center text-center text-sm text-[#182230] darks:text-white/80 gap-x-1 justify-center"
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, '/auth/register')"
+            :to="handleRouting(route, `/auth/register${app && `/${app}`}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -132,7 +133,7 @@ const [password, passwordAtt] = defineField("password");
 const route = useRoute();
 const router = useRouter();
 
-const { app } = route.query;
+const { app } = route.params;
 
 const onSubmit = handleSubmit((values) => {
   formValues.email = values.email;
@@ -159,7 +160,7 @@ const onSubmit = handleSubmit((values) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/register?email=${encodeURIComponent(values.email)}&step=2`
+          `/auth/${app && `/${app}`}?email=${encodeURIComponent(values.email)}&step=2`
         );
       }
     });
@@ -267,7 +268,7 @@ const handleLoginSuccess = (response) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/register?email=${encodeURIComponent(values.email)}&step=2`
+          `/auth/register${app && `/${app}`}?email=${encodeURIComponent(values.email)}&step=2`
         );
       }
     });

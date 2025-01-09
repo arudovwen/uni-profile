@@ -1,16 +1,16 @@
 <template>
-  <NuxtLink to="/">
+
     <img
       :src="AppsObject[app]?.logo || '/logo.png'"
       :alt="AppsObject[app]?.label"
       :class="className"
     />
-  </NuxtLink>
+
 </template>
 
 <script setup>
 const route = useRoute();
-const { app } = route.query;
+const { app } = route.params;
 
 defineProps({
   className: {
