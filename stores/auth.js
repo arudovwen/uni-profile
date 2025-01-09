@@ -11,7 +11,7 @@ export const useAuthStore = defineStore(
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
     const isLoggedIn = computed(() => !!loggedUser.value);
-    const refresh_token = computed(() => loggedUser?.value?.jwToken);
+    const refresh_token = computed(() => loggedUser?.value?.refreshToken);
     const access_token = computed(() => loggedUser?.value?.jwToken);
     const roles = computed(() => loggedUser?.value?.roles);
     const userId = computed(() => loggedUser?.value?.id);

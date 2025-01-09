@@ -168,8 +168,18 @@ const onboardUser = async (data) => {
   if (data?.subApps.includes(parseInt(app))) {
     return true;
   }
-  AppsObject[app]?.onboarding({ email: data.email, accessToken: data.jwToken });
-
+  try {
+    const resp = AppsObject[app]?.onboarding({
+      email: data.email,
+      accessToken: data.jwToken,
+    });
+    if (resp.status === 200) {
+      return true;
+    }
+  } catch (err) {
+    console.log("🚀 ~ onboardUser ~ err:", err);
+    return true;
+  }
 };
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
@@ -177,7 +187,8 @@ const handleFinalSubmit = async (token) => {
     .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
-        // const appResponse = await onboardUser(res.data.data);
+        await onboardUser(res.data.data);
+
         if (
           route.query.redirected_from &&
           route.query.redirected_from !== "/"
