@@ -79,8 +79,14 @@ export const useAuthStore = defineStore(
           });
         }
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error?.response?.data?.message);
         isLoggingOut.value = false;
+        localStorage.clear();
+        removeObjectByToken(access_token.value);
+        clearCookies().then(() => {
+          loggedUser.value = null;
+          window.location.href = "/auth/login";
+        });
       }
     };
     return {
