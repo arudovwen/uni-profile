@@ -168,7 +168,7 @@ const onSubmit = handleSubmit((values) => {
     });
 });
 const onboardUser = async (data) => {
-  console.log("🚀 ~ onboardUser ~ data:", data)
+
   if (data?.subApps.includes(parseInt(app))) {
     return true;
   }

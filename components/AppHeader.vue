@@ -104,9 +104,10 @@
           <button
             type="button"
             @click="logOut"
-            class="appearance-none border min-w-[140px] w-1/2 border-primary-500 leading-none px-8 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px] uppercase"
+            :disabled="authStore.isLoggingOut"
+            class="appearance-none border min-w-[140px] w-1/2 disabled:opacity-60 disabled:cursor-not-allowed border-primary-500 leading-none px-4 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px]"
           >
-            Yes
+            {{authStore.isLoggingOut?'Logging out ...':'Yes'}}
           </button>
         </div>
       </div>

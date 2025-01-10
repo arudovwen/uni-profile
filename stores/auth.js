@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { toast } from "vue3-toastify";
 import { logoutUser } from "~/services/authservices";
 
 const cookieDomain =
@@ -7,6 +8,7 @@ export const useAuthStore = defineStore(
   "matta_auth",
   () => {
     const loggedUser = ref("");
+    const isLoggingOut = ref(false);
     const authUsers = ref([]);
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
@@ -48,7 +50,6 @@ export const useAuthStore = defineStore(
       setLoggedUser(userInfo);
     }
     function saveAuthUser(obj) {
-      
       const exists = authUsers.value.some(
         (existingObj) => existingObj?.access_token === obj?.access_token
       );
@@ -63,15 +64,23 @@ export const useAuthStore = defineStore(
       );
     }
     const logOut = async () => {
-      const response = await logoutUser({token:access_token.value, refreshToken: refresh_token.value });
-      if (response.status === 200) {
-        localStorage.clear();
-        removeObjectByToken(access_token.value);
-        clearCookies().then(() => {
-          loggedUser.value = null
-          window.location.href = "/auth/login";
-
+      try {
+        isLoggingOut.value = true;
+        const response = await logoutUser({
+          token: access_token.value,
+          refreshToken: refresh_token.value,
         });
+        if (response.status === 200) {
+          localStorage.clear();
+          removeObjectByToken(access_token.value);
+          clearCookies().then(() => {
+            loggedUser.value = null;
+            window.location.href = "/auth/login";
+          });
+        }
+      } catch (error) {
+        toast.error(error.response.data.message);
+        isLoggingOut.value = false;
       }
     };
     return {
@@ -92,7 +101,9 @@ export const useAuthStore = defineStore(
       businessId,
       language,
       setHasPin,
-      hasPin,authUsers
+      hasPin,
+      authUsers,
+      isLoggingOut,
     };
   },
   {
