@@ -61,7 +61,7 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/auth/register${app && `/${app}`}`)"
+            :to="handleRouting(route, `/auth/register${app ? `/${app}`:''}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -160,7 +160,7 @@ const onSubmit = handleSubmit((values) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/${app && `/${app}`}?email=${encodeURIComponent(
+          `/auth/${app ? `/${app}`:''}?email=${encodeURIComponent(
             values.email
           )}&step=2`
         );
@@ -189,7 +189,6 @@ const handleFinalSubmit = async (token) => {
   isLoading.value = true;
   loginUser2FA({ token, email: formValues.email })
     .then(async (res) => {
-      console.log("🚀 ~ .then ~ res:", res)
       if (res.status === 200) {
         const tempData = {...res.data.data, access_token: res.data.data.jwToken}
         authStore.setLoggedUser(tempData);
@@ -213,7 +212,7 @@ const handleFinalSubmit = async (token) => {
     })
 
     .catch((err) => {
-      console.log("🚀 ~ handleFinalSubmit ~ err:", err)
+
       isLoading.value = false;
 
       if (!err?.response?.data) return;
@@ -225,7 +224,7 @@ const handleFinalSubmit = async (token) => {
         (data?.message || data?.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/resend-verification/${encodeURIComponent(formValues.email)}`
+          `/auth/register?email=${encodeURIComponent(formValues.email)}`
         );
       }
     });
@@ -276,7 +275,7 @@ const handleLoginSuccess = (response) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/register${app && `/${app}`}?email=${encodeURIComponent(
+          `/auth/register${app ? `/${app}`:''}?email=${encodeURIComponent(
             values.email
           )}&step=2`
         );

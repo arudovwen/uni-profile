@@ -89,6 +89,7 @@
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resend2FA } from "~/services/authservices";
+import { toast } from "vue3-toastify";
 
 const props = defineProps({
   title: {
@@ -132,21 +133,25 @@ async function handleSubmit() {
 }
 function resendOTP() {
   if (countdown.value === 0) {
-    resend2FA({ email: props.email }).then((res) => {
-      if (res.status === 200) {
-        // Start the countdown
-        countdown.value = 60;
-        isResending.value = true;
+    resend2FA({ email: props.email })
+      .then((res) => {
+        if (res.status === 200) {
+          // Start the countdown
+          countdown.value = 60;
+          isResending.value = true;
 
-        const interval = setInterval(() => {
-          countdown.value--;
-          if (countdown.value <= 0) {
-            clearInterval(interval);
-            isResending.value = false;
-          }
-        }, 1000);
-      }
-    });
+          const interval = setInterval(() => {
+            countdown.value--;
+            if (countdown.value <= 0) {
+              clearInterval(interval);
+              isResending.value = false;
+            }
+          }, 1000);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.Message);
+      });
 
     // Logic to actually resend the OTP can go here
   }

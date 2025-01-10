@@ -71,7 +71,7 @@
           />
         </div>
         <NuxtLink
-          :to="`/auth/login${app && `/${app}`}`"
+          :to="`/auth/login${app ? `/${app}`:''}`"
           class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           @click="emit('close')"
         >
@@ -163,7 +163,7 @@ const onSubmit = handleSubmit((values) => {
 
         setTimeout(() => {
           toast.success("Password Reset successful");
-          router.push(`/auth/login${app && `/${app}`}`);
+          router.push(`/auth/login${app ? `/${app}`:''}`);
         }, 2000);
       }
     })

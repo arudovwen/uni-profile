@@ -1,4 +1,5 @@
 <template>
+   <NuxtLayout name="empty">
   <div class="max-w-[500px] mx-auto">
     <div>
       <h1
@@ -75,12 +76,13 @@
       </form>
     </div>
   </div>
+</NuxtLayout>
 </template>
 
 <script setup>
 definePageMeta({
   layout: "auth",
-  middleware: "auth",
+  middleware: "auth"
 });
 
 import useVuelidate from "@vuelidate/core";
