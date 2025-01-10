@@ -160,12 +160,15 @@ const onSubmit = handleSubmit((values) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/${app && `/${app}`}?email=${encodeURIComponent(values.email)}&step=2`
+          `/auth/${app && `/${app}`}?email=${encodeURIComponent(
+            values.email
+          )}&step=2`
         );
       }
     });
 });
 const onboardUser = async (data) => {
+  console.log("🚀 ~ onboardUser ~ data:", data)
   if (data?.subApps.includes(parseInt(app))) {
     return true;
   }
@@ -186,9 +189,13 @@ const handleFinalSubmit = async (token) => {
   isLoading.value = true;
   loginUser2FA({ token, email: formValues.email })
     .then(async (res) => {
+      console.log("🚀 ~ .then ~ res:", res)
       if (res.status === 200) {
-        authStore.setLoggedUser(res.data.data);
-        await onboardUser(res.data.data);
+        const tempData = {...res.data.data, access_token: res.data.data.jwToken}
+        authStore.setLoggedUser(tempData);
+        if (![0, 1].includes(app)) {
+          await onboardUser(tempData);
+        }
 
         if (
           route.query.redirected_from &&
@@ -206,6 +213,7 @@ const handleFinalSubmit = async (token) => {
     })
 
     .catch((err) => {
+      console.log("🚀 ~ handleFinalSubmit ~ err:", err)
       isLoading.value = false;
 
       if (!err?.response?.data) return;
@@ -268,7 +276,9 @@ const handleLoginSuccess = (response) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/register${app && `/${app}`}?email=${encodeURIComponent(values.email)}&step=2`
+          `/auth/register${app && `/${app}`}?email=${encodeURIComponent(
+            values.email
+          )}&step=2`
         );
       }
     });

@@ -48,8 +48,9 @@ export const useAuthStore = defineStore(
       setLoggedUser(userInfo);
     }
     function saveAuthUser(obj) {
+      
       const exists = authUsers.value.some(
-        (existingObj) => existingObj.access_token === obj.access_token
+        (existingObj) => existingObj?.access_token === obj?.access_token
       );
       if (exists) {
         return;
