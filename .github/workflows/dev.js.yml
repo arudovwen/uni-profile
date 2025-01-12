@@ -34,7 +34,7 @@ jobs:
     
     - name: Archive production artifacts (Windows)
       run: |
-            xcopy C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist C:\inetpub\wwwroot\Dev.Profile.FrontEnd /E /I /Y # Adjust "public" to match your build output folder
+            xcopy C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist C:\inetpub\wwwroot\Dev.Profile2.FrontEnd /E /I /Y # Adjust "public" to match your build output folder
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
