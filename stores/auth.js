@@ -72,6 +72,7 @@ export const useAuthStore = defineStore(
         });
         if (response.status === 200) {
           localStorage.clear();
+          isLoggingOut.value = false;
           removeObjectByToken(access_token.value);
           clearCookies().then(() => {
             loggedUser.value = null;

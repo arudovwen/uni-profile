@@ -3,7 +3,7 @@ const urls = {
   LOGIN_USER: "v1/account/login",
   LOGIN_OUT: "v1/account/logout",
   LOGIN_USER_2FA: "v1/account/login2fa",
-  CONFIRM_2FA: "v1/account/confirm-2fa",
+  CONFIRM_2FA: "v1/account/confirm",
   REGISTER: "/v1/onboarding/sign-up",
   RESEND_VERIFICATION: "/v1/register/resendverification",
   REGISTER_INVITED_USER: "/v1/account/registerbusinessuser",

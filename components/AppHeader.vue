@@ -66,12 +66,12 @@
               </div></MenuItem
             >
             <MenuItem>
-              <div
+              <button type="button"
                 @click="isSigniningOut = true"
                 class="'group flex w-full items-center rounded-md text-sm px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
               >
               <AppIcon icon="lets-icons:sign-out-circle-light" icon-class="text-base" />  Sign Out
-              </div></MenuItem
+              </button></MenuItem
             >
           </MenuItems>
         </Menu>
@@ -103,11 +103,11 @@
 
           <button
             type="button"
-            @click="logOut"
-            :disabled="authStore.isLoggingOut"
+            @click="navigateTo('/auth/logout')"
+          
             class="appearance-none border min-w-[140px] w-1/2 disabled:opacity-60 disabled:cursor-not-allowed border-primary-500 leading-none px-4 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px]"
           >
-            {{authStore.isLoggingOut?'Logging out ...':'Yes'}}
+          Yes
           </button>
         </div>
       </div>

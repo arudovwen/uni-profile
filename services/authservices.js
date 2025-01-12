@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { apiPost, deltaPost, mattaPost, orbitalPost, ssoPost } from "../helpers/api_helpers";
+import { apiPost, deltaPost, mattaGet, mattaPost, orbitalPost, ssoPost } from "../helpers/api_helpers";
 
 //Authentication
 export async function loginUser(user, config = {}) {
@@ -83,7 +83,7 @@ export async function orbitalOnboardingSignup(user, config = {}) {
 }
 
 export async function mattaConfirmemail(data, config = {}) {
-  return await mattaPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
+  return await mattaPost(`${urls.CONFIRM_2FA}`, data, config);
 }
 export async function mattaRegisterUser(user, config = {}) {
   return await mattaPost(urls.ORBITAL_REGISTER, user, config);

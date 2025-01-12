@@ -17,6 +17,25 @@
             class="grid w-full grid-cols-1 lg:grid-cols-2 gap-x-[18px] gap-y-5"
           >
             <div
+              v-if="!app || app == 0"
+              class="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6"
+            >
+              <AuthMattaTypeCard
+                :active="business_UserType === 0"
+                @click="setFieldValue('business_UserType', 0)"
+                icon="ri:user-3-line"
+                title="Buyer Account"
+                description="Search, buy and place orders for products"
+              />
+              <AuthMattaTypeCard
+                :active="business_UserType === 1"
+                @click="setFieldValue('business_UserType', 1)"
+                icon="solar:shop-linear"
+                title="Vendor Account"
+                description="For merchants who wants to sell their products"
+              />
+            </div>
+            <div
               v-if="app == 1"
               class="lg:col-span-2 flex flex-col gap-4 lg:flex-row justify-between"
             >
@@ -129,7 +148,7 @@
             >
               Already have an account?
               <NuxtLink
-                :to="handleRouting(route, `/auth/login${app ? `/${app}`:''}`)"
+                :to="handleRouting(route, `/auth/login${app ? `/${app}` : ''}`)"
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
               >
@@ -230,6 +249,7 @@ const [firstName, firstNameAtt] = defineField("firstName");
 const [lastName, lastNameAtt] = defineField("lastName");
 const [phone, phoneAtt] = defineField("phone");
 const [userType] = defineField("userType");
+const [business_UserType] = defineField("business_UserType");
 const [companyName, companyNameAtt] = defineField("companyName");
 const router = useRouter();
 
@@ -264,7 +284,11 @@ const onSubmit = handleSubmit((values) => {
 const handleFinalSubmit = (code) => {
   isLoading.value = true;
   AppsObject[app]
-    .confirmRegisterUrl({ code, email: email.value || route.query.email })
+    .confirmRegisterUrl({
+      code,
+      otpCode: code,
+      email: email.value || route.query.email,
+    })
     .then((res) => {
       if (res.status === 200) {
         isVerified.value = true;
