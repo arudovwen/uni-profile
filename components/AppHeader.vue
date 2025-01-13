@@ -33,7 +33,7 @@
                 class="flex flex-col items-start p-0 lg:w-[103px] hidden lg:inline"
               >
                 <p
-                  class="h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left  w-[120px] truncate whitespace-nowrap"
+                  class="h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left w-[120px] truncate whitespace-nowrap"
                 >
                   {{ authStore?.loggedUser?.fullName }}
                 </p>
@@ -59,18 +59,29 @@
           >
             <MenuItem>
               <div
-                class="'group  w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+                class="'group w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
               >
-                <span class="block font-medium text-xs  w-[180px] truncate whitespace-nowrap"> {{ authStore?.loggedUser?.fullName }}</span>
-                <span class="block font-normal text-xs w-[180px] truncate"> {{ authStore?.loggedUser?.email }} </span>
+                <span
+                  class="block font-medium text-xs w-[180px] truncate whitespace-nowrap"
+                >
+                  {{ authStore?.loggedUser?.fullName }}</span
+                >
+                <span class="block font-normal text-xs w-[180px] truncate">
+                  {{ authStore?.loggedUser?.email }}
+                </span>
               </div></MenuItem
             >
             <MenuItem>
-              <button type="button"
+              <button
+                type="button"
                 @click="isSigniningOut = true"
-                class="'group flex w-full items-center rounded-md text-sm px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+                class="'group flex w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
               >
-              <AppIcon icon="lets-icons:sign-out-circle-light" icon-class="text-base" />  Sign Out
+                <AppIcon
+                  icon="lets-icons:sign-out-circle-light"
+                  icon-class="text-base"
+                />
+                Sign Out
               </button></MenuItem
             >
           </MenuItems>
@@ -103,11 +114,10 @@
 
           <button
             type="button"
-            @click="navigateTo('/auth/logout')"
-          
+            @click="handleLogout"
             class="appearance-none border min-w-[140px] w-1/2 disabled:opacity-60 disabled:cursor-not-allowed border-primary-500 leading-none px-4 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px]"
           >
-          Yes
+            Yes
           </button>
         </div>
       </div>
@@ -129,7 +139,9 @@ import DotsGrid from "@/assets/images/svgs/dots-grid.svg";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 
 const isSigniningOut = ref(false);
-
+function handleLogout() {
+  window.location.href = "/auth/logout";
+}
 const props = defineProps({
   showlang: {
     default: false,
