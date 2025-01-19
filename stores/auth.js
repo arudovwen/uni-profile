@@ -7,11 +7,12 @@ const cookieDomain =
 export const useAuthStore = defineStore(
   "matta_auth",
   () => {
-    const loggedUser = ref("");
+    const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
+
     const isLoggedIn = computed(() => !!loggedUser.value);
     const refresh_token = computed(() => loggedUser?.value?.refreshToken);
     const access_token = computed(() => loggedUser?.value?.jwToken);
@@ -59,7 +60,7 @@ export const useAuthStore = defineStore(
       authUsers.value.push(obj);
     }
     function removeObjectByToken(access_token) {
-      authUsers.value = authUsers.value.filter(
+      authUsers.value = authUsers?.value?.filter(
         (obj) => obj.access_token !== access_token
       );
     }
@@ -73,20 +74,21 @@ export const useAuthStore = defineStore(
         if (response.status === 200) {
           localStorage.clear();
           isLoggingOut.value = false;
+          authUsers.value = [];
           removeObjectByToken(access_token.value);
           clearCookies().then(() => {
             loggedUser.value = null;
-            window.location.href = "/auth/login";
+            handleAppRedirect(route.params.appId);
           });
         }
       } catch (error) {
-        toast.error(error?.response?.data?.message);
+        const route = useRoute();
         isLoggingOut.value = false;
         localStorage.clear();
         removeObjectByToken(access_token.value);
         clearCookies().then(() => {
           loggedUser.value = null;
-          window.location.href = "/auth/login";
+          handleAppRedirect(route.params.appId);
         });
       }
     };

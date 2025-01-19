@@ -1,10 +1,15 @@
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
 
+  if (authStore.isLoggedIn) {
+    if (to.query.continue) {
+      abortNavigation();
+      handleRedirect(to, authStore.access_token);
+      return;
+    }
+  }
   // Avoid infinite redirect to homepage if already on the homepage
   if (authStore.isLoggedIn && to?.name?.includes("auth")) {
-    // Only redirect to homepage if the current route is not the homepage
-
     return navigateTo(`/`);
   }
 
@@ -14,7 +19,9 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (!to.path.includes("/auth/login")) {
       abortNavigation(); // Stop the current navigation
       return navigateTo(
-        `/auth/login${to.query.app ? `/${to.query.app}`:''}?${new URLSearchParams({
+        `/auth/login${
+          to.query.app ? `/${to.query.app}` : ""
+        }?${new URLSearchParams({
           redirected_from: to.path,
           ...to.query,
         })}`

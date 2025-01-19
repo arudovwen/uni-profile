@@ -18,6 +18,7 @@ import {
   oxideRegisterUser,
 } from "~/services/authservices";
 
+
 export const AppsObject = {
   1: {
     label: "Flux",

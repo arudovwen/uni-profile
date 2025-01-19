@@ -45,7 +45,6 @@
             >Forgot password?</NuxtLink
           >
         </span>
-
         <div class="grid gap-y-[22px] mb-9">
           <AppButton
             type="submit"
@@ -61,7 +60,7 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/auth/register${app ? `/${app}`:''}`)"
+            :to="handleRouting(route, `/auth/register${app ? `/${app}` : ''}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -78,6 +77,7 @@
       @close="
         step = 1;
         isLoading = false;
+        resetForm();
       "
       :subtext="
         isVerified
@@ -120,7 +120,7 @@ const schema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const { handleSubmit, defineField, errors, meta } = useForm({
+const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
   validationSchema: schema,
   initialValues: formValues,
   mode: "onBlur",
@@ -136,6 +136,7 @@ const router = useRouter();
 const { app } = route.params;
 
 const onSubmit = handleSubmit((values) => {
+  step.value = 1;
   formValues.email = values.email;
   formValues.password = values.password;
   isLoading.value = true;
@@ -160,7 +161,7 @@ const onSubmit = handleSubmit((values) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/${app ? `/${app}`:''}?email=${encodeURIComponent(
+          `/auth/${app ? `/${app}` : ""}?email=${encodeURIComponent(
             values.email
           )}&step=2`
         );
@@ -168,7 +169,6 @@ const onSubmit = handleSubmit((values) => {
     });
 });
 const onboardUser = async (data) => {
-
   if (data?.subApps.includes(parseInt(app))) {
     return true;
   }
@@ -190,10 +190,17 @@ const handleFinalSubmit = async (token) => {
   loginUser2FA({ token, email: formValues.email })
     .then(async (res) => {
       if (res.status === 200) {
-        const tempData = {...res.data.data, access_token: res.data.data.jwToken}
+        const tempData = {
+          ...res.data.data,
+          access_token: res.data.data.jwToken,
+        };
         authStore.setLoggedUser(tempData);
         if (![0, 1].includes(app)) {
           await onboardUser(tempData);
+        }
+        if (route.query.continue) {
+          handleRedirect(route, res.data.data.jwToken);
+          return;
         }
 
         if (
@@ -212,7 +219,6 @@ const handleFinalSubmit = async (token) => {
     })
 
     .catch((err) => {
-
       isLoading.value = false;
 
       if (!err?.response?.data) return;
@@ -275,7 +281,7 @@ const handleLoginSuccess = (response) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/register${app ? `/${app}`:''}?email=${encodeURIComponent(
+          `/auth/register${app ? `/${app}` : ""}?email=${encodeURIComponent(
             values.email
           )}&step=2`
         );

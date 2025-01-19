@@ -134,6 +134,18 @@
                 description="Must be at least 8 characters."
               />
             </div>
+            <div class="lg:col-span-2">
+              <Textinput
+                placeholder=""
+                label="Referral Code (Optional)"
+                type="text"
+                name="AgentReferralCode"
+                v-bind="AgentReferralCodeAtt"
+                v-model="AgentReferralCode"
+                :error="errors.AgentReferralCode"
+                :isCumpulsory="false"
+              />
+            </div>
             <div class="lg:col-span-2 grid gap-y-[22px] mb-[13px] mt-4">
               <AppButton
                 type="submit"
@@ -179,11 +191,6 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import {
-  registerUser,
-  confirm2FA,
-  confirmemail,
-} from "~/services/authservices";
 import { getUserInfo } from "~/services/userservices";
 import UserTypeCard from "./UserTypeCard.vue";
 
@@ -210,6 +217,7 @@ const formValues = {
   companyName: "",
   userType: 0,
   business_UserType: 0,
+  AgentReferralCode: "",
 };
 const step = ref(1);
 const schema = yup.object({
@@ -251,6 +259,9 @@ const [phone, phoneAtt] = defineField("phone");
 const [userType] = defineField("userType");
 const [business_UserType] = defineField("business_UserType");
 const [companyName, companyNameAtt] = defineField("companyName");
+const [AgentReferralCode, AgentReferralCodeAtt] =
+  defineField("AgentReferralCode");
+
 const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
@@ -300,14 +311,14 @@ const handleFinalSubmit = (code) => {
               ...authStore.loggedUser,
               accountType: res.data.data?.userType,
             });
-            toast.success("Sign up successful");
-
-            isLoading.value = false;
-            window.location.replace(redirected_from);
-            return;
           });
         }
-        toast.success("Login successful");
+        if (route.query.continue) {
+          handleRedirect(route, res.data.data.jwToken);
+          return;
+        }
+        toast.success("Sign up successful");
+
         isLoading.value = false;
         window.location.replace(redirected_from);
       }
