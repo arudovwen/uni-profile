@@ -77,7 +77,7 @@ const form = reactive({
   registrationNo: "",
   tin: "",
   sector: "",
-  dateofIncorporation: "",
+  dateOfIncorporation: "",
   dateOfIncorporation: "",
 });
 const isLoading = ref(true);
@@ -110,7 +110,7 @@ function getData() {
         Object.keys(tempData).forEach((key) => {
           form[key] = tempData[key];
         });
-        form.dateofIncorporation = res.data.data.dateOfIncorporation;
+        form.dateOfIncorporation = res.data.data.dateOfIncorporation;
         if (companyDocuments.length > 0) {
           const formattedDocData = formatDocuments(companyDocuments);
           formData.kyb.companyDocuments =

@@ -115,7 +115,7 @@
       </div> -->
     </div>
 
-    <div>
+    <!-- <div>
       <div class="mb-6">
         <FormGroup label="How do you want to get your earnings" name="earings">
           <div class="grid gap-y-[6px]">
@@ -131,6 +131,26 @@
         text="Save changes"
         btnClass="bg-primary-500 text-white rounded-lg px-[14px] py-[10px]"
       />
+    </div> -->
+    <div class="max-w-[280px]">
+      <SwitchGroup>
+        <div class="flex items-center justify-start gap-x-1">
+          <SwitchLabel class="mr-4 whitespace-nowrap font-medium">{{
+            `${!isAutoSettlement ? "Activate" : "Deactivate"} auto settlement`
+          }}</SwitchLabel>
+          <Switch
+            v-model="isAutoSettlement"
+            :class="isAutoSettlement ? 'bg-blue-600' : 'bg-gray-200'"
+            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none"
+          >
+            <span
+              :class="isAutoSettlement ? 'translate-x-6' : 'translate-x-1'"
+              class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+            />
+          </Switch>
+          <AppIcon v-if="setLoader" icon="fa:spinner" iconClass="fa-spin" />
+        </div>
+      </SwitchGroup>
     </div>
   </div>
   <DeleteModal
@@ -144,7 +164,11 @@
   <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
     <template #content>
       <div class="h-full w-full bg-white rounded-lg p-6">
-        <PagesSettlementsForm :id="id" :detail="detail" />
+        <PagesSettlementsForm
+          :id="id"
+          :detail="detail"
+          @refresh="getFinanceData()"
+        />
       </div>
     </template>
   </IndexModal>
@@ -157,19 +181,27 @@ import AppIcon from "~/components/AppIcon";
 import { Menu, MenuButton, MenuItems } from "@headlessui/vue";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
-import { viewSettlement } from "~/services/settlementservice";
+import { Switch, SwitchGroup, SwitchLabel } from "@headlessui/vue";
+import {
+  viewSettlement,
+  deleteSettlement,
+  autoSettlement,
+  getAutoSettlement,
+} from "~/services/settlementservice";
 
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
-const isPrimaryOpen = ref(false);
+const setLoader = ref(false);
 const detail = ref(null);
 const authStore = useAuthStore();
+const isAutoSettlement = ref(false);
 
 const theads = ["account name", "account number", "bank", ""];
 const financeData = ref([]);
 
 onMounted(() => {
+  getSettlement()
   getFinanceData();
 });
 const settlementValue = ref(null);
@@ -181,7 +213,19 @@ const queryParams = reactive({
   Type: "",
 });
 const docLoading = ref(false);
-
+function getSettlement() {
+  setLoader.value = true;
+  getAutoSettlement()
+    .then((res) => {
+      if (res.status === 200) {
+        setLoader.value = false;
+        isAutoSettlement.value = res.data.data.autoSettlement;
+      }
+    })
+    .catch(() => {
+      setLoader.value = false;
+    });
+}
 function getFinanceData() {
   docLoading.value = true;
   viewSettlement(queryParams).then((res) => {
@@ -204,12 +248,21 @@ const debounceSearch = debounce(() => {
   getFinanceData();
 }, 800);
 const handleDelete = () => {
-  withdrawFinance(id.value).then((res) => {
-    if (res.status === 200) {
-      getFinanceData();
-      toast.success("Account deleted");
-    }
-  });
+  deleteSettlement(id.value)
+    .then((res) => {
+      if (res.status === 200) {
+        getSettlements();
+        isSuccessOpen.value = true;
+      }
+    })
+    .catch((err) => {
+      errorText.value =
+        err?.response?.data?.message ||
+        err?.response?.data?.Message ||
+        "Account deletion failed";
+      isErrorOpen.value = true;
+      isLoading.value = false;
+    });
 };
 function handleSuccess() {
   getFinanceData();
@@ -226,7 +279,20 @@ watch(
     getFinanceData();
   }
 );
-
+watch(isAutoSettlement, (oldval, newval) => {
+  if (oldval === newval) return;
+  handleAutoSettlement();
+});
+function handleAutoSettlement() {
+  setLoader.value = true;
+  autoSettlement({ autoSettlement: isAutoSettlement.value })
+    .then((res) => {
+      setLoader.value = false;
+    })
+    .catch(() => {
+      setLoader.value = false;
+    });
+}
 provide("handleSuccess", handleSuccess);
 provide("isOpen", isOpen);
 </script>

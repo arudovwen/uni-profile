@@ -115,7 +115,7 @@ definePageMeta({
   middleware: "auth",
 });
 useHead({
-  title: "Reset password | Deltalog",
+  title: "Reset password | MATTA",
 });
 
 const isVerifyPin = ref(false);

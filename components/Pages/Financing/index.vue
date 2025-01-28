@@ -103,10 +103,10 @@ const formData = reactive({
     businessType: "",
     address: "",
     description: "",
-    dateofIncorporation: null,
+    dateOfIncorporation: null,
     companyDocuments: [],
     statusReport: "",
-    incorporation: "", // Assuming incorporation is a dateofIncorporation type
+    incorporation: "", // Assuming incorporation is a dateOfIncorporation type
     mermat: "",
     utilityBill: "",
     country: "Nigeria",

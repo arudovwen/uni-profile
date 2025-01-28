@@ -65,6 +65,7 @@ export const useAuthStore = defineStore(
       );
     }
     const logOut = async () => {
+      const route = useRoute();
       try {
         isLoggingOut.value = true;
         const response = await logoutUser({
@@ -82,7 +83,7 @@ export const useAuthStore = defineStore(
           });
         }
       } catch (error) {
-        const route = useRoute();
+       
         isLoggingOut.value = false;
         localStorage.clear();
         removeObjectByToken(access_token.value);

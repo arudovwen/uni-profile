@@ -13,14 +13,14 @@
 
       <FormGroup
         label="Date of incorporation"
-        name="dateofIncorporation"
-        :error="errors.dateofIncorporation"
+        name="dateOfIncorporation"
+        :error="errors.dateOfIncorporation"
         :isCumpulsory="true"
       >
         <ClientOnly>
           <VueDatePicker
             auto-apply
-            v-model="dateofIncorporation"
+            v-model="dateOfIncorporation"
             placeholder="Select date"
             :enable-time-picker="false"
             :input-class-name="`!rounded-lg px-[14px] py-[10px] h-11 w-full border  placeholder:text-[#B6B7B9] focus:outline-matta-black/20
@@ -276,7 +276,7 @@ const [tin, tinAtt] = defineField("tin");
 const [sector] = defineField("sector");
 const [companyEmail, emailAtt] = defineField("companyEmail");
 const [companyPhone] = defineField("companyPhone");
-const [dateofIncorporation] = defineField("dateofIncorporation");
+const [dateOfIncorporation] = defineField("dateOfIncorporation");
 const [category] = defineField("category");
 const [address, addressAtt] = defineField("address");
 const [notes, notesAtt] = defineField("notes");

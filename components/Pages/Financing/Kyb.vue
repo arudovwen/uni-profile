@@ -63,14 +63,14 @@
 
       <FormGroup
         label="Date of incorporation"
-        name="dateofIncorporation"
-        :error="errors.dateofIncorporation"
+        name="dateOfIncorporation"
+        :error="errors.dateOfIncorporation"
         :isCumpulsory="true"
       >
         <ClientOnly>
           <VueDatePicker
             auto-apply
-            v-model="dateofIncorporation"
+            v-model="dateOfIncorporation"
             placeholder="Select date"
             :enable-time-picker="false"
             :input-class-name="`!rounded-lg px-[14px] py-[10px] h-11 w-full border  placeholder:text-[#B6B7B9] focus:outline-matta-black/20
@@ -225,7 +225,7 @@ const authStore = useAuthStore();
 const formSchema = yup.object().shape({
   companyName: yup.string().required("Company Name is required"),
   sector: yup.string().required("Sector is required"),
-  dateofIncorporation: yup
+  dateOfIncorporation: yup
     .date()
     .typeError("Invalid date Of Incorporation")
     .nullable()
@@ -295,7 +295,7 @@ const [tin, tinAtt] = defineField("tin");
 const [sector] = defineField("sector");
 const [email, emailAtt] = defineField("email");
 const [phone] = defineField("phone");
-const [dateofIncorporation] = defineField("dateofIncorporation");
+const [dateOfIncorporation] = defineField("dateOfIncorporation");
 const [category] = defineField("category");
 const [address, addressAtt] = defineField("address");
 const [description, descriptionAtt] = defineField("description");
