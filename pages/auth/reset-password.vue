@@ -121,7 +121,7 @@ useHead({
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isResetSuccess = ref(false);
-const isVerified = ref(false);
+const isVerified = ref(true);
 const route = useRoute();
 const router = useRouter();
 const formValues = {
