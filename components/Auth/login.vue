@@ -60,7 +60,7 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/auth/register${app ? `/${app}` : ''}`)"
+            :to="handleRouting(route, `/auth/register/${app || 0}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -135,7 +135,6 @@ const onSubmit = handleSubmit((values) => {
   loginUser(values)
     .then((res) => {
       if (res.status === 200) {
-       
         if (route.query.continue && app == 5) {
           handleRedirect(route, res.data.data.jwToken);
           return;
@@ -208,7 +207,7 @@ const handleFinalSubmit = async (token) => {
         toast.success("Login successful");
 
         isLoading.value = false;
-       navigateTo(`/`);
+        navigateTo(`/`);
       }
     })
 

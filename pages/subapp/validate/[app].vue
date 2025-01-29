@@ -12,12 +12,9 @@ const { app } = route.params;
 const auth = useAuthStore();
 
 onMounted(() => {
-
   if (auth.isLoggedIn && auth.access_token) {
     const encodededToken = encodeURIComponent(auth.access_token);
-    window.location.href = `${
-      AppsObject[app ?? 0]?.url
-    }/auth/validate/app?token=${encodededToken}`;
+    window.location.href = `${AppsObject[app]?.url}/auth/validate/app?token=${encodededToken}`;
     return;
   }
   navigateTo(
