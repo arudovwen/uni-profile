@@ -266,7 +266,7 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  AppsObject[app]
+  AppsObject[app ?? 0]
     .registerUrl({
       ...values,
       confirmPassword: values.password,
@@ -294,7 +294,7 @@ const onSubmit = handleSubmit((values) => {
 
 const handleFinalSubmit = (code) => {
   isLoading.value = true;
-  AppsObject[app]
+  AppsObject[app ?? 0]
     .confirmRegisterUrl({
       code,
       otpCode: code,
