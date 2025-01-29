@@ -11,7 +11,7 @@ const ORBITAL_URL = "https://dev.market.matta.trade/api/";
 
 let isRefreshing = false;
 let pendingRequests = [];
-
+let count = 0;
 // Handle token refresh logic with locking mechanism
 const handleTokenRefresh = async () => {
   const authStore = useAuthStore();
@@ -54,6 +54,10 @@ const handleTokenRefresh = async () => {
 
 // Handle errors when refreshing token
 const handleRefreshError = () => {
+  count++;
+  if (count == 3) {
+    authStore.clearAuth();
+  }
   const authStore = useAuthStore();
   authStore.logOut();
 };
@@ -76,15 +80,14 @@ const createAxiosInstance = (baseURL) => {
     (response) => response,
     async (error) => {
       if (error?.response?.status === 403) {
-        // try {
-        //   const newAccessToken = await handleTokenRefresh();
-        //   error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
-        //   return instance.request(error.config);
-        // } catch (refreshError) {
-        //   handleRefreshError();
-        //   return Promise.reject(refreshError);
-        // }
-        handleRefreshError();
+        try {
+          const newAccessToken = await handleTokenRefresh();
+          error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return instance.request(error.config);
+        } catch (refreshError) {
+          handleRefreshError();
+          return Promise.reject(refreshError);
+        }
       } else {
         return Promise.reject(error);
       }

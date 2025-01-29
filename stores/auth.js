@@ -93,6 +93,14 @@ export const useAuthStore = defineStore(
         });
       }
     };
+
+    const clearAuth = () => {
+      removeObjectByToken(access_token.value);
+      clearCookies().then(() => {
+        loggedUser.value = null;
+        handleAppRedirect(route.params.appId);
+      });
+    };
     return {
       updateUser,
       isLoggedIn,
@@ -114,6 +122,7 @@ export const useAuthStore = defineStore(
       hasPin,
       authUsers,
       isLoggingOut,
+      clearAuth
     };
   },
   {

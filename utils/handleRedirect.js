@@ -8,7 +8,7 @@ export function handleRedirect(route, token) {
 export function handleAppRedirect(app) {
   if (app) {
     const AppUrl = AppsObject[app]?.url;
-    return navigateTo(`/auth/login/${app}?continue=${AppUrl}`);
+    return window.location.replace(`/auth/login/${app}?continue=${AppUrl}`);
   }
-  return navigateTo(`/auth/login`);
+  return window.location.replace(`/auth/login`);
 }
