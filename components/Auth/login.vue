@@ -96,13 +96,12 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import { loginUser, sociallogin, loginUser2FA } from "~/services/authservices";
+import { loginUser, loginUser2FA } from "~/services/authservices";
 
-const props = defineProps({
-  main: {
-    default: true,
-  },
-});
+const authStore = useAuthStore();
+const route = useRoute();
+const router = useRouter();
+const { app } = route.params;
 const step = ref(1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
@@ -110,6 +109,7 @@ const isLoading = ref(false);
 const formValues = {
   email: "",
   password: "",
+  subApp: app || 0,
 };
 
 const schema = yup.object({
@@ -125,24 +125,21 @@ const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
   initialValues: formValues,
   mode: "onBlur",
 });
-
-const emits = defineEmits(["close", "toggleAuth"]);
-const authStore = useAuthStore();
 const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
-const route = useRoute();
-const router = useRouter();
-
-const { app } = route.params;
 
 const onSubmit = handleSubmit((values) => {
-  step.value = 1;
   formValues.email = values.email;
   formValues.password = values.password;
   isLoading.value = true;
   loginUser(values)
     .then((res) => {
       if (res.status === 200) {
+       
+        if (route.query.continue && app == 5) {
+          handleRedirect(route, res.data.data.jwToken);
+          return;
+        }
         isVerifyPin.value = true;
         step.value = 2;
         isLoading.value = false;
@@ -151,7 +148,6 @@ const onSubmit = handleSubmit((values) => {
 
     .catch((err) => {
       isLoading.value = false;
-
       if (!err.response.data) return;
       const { data } = err.response;
       if (data.message || data.Message) {
@@ -173,11 +169,11 @@ const onboardUser = async (data) => {
     return true;
   }
   try {
-    const resp = AppsObject[app]?.onboarding({
+    const resp = await AppsObject[app]?.onboarding({
       email: data.email,
       accessToken: data.jwToken,
     });
-    if (resp.status === 200) {
+    if (resp?.status === 200) {
       return true;
     }
   } catch (err) {
@@ -190,14 +186,12 @@ const handleFinalSubmit = async (token) => {
   loginUser2FA({ token, email: formValues.email })
     .then(async (res) => {
       if (res.status === 200) {
-        const tempData = {
-          ...res.data.data,
-          access_token: res.data.data.jwToken,
-        };
-        authStore.setLoggedUser(tempData);
-        if (![0, 1].includes(app)) {
+        authStore.setLoggedUser(res.data.data);
+
+        if (app && ![0, 1].includes(app)) {
           await onboardUser(tempData);
         }
+
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
           return;
@@ -208,13 +202,13 @@ const handleFinalSubmit = async (token) => {
           route.query.redirected_from !== "/"
         ) {
           isLoading.value = false;
-          window.location.replace(route.query.redirected_from);
+          navigateTo(route.query.redirected_from);
           return;
         }
         toast.success("Login successful");
 
         isLoading.value = false;
-        window.location.replace(`/`);
+       navigateTo(`/`);
       }
     })
 
@@ -235,68 +229,4 @@ const handleFinalSubmit = async (token) => {
       }
     });
 };
-
-const handleLoginSuccess = (response) => {
-  const { access_token } = response;
-  let data = {
-    provider: "GOOGLE",
-    idToken: access_token,
-    business_UserType: 0,
-  };
-
-  sociallogin(data)
-    .then((res) => {
-      if (res.status === 200) {
-        store.commit("setUser", res.data.data);
-        toast.success(res.data.message ? res.data.message : "Login successful");
-        if (res.data.message.includes("Email has not verified yet")) {
-          return;
-        }
-
-        if (!res.data.data.onboardingPageStatus) {
-          window.location.replace("/overview");
-          return;
-        }
-        if (route.query.redirected_from) {
-          window.location.replace(route.query.redirected_from);
-          return;
-        }
-        if (route.query.redirect_to) {
-          window.location.replace(route.query.redirect_to);
-          return;
-        }
-
-        window.location.replace("/");
-      }
-    })
-    .catch((err) => {
-      invalidCredentials.value = true;
-      isLoading.value = false;
-      if (!err.response.data) return;
-      const { data } = err.response;
-      if (data.message || data.Message) {
-        toast.error(data.message || data.Message);
-      }
-      if (
-        (data.message || data.Message).includes("Email has not verified yet")
-      ) {
-        router.push(
-          `/auth/register${app ? `/${app}` : ""}?email=${encodeURIComponent(
-            values.email
-          )}&step=2`
-        );
-      }
-    });
-};
-
-// handle an error event
-const handleLoginError = () => {
-  console.error("Login failed");
-};
-
-const { isReady, login } = useTokenClient({
-  onSuccess: handleLoginSuccess,
-  onError: handleLoginError,
-  // other options
-});
 </script>

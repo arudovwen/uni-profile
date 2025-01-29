@@ -31,20 +31,9 @@ useHead(
   }
 );
 
-import AOS from "aos";
-import "aos/dist/aos.css";
-
-const query = reactive({
-  PageNumber: 1,
-  PageSize: 200,
+onMounted(() => {
+  useAuthStore();
 });
-const getAllMarkets = () => {
-  getMarkets(query).then((res) => {
-    if (res.status === 200) {
-      store.setMarkets(res.data.data);
-    }
-  });
-};
 </script>
 
 <style>

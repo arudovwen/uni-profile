@@ -3,7 +3,8 @@ import { toast } from "vue3-toastify";
 import { logoutUser } from "~/services/authservices";
 
 const cookieDomain =
-  process.env.NODE_ENV === "production" ? ".matta.trade" : undefined;
+  process.env.NODE_ENV === "production" ? ".matta.trade" : "localhost";
+
 export const useAuthStore = defineStore(
   "matta_auth",
   () => {
@@ -22,7 +23,7 @@ export const useAuthStore = defineStore(
     const userInfo = computed(() => loggedUser?.value);
 
     function setLoggedUser(data) {
-      loggedUser.value = data;
+      loggedUser.value = { ...data, access_token: data.jwToken };
       saveAuthUser(data);
     }
 
@@ -83,9 +84,8 @@ export const useAuthStore = defineStore(
           });
         }
       } catch (error) {
-       
         isLoggingOut.value = false;
-        localStorage.clear();
+        // localStorage.clear();
         removeObjectByToken(access_token.value);
         clearCookies().then(() => {
           loggedUser.value = null;
@@ -122,7 +122,7 @@ export const useAuthStore = defineStore(
         domain: cookieDomain,
         path: "/",
         secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
+        sameSite: "strict",
       }),
     },
   }
