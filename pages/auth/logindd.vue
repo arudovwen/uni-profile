@@ -1,5 +1,5 @@
 <template>
-  <AuthLogin @close="() => {}" />
+  <AuthLogin />
 </template>
 
 <script setup>

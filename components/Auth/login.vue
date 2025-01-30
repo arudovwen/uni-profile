@@ -188,7 +188,7 @@ const handleFinalSubmit = async (token) => {
         authStore.setLoggedUser(res.data.data);
 
         if (app && ![0, 1].includes(app)) {
-          await onboardUser(tempData);
+          await onboardUser(res.data.data);
         }
 
         if (route.query.continue) {
@@ -201,13 +201,13 @@ const handleFinalSubmit = async (token) => {
           route.query.redirected_from !== "/"
         ) {
           isLoading.value = false;
-          navigateTo(route.query.redirected_from);
+          window.location.replace(route.query.redirected_from);
           return;
         }
         toast.success("Login successful");
 
         isLoading.value = false;
-        navigateTo(`/`);
+        window.location.replace(`/`);
       }
     })
 
