@@ -52,5 +52,11 @@ const urls = {
   GET_LEDGER_TRANSACTIONS: "v1/ledger/get-all",
 
   VALIDATE_ACCOUNT: "v1/wallet/validate-account",
+
+  //Sub apps
+  GET_SUBAPPS: "admin/v1/subapplication/apps",
+  GET_SUBAPP: (id) => `adminv1/subapplication/apps/${id}`,
+  ADD_SUBAPP: "admin/v1/subapplication",
+  UPDATE_SUBAPP: "admin/v1/subapplication",
 };
 export default urls;

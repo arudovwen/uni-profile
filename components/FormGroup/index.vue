@@ -1,7 +1,7 @@
 <template>
   <div
     class="formGroup relative w-full md:w-auto"
-    :class="`${error ? 'has-error' : ''}  ${horizontal ? 'flex' : ''}  ${
+    :class="`${error ? 'has-error' : ''}  ${horizontal ? 'flex gap-x-3' : ''}  ${
       validate ? 'is-valid' : ''
     } ${formClass}`"
   >

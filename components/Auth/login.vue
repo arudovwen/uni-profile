@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout v-if="step === 1" name="auth">
-    <div v-if="step === 1" class="pt-10 lg:pt-0 w-full max-w-[450px] mx-auto">
+    <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto ">
       <h1
         class="text-[#182230] darks:text-white mb-4 text-3xl font-medium w-full"
       >
@@ -209,9 +209,7 @@ const handleFinalSubmit = async (token) => {
         isLoading.value = false;
         window.location.replace(`/`);
       }
-    })
-
-    .catch((err) => {
+    }).catch((err) => {
       isLoading.value = false;
 
       if (!err?.response?.data) return;

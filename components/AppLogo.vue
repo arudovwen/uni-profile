@@ -1,9 +1,9 @@
 <template>
 
     <img
-      :src="AppsObject[app]?.logo || '/logo.png'"
-      :alt="AppsObject[app]?.label"
-      :class="className"
+      src="@/assets/apps/ssologo.png"
+      alt="sso"
+      class="w-auto h-16"
     />
 
 </template>

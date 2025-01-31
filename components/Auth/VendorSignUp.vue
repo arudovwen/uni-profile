@@ -1,61 +1,23 @@
 <template>
   <NuxtLayout name="auth" v-if="step == 1">
-    <div class="w-full max-w-[563px] py-2 mt-28 mx-auto">
+    <div class="w-full lg:w-[600px] mx-auto">
       <div>
         <h1
           class="text-[#101828] darks:text-white mb-[4px] text-[30px] font-medium"
         >
-          Get Started
+          Sign Up
         </h1>
         <p class="mb-8 text-base darks:text-white/80">Create an Account</p>
       </div>
-      <div class="mb-8 flex gap-x-1 items-center w-full">
+      <div class="flex gap-x-1 items-center w-full">
         <div class="w-full">
           <form
             v-if="step === 1"
             @submit.prevent="onSubmit"
             class="grid w-full grid-cols-1 lg:grid-cols-2 gap-x-[18px] gap-y-5"
           >
-            <div
-              v-if="!app || app == 0"
-              class="lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-6"
-            >
-              <AuthMattaTypeCard
-                :active="business_UserType === 0"
-                @click="setFieldValue('business_UserType', 0)"
-                icon="ri:user-3-line"
-                title="Buyer Account"
-                description="Search, buy and place orders for products"
-              />
-              <AuthMattaTypeCard
-                :active="business_UserType === 1"
-                @click="setFieldValue('business_UserType', 1)"
-                icon="solar:shop-linear"
-                title="Vendor Account"
-                description="For merchants who wants to sell their products"
-              />
-            </div>
-            <div
-              v-if="app == 1"
-              class="lg:col-span-2 flex flex-col gap-4 lg:flex-row justify-between"
-            >
-              <user-type-card
-                :active="userType === 0"
-                @click="setFieldValue('userType', 0)"
-                icon-active="AuthClientIconActive"
-                icon-inactive="AuthClientIcon"
-                title="Clients"
-                description="Need a logistics and fulfillment partner"
-              />
-              <user-type-card
-                :active="userType === 1"
-                @click="setFieldValue('userType', 1)"
-                icon-active="AuthVendorIconActive"
-                icon-inactive="AuthVendorIcon"
-                title="Vendors"
-                description="Become a fulfillment service provider"
-              />
-            </div>
+          
+         
 
             <div>
               <Textinput
@@ -81,7 +43,7 @@
                 isCumpulsory
               />
             </div>
-            <div class="lg:col-span-2">
+            <div >
               <Textinput
                 placeholder="Email address"
                 label="Email Address"
@@ -95,7 +57,7 @@
                 :error="errors.email"
               />
             </div>
-            <div class="lg:col-span-2">
+            <div >
               <LazyPhoneNumber
                 label="Phone number"
                 type="tel"
@@ -150,7 +112,7 @@
               <AppButton
                 type="submit"
                 :isLoading="isLoading"
-                text="Get Started"
+                text="Sign Up"
                 btnClass="normal-case btn-primary !py-3"
                 :isDisabled="isLoading || !meta.valid"
               />
@@ -192,7 +154,6 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { getUserInfo } from "~/services/userservices";
-import UserTypeCard from "./UserTypeCard.vue";
 
 const props = defineProps({
   main: {
@@ -215,8 +176,6 @@ const formValues = {
   password: "",
   confirmPassword: "",
   companyName: "",
-  userType: 0,
-  business_UserType: 0,
   AgentReferralCode: "",
 };
 const step = ref(1);

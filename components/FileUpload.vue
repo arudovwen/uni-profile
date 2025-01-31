@@ -40,6 +40,10 @@
         class="flex-1 px-4 truncate text-[#999999] inline-bloc"
         >{{ multiple ? multiUrls.join() : title }}</span
       >
+
+      <span v-if="modelValue">
+        <img class="h-5" :src="modelValue" />
+      </span>
     </div>
   </div>
 </template>

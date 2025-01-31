@@ -35,7 +35,11 @@
                 <p
                   class="h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left w-[120px] truncate whitespace-nowrap"
                 >
-                  {{ authStore?.loggedUser?.fullName }}
+                {{
+                    authStore?.userInfo?.accountType != 2
+                      ? authStore?.loggedUser?.fullName
+                      : "Superadmin"
+                  }}
                 </p>
                 <p
                   class="font-normal text-[12px] leading-[18px] text-gray-600 flex-none order-1 flex-grow-0 capitalize w-[120px] truncate"
@@ -64,7 +68,11 @@
                 <span
                   class="block font-medium text-xs w-[180px] truncate whitespace-nowrap"
                 >
-                  {{ authStore?.loggedUser?.fullName }}</span
+                  {{
+                    authStore?.userInfo?.accountType != 2
+                      ? authStore?.loggedUser?.fullName
+                      : "Superadmin"
+                  }}</span
                 >
                 <span class="block font-normal text-xs w-[180px] truncate">
                   {{ authStore?.loggedUser?.email }}

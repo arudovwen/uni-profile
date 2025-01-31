@@ -63,3 +63,14 @@
 label {
   color: #475467 !important;
 }
+
+/* Hide the number input caret (spinner) in most browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

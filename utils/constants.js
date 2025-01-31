@@ -364,9 +364,24 @@ export const Navigation = [
     key: "settlement",
   },
   {
+    name: "Apps",
+    url: "/sub-apps",
+    key: "sub-apps",
+  },
+  {
     name: "Notifications",
     url: "/notifications",
     key: "notifications",
+  },
+  {
+    name: "User Management",
+    url: "/user-management",
+    key: "user-management",
+  },
+  {
+    name: "Audit Logs",
+    url: "/audit-logs",
+    key: "audit-logs",
   },
 ];
 export const nigeriaTypes = [0, 1, 2, 3, 4];
