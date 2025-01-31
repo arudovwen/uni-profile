@@ -23,9 +23,8 @@
         :columns="columns"
         :rows="rows"
         emptyTitle="No application available"
-        :isLoading="loading"
         emptyType="user"
-        :isLOading="setLoader"
+        :isLoading="setLoader"
       >
         <template #table-row-action="{ row }">
           <Menu class="" as="div">
