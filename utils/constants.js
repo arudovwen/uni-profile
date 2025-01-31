@@ -18,7 +18,6 @@ import {
   oxideRegisterUser,
 } from "~/services/authservices";
 
-
 export const AppsObject = {
   1: {
     label: "Flux",
@@ -353,16 +352,7 @@ export const Navigation = [
     url: "/security",
     key: "security",
   },
-  {
-    name: "Business Information",
-    url: "/business-information",
-    key: "business",
-  },
-  {
-    name: "Settlement Accounts",
-    url: "/settlements",
-    key: "settlement",
-  },
+ 
   {
     name: "Apps",
     url: "/sub-apps",
@@ -384,5 +374,37 @@ export const Navigation = [
     key: "audit-logs",
   },
 ];
+
+export const superadminRoutes = ['user-management', 'sup-apps', 'audit-logs']
+
+export const UserNavigation = [
+  {
+    name: "Profile",
+    url: "/",
+    key: "profile",
+  },
+  {
+    name: "Security",
+    url: "/security",
+    key: "security",
+  },
+  {
+    name: "Business Information",
+    url: "/business-information",
+    key: "business",
+  },
+  {
+    name: "Settlement Accounts",
+    url: "/settlements",
+    key: "settlement",
+  },
+
+  {
+    name: "Notifications",
+    url: "/notifications",
+    key: "notifications",
+  },
+];
+
 export const nigeriaTypes = [0, 1, 2, 3, 4];
 export const nonNigeriaTypes = [0, 4];

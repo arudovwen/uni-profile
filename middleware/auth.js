@@ -1,4 +1,5 @@
 export default defineNuxtRouteMiddleware((to, from) => {
+  console.log("🚀 ~ defineNuxtRouteMiddleware ~ to:", to);
   const authStore = useAuthStore();
 
   if (authStore.isLoggedIn) {
@@ -6,6 +7,13 @@ export default defineNuxtRouteMiddleware((to, from) => {
       abortNavigation();
       handleRedirect(to, authStore.access_token);
       return;
+    }
+    if (
+      authStore.userInfo.accountType != 2 &&
+      superadminRoutes.includes(to.name)
+    ) {
+      abortNavigation();
+      return navigateTo(`/`);
     }
   }
   // Avoid infinite redirect to homepage if already on the homepage

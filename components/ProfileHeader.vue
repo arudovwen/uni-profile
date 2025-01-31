@@ -1,7 +1,14 @@
 <template>
   <div class="bg-white border-t border-b border-[#E4E7EC]">
-    <ul class="flex gap-x-1 items-center justify-start py-3 container overflow-auto">
-      <li v-for="n in Navigation" :key="n.name">
+    <ul
+      class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
+    >
+      <li
+        v-for="n in authStore?.userInfo?.accountType == 2
+          ? Navigation
+          : UserNavigation"
+        :key="n.name"
+      >
         <NuxtLink :to="n.url">
           <button
             :class="
@@ -19,7 +26,8 @@
   </div>
 </template>
 <script setup>
-import { Navigation } from "@/utils/constants";
+import { Navigation, UserNavigation } from "@/utils/constants";
 
+const authStore = useAuthStore()
 const route = useRoute();
 </script>
