@@ -109,7 +109,7 @@ const isLoading = ref(false);
 const formValues = {
   email: "",
   password: "",
-  subApp: parseInt(app, 10) || 0,
+  subApp: app
 };
 
 const schema = yup.object({

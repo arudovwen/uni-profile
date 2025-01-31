@@ -4,7 +4,7 @@
       class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
     >
       <li
-        v-for="n in authStore?.userInfo?.accountType == 2
+        v-for="n in authStore?.userInfo?.userCategory == 2
           ? Navigation
           : UserNavigation"
         :key="n.name"

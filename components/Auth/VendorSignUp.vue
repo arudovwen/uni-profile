@@ -16,9 +16,6 @@
             @submit.prevent="onSubmit"
             class="grid w-full grid-cols-1 lg:grid-cols-2 gap-x-[18px] gap-y-5"
           >
-          
-         
-
             <div>
               <Textinput
                 placeholder="First Name"
@@ -43,7 +40,7 @@
                 isCumpulsory
               />
             </div>
-            <div >
+            <div>
               <Textinput
                 placeholder="Email address"
                 label="Email Address"
@@ -57,14 +54,14 @@
                 :error="errors.email"
               />
             </div>
-            <div >
+            <div>
               <LazyPhoneNumber
                 label="Phone number"
                 type="tel"
-                name="phone"
-                v-bind="phoneAtt"
-                v-model="phone"
-                :error="errors.phone"
+                name="phonenumber"
+                v-bind="phonenumberAtt"
+                v-model="phonenumber"
+                :error="errors.phonenumber"
                 isCumpulsory
               />
             </div>
@@ -153,7 +150,7 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import { getUserInfo } from "~/services/userservices";
+import { registerUser,confirmRegister } from "~/services/authservices";
 
 const props = defineProps({
   main: {
@@ -172,16 +169,16 @@ const formValues = {
   email: "",
   firstName: "",
   lastName: "",
-  phone: "",
+  phonenumber: "",
   password: "",
   confirmPassword: "",
   companyName: "",
   AgentReferralCode: "",
+  subApp: app
 };
 const step = ref(1);
 const schema = yup.object({
-  userType: yup.mixed(),
-  business_UserType: yup.mixed(),
+  subApp: yup.string().required(),
   email: yup
     .string()
     .required("Email is required")
@@ -193,7 +190,7 @@ const schema = yup.object({
     otherwise: (schema) => schema.required("Company name is required"),
   }),
   lastName: yup.string().required("Last name is required"),
-  phone: yup.string().required("Phone number is required"),
+  phonenumber: yup.string().required("Phone number is required"),
   password: yup
     .string()
     .required(
@@ -214,9 +211,7 @@ const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
 const [firstName, firstNameAtt] = defineField("firstName");
 const [lastName, lastNameAtt] = defineField("lastName");
-const [phone, phoneAtt] = defineField("phone");
-const [userType] = defineField("userType");
-const [business_UserType] = defineField("business_UserType");
+const [phonenumber, phonenumberAtt] = defineField("phonenumber");
 const [companyName, companyNameAtt] = defineField("companyName");
 const [AgentReferralCode, AgentReferralCodeAtt] =
   defineField("AgentReferralCode");
@@ -225,12 +220,11 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  AppsObject[app]
-    .registerUrl({
-      ...values,
-      confirmPassword: values.password,
-      phoneNumber: values.phone,
-    })
+  registerUser({
+    ...values,
+    confirmPassword: values.password,
+    phonenumberNumber: values.phonenumber,
+  })
     .then((res) => {
       if (res.status === 200) {
         isVerifyPin.value = true;
@@ -253,8 +247,7 @@ const onSubmit = handleSubmit((values) => {
 
 const handleFinalSubmit = (code) => {
   isLoading.value = true;
-  AppsObject[app]
-    .confirmRegisterUrl({
+ confirmRegister({
       code,
       otpCode: code,
       email: email.value || route.query.email,
@@ -264,14 +257,7 @@ const handleFinalSubmit = (code) => {
         isVerified.value = true;
         authStore.setLoggedUser(res.data.data);
         authStore.setHasPin(res.data.data.hasTransactionPIN);
-        if (app == 1) {
-          getUserInfo().then((res) => {
-            authStore.setLoggedUser({
-              ...authStore.loggedUser,
-              accountType: res.data.data?.userType,
-            });
-          });
-        }
+      
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
           return;
@@ -279,7 +265,7 @@ const handleFinalSubmit = (code) => {
         toast.success("Sign up successful");
 
         isLoading.value = false;
-        window.location.replace(redirected_from);
+        window.location.replace(redirected_from || "/");
       }
     })
 

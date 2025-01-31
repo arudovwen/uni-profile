@@ -19,9 +19,7 @@ export async function logOut() {
   // googleLogout();
   authStore.logOut();
 }
-export async function registerUser(user, config = {}) {
-  return await apiPost(urls.REGISTER, user, config);
-}
+
 export async function registerInvitedUser(user, config = {}) {
   return await apiPost(urls.REGISTER_INVITED_USER, user, config);
 }
@@ -72,11 +70,11 @@ export async function fluxOnboardingSignup(user, config = {}) {
   return await deltaPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);
 }
 
-export async function orbitalConfirmemail(data, config = {}) {
-  return await orbitalPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
+export async function confirmRegister(data, config = {}) {
+  return await ssoPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
 }
-export async function orbitalRegisterUser(user, config = {}) {
-  return await orbitalPost(urls.ORBITAL_REGISTER, user, config);
+export async function registerUser(user, config = {}) {
+  return await ssoPost(urls.REGISTER, user, config);
 }
 export async function orbitalOnboardingSignup(user, config = {}) {
   return await orbitalPost(urls.OXIDE_ONBOARDING_SIGNUP, user, config);

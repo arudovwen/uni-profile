@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  console.log("🚀 ~ defineNuxtRouteMiddleware ~ to:", to);
+
   const authStore = useAuthStore();
 
   if (authStore.isLoggedIn) {
@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return;
     }
     if (
-      authStore.userInfo.accountType != 2 &&
+      authStore.userInfo.userCategory != 2 &&
       superadminRoutes.includes(to.name)
     ) {
       abortNavigation();

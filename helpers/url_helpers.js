@@ -21,8 +21,8 @@ const urls = {
 
   FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
 
-  ORBITAL_REGISTER: "/v1/register",
-  ORBITAL_CONFIRM_EMAIL: "v1/register/confirm-email",
+ REGISTER: "/v1/register",
+  ORBITAL_CONFIRM_EMAIL: "v1/account/confirm-email",
 
   //Customers
   CUSTOMERS: "v1/customers",

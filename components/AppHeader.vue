@@ -30,13 +30,13 @@
                 <span>{{ authStore.loggedUser?.lastName?.slice(0, 1) }}</span>
               </div>
               <div
-                class="flex flex-col items-start p-0 lg:w-[103px] hidden lg:inline"
+                class=" flex-col items-start p-0 lg:w-[103px] hidden lg:inline"
               >
                 <p
                   class="h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left w-[120px] truncate whitespace-nowrap"
                 >
                 {{
-                    authStore?.userInfo?.accountType != 2
+                    authStore?.userInfo?.userCategory != 2
                       ? authStore?.loggedUser?.fullName
                       : "Superadmin"
                   }}

@@ -4,18 +4,7 @@ import Flux from "@/assets/apps/flu.png";
 import Orbital from "@/assets/apps/orbital.png";
 import Mattapedia from "@/assets/apps/mattapedia.png";
 import {
-  fluxConfirmemail,
-  fluxOnboardingSignup,
-  fluxRegisterUser,
-  mattaConfirmemail,
-  mattaOnboardingSignup,
-  mattaRegisterUser,
-  orbitalConfirmemail,
-  orbitalOnboardingSignup,
-  orbitalRegisterUser,
-  oxideConfirmemail,
-  oxideOnboardingSignup,
-  oxideRegisterUser,
+
 } from "~/services/authservices";
 
 export const AppsObject = {
@@ -31,9 +20,7 @@ export const AppsObject = {
     authText: "Move, Store, and Distribute with Flux",
     authSubText:
       "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
-    registerUrl: fluxRegisterUser,
-    confirmRegisterUrl: fluxConfirmemail,
-    onboarding: fluxOnboardingSignup,
+ 
   },
   3: {
     label: "Oxide",
@@ -47,9 +34,7 @@ export const AppsObject = {
     authText: "Payments, Financing, and Cross-border Payments",
     authSubText:
       "Seamless payments and financing for Africa's Manufacturing Industry",
-    registerUrl: oxideRegisterUser,
-    confirmRegisterUrl: oxideConfirmemail,
-    onboarding: oxideOnboardingSignup,
+ 
   },
   0: {
     label: "Matta",
@@ -62,9 +47,7 @@ export const AppsObject = {
     authBgUrl: "/images/heavy-duty.png",
     authText: "",
     authSubText: "",
-    registerUrl: mattaRegisterUser,
-    confirmRegisterUrl: mattaConfirmemail,
-    onboarding: mattaOnboardingSignup,
+
   },
   4: {
     label: "Orbital",
@@ -79,9 +62,8 @@ export const AppsObject = {
     authText: "Move, Store, and Distribute with Orbital",
     authSubText:
       "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
-    registerUrl: orbitalRegisterUser,
-    confirmRegisterUrl: orbitalConfirmemail,
-    onboarding: orbitalOnboardingSignup,
+ 
+ 
   },
   5: {
     label: "Mattapedia",

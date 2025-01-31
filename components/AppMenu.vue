@@ -36,42 +36,15 @@ import DotsGrid from "@/assets/images/svgs/dots-grid.svg";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { getSubApps } from "~/services/userservices";
 
-import Matta from "@/assets/apps/matt.png";
-import Oxide from "@/assets/apps/ox.png";
-import Flux from "@/assets/apps/flus.png";
-import Orbital from "@/assets/apps/orb.png";
-
-const apps = [
-  {
-    label: "Flux",
-    url: "https://dev.deltalog.co",
-    appId: "",
-    logo: Flux,
-  },
-  {
-    label: "Oxide",
-    url: "https://dev.oxide.matta.trade/",
-    appId: "",
-    logo: Oxide,
-  },
-  {
-    label: "Matta",
-    url: "https://dev.matta.trade",
-    appId: "",
-    logo: Matta,
-  },
-  {
-    label: "Orbital",
-    url: "https://dev.orbital.matta.trade/",
-    appId: "",
-    logo: Orbital,
-  },
-];
+const authStore = useAuthStore()
 const rows = ref([]);
 function getData() {
   getSubApps().then((res) => {
     if (res.status === 200) {
-      rows.value = res.data.data;
+      rows.value = res.data.data.map((i) => ({
+        ...i,
+        url: `${i.url}/auth/validate?token=${authStore.access_token}`,
+      }));
     }
   });
 }

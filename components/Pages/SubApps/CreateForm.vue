@@ -106,7 +106,7 @@
     :open="isSuccessOpen"
     type="approve"
     :title="`Application ${detail ? 'Updated' : 'Created'}`"
-    :text="`Your applicatin has been ${
+    :text="`Your application has been ${
       detail ? 'updated' : 'created'
     } successfully`"
     btnText="Close"
