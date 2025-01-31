@@ -37,8 +37,4 @@ jobs:
             #xcopy C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist C:\inetpub\wwwroot\Dev.Profile2.FrontEnd /E /I /Y # Adjust "public" to match your build output folder
              Copy-Item -Path C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist\* -Destination C:\inetpub\wwwroot\Dev.Profile.FrontEnd\ -recurse -Force
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-          name: deployable-package
-          path: C:\build\deployable-package.zip
+  
