@@ -3,7 +3,7 @@
     <img
       src="@/assets/apps/ssologo.png"
       alt="sso"
-      class="w-auto h-16"
+      class="w-auto h-12"
     />
 
 </template>

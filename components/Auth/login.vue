@@ -40,7 +40,7 @@
         </div>
         <span class="block text-sm text-primary-500 darks:text-white/80 mb-10">
           <NuxtLink
-            :to="handleRouting(route, '/auth/forgot-password')"
+            :to="handleRouting(route, `/${auth}/forgot-password`)"
             class="font-medium"
             >Forgot password?</NuxtLink
           >
@@ -60,7 +60,7 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/auth/register/${app || 0}`)"
+            :to="handleRouting(route, `/${auth}/register/${app || 0}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -102,7 +102,7 @@ import { loginUser, loginUser2FA } from "~/services/authservices";
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
-const { app } = route.params;
+const { app, auth } = route.params;
 const step = ref(1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
