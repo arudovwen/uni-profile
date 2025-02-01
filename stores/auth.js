@@ -23,8 +23,7 @@ export const useAuthStore = defineStore(
     const userInfo = computed(() => loggedUser?.value);
 
     function setLoggedUser(data) {
-      const authData = { ...data, access_token: data.jwToken };
-      loggedUser.value = authData;
+      loggedUser.value = { ...data, access_token: data.jwToken };
     }
 
     function setHasPin(data) {

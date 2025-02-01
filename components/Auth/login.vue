@@ -172,7 +172,6 @@ const handleFinalSubmit = async (token) => {
         authStore.setLoggedUser(res.data.data);
         authStore.saveAuthUser(res.data.data);
 
-
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
           return;
@@ -192,6 +191,7 @@ const handleFinalSubmit = async (token) => {
         window.location.replace(`/`);
       }
     }).catch((err) => {
+      console.log("🚀 ~ .then ~ err:", err)
       isLoading.value = false;
 
       if (!err?.response?.data) return;
