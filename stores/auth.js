@@ -16,21 +16,21 @@ export const useAuthStore = defineStore(
 
     const isLoggedIn = computed(() => !!loggedUser.value);
     const refresh_token = computed(() => loggedUser?.value?.refreshToken);
-    const access_token = computed(() => loggedUser?.value?.jwToken);
+    const jwToken = computed(() => loggedUser?.value?.jwToken);
     const roles = computed(() => loggedUser?.value?.roles);
     const userId = computed(() => loggedUser?.value?.id);
     const businessId = computed(() => loggedUser?.value?.businessId);
     const userInfo = computed(() => loggedUser?.value);
 
     function setLoggedUser(data) {
-      loggedUser.value = { ...data, access_token: data.jwToken };
+      loggedUser.value = { ...data };
     }
 
     function setHasPin(data) {
       hasPin.value = data;
     }
     function setAccessToken(value) {
-      let userInfo = { ...loggedUser?.value, access_token: value };
+      let userInfo = { ...loggedUser?.value, jwToken: value };
       setLoggedUser(userInfo);
     }
     function setRefreshToken(value) {
@@ -59,24 +59,26 @@ export const useAuthStore = defineStore(
       }
       authUsers.value.push(obj);
     }
-    function removeObjectByToken(access_token) {
+    function removeObjectByToken(jwToken) {
       authUsers.value = authUsers?.value?.filter(
-        (obj) => obj.jwToken !== access_token
+        (obj) => obj.jwToken !== jwToken
       );
     }
     const logOut = async () => {
+      const mattaProfiles = useCookie("mattaProfiles");
+      mattaProfiles.value = null;
       const route = useRoute();
       try {
         isLoggingOut.value = true;
         const response = await logoutUser({
-          token: access_token.value,
+          token: jwToken.value,
           refreshToken: refresh_token.value,
         });
         if (response.status === 200) {
           localStorage.clear();
           isLoggingOut.value = false;
           authUsers.value = [];
-          removeObjectByToken(access_token.value);
+
           clearCookies().then(() => {
             loggedUser.value = null;
             handleAppRedirect(route.params.appId);
@@ -84,8 +86,7 @@ export const useAuthStore = defineStore(
         }
       } catch (error) {
         isLoggingOut.value = false;
-        // localStorage.clear();
-        removeObjectByToken(access_token.value);
+
         clearCookies().then(() => {
           loggedUser.value = null;
           handleAppRedirect(route.params.appId);
@@ -94,7 +95,6 @@ export const useAuthStore = defineStore(
     };
 
     const clearAuth = () => {
-      removeObjectByToken(access_token.value);
       clearCookies().then(() => {
         loggedUser.value = null;
         handleAppRedirect(route.params.appId);
@@ -104,7 +104,7 @@ export const useAuthStore = defineStore(
       updateUser,
       isLoggedIn,
       refresh_token,
-      access_token,
+      jwToken,
       roles,
       userId,
       userInfo,

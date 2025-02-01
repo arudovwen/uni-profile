@@ -108,7 +108,7 @@ const profileButtonClass = 'box-border flex flex-row items-center lg:p-2 lg:gap-
 const avatarClass = 'w-[38px] h-[38px] text-sm whitespace-nowrap bg-gray-200 flex rounded-[50%] uppercase items-center justify-center font-medium truncate';
 const nameClass = 'h-[20px] font-medium text-[14px] leading-[20px] text-[#344054] text-left w-[120px] truncate whitespace-nowrap';
 const emailClass = 'font-normal text-[12px] leading-[18px] text-gray-600 flex-none order-1 flex-grow-0 capitalize w-[120px] truncate';
-const menuItemsClass = 'absolute z-[999] divide-y divide-gray-100 bg-white shadow right-0 min-w-[150px] w-[300px] border border-[#E4E7EC] rounded-lg mt-2';
+const menuItemsClass = 'absolute z-[999] divide-y divide-gray-100 bg-white shadow right-0 min-w-[150px] w-[300px] border border-[#E4E7EC] overflow-hidden rounded-lg mt-2';
 
 // Methods
 const openModal = () => {

@@ -8,7 +8,7 @@ const store = createStore({
     loggedUser: {},
     cartItems: [],
     refresh_token: "",
-    access_token: "",
+    jwToken: "",
     isLoggedIn: false,
     roles: [],
     userId: "",
@@ -21,7 +21,7 @@ const store = createStore({
     token: (state) => (state.loggedUser ? state.loggedUser.jwToken : null),
  
     cartItems: (state) => state.cartItems,
-    accessToken: (state) => state.access_token,
+    accessToken: (state) => state.jwToken,
     refreshToken: (state) => state.refresh_token,
     cartTotal: (state) => state.cartItems.length,
     markets: (state) => state.markets,
@@ -40,7 +40,7 @@ const store = createStore({
       state.isLoggedIn = true;
       state.userId = data.id;
       state.refresh_token = data.refreshToken;
-      state.access_token = data.jwToken;
+      state.jwToken = data.jwToken;
     },
     setUserId(state, id) {
       state.userId = id;
@@ -52,13 +52,13 @@ const store = createStore({
       state.refresh_token = refreshToken;
     },
     setAccessToken(state, token) {
-      state.access_token = token;
+      state.jwToken = token;
     },
 
     clearUserData(state) {
       state.loggedUser = {};
       state.refresh_token = "";
-      state.access_token = "";
+      state.jwToken = "";
       state.isLoggedIn = false;
       state.userId = "";
     },

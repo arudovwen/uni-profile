@@ -3,12 +3,12 @@
 
   <ul class="grid">
     <li
-      v-for="item in authStore.authUsers"
+      v-for="item in mattaProfiles"
       @click="switchProfile(item)"
-      class="px-4 flex gap-x-3 items-center text-sm border-b py-[10px]"
+      class="px-4 flex gap-x-3 items-center text-sm border-b py-[10px] hover:bg-gray-50 cursor-pointer"
     >
       <span
-        class="h-10 w-10 rounded-full flex items-center border border-[#D0D5DD] justify-center bg-[#F2F4F7] uppercase font-semibold"
+        class="h-10 w-10 rounded-full flex items-center border border-blue-100 justify-center bg-blue-50 uppercase font-semibold"
         >{{ item.firstName.slice(0, 1) }}{{ item.lastName.slice(0, 1) }}</span
       >
       <span class="flex flex-col">
@@ -117,7 +117,7 @@
 </template>
 <script setup>
 const authStore = useAuthStore();
-
+const mattaProfiles = useCookie("mattaProfiles");
 defineEmits([
   "close",
   "click",
@@ -145,7 +145,7 @@ function handleLogout() {
 
 function switchProfile(data){
   authStore.setLoggedUser(data)
-  // window.location.reload()
+  window.location.reload()
 }
 provide("isOpen", isSigniningOut);
 </script>

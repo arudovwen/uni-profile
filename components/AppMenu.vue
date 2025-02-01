@@ -43,7 +43,7 @@ function getData() {
     if (res.status === 200) {
       rows.value = res.data.data.map((i) => ({
         ...i,
-        url: `${i.url}/auth/validate?token=${authStore.access_token}`,
+        url: `${i.url}/auth/validate?token=${authStore.jwToken}`,
       }));
     }
   });

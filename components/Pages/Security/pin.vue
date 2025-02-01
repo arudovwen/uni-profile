@@ -120,7 +120,7 @@ const [confirmPin, confirmPinAtt] = defineField("confirmPin");
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  changePassword(authStore.access_token, values)
+  changePassword(authStore.jwToken, values)
     .then(() => {
       toast.success("Pin updated");
       resetForm();

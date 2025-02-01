@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout v-if="step === 1" name="auth">
-    <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto ">
+    <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
       <h1
         class="text-[#182230] darks:text-white mb-4 text-3xl font-medium w-full"
       >
@@ -96,6 +96,7 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
+import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { loginUser, loginUser2FA } from "~/services/authservices";
 
 const authStore = useAuthStore();
@@ -109,7 +110,7 @@ const isLoading = ref(false);
 const formValues = {
   email: "",
   password: "",
-  appCode: app
+  appCode: app,
 };
 
 const schema = yup.object({
@@ -166,11 +167,12 @@ const onSubmit = handleSubmit((values) => {
 
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
-  loginUser2FA({ token, email: formValues.email, appCode:app })
+
+  loginUser2FA({ token, email: formValues.email, appCode: app })
     .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
-        authStore.saveAuthUser(res.data.data);
+        saveAuthProfile(res.data.data);
 
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
@@ -190,8 +192,9 @@ const handleFinalSubmit = async (token) => {
         isLoading.value = false;
         window.location.replace(`/`);
       }
-    }).catch((err) => {
-      console.log("🚀 ~ .then ~ err:", err)
+    })
+    .catch((err) => {
+      console.log("🚀 ~ .then ~ err:", err);
       isLoading.value = false;
 
       if (!err?.response?.data) return;

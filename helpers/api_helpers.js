@@ -69,8 +69,8 @@ const createAxiosInstance = (baseURL) => {
 
   instance.interceptors.request.use((config) => {
     const authStore = useAuthStore();
-    config.headers.Authorization = authStore?.access_token
-      ? `Bearer ${authStore.access_token}`
+    config.headers.Authorization = authStore?.jwToken
+      ? `Bearer ${authStore.jwToken}`
       : "";
     config.headers.Accept = "application/json";
     return config;

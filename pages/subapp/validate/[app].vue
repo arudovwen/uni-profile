@@ -12,8 +12,8 @@ const { app } = route.params;
 const auth = useAuthStore();
 
 onMounted(() => {
-  if (auth.isLoggedIn && auth.access_token) {
-    const encodededToken = encodeURIComponent(auth.access_token);
+  if (auth.isLoggedIn && auth.jwToken) {
+    const encodededToken = encodeURIComponent(auth.jwToken);
     window.location.href = `${AppsObject[app]?.url}/auth/validate/app?token=${encodededToken}`;
     return;
   }

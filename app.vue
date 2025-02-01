@@ -32,6 +32,8 @@ useHead(
 );
 
 onMounted(() => {
+  const mattaProfiles = useCookie('mattaProfiles')
+  console.log("🚀 ~ onMounted ~ mattaProfiles:", mattaProfiles.value)
   useAuthStore();
 });
 </script>

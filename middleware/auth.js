@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (authStore.isLoggedIn) {
     if (to.query.continue) {
       abortNavigation();
-      handleRedirect(to, authStore.access_token);
+      handleRedirect(to, authStore.jwToken);
       return;
     }
     if (
