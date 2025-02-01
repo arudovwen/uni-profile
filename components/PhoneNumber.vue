@@ -157,7 +157,6 @@ const phoneNumber = ref(null);
 
 onMounted(() => {
   if (props.modelValue) {
-
     const tempData = props.modelValue.split("-");
     selectedCountryCode.value = tempData[0];
     phoneNumber.value = tempData[1];
@@ -176,7 +175,6 @@ watch(
   () => [props.modelValue],
   () => {
     if (props.modelValue) {
-  
       const tempData = props.modelValue.split("-");
       selectedCountryCode.value = tempData[0];
       phoneNumber.value = tempData[1];
@@ -191,6 +189,16 @@ watch(
   box-shadow: 0px 1px 2px #1018280d;
   border-radius: 8px;
   border: 1px solid #d0d5dd;
+}
+/* Hide the number input caret (spinner) in most browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .has-error input {
