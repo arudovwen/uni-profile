@@ -23,8 +23,8 @@ export const useAuthStore = defineStore(
     const userInfo = computed(() => loggedUser?.value);
 
     function setLoggedUser(data) {
-      loggedUser.value = { ...data, access_token: data.jwToken };
-      saveAuthUser(data);
+      const authData = { ...data, access_token: data.jwToken };
+      loggedUser.value = authData;
     }
 
     function setHasPin(data) {
@@ -53,7 +53,7 @@ export const useAuthStore = defineStore(
     }
     function saveAuthUser(obj) {
       const exists = authUsers.value.some(
-        (existingObj) => existingObj?.access_token === obj?.access_token
+        (existingObj) => existingObj?.jwToken === obj?.jwToken
       );
       if (exists) {
         return;
@@ -62,7 +62,7 @@ export const useAuthStore = defineStore(
     }
     function removeObjectByToken(access_token) {
       authUsers.value = authUsers?.value?.filter(
-        (obj) => obj.access_token !== access_token
+        (obj) => obj.jwToken !== access_token
       );
     }
     const logOut = async () => {
@@ -122,7 +122,8 @@ export const useAuthStore = defineStore(
       hasPin,
       authUsers,
       isLoggingOut,
-      clearAuth
+      clearAuth,
+      saveAuthUser,
     };
   },
   {

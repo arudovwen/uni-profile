@@ -163,33 +163,15 @@ const onSubmit = handleSubmit((values) => {
       }
     });
 });
-const onboardUser = async (data) => {
-  if (data?.subApps.includes(parseInt(app))) {
-    return true;
-  }
-  try {
-    const resp = await AppsObject[app]?.onboarding({
-      email: data.email,
-      accessToken: data.jwToken,
-    });
-    if (resp?.status === 200) {
-      return true;
-    }
-  } catch (err) {
-    console.log("🚀 ~ onboardUser ~ err:", err);
-    return true;
-  }
-};
+
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
   loginUser2FA({ token, email: formValues.email, appCode:app })
     .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
+        authStore.saveAuthUser(res.data.data);
 
-        if (app && ![0, 1].includes(app)) {
-          await onboardUser(res.data.data);
-        }
 
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
