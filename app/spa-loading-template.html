@@ -4,19 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Profile | Matta</title>
-  </head>
-  <body>
-    <!-- https://github.com/barelyhuman/snips/blob/dev/pages/css-loader.md -->
-    <div class="loader-container h-screen w-screen flex items-center justify-center">
-      <div data-testid="spinner" class="loader"></div>
-    </div>
-    <style scoped>
+
+    <style>
+      /* Full screen container for centering the loader */
+      .loader-container {
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
       .loader {
         transform: rotateZ(45deg);
         perspective: 1000px;
         border-radius: 50%;
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         color: #021242;
       }
       .loader:before,
@@ -33,57 +38,98 @@
         animation: 1s spin linear infinite;
       }
       .loader:after {
-        color: #1570EF;
+        color: #1570ef;
         transform: rotateY(70deg);
         animation-delay: 0.4s;
       }
-      
-      @keyframes rotate {
+
+      /* Top loading bar */
+      .top-load {
+        width: 0%;
+        height: 6px;
+        background: #1570ef;
+        position: absolute;
+        top: 0;
+        left: 0;
+        animation: top-load 5s forwards;
+      }
+
+      /* Keyframe for top-load animation */
+      @keyframes top-load {
         0% {
-          transform: translate(-50%, -50%) rotateZ(0deg);
+          width: 0%;
+          opacity: 0.1;
         }
         100% {
-          transform: translate(-50%, -50%) rotateZ(360deg);
+          width: 100%;
+          opacity: 1;
         }
       }
-      
-      @keyframes rotateccw {
-        0% {
-          transform: translate(-50%, -50%) rotate(0deg);
-        }
-        100% {
-          transform: translate(-50%, -50%) rotate(-360deg);
-        }
-      }
-      
+
+      /* Spin animation for the loader */
       @keyframes spin {
-        0%,
+        0% {
+          transform: rotateZ(0deg);
+        }
         100% {
-          box-shadow: 0.2em 0px 0 0px currentcolor;
-        }
-        12% {
-          box-shadow: 0.2em 0.2em 0 0 currentcolor;
-        }
-        25% {
-          box-shadow: 0 0.2em 0 0px currentcolor;
-        }
-        37% {
-          box-shadow: -0.2em 0.2em 0 0 currentcolor;
-        }
-        50% {
-          box-shadow: -0.2em 0 0 0 currentcolor;
-        }
-        62% {
-          box-shadow: -0.2em -0.2em 0 0 currentcolor;
-        }
-        75% {
-          box-shadow: 0px -0.2em 0 0 currentcolor;
-        }
-        87% {
-          box-shadow: 0.2em -0.2em 0 0 currentcolor;
+          transform: rotateZ(360deg);
         }
       }
-      </style>
       
+@keyframes rotate {
+  0% {
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateZ(360deg);
+  }
+}
+
+@keyframes rotateccw {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@keyframes spin {
+  0%,
+  100% {
+    box-shadow: 0.2em 0px 0 0px currentcolor;
+  }
+  12% {
+    box-shadow: 0.2em 0.2em 0 0 currentcolor;
+  }
+  25% {
+    box-shadow: 0 0.2em 0 0px currentcolor;
+  }
+  37% {
+    box-shadow: -0.2em 0.2em 0 0 currentcolor;
+  }
+  50% {
+    box-shadow: -0.2em 0 0 0 currentcolor;
+  }
+  62% {
+    box-shadow: -0.2em -0.2em 0 0 currentcolor;
+  }
+  75% {
+    box-shadow: 0px -0.2em 0 0 currentcolor;
+  }
+  87% {
+    box-shadow: 0.2em -0.2em 0 0 currentcolor;
+  }
+}
+    </style>
+  </head>
+  <body>
+    <div class="loader-container">
+      <!-- Top Load Progress Bar -->
+      <div class="top-load"></div>
+
+      <!-- Rotating Loader -->
+      <div class="loader"></div>
+    </div>
   </body>
 </html>

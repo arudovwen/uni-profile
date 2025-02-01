@@ -1,16 +1,20 @@
 <template>
-  <div class="loader-container flex justify-center">
+  <div
+    class="loader-container w-screen h-screen flex justify-center items-center"
+  >
+    <div class="top-load fixed top-0" />
+
     <div data-testid="spinner" class="loader"></div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .loader {
   transform: rotateZ(45deg);
   perspective: 1000px;
   border-radius: 50%;
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   color: #021242;
 }
 .loader:before,
@@ -27,11 +31,28 @@
   animation: 1s spin linear infinite;
 }
 .loader:after {
-  color: #1570EF;
+  color: #1570ef;
   transform: rotateY(70deg);
   animation-delay: 0.4s;
 }
 
+.top-load {
+  width: 0%; /* Starts at 0% width */
+  height: 6px;
+  background: #1570ef;
+  animation: top-load 5s infinite forwards; /* Animation duration 5s and stops at 100% width */
+}
+
+@keyframes top-load {
+  0% {
+    width: 0%;
+    opacity: 10%;
+  }
+  100% {
+    width: 100%;
+    opacity: 100%;
+  }
+}
 @keyframes rotate {
   0% {
     transform: translate(-50%, -50%) rotateZ(0deg);
