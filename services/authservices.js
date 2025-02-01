@@ -3,10 +3,10 @@ import { apiPost, deltaPost, mattaGet, mattaPost, orbitalPost, ssoPost } from ".
 
 //Authentication
 export async function loginUser(user, config = {}) {
-  return await ssoPost(urls.LOGIN_USER, user, config);
+  return await ssoPost(urls.LOGIN_USER, cleanObject(user), config);
 }
 export async function loginUser2FA(user, config = {}) {
-  return await ssoPost(urls.LOGIN_USER_2FA, user, config);
+  return await ssoPost(urls.LOGIN_USER_2FA, cleanObject(user), config);
 }
 export async function confirm2FA(user, config = {}) {
   return await ssoPost(`${urls.CONFIRM_2FA}`, user, config);

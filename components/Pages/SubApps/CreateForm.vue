@@ -23,7 +23,6 @@
           <Textinput
             placeholder="Enter application name"
             label="Application name"
-            iconType="name"
             v-bind="nameAtt"
             v-model="name"
             :error="errors.name"
@@ -34,10 +33,19 @@
           <Textinput
             placeholder="Enter application url link"
             label="URL Link"
-            iconType="url"
             v-bind="urlAtt"
             v-model="url"
             :error="errors.url"
+            :isCumpulsory="true"
+          />
+        </div>
+        <div>
+          <Textarea
+            placeholder="Enter application description"
+            label="Description"
+
+            v-model="description"
+            :error="errors.description"
             :isCumpulsory="true"
           />
         </div>
@@ -133,6 +141,7 @@ const formValues = {
   isTwoFactorAuthEnabled: true,
   isDisabled: false,
   url: "",
+  description: "",
 };
 
 const schema = yup.object({
@@ -141,6 +150,7 @@ const schema = yup.object({
   iconUrl: yup.string().required("Icon is required"),
   isTwoFactorAuthEnabled: yup.boolean(),
   isDisabled: yup.boolean(),
+  description: yup.string().required(),
   url: yup
     .string()
     .trim()
@@ -156,6 +166,7 @@ const { handleSubmit, defineField, errors, setValues } = useForm({
 const [name, nameAtt] = defineField("name");
 const [iconUrl] = defineField("iconUrl");
 const [url, urlAtt] = defineField("url");
+const [description] = defineField("description");
 const [logoUrl] = defineField("logoUrl");
 const [isTwoFactorAuthEnabled] = defineField("isTwoFactorAuthEnabled");
 const [isDisabled] = defineField("isDisabled");
@@ -188,5 +199,5 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-provide("handleChange", null)
+provide("handleChange", null);
 </script>

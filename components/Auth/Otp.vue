@@ -80,7 +80,7 @@
           @click="emit('close')"
         >
           <AppIcon icon="eva:arrow-back-fill" />
-          <span class="font-normal"> Back to Login </span>
+          <span class="font-normal"> Back </span>
         </button>
       </div>
     </form>

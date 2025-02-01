@@ -24,7 +24,7 @@
         <div class="grid gap-y-[22px] mb-9" v-if="isSent">
           <NuxtLink to="/auth/login">
             <AppButton
-              text="Back to login"
+              text="Back"
               btnClass="btn-primary !py-3 w-full"
             />
           </NuxtLink>

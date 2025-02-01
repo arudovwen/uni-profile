@@ -109,7 +109,7 @@ const isLoading = ref(false);
 const formValues = {
   email: "",
   password: "",
-  subApp: app
+  appCode: app
 };
 
 const schema = yup.object({
@@ -182,7 +182,7 @@ const onboardUser = async (data) => {
 };
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
-  loginUser2FA({ token, email: formValues.email })
+  loginUser2FA({ token, email: formValues.email, appCode:app })
     .then(async (res) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);

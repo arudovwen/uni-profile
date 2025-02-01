@@ -58,10 +58,10 @@
               <LazyPhoneNumber
                 label="Phone number"
                 type="tel"
-                name="phonenumber"
-                v-bind="phonenumberAtt"
-                v-model="phonenumber"
-                :error="errors.phonenumber"
+                name="phoneNumber"
+                v-bind="phoneNumberAtt"
+                v-model="phoneNumber"
+                :error="errors.phoneNumber"
                 isCumpulsory
               />
             </div>
@@ -169,16 +169,16 @@ const formValues = {
   email: "",
   firstName: "",
   lastName: "",
-  phonenumber: "",
+  phoneNumber: "",
   password: "",
   confirmPassword: "",
   companyName: "",
   AgentReferralCode: "",
-  subApp: app
+  appCode: app
 };
 const step = ref(1);
 const schema = yup.object({
-  subApp: yup.string().required(),
+  appCode: yup.string().required(),
   email: yup
     .string()
     .required("Email is required")
@@ -190,7 +190,7 @@ const schema = yup.object({
     otherwise: (schema) => schema.required("Company name is required"),
   }),
   lastName: yup.string().required("Last name is required"),
-  phonenumber: yup.string().required("Phone number is required"),
+  phoneNumber: yup.string().required("Phone number is required"),
   password: yup
     .string()
     .required(
@@ -211,7 +211,7 @@ const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
 const [firstName, firstNameAtt] = defineField("firstName");
 const [lastName, lastNameAtt] = defineField("lastName");
-const [phonenumber, phonenumberAtt] = defineField("phonenumber");
+const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 const [companyName, companyNameAtt] = defineField("companyName");
 const [AgentReferralCode, AgentReferralCodeAtt] =
   defineField("AgentReferralCode");
@@ -223,7 +223,7 @@ const onSubmit = handleSubmit((values) => {
   registerUser({
     ...values,
     confirmPassword: values.password,
-    phonenumberNumber: values.phonenumber,
+    phoneNumber: values.phoneNumber,
   })
     .then((res) => {
       if (res.status === 200) {
