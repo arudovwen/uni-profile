@@ -151,6 +151,7 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { registerUser,confirmRegister } from "~/services/authservices";
+import { saveAuthProfile } from "~/utils/saveAuthProfile";
 
 const props = defineProps({
   main: {
@@ -257,6 +258,7 @@ const handleFinalSubmit = (code) => {
         isVerified.value = true;
         authStore.setLoggedUser(res.data.data);
         authStore.setHasPin(res.data.data.hasTransactionPIN);
+        saveAuthProfile(res.data.data);
       
         if (route.query.continue) {
           handleRedirect(route, res.data.data.jwToken);
