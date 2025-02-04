@@ -30,10 +30,10 @@ export async function addSubApp(data) {
 }
 
 export async function getSubApps(data) {
-  return await ssoGet(`${urls.GET_SUBAPPS}`, data);
+  return await ssoGet(`${urls.GET_SUBAPPS}`, {});
 }
-export async function getSubApp(data) {
-  return await ssoGet(`${urls.GET_SUBAPP(id)}`, data);
+export async function getSubApp(id) {
+  return await ssoGet(`${urls.GET_SUBAPP(id)}`, {});
 }
 export async function editSubApp(data) {
   return await ssoPut(`${urls.UPDATE_SUBAPP}`, data);
