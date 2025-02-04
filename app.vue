@@ -5,6 +5,8 @@
   <!-- </NuxtLayout> -->
 </template>
 <script setup>
+import { getSubApps } from "~/services/userservices";
+
 useHead(
   {
     script: [
@@ -30,11 +32,22 @@ useHead(
     mode: "client", // Load the script 'strict-dynamically' on client-side only
   }
 );
-
+const authStore = useAuthStore();
+function getData() {
+  getSubApps().then((res) => {
+    if (res.status === 200) {
+      const rows = res.data.data.map((i) => ({
+        ...i,
+        url: `${i.url}/auth/validate?token=${authStore.jwToken}`,
+      }));
+      authStore.setAppList(rows);
+    }
+  });
+}
 onMounted(() => {
-  const mattaProfiles = useCookie('mattaProfiles')
-  console.log("🚀 ~ onMounted ~ mattaProfiles:", mattaProfiles.value)
-  useAuthStore();
+  const mattaProfiles = useCookie("mattaProfiles");
+  console.log("🚀 ~ onMounted ~ mattaProfiles:", mattaProfiles.value);
+  // getData();
 });
 </script>
 

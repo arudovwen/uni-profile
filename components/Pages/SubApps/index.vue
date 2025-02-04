@@ -1,23 +1,24 @@
 <template>
   <div class="w-full mx-auto max-w-[1200px] px-4 lg:px-0 py-10">
-    <!-- Top bar   -->
-
+    <!-- Top bar -->
     <div
       class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
       <HeaderComponent
         title="Applications"
-        subtext="Manage all your applicatinos in one place."
+        subtext="Manage all your applications in one place."
       />
       <div>
         <AppButton
           @click="isOpen = true"
-          text="New Applicaiton"
+          text="New Application"
           icon="humbleicons:plus"
           :btnClass="`!px-[10px] md:!px-[14px] !py-[10px] bg-primary-500 !text-white !text-sm`"
         />
       </div>
     </div>
+
+    <!-- Table -->
     <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
       <CustomTable
         :columns="columns"
@@ -26,6 +27,7 @@
         emptyType="user"
         :isLoading="setLoader"
       >
+        <!-- Row Actions -->
         <template #table-row-action="{ row }">
           <Menu class="" as="div">
             <Float placement="bottom-end" :offset="4">
@@ -50,23 +52,51 @@
             </Float>
           </Menu>
         </template>
-        <template #table-row-isTwoFactorAuthEnabled="{ row }">
-          <span class="capitalize">{{ row.isTwoFactorAuthEnabled }}</span>
-        </template>
+
+        <!-- Name Column -->
         <template #table-row-name="{ row }">
           <span class="capitalize flex gap-x-2 items-center">
             <img class="h-4" :src="row.iconUrl" />
-            <span class="">
-              <span class="capitalize block font-medium">{{ row.name }}</span>
-            </span>
+            <span class="capitalize block font-medium">{{ row.name }}</span>
           </span>
         </template>
+
+        <!-- Status Column -->
         <template #table-row-isDisabled="{ row }">
           <AppStatusButton stattype="driver" :status="row.isDisabled ? 2 : 1" />
+        </template>
+
+        <!-- 2FA Enabled Column -->
+        <template #table-row-isTwoFactorAuthEnabled="{ row }">
+          <div class="max-w-[280px]">
+            <SwitchGroup>
+              <div class="flex items-center justify-start gap-x-1">
+                <Switch
+                  v-model="row.isTwoFactorAuthEnabled"
+                  :class="
+                    row.isTwoFactorAuthEnabled ? 'bg-green-700' : 'bg-gray-200'
+                  "
+                  class="relative inline-flex h-5 w-[38px] items-center rounded-full transition-colors focus:outline-none"
+                  @click="toggleTwoFactorAuth(row)"
+                >
+                  <span
+                    :class="
+                      row.isTwoFactorAuthEnabled
+                        ? 'translate-x-5'
+                        : 'translate-x-[2px]'
+                    "
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                  />
+                </Switch>
+              </div>
+            </SwitchGroup>
+          </div>
         </template>
       </CustomTable>
     </div>
   </div>
+
+  <!-- Delete Modal -->
   <DeleteModal
     @deleteItem="handleDelete"
     @close="open = false"
@@ -75,6 +105,8 @@
     :open="open"
     btnText="Yes, Delete"
   />
+
+  <!-- Create/Edit Modal -->
   <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
     <template #content>
       <div class="h-full w-full bg-white rounded-lg p-6">
@@ -82,81 +114,55 @@
           :id="id"
           :detail="detail"
           @refresh="getData()"
+          @close="isOpen = false"
         />
       </div>
     </template>
   </IndexModal>
 </template>
+
 <script setup>
 import { Float } from "@headlessui-float/vue";
+import {
+  Menu,
+  MenuButton,
+  MenuItems,
+  Switch,
+  SwitchGroup,
+} from "@headlessui/vue";
+import { getSubApps, editSubApp } from "~/services/userservices";
+
+import debounce from "lodash/debounce";
+import { toast } from "vue3-toastify";
+
 definePageMeta({
   layout: "dashboard",
 });
-import debounce from "lodash/debounce";
-import { Menu, MenuButton, MenuItems } from "@headlessui/vue";
-import { getSubApps } from "~/services/userservices";
 
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
 const setLoader = ref(false);
 const detail = ref(null);
-const authStore = useAuthStore();
-const isAutoSettlement = ref(false);
 const rows = ref([]);
-const loading = ref(false);
 const columns = [
-  {
-    header: "Name",
-    key: "name",
-    isHtml: false,
-    isStatus: false,
-  },
-
-  {
-    header: "Code",
-    key: "code",
-    isHtml: false,
-    isStatus: false,
-  },
-
-  {
-    header: "App ID",
-    key: "id",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "App URL",
-    key: "url",
-    isHtml: false,
-    isStatus: false,
-  },
+  { header: "Name", key: "name", isHtml: false, isStatus: false },
+  { header: "App Code", key: "code", isHtml: false, isStatus: false },
+  { header: "App URL", key: "url", isHtml: false, isStatus: false },
   {
     header: "2FA Enabled",
     key: "isTwoFactorAuthEnabled",
     isHtml: false,
     isStatus: false,
   },
-  {
-    header: "Status",
-    key: "isDisabled",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "",
-    key: "action",
-    isHtml: false,
-    isStatus: false,
-  },
+  { header: "Status", key: "isDisabled", isHtml: false, isStatus: false },
+  { header: "", key: "action", isHtml: false, isStatus: false },
 ];
-const financeData = ref([]);
 
 onMounted(() => {
   getData();
 });
-const settlementValue = ref(null);
+
 const queryParams = reactive({
   Search: "",
   SortOrder: "",
@@ -164,7 +170,7 @@ const queryParams = reactive({
   PageSize: 10,
   Type: "",
 });
-const docLoading = ref(false);
+
 function getData() {
   setLoader.value = true;
   getSubApps()
@@ -172,8 +178,6 @@ function getData() {
       if (res.status === 200) {
         setLoader.value = false;
         rows.value = res.data.data;
-        queryParams.totalCount = res.data.data.totalCount;
-        docLoading.value = false;
       }
     })
     .catch(() => {
@@ -181,64 +185,29 @@ function getData() {
     });
 }
 
-function deleteRequest(value) {
-  id.value = value;
-  open.value = true;
-}
-const document = ref({});
-function openRequest(val) {
-  detail.value = val;
-  isOpen.value = true;
-}
-const debounceSearch = debounce(() => {
-  getFinanceData();
-}, 800);
-const handleDelete = () => {
-  // deleteSettlement(id.value)
-  //   .then((res) => {
-  //     if (res.status === 200) {
-  //       getDatas();
-  //       isSuccessOpen.value = true;
-  //     }
-  //   })
-  //   .catch((err) => {
-  //     errorText.value =
-  //       err?.response?.data?.message ||
-  //       err?.response?.data?.Message ||
-  //       "Account deletion failed";
-  //     isErrorOpen.value = true;
-  //     isLoading.value = false;
-  //   });
-};
-function handleSuccess() {
-  getFinanceData();
-}
-watch(
-  () => [queryParams.Search],
-  () => {
-    debounceSearch();
-  }
-);
-watch(
-  () => [queryParams.PageNumber, queryParams.SortOrder],
-  () => {
-    getFinanceData();
-  }
-);
-watch(isAutoSettlement, (oldval, newval) => {
-  if (oldval === newval) return;
-  handleAutoSettlement();
-});
-function handleAutoSettlement() {
-  setLoader.value = true;
-  autoSettlement({ autoSettlement: isAutoSettlement.value })
+function toggleTwoFactorAuth(row) {
+  editSubApp({ ...row, isTwoFactorAuthEnabled: !row.isTwoFactorAuthEnabled })
     .then((res) => {
-      setLoader.value = false;
+      if (res.status === 200) {
+        toast.info("Updated successfully");
+      }
     })
-    .catch(() => {
-      setLoader.value = false;
+    .catch((err) => {
+      console.error("Failed to update 2FA status:", err);
     });
 }
-provide("handleSuccess", handleSuccess);
-provide("isOpen", isOpen);
+
+const handleDelete = () => {
+  // Handle delete logic here
+};
+
+watch(
+  () => [queryParams.Search],
+  debounce(() => getData(), 800)
+);
+
+watch(
+  () => [queryParams.PageNumber, queryParams.SortOrder],
+  () => getData()
+);
 </script>

@@ -336,9 +336,9 @@ export const Navigation = [
   },
  
   {
-    name: "Apps",
-    url: "/sub-apps",
-    key: "sub-apps",
+    name: "Application Management",
+    url: "/application-management",
+    key: "application-management",
   },
   {
     name: "Notifications",
@@ -357,7 +357,7 @@ export const Navigation = [
   },
 ];
 
-export const superadminRoutes = ['user-management', 'sup-apps', 'audit-logs']
+export const superadminRoutes = ['user-management', 'application-management', 'audit-logs']
 
 export const UserNavigation = [
   {

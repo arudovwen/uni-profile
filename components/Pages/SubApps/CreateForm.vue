@@ -94,7 +94,7 @@
             text="Cancel"
             @click="
               () => {
-                isOpen = false;
+               emits('close')
               }
             "
           />
@@ -121,10 +121,11 @@
     :isCancel="false"
     @actionItem="
       () => {
-        isOpen = isSuccessOpen = false;
+       isSuccessOpen = false;
+        emits('close')
       }
     "
-    @close="isOpen = isSuccessOpen = false"
+    @close=" isSuccessOpen = false;   emits('close')"
   />
 </template>
 
@@ -173,7 +174,6 @@ const [isDisabled] = defineField("isDisabled");
 
 const isSuccessOpen = ref(false);
 const isLoading = ref(false);
-const isOpen = inject("isOpen");
 
 onMounted(() => {
   if (props.detail) {
@@ -181,7 +181,7 @@ onMounted(() => {
   }
 });
 
-const emits = defineEmits(["refresh"]);
+const emits = defineEmits(["refresh", "close"]);
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;

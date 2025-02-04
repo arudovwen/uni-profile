@@ -8,6 +8,7 @@ const cookieDomain =
 export const useAuthStore = defineStore(
   "matta_auth",
   () => {
+    const appList = ref([]);
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -22,6 +23,9 @@ export const useAuthStore = defineStore(
     const businessId = computed(() => loggedUser?.value?.businessId);
     const userInfo = computed(() => loggedUser?.value);
 
+    function setAppList(data) {
+      appList.value = data;
+    }
     function setLoggedUser(data) {
       loggedUser.value = { ...data };
     }
@@ -123,6 +127,8 @@ export const useAuthStore = defineStore(
       isLoggingOut,
       clearAuth,
       saveAuthUser,
+      appList,
+      setAppList,
     };
   },
   {
