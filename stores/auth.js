@@ -1,5 +1,4 @@
 import { defineStore } from "pinia";
-import { toast } from "vue3-toastify";
 import { logoutUser } from "~/services/authservices";
 
 const cookieDomain =
@@ -9,19 +8,20 @@ export const useAuthStore = defineStore(
   "matta_auth",
   () => {
     const appList = ref([]);
+    const mattaAuth = useCookie("mattaAuth");
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
 
-    const isLoggedIn = computed(() => !!loggedUser.value);
-    const refresh_token = computed(() => loggedUser?.value?.refreshToken);
-    const jwToken = computed(() => loggedUser?.value?.jwToken);
-    const roles = computed(() => loggedUser?.value?.roles);
-    const userId = computed(() => loggedUser?.value?.id);
-    const businessId = computed(() => loggedUser?.value?.businessId);
-    const userInfo = computed(() => loggedUser?.value);
+    const isLoggedIn = computed(() => !!mattaAuth.value);
+    const refresh_token = computed(() => mattaAuth?.value?.refreshToken);
+    const jwToken = computed(() => mattaAuth?.value?.jwToken);
+    const roles = computed(() => mattaAuth?.value?.roles);
+    const userId = computed(() => mattaAuth?.value?.id);
+    const businessId = computed(() => mattaAuth?.value?.businessId);
+    const userInfo = computed(() => mattaAuth?.value);
 
     function setAppList(data) {
       appList.value = data;
@@ -70,7 +70,9 @@ export const useAuthStore = defineStore(
     }
     const logOut = async () => {
       const mattaProfiles = useCookie("mattaProfiles");
+      const mattaAuth = useCookie("mattaAuth");
       mattaProfiles.value = null;
+      mattaAuth.value = null
       const route = useRoute();
       try {
         isLoggingOut.value = true;

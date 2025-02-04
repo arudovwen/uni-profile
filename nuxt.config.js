@@ -100,8 +100,8 @@ export default defineNuxtConfig({
     "/finance": { redirect: "/" },
   },
 
-  // plugins: ["~/plugins/pdf-viewer.client.js"],
-
+  plugins: ["~/plugins/axios.js"],
+  
   googleSignIn: {
     clientId:
       "56799988480-4d51egljupar9la4djc2tknjodn2vsj5.apps.googleusercontent.com",

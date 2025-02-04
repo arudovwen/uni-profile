@@ -4,7 +4,7 @@
       class="bg-[#FFFFFF] min-h-screen w-screen bg-contain bg-center max-w-[1980px] mx-auto lg:flex justify-center items-center relative p-4"
     >
       <div class="lg:absolute top-6 left-6 mb-6">
-        <NuxtLink to="/"><AppLogo /></NuxtLink>
+        <NuxtLink to="/"> <AuthLogo /></NuxtLink>
       </div>
       <div class="border rounded-xl shadow-hero border-[#E4E7EC] py-11 px-9">
         <slot />
@@ -14,7 +14,8 @@
 </template>
 
 <script setup>
-const { app } = useRoute().params;
+
+
 </script>
 
 <style scoped lang="scss">

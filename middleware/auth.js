@@ -1,35 +1,51 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-
   const authStore = useAuthStore();
+  const mattaAuth = useCookie("mattaAuth");
 
-  if (authStore.isLoggedIn) {
+  // Check if the user is authenticated
+  const isAuthenticated = !!mattaAuth.value;
+
+  // Handle authenticated user logic
+  if (isAuthenticated) {
+    // Redirect if the user is trying to access a route with a `continue` query parameter
     if (to.query.continue) {
       abortNavigation();
       handleRedirect(to, authStore.jwToken);
       return;
     }
+
+    // Redirect non-superadmin users trying to access superadmin routes
+    
     if (
-      authStore.userInfo.userCategory != 2 &&
+      mattaAuth.value.userCategory !== 2 &&
       superadminRoutes.includes(to.name)
     ) {
       abortNavigation();
-      return navigateTo(`/`);
+      return navigateTo("/");
+    }
+
+    // Redirect superadmin users trying to access non-superadmin routes
+    if (
+      mattaAuth.value.userCategory === 2 &&
+      !superadminRoutes.includes(to.name)
+    ) {
+      abortNavigation();
+      return navigateTo("/user-management");
+    }
+
+    // Redirect authenticated users away from auth-related routes
+    if (to?.name?.includes("auth")) {
+      return navigateTo("/");
     }
   }
-  // Avoid infinite redirect to homepage if already on the homepage
-  if (authStore.isLoggedIn && to?.name?.includes("auth")) {
-    return navigateTo(`/`);
-  }
 
-  // Avoid infinite redirect to login if already on the login page
-  if (!authStore.isLoggedIn && !to?.name?.includes("auth")) {
-    // Only redirect to login if the current route is not the login page
+  // Handle unauthenticated user logic
+  if (!isAuthenticated) {
+    // Redirect unauthenticated users to the login page if they're not already there
     if (!to.path.includes("/auth/login")) {
-      abortNavigation(); // Stop the current navigation
+      abortNavigation();
       return navigateTo(
-        `/auth/login${
-          to.query.app ? `/${to.query.app}` : ""
-        }?${new URLSearchParams({
+        `/auth/login${to.query.app ? `/${to.query.app}` : ""}?${new URLSearchParams({
           redirected_from: to.path,
           ...to.query,
         })}`

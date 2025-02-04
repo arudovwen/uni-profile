@@ -55,7 +55,7 @@ const urls = {
 
   //Sub apps
   GET_SUBAPPS: "admin/v1/subapplication/apps",
-  GET_SUBAPP: (id) => `adminv1/subapplication/apps/${id}`,
+  GET_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
   ADD_SUBAPP: "admin/v1/subapplication",
   UPDATE_SUBAPP: "admin/v1/subapplication",
 };

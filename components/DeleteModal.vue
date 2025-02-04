@@ -35,7 +35,7 @@
                 <div class="bg-white px-6 py-6">
                   <div class="flex justify-between mb-5 items-center">
                     <div>
-                      <img alt="delete" src="/images/delete.svg" />
+                      <img alt="delete" :src="imgUrl" />
                     </div>
                     <span @click="handleclose" class="absolute top-3 right-3">
                       <i
@@ -88,7 +88,27 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 
-defineProps(["title", "text", "open", "btnText", "loading"]);
+defineProps({
+  title: {
+    default: "",
+  },
+  text: {
+    default: "",
+  },
+  open: {
+    default: false,
+  },
+  btnText: {
+    default: "",
+  },
+
+  loading: {
+    default: false,
+  },
+  imgUrl: {
+    default: "/images/delete.svg",
+  },
+});
 const emits = defineEmits(["deleteItem", "close"]);
 
 function deleteItem() {
@@ -98,4 +118,3 @@ function handleclose() {
   emits("close");
 }
 </script>
-

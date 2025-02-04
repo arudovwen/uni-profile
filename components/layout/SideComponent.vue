@@ -23,21 +23,25 @@
             >
               <div class="flex flex-row items-center p-2 gap-x-3">
                 <span class="">
-                  <SvgsHomeSvg
-                    v-if="item.key === 'home'"
+                  <SvgsAuditSvg
+                    v-if="item.key === 'audit-logs'"
                     :active="isActive(item)"
                   />
-                  <SvgsFinanceSvg
-                    v-if="item.key === 'financing'"
+                  <SvgsUsersSvg
+                    v-if="item.key === 'user-management'"
                     :active="isActive(item)"
                   />
                   <SvgsOrdersSvg
-                    v-if="item.key === 'credit'"
+                    v-if="item.key === 'profile'"
                     :active="isActive(item)"
                   />
 
-                  <SvgsProfileSvg
-                    v-if="item.key === 'profile'"
+                  <SvgsAppSvg
+                    v-if="item.key === 'application-management'"
+                    :active="isActive(item)"
+                  />
+                  <SvgsNotificationSvg
+                    v-if="item.key === 'notifications'"
                     :active="isActive(item)"
                   />
                 </span>
@@ -51,23 +55,7 @@
               </div>
             </router-link>
           </li>
-          <li class="block w-full">
-            <span
-              :class="`flex flex-row items-center p-2 gap-2 w-full  bg-blue rounded-[6px]`"
-            >
-              <button
-                class="outline-none flex flex-row items-center px-2 gap-x-3 justify-between w-full"
-              >
-                <span
-                  class="font-onest font-normal text-[16px] leading-[24px] flex gap-x-3 items-center"
-                >
-                  <SvgsProfileSvg />
-                  <span>Profile Settings</span>
-                </span>
-                <SvgsLinkSvg />
-              </button>
-            </span>
-          </li>
+       
         </ul>
       </nav>
     </div>
@@ -75,7 +63,7 @@
 </template>
 <script setup>
 const route = useRoute();
-const mappedNavigation = computed(() => Navigation);
+const mappedNavigation = computed(() => SuperNavigation);
 
 const isActive = (item) => {
   return (

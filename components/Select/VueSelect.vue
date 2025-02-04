@@ -13,7 +13,7 @@
       {{ label }} <RedDot v-if="isCumpulsory"
     /></label>
     <div class="relative">
-      <div v-if="!$slots.default" class="text-sm">
+      <div v-if="!$slots.default" class="text-sm"  :class="disabled ? 'opacity-60' : ''">
         <vSelect
           :name="name"
           :error="error"
@@ -160,12 +160,10 @@ export default {
   },
   watch: {
     selectedValue(newValue) {
-      console.log("🚀 ~ selectedValue ~ newValue:", newValue)
       this.$emit("update:modelValue", newValue);
     },
 
     modelValue(newValue) {
-      console.log("🚀 ~ modelValue ~ newValue:", newValue)
       this.selectedValue = newValue;
     },
   },

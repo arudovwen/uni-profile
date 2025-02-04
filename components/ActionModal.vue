@@ -34,11 +34,11 @@
               >
                 <div class="bgc px-6 py-6">
                   <div class="flex justify-between mb-5 items-center">
-                    <div class="">
+                    <div class="" v-if="!imgUrl">
                       <SvgsSuccessSvg v-if="type !== 'reject'" />
                       <SvgsRejectSvg v-if="type === 'reject'" />
                     </div>
-
+                    <img v-else alt="delete" :src="imgUrl" />
                     <span
                       v-if="canClose"
                       @click="handleclose"
@@ -204,6 +204,9 @@ defineProps({
   isAnother: { default: false },
   anotherText: {
     default: "Add another",
+  },
+  imgUrl: {
+    default: "",
   },
 });
 const emits = defineEmits([

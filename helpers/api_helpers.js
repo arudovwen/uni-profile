@@ -5,7 +5,7 @@ import { toast } from "vue3-toastify";
 const API_URL = "https://dev.gateway.oxide.matta.trade/api/";
 const SSO_URL = "https://dev.sso.matta.trade/api/";
 const WALLET_URL = "https://dev.wallets.matta.trade/api/";
-const Matta_URL = "https://dev.gateway.matta.trade/api/";
+const Matta_URL = "https://dev.gateway.matta.trade/matta/";
 const DELTALOG_URL = "https://dev.gateway.deltalog.co/api/";
 const ORBITAL_URL = "https://dev.market.matta.trade/api/";
 

@@ -39,7 +39,7 @@
             :isCumpulsory="true"
           />
 
-          <div class="md:col-span-2">
+          <div >
             <Textinput
               placeholder=""
               label="Email address"
@@ -62,7 +62,7 @@
             <FormsPhoneCodes v-model="phone" />
           </FormGroup>
 
-          <FormGroup
+          <!-- <FormGroup
             label="Business type"
             :error="errors.category"
             name="category"
@@ -76,7 +76,7 @@
                 errors.tenor ? 'border-red-500' : 'border-[#D0D5DD]'
               }`"
             />
-          </FormGroup>
+          </FormGroup> -->
 
           <div class="md:col-span-2">
             <Textinput

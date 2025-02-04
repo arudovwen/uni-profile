@@ -10,7 +10,7 @@
       />
       <div>
         <AppButton
-          @click="isOpen = true"
+          @click="navigateTo('/application-management/create')"
           text="New Application"
           icon="humbleicons:plus"
           :btnClass="`!px-[10px] md:!px-[14px] !py-[10px] bg-primary-500 !text-white !text-sm`"
@@ -43,6 +43,7 @@
                     detail = row;
                     id = detail.id;
                     isOpen = true;
+                    navigateTo(`/application-management/edit/${row.id}`);
                   "
                   class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap cursor-pointer w-full text-left"
                 >
@@ -105,20 +106,6 @@
     :open="open"
     btnText="Yes, Delete"
   />
-
-  <!-- Create/Edit Modal -->
-  <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
-    <template #content>
-      <div class="h-full w-full bg-white rounded-lg p-6">
-        <PagesSubAppsCreateForm
-          :id="id"
-          :detail="detail"
-          @refresh="getData()"
-          @close="isOpen = false"
-        />
-      </div>
-    </template>
-  </IndexModal>
 </template>
 
 <script setup>
@@ -146,9 +133,9 @@ const setLoader = ref(false);
 const detail = ref(null);
 const rows = ref([]);
 const columns = [
-  { header: "Name", key: "name", isHtml: false, isStatus: false },
-  { header: "App Code", key: "code", isHtml: false, isStatus: false },
-  { header: "App URL", key: "url", isHtml: false, isStatus: false },
+  { header: "Application", key: "name", isHtml: false, isStatus: false },
+  { header: "Application Code", key: "code", isHtml: false, isStatus: false },
+  { header: "Application URL", key: "url", isHtml: false, isStatus: false },
   {
     header: "2FA Enabled",
     key: "isTwoFactorAuthEnabled",

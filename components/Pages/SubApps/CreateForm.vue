@@ -1,92 +1,77 @@
 <template>
-  <div
-    class="flex flex-col items-center p-0 pt-6 w-full bg-white z-10 lg:w-[500px]"
-  >
-    <div class="deco flex flex-col items-center gap-[16px] mb-6 z-0">
-      <div
-        class="flex flex-col items-center p-0 gap-[4px] flex-none order-1 self-stretch flex-grow-0"
-      >
-        <div
-          class="text-center flex-none order-0 self-stretch flex-grow-0 w-[352px]"
-        >
-          <span
-            class="font-Onest font-semibold text-[18px] leading-[28px] text-[#101828]"
-          >
-            {{ detail ? "Update" : "New" }} Application
-          </span>
-        </div>
-      </div>
+  <div class=" ">
+    <div class="mb-6">
+      <GoBack text="Back to App Management" url="/application-management" />
     </div>
+    <div
+      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+    >
+      <HeaderComponent title="Add New App" subtext="Create a new application" />
+    </div>
+    <hr class="border-[#E4E7EC] my-6" />
     <div class="flex flex-col items-start p-0 gap-[16px] w-full">
       <form @submit.prevent="onSubmit" class="grid w-full grid-cols-1 gap-y-6">
-        <div>
+        <FormGroupV2 label="Application name">
           <Textinput
             placeholder="Enter application name"
-            label="Application name"
+            label=""
             v-bind="nameAtt"
             v-model="name"
             :error="errors.name"
             :isCumpulsory="true"
           />
-        </div>
-        <div>
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] my-6" />
+        <FormGroupV2
+          label="Application URL Link"
+          subtext="The URL to access the app"
+        >
           <Textinput
             placeholder="Enter application url link"
-            label="URL Link"
             v-bind="urlAtt"
             v-model="url"
             :error="errors.url"
             :isCumpulsory="true"
           />
-        </div>
-        <div>
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] my-6" />
+        <FormGroupV2 label="Description">
           <Textarea
             placeholder="Enter application description"
-            label="Description"
-
             v-model="description"
             :error="errors.description"
             :isCumpulsory="true"
           />
-        </div>
-        <div>
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] my-6" />
+        <FormGroupV2 label="Application logo" subtext="Upload the app logo.">
           <FormGroup label="" :error="errors.logoUrl" name="logoUrl">
-            <FileUpload
-              label="Application logo"
-              id="iconUrl"
-              v-model="logoUrl"
-              :isCumpulsory="true"
-            />
+            <FileUpload id="iconUrl" v-model="logoUrl" :isCumpulsory="true" />
           </FormGroup>
-        </div>
-        <div>
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] my-6" />
+        <FormGroupV2 label="Application Icon" subtext="Upload the app favicon">
           <FormGroup label="" :error="errors.iconUrl" name="iconUrl">
-            <FileUpload
-              label="Application Icon"
-              id="iconUrl"
-              v-model="iconUrl"
-              :isCumpulsory="true"
-            />
+            <FileUpload id="iconUrl" v-model="iconUrl" :isCumpulsory="true" />
           </FormGroup>
-        </div>
-        <div class="flex gap-x-6">
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] my-6" />
+        <FormGroupV2
+          label="Two Factor Authentication"
+          subtext="Add an extra layer of security "
+        >
           <FormGroup
-            label="Two Factor Enabled"
+            label="Enable 2FA"
             :error="errors.isTwoFactorAuthEnabled"
             :horizontal="true"
             name="iconUrl"
             ><input type="checkbox" v-model="isTwoFactorAuthEnabled" />
           </FormGroup>
-          <FormGroup
-            label="Set as Disabled"
-            :error="errors.isDisabled"
-            :horizontal="true"
-            name="iconUrl"
-            ><input type="checkbox" v-model="isDisabled" />
-          </FormGroup>
-        </div>
-
-        <div class="flex gap-x-4 pt-4 p-0 w-full z-30">
+        </FormGroupV2>
+        <hr class="border-[#E4E7EC] mt-6" />
+        <div
+          class="flex gap-x-4 pt-4 p-0 w-full z-30 justify-end ml-auto max-w-[400px]"
+        >
           <AppButton
             btnClass="w-full text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
             type="button"
@@ -94,7 +79,7 @@
             text="Cancel"
             @click="
               () => {
-               emits('close')
+                emits('close');
               }
             "
           />
@@ -113,28 +98,30 @@
   <ActionModal
     :open="isSuccessOpen"
     type="approve"
-    :title="`Application ${detail ? 'Updated' : 'Created'}`"
+    :title="`Application ${id ? 'Updated' : 'Created'}`"
     :text="`Your application has been ${
-      detail ? 'updated' : 'created'
+      id ? 'updated' : 'created'
     } successfully`"
     btnText="Close"
     :isCancel="false"
     @actionItem="
       () => {
-       isSuccessOpen = false;
-        emits('close')
+        navigateTo('/application-management')
       }
     "
-    @close=" isSuccessOpen = false;   emits('close')"
+    @close="
+     navigateTo('/application-management')
+    "
   />
 </template>
 
 <script setup>
 import { toast } from "vue3-toastify";
 import * as yup from "yup";
-import { addSubApp, editSubApp } from "~/services/userservices";
+import { addSubApp, editSubApp, getSubApp } from "~/services/userservices";
 
-const props = defineProps(["detail", "id"]);
+const { id } = useRoute().params;
+const detail = ref(null);
 const formValues = {
   name: "",
   logoUrl: "",
@@ -176,16 +163,17 @@ const isSuccessOpen = ref(false);
 const isLoading = ref(false);
 
 onMounted(() => {
-  if (props.detail) {
-    setValues(props.detail);
-  }
+  getSubApp(id).then((res) => {
+    if (res.status === 200) {
+      setValues(res.data.data);
+    }
+  });
 });
-
 const emits = defineEmits(["refresh", "close"]);
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-    const response = await (props?.detail ? editSubApp : addSubApp)(values);
+    const response = await (id ? editSubApp : addSubApp)(values);
 
     if (response.status === 200) {
       isSuccessOpen.value = true;

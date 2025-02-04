@@ -4,7 +4,7 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from "@testing-library/vue";
-import register from "~/layouts/register.vue";
+import register from "~/layouts/superadmin.vue";
 
 describe("register", () => {
   it("Mounts without error", async () => {

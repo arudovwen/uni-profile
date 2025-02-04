@@ -145,6 +145,7 @@ function handleLogout() {
 
 function switchProfile(data){
   authStore.setLoggedUser(data)
+  saveAuthProfile(data)
   window.location.reload()
 }
 provide("isOpen", isSigniningOut);

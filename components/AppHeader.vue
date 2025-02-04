@@ -3,7 +3,7 @@
     <div class="container box-border py-4 bg-white border-b border-gray-200 flex items-center justify-between">
       <!-- Logo and Search Section -->
       <div class="flex gap-x-6 items-center">
-        <AppLogo class="" />
+        <AppLogo v-if="!hideLogo" class="" />
         <div class="w-[425px] hidden lg:inline">
           <Textinput
             icon-position="left"
@@ -32,7 +32,7 @@
                   {{ displayName }}
                 </p>
                 <p :class="emailClass">
-                  {{ authStore?.loggedUser?.email }}
+                  {{ authStore?.userInfo?.email }}
                 </p>
               </div>
 
@@ -77,6 +77,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  hideLogo:{
+    type: Boolean,
+    default:false
+  }
 });
 
 // Store and Router
@@ -92,13 +96,13 @@ const view = ref({ atTopOfPage: true });
 const showAppMenu = computed(() => authStore?.userInfo?.userCategory !== 2);
 
 const userInitials = computed(() => ({
-  first: authStore.loggedUser?.firstName?.slice(0, 1) || '',
-  last: authStore.loggedUser?.lastName?.slice(0, 1) || ''
+  first: authStore.userInfo?.firstName?.slice(0, 1) || '',
+  last: authStore.userInfo?.lastName?.slice(0, 1) || ''
 }));
 
 const displayName = computed(() => 
   authStore?.userInfo?.userCategory !== 2
-    ? authStore?.loggedUser?.fullName
+    ? authStore?.userInfo?.fullName
     : "Superadmin"
 );
 

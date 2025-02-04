@@ -45,10 +45,7 @@ import { nigeriaTypes, nonNigeriaTypes } from "~/utils/constants.js";
 import { toast } from "vue3-toastify";
 import { useRouter } from "vue-router";
 // eslint-disable-next-line no-unused-vars
-import {
-  updateCompanyProfile,
-  updateDocuments,
-} from "~/services/settingservices";
+import { updateCompanyProfile } from "~/services/settingservices";
 
 const authStore = useAuthStore();
 const companyInfo = inject("companyInfo");

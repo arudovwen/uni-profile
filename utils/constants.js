@@ -3,9 +3,7 @@ import Oxide from "@/assets/apps/oxide.png";
 import Flux from "@/assets/apps/flu.png";
 import Orbital from "@/assets/apps/orbital.png";
 import Mattapedia from "@/assets/apps/mattapedia.png";
-import {
-
-} from "~/services/authservices";
+import {} from "~/services/authservices";
 
 export const AppsObject = {
   1: {
@@ -20,7 +18,6 @@ export const AppsObject = {
     authText: "Move, Store, and Distribute with Flux",
     authSubText:
       "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
- 
   },
   3: {
     label: "Oxide",
@@ -34,7 +31,6 @@ export const AppsObject = {
     authText: "Payments, Financing, and Cross-border Payments",
     authSubText:
       "Seamless payments and financing for Africa's Manufacturing Industry",
- 
   },
   0: {
     label: "Matta",
@@ -47,7 +43,6 @@ export const AppsObject = {
     authBgUrl: "/images/heavy-duty.png",
     authText: "",
     authSubText: "",
-
   },
   4: {
     label: "Orbital",
@@ -62,8 +57,6 @@ export const AppsObject = {
     authText: "Move, Store, and Distribute with Orbital",
     authSubText:
       "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
- 
- 
   },
   5: {
     label: "Mattapedia",
@@ -334,12 +327,7 @@ export const Navigation = [
     url: "/security",
     key: "security",
   },
- 
-  {
-    name: "Application Management",
-    url: "/application-management",
-    key: "application-management",
-  },
+
   {
     name: "Notifications",
     url: "/notifications",
@@ -350,14 +338,54 @@ export const Navigation = [
     url: "/user-management",
     key: "user-management",
   },
+];
+export const SuperNavigation = [
+  {
+    name: "User Management",
+    url: "/user-management",
+    key: "user-management",
+  },
+
+  {
+    name: "App Management",
+    url: "/application-management",
+    key: "application-management",
+  },
+
   {
     name: "Audit Logs",
     url: "/audit-logs",
     key: "audit-logs",
   },
+  {
+    name: "Profile",
+    url: "/profile",
+    key: "profile",
+  },
 ];
 
-export const superadminRoutes = ['user-management', 'application-management', 'audit-logs']
+export const superadminRoutes = [
+  "user-management",
+  "user-management-user-detail-id",
+  "application-management",
+  "audit-logs",
+  "profile",
+  "application-management-action-id"
+];
+
+export const adminRoutes = [
+  "user-management",
+  "settlements",
+  "audit-logs",
+  "profile",
+  "business-information",
+];
+export const userRoutes = [
+  "security",
+  "settlements",
+  "profile",
+  "notifications",
+];
 
 export const UserNavigation = [
   {
@@ -380,7 +408,11 @@ export const UserNavigation = [
     url: "/settlements",
     key: "settlement",
   },
-
+  {
+    name: "Applications",
+    url: "/my-applications",
+    key: "my-applications",
+  },
   {
     name: "Notifications",
     url: "/notifications",
