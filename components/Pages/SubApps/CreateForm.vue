@@ -106,12 +106,10 @@
     :isCancel="false"
     @actionItem="
       () => {
-        navigateTo('/application-management')
+        navigateTo('/application-management');
       }
     "
-    @close="
-     navigateTo('/application-management')
-    "
+    @close="navigateTo('/application-management')"
   />
 </template>
 
@@ -121,7 +119,7 @@ import * as yup from "yup";
 import { addSubApp, editSubApp, getSubApp } from "~/services/userservices";
 
 const { id } = useRoute().params;
-const detail = ref(null);
+
 const formValues = {
   name: "",
   logoUrl: "",
@@ -157,17 +155,18 @@ const [url, urlAtt] = defineField("url");
 const [description] = defineField("description");
 const [logoUrl] = defineField("logoUrl");
 const [isTwoFactorAuthEnabled] = defineField("isTwoFactorAuthEnabled");
-const [isDisabled] = defineField("isDisabled");
 
 const isSuccessOpen = ref(false);
 const isLoading = ref(false);
 
 onMounted(() => {
-  getSubApp(id).then((res) => {
-    if (res.status === 200) {
-      setValues(res.data.data);
-    }
-  });
+  if (id) {
+    getSubApp(id).then((res) => {
+      if (res.status === 200) {
+        setValues(res.data.data);
+      }
+    });
+  }
 });
 const emits = defineEmits(["refresh", "close"]);
 const onSubmit = handleSubmit(async (values) => {
