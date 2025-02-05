@@ -52,7 +52,7 @@ const deltaApi = createAxiosInstance("flux");
 const handleTokenRefresh = async () => {
   const authStore = useAuthStore();
   if (refreshAttemptCount >= MAX_REFRESH_ATTEMPTS) {
-    authStore.signOut();
+    authStore.clearAuth();
     throw new Error("Max refresh attempts reached");
   }
 
