@@ -115,7 +115,7 @@ const setLoader = ref(false);
 const detail = ref(null);
 const authStore = useAuthStore();
 const isAutoSettlement = ref(false);
-const rows = ref([{}]);
+const rows = ref([]);
 const loading = ref(false);
 const columns = [
   {

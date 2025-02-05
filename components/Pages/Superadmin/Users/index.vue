@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-4 lg:px-0 py-10">
+  <div class="w-full ">
     <!-- Top bar   -->
 
     <div

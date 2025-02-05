@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mx-auto max-w-[1200px] px-4 lg:px-0 py-10">
+  <div class="w-full">
     <!-- Top bar -->
     <div
       class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"

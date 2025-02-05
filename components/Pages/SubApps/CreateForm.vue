@@ -1,5 +1,5 @@
 <template>
-  <div class=" ">
+  <div class="max-w-[1200px] ">
     <div class="mb-6">
       <GoBack text="Back to App Management" url="/application-management" />
     </div>

@@ -1,6 +1,6 @@
 <template>
     <NuxtLayout>
-      <div class="container">
+      <div class="">
         <PagesSubAppsCreateForm />
       </div>
     </NuxtLayout>
