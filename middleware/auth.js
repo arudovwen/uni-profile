@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Handle unauthenticated user logic
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page if they're not already there
-    if (!to.path.includes("/auth/login")) {
+    if (!to.path.includes("auth")) {
       abortNavigation();
       return navigateTo(
         `/auth/login${to.query.app ? `/${to.query.app}` : ""}?${new URLSearchParams({
