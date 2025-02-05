@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { apiPost, deltaPost, mattaGet, mattaPost, orbitalPost, ssoPost } from "../helpers/api_helpers";
+import { ssoPost } from "../helpers/api_helpers";
 
 //Authentication
 export async function loginUser(user, config = {}) {
@@ -21,7 +21,7 @@ export async function logOut() {
 }
 
 export async function registerInvitedUser(user, config = {}) {
-  return await apiPost(urls.REGISTER_INVITED_USER, user, config);
+  return await ssoPost(urls.REGISTER_INVITED_USER, user, config);
 }
 export async function forgotPassword(user, config = {}) {
   return await ssoPost(urls.FORGOT_PASSWORD, user, config);

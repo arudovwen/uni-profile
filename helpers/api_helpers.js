@@ -1,77 +1,23 @@
 import Axios from "axios";
-import { useAuthStore } from "~/stores/auth";
-import { toast } from "vue3-toastify";
 
-const API_URL = "https://dev.gateway.oxide.matta.trade/api/";
-const SSO_URL = "https://dev.sso.matta.trade/api/";
-const WALLET_URL = "https://dev.wallets.matta.trade/api/";
-const Matta_URL = "https://dev.gateway.matta.trade/matta/";
-const DELTALOG_URL = "https://dev.gateway.deltalog.co/api/";
-const ORBITAL_URL = "https://dev.market.matta.trade/api/";
+// Max refresh attempts
+const MAX_REFRESH_ATTEMPTS = 3;
+let refreshAttemptCount = 0;
 
-let isRefreshing = false;
-let pendingRequests = [];
-let count = 0;
-// Handle token refresh logic with locking mechanism
-const handleTokenRefresh = async () => {
-  const authStore = useAuthStore();
+// Base URL for API services
+const BASE_URL = "https://dev.gateway.matta.trade";
 
-  if (!isRefreshing) {
-    isRefreshing = true;
-    try {
-      const { data } = await axiosSSO.post("/v1/Account/refreshtoken", {
-        token: authStore.refresh_token,
-        ipAddress: "",
-      });
-
-      authStore.setAccessToken(data.jwToken);
-      authStore.setRefreshToken(data.refreshToken);
-
-      // Resolve pending requests
-      pendingRequests.forEach((callback) => callback(data.jwToken));
-      pendingRequests = [];
-      return data.jwToken;
-    } catch (error) {
-      pendingRequests.forEach((callback) => callback(null));
-      pendingRequests = [];
-      throw error;
-    } finally {
-      isRefreshing = false;
-    }
-  }
-
-  // Wait for the refresh to complete
-  return new Promise((resolve, reject) => {
-    pendingRequests.push((newToken) => {
-      if (newToken) {
-        resolve(newToken);
-      } else {
-        reject(new Error("Token refresh failed"));
-      }
-    });
+// Create an Axios instance with custom configuration
+const createAxiosInstance = (service) => {
+  const instance = Axios.create({
+    baseURL: `${BASE_URL}/${service}/`,
   });
-};
-
-// Handle errors when refreshing token
-const handleRefreshError = () => {
-  count++;
-  if (count == 3) {
-    authStore.clearAuth();
-  }
-  const authStore = useAuthStore();
-  authStore.logOut();
-};
-
-// Create Axios instances with interceptors
-const createAxiosInstance = (baseURL) => {
-  const instance = Axios.create({ baseURL });
-  instance.defaults.withCredentials = true;
 
   instance.interceptors.request.use((config) => {
     const authStore = useAuthStore();
     config.headers.Authorization = authStore?.jwToken
       ? `Bearer ${authStore.jwToken}`
-      : "";
+      : config.headers.Authorization || "";
     config.headers.Accept = "application/json";
     return config;
   });
@@ -79,7 +25,7 @@ const createAxiosInstance = (baseURL) => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error?.response?.status === 403 || error?.response?.status === 401) {
+      if ([401, 403].includes(error?.response?.status)) {
         try {
           const newAccessToken = await handleTokenRefresh();
           error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
@@ -88,74 +34,84 @@ const createAxiosInstance = (baseURL) => {
           handleRefreshError();
           return Promise.reject(refreshError);
         }
-      } else {
-        return Promise.reject(error);
       }
+      return Promise.reject(error);
     }
   );
 
   return instance;
 };
 
-// Axios instances
-const axiosApi = createAxiosInstance(API_URL);
-const axiosSSO = createAxiosInstance(SSO_URL);
-const mattaApi = createAxiosInstance(Matta_URL);
-const walletApi = createAxiosInstance(WALLET_URL);
-const deltaApi = createAxiosInstance(DELTALOG_URL);
-const orbitalApi = createAxiosInstance(ORBITAL_URL);
+const axiosApi = createAxiosInstance("market");
+const axiosSSO = createAxiosInstance("sso");
+const mattaApi = createAxiosInstance("matta");
+const walletApi = createAxiosInstance("wallet");
+const deltaApi = createAxiosInstance("flux");
 
-// General API methods
-export const apiGet = (url, config = {}) => axiosApi.get(url, config);
-export const apiPost = (url, data, config = {}) =>
-  axiosApi.post(url, data, config);
-export const apiPut = (url, data, config = {}) =>
-  axiosApi.put(url, data, config);
-export const apiDelete = (url, config = {}) => axiosApi.delete(url, config);
+// Handle token refresh logic
+const handleTokenRefresh = async () => {
+  const authStore = useAuthStore();
+  if (refreshAttemptCount >= MAX_REFRESH_ATTEMPTS) {
+    authStore.signOut();
+    throw new Error("Max refresh attempts reached");
+  }
 
-export const get = (url, config = {}) => axiosApi.get(url, config);
-export const post = (url, data, config = {}) =>
-  axiosApi.post(url, data, config);
-export const put = (url, data, config = {}) => axiosApi.put(url, data, config);
-export const del = (url, config = {}) => axiosApi.delete(url, config);
+  try {
+    refreshAttemptCount += 1;
 
-// Matta API methods
-export const mattaGet = (url, config = {}) => mattaApi.get(url, config);
-export const mattaPost = (url, data, config = {}) =>
-  mattaApi.post(url, data, config);
-export const mattaPut = (url, data, config = {}) =>
-  mattaApi.put(url, data, config);
-export const mattaDelete = (url, config = {}) => mattaApi.delete(url, config);
+    const { data } = await axiosApi.post("/v1/Account/refreshtoken", {
+      token: authStore.refresh_token,
+      ipAddress: "",
+    });
 
-// SSO API methods
-export const ssoGet = (url, config = {}) => axiosSSO.get(url, config);
-export const ssoPost = (url, data, config = {}) =>
-  axiosSSO.post(url, data, config);
-export const ssoPut = (url, data, config = {}) =>
-  axiosSSO.put(url, data, config);
-export const ssoDelete = (url, config = {}) => axiosSSO.delete(url, config);
+    authStore.setAccessToken(data.jwToken);
+    authStore.setRefreshToken(data.refreshToken);
+    axiosApi.defaults.headers.common["Authorization"] = `Bearer ${data.jwToken}`;
+    return data.jwToken;
+  } catch (error) {
+    authStore.signOut();
+    throw error;
+  }
+};
 
-// Wallet API methods
-export const walletGet = (url, config = {}) => walletApi.get(url, config);
-export const walletPost = (url, data, config = {}) =>
-  walletApi.post(url, data, config);
-export const walletPut = (url, data, config = {}) =>
-  walletApi.put(url, data, config);
-export const walletDelete = (url, config = {}) => walletApi.delete(url, config);
+// Handle errors when refreshing token
+const handleRefreshError = () => {
+  const authStore = useAuthStore();
+  authStore.logOut();
+};
 
-// Deltalog API methods
-export const deltaGet = (url, config = {}) => deltaApi.get(url, config);
-export const deltaPost = (url, data, config = {}) =>
-  deltaApi.post(url, data, config);
-export const deltaPut = (url, data, config = {}) =>
-  deltaApi.put(url, data, config);
-export const deltaDelete = (url, config = {}) => deltaApi.delete(url, config);
 
-// Orbital API methods
-export const orbitalGet = (url, config = {}) => orbitalApi.get(url, config);
-export const orbitalPost = (url, data, config = {}) =>
-  orbitalApi.post(url, data, config);
-export const orbitalPut = (url, data, config = {}) =>
-  orbitalApi.put(url, data, config);
-export const orbitalDelete = (url, config = {}) =>
-  orbitalApi.delete(url, config);
+const createApiMethods = (apiInstance) => ({
+  get: (url, config = {}) => apiInstance.get(url, config),
+  post: (url, data, config = {}) => apiInstance.post(url, data, config),
+  put: (url, data, config = {}) => apiInstance.put(url, data, config),
+  delete: (url, config = {}) => apiInstance.delete(url, config),
+});
+
+const apiMethods = createApiMethods(axiosApi);
+const mattaMethods = createApiMethods(mattaApi);
+const ssoMethods = createApiMethods(axiosSSO);
+const walletMethods = createApiMethods(walletApi);
+const deltaMethods = createApiMethods(deltaApi);
+
+// Export the API methods
+export const { get, post, put, delete: del } = apiMethods;
+export const mattaGet = mattaMethods.get;
+export const mattaPost = mattaMethods.post;
+export const mattaPut = mattaMethods.put;
+export const mattaDelete = mattaMethods.delete;
+
+export const ssoGet = ssoMethods.get;
+export const ssoPost = ssoMethods.post;
+export const ssoPut = ssoMethods.put;
+export const ssoDelete = ssoMethods.delete;
+
+export const walletGet = walletMethods.get;
+export const walletPost = walletMethods.post;
+export const walletPut = walletMethods.put;
+export const walletDelete = walletMethods.delete;
+
+export const deltaGet = deltaMethods.get;
+export const deltaPost = deltaMethods.post;
+export const deltaPut = deltaMethods.put;
+export const deltaDelete = deltaMethods.delete;
