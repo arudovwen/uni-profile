@@ -103,6 +103,7 @@ const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const { app, auth } = route.params;
+
 const step = ref(1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
@@ -128,16 +129,33 @@ const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
 });
 const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
+const handleFinalRedirect = () => {
+  if (route.query.continue) {
+    handleRedirect(route, res.data.data.jwToken);
+    return;
+  }
 
+  if (route.query.redirected_from && route.query.redirected_from !== "/") {
+    isLoading.value = false;
+    window.location.replace(route.query.redirected_from);
+    return;
+  }
+  toast.success("Login successful");
+
+  isLoading.value = false;
+  window.location.replace(`/`);
+};
 const onSubmit = handleSubmit((values) => {
   formValues.email = values.email;
   formValues.password = values.password;
   isLoading.value = true;
-  loginUser(values)
+  loginUser({ ...values, appCode: app })
     .then((res) => {
       if (res.status === 200) {
-        if (route.query.continue && app == 5) {
-          handleRedirect(route, res.data.data.jwToken);
+        if (!res.data.data.is2FA && app) {
+          authStore.setLoggedUser(res.data.data);
+          saveAuthProfile(res.data.data);
+          handleFinalRedirect();
           return;
         }
         isVerifyPin.value = true;
@@ -147,6 +165,7 @@ const onSubmit = handleSubmit((values) => {
     })
 
     .catch((err) => {
+      console.log("🚀 ~ onSubmit ~ err:", err);
       isLoading.value = false;
       if (!err.response.data) return;
       const { data } = err.response;
@@ -173,24 +192,7 @@ const handleFinalSubmit = async (token) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
         saveAuthProfile(res.data.data);
-
-        if (route.query.continue) {
-          handleRedirect(route, res.data.data.jwToken);
-          return;
-        }
-
-        if (
-          route.query.redirected_from &&
-          route.query.redirected_from !== "/"
-        ) {
-          isLoading.value = false;
-          window.location.replace(route.query.redirected_from);
-          return;
-        }
-        toast.success("Login successful");
-
-        isLoading.value = false;
-        window.location.replace(`/`);
+        handleFinalRedirect();
       }
     })
     .catch((err) => {
