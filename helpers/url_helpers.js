@@ -60,6 +60,7 @@ const urls = {
   UPDATE_SUBAPP: "admin/v1/subapplication",
 
   // Invitation
-  INVITATION: "admin/v1/Invitation"
+  INVITATION: "admin/v1/Invitation",
+  GET_ALL_USERS: "admin/v1/user/get-users"
 };
 export default urls;

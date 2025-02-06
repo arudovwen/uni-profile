@@ -56,5 +56,12 @@ export async function delSingleInvite(id) {
   return await ssoDelete(`${urls.INVITATION}/invites/${id}`, {});
 }
 export async function getAllinvites(payload) {
-  return await ssoGet(`${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`, {});
+  return await ssoGet(
+    `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
+    {}
+  );
+}
+
+export async function getAllUsers(payload) {
+  return await ssoPost(`${urls.GET_ALL_USERS}`, cleanObject(payload));
 }
