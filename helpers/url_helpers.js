@@ -61,6 +61,7 @@ const urls = {
 
   // Invitation
   INVITATION: "admin/v1/Invitation",
-  GET_ALL_USERS: "admin/v1/user/get-users"
+  GET_ALL_USERS: "admin/v1/user/get-users",
+  TOGGLE_USER: (email)=>`admin/v1/user/users/${email}/toggle-status`,
 };
 export default urls;

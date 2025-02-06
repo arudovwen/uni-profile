@@ -62,17 +62,18 @@
                         </button></MenuItem
                       >
 
-                      <MenuItem v-if="row.status === 1">
+                      <MenuItem v-if="authStore?.userInfo?.userCategory === 3">
                         <button
                           type="button"
                           @click="
                             detail = row;
-                            id = detail.id;
-                            isOpen = true;
+                            id = detail.contactEmail;
+                            open = true;
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
-                          <AppIcon icon="la:user-minus" /> Deactivate access
+                          <AppIcon icon="la:user-minus" />
+                          {{ row.isActive ? "Enable" : "Deactivate" }} access
                         </button></MenuItem
                       >
                     </MenuItems>
@@ -83,24 +84,24 @@
           </div>
         </div>
       </div>
-      <DeleteModal
-        @deleteItem="handleDelete"
+      <ActionModal
+        @actionItem="handleDelete"
         @close="open = false"
-        title="Cancel invite"
-        text="Are you sure you want to cancel this invitation? This action cannot be undone."
+        :title="!detail?.isActive ? 'Deactivate Access' : 'Enable access'"
+        :text="`Are you sure you want to ${
+          !detail?.isActive ? 'deactivate access' : 'enable access'
+        } for this user?`"
         :open="open"
-        btnText="Yes, Delete"
+        :btnText="`Yes, ${detail?.isActive ? 'Enable' : 'Deactivate'}`"
+        :imgUrl="
+          detail?.isActive
+            ? '/images/enable-user.svg'
+            : '/images/revoke-user.svg'
+        "
+        type="approve"
       />
     </div>
   </div>
-
-  <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
-    <template #content>
-      <div class="h-full w-full bg-white rounded-lg p-6">
-        <PagesSuperadminUsersInviteForm @refresh="getInvites()" />
-      </div>
-    </template>
-  </IndexModal>
 </template>
 <script setup>
 definePageMeta({
@@ -110,8 +111,9 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getAllUsers, delSingleInvite } from "~/services/userservices";
+import { getAllUsers, toggleUserStatus } from "~/services/userservices";
 import { toast } from "vue3-toastify";
+import moment from "moment";
 
 const id = ref(null);
 const open = ref(false);
@@ -154,13 +156,13 @@ const columns = [
 
   {
     header: "Role",
-    key: "roleName",
+    key: "category",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Email",
-    key: "email",
+    key: "contactEmail",
     isHtml: false,
     isStatus: false,
   },
@@ -178,7 +180,7 @@ const columns = [
   },
   {
     header: "Last active",
-    key: "lastActive",
+    key: "lastLoginTime",
     isHtml: false,
     isStatus: false,
   },
@@ -206,18 +208,23 @@ const queryParams = reactive({
 });
 
 function getInvites() {
+  loading.value = true;
   try {
-    loading.value = true;
     getAllUsers(queryParams).then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,
-        roleName: RoleMap[i.role],
+        // roleName: RoleMap[i.role],
         name: `${i.firstName} ${i.lastName}`,
+        lastLoginTime: i.lastLoginTime
+          ? moment(i.lastLoginTime).format("lll")
+          : null,
+        status: !i.isActive ? 1 : 2,
       }));
       queryParams.total = res.data.totalCount;
       loading.value = false;
     });
-  } finally {
+  } catch (err) {
+    console.log("🚀 ~ getInvites ~ err:", err);
     loading.value = false;
   }
 }
@@ -226,12 +233,12 @@ const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  delSingleInvite(id.value)
+  toggleUserStatus(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;
         getInvites();
-        toast.success("Invitation cancelled");
+        toast.success("User Access updated");
       }
     })
     .catch((err) => {

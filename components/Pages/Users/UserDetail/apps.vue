@@ -94,7 +94,7 @@
     imgUrl="/images/revoke-user.svg"
   />
   <ActionModal
-    @deleteItem="handleDelete"
+    @actionItem="handleDelete"
     @close="isOpen = false"
     title="Enable Access"
     text="Are you sure you want to re-activate this user’s access"

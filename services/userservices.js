@@ -65,3 +65,7 @@ export async function getAllinvites(payload) {
 export async function getAllUsers(payload) {
   return await ssoPost(`${urls.GET_ALL_USERS}`, cleanObject(payload));
 }
+
+export async function toggleUserStatus(email) {
+  return await ssoPost(`${urls.TOGGLE_USER(email)}`, {});
+}
