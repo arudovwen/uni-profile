@@ -80,16 +80,18 @@ export const useAuthStore = defineStore(
         if (response.status === 200) {
           localStorage.clear();
           isLoggingOut.value = false;
-          mattaAuth.value = null
+        
           clearCookies().then(() => {
+            mattaAuth.value = null
             loggedUser.value = null;
             handleAppRedirect(route.params.appId);
           });
         }
       } catch (error) {
         isLoggingOut.value = false;
-        mattaAuth.value = null
+       
         clearCookies().then(() => {
+          mattaAuth.value = null
           loggedUser.value = null;
           handleAppRedirect(route.params.appId);
         });
@@ -97,8 +99,9 @@ export const useAuthStore = defineStore(
     };
 
     const clearAuth = () => {
-      mattaAuth.value = null
+     
       clearCookies().then(() => {
+        mattaAuth.value = null
         loggedUser.value = null;
         handleAppRedirect(route.params.appId);
       });

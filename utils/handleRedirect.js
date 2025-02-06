@@ -1,8 +1,10 @@
-export function handleRedirect(route, token) {
+export function handleRedirect(route, token, app) {
+  const authStore = useAuthStore();
+  const url = authStore.appList?.find((i) => i.code === app)?.defaultUrl;
   return window.location.replace(
-    `${route.query.continue}/auth/validate?token=${token}`
+     `${url || route.query.continue}/auth/validate?token=${token}`
   );
-  return;
+
 }
 
 export function handleAppRedirect(app) {

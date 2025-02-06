@@ -39,6 +39,7 @@ function getData() {
       const rows = res.data.data.map((i) => ({
         ...i,
         url: `${i.url}/auth/validate?token=${authStore.jwToken}`,
+        defaultUrl: i.url,
       }));
       authStore.setAppList(rows);
     }
@@ -48,7 +49,6 @@ onMounted(() => {
   const mattaProfiles = useCookie("mattaProfiles");
   console.log("🚀 ~ onMounted ~ mattaProfiles:", mattaProfiles.value);
   getData();
-
 });
 </script>
 

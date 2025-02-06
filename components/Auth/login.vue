@@ -4,7 +4,7 @@
       <h1
         class="text-[#182230] darks:text-white mb-4 text-3xl font-medium w-full"
       >
-        Log In {{ AppsObject[app]?.label ?? "" }}
+        Log In {{ authStore.appList.find((i) => i.code === app)?.name ?? "" }}
       </h1>
       <p class="mb-8 text-base text-[#475467] darks:text-white/80">
         Welcome Back! Please enter your details
@@ -45,7 +45,7 @@
             >Forgot password?</NuxtLink
           >
         </span>
-        <div class="grid gap-y-[22px] mb-9">
+        <div class="grid gap-y-[22px]">
           <AppButton
             type="submit"
             :isLoading="isLoading"
@@ -54,13 +54,14 @@
             btnClass="btn-primary !py-3"
           />
         </div>
+
         <span
-          v-if="app !== 5"
-          class="flex items-center text-center text-sm text-[#182230] darks:text-white/80 gap-x-1 justify-center"
+          v-if="app && app !== 5"
+          class="flex items-center text-center text-sm text-[#182230] mt-9 darks:text-white/80 gap-x-1 justify-center"
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/register/${app || 0}`)"
+            :to="handleRouting(route, `/${auth}/register/${app}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
@@ -132,7 +133,7 @@ const [password, passwordAtt] = defineField("password");
 
 const handleFinalRedirect = (data) => {
   if (route.query.continue) {
-    handleRedirect(route, data.jwToken);
+    handleRedirect(route, data.jwToken, app);
     return;
   }
 

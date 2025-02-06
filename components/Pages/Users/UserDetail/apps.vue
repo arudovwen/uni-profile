@@ -125,6 +125,7 @@ import { getSubApps } from "~/services/userservices";
 
 import debounce from "lodash/debounce";
 
+const authStore = useAuthStore()
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
@@ -159,7 +160,7 @@ function getData() {
     .then((res) => {
       if (res.status === 200) {
         setLoader.value = false;
-        rows.value = res.data.data;
+        rows.value = res.data.data.filter((i) => authStore.userInfo.subAppCodes.includes(i.code));
       }
     })
     .catch(() => {

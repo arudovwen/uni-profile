@@ -224,8 +224,11 @@ function getInvites() {
       loading.value = false;
     });
   } catch (err) {
-    console.log("🚀 ~ getInvites ~ err:", err);
     loading.value = false;
+  } finally {
+    setTimeout(() => {
+      loading.value = false;
+    }, 5000);
   }
 }
 
