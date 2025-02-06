@@ -1,44 +1,34 @@
 <template>
-  <div class="px-[15px] pt-[15px] pb-[36px]">
-    <div class="flex justify-between items-center mb-[15px]">
-      <span class="font-bold text-base">{{ title }}</span>
-      <span class="cursor-pointer" @click="active = !active"
-        ><AppIcon :icon="active ? 'charm:minus' : 'charm:plus'"
-      /></span>
-    </div>
-    <div v-if="active">
-      <ul class="grid gap-y-[10px] max-h-[300px] overflow-y-auto">
-        <li
-          class="flex items-center capitalize"
-          v-for="list in lists"
-          :key="list.title"
+  <div class="">
+    <ul
+      class="custom-shadow bg-white rounded-lg overflow-hidden w-[200px] grid gap-y-1 border border-gray-50"
+    >
+      <li v-for="tab in tabs" :key="tab.label">
+        <button
+          type="button"
+          class="text-sm font-semibold py-2 px-3 border-l-2 w-full text-left"
+          @click="emits('setActive', tab.value)"
+          :class="
+            active === tab.value
+              ? 'bg-[#F5FAFF]  border-primary-500 text-primary-500'
+              : 'border-transparent text-[#667085]'
+          "
         >
-          <CheckboxMulti
-            v-model="selected"
-            :label="list.title.toLowerCase()"
-            labelClass="text-xs md:text-sm"
-            :value="list.value"
-          />
-        </li>
-      </ul>
-    </div>
+          {{ tab.label }}
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
+
 <script setup>
-const active = ref(true);
-const { emit } = getCurrentInstance();
-const props = defineProps(["lists", "title", "modelValue"]);
+const emits = defineEmits(["setActive"]);
 
-const selected = ref([]);
-
-watch(selected, (newValue) => {
-  emit("update:modelValue", newValue);
-});
-
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    selected.value = newValue;
-  }
-);
+const props = defineProps(["tabs", "active"]);
 </script>
+<style>
+.custom-shadow {
+  box-shadow: 0px 2px 4px -2px #1018280f;
+  box-shadow: 0px 4px 8px -2px #1018281a;
+}
+</style>

@@ -4,7 +4,7 @@
       class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
     >
       <li
-        v-for="n in authStore?.userInfo?.userCategory == 2
+        v-for="n in authStore?.userInfo?.userCategory == 0
           ? Navigation
           : UserNavigation"
         :key="n.name"
@@ -28,6 +28,6 @@
 <script setup>
 import { Navigation, UserNavigation } from "@/utils/constants";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const route = useRoute();
 </script>

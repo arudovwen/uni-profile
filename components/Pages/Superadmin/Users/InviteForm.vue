@@ -59,15 +59,15 @@
             />
           </FormGroup>
         </div>
-        <div v-if="values.role?.toLowerCase() !== 'superadmin'" class="mt-4">
+        <div v-if="values.role !== 1" class="mt-4">
           <AppUserSelector
             @getData="
               (value) => {
-                setFieldValue('subApps', value);
+                setFieldValue('appCodes', value);
               }
             "
           />
-          <p class="text-danger-500 block text-sm mt-1">{{errors.subApps}}</p>
+          <p class="text-danger-500 block text-sm mt-1">{{ errors.appCodes }}</p>
         </div>
         <div class="flex gap-x-4 pt-4 p-0 w-full z-30">
           <AppButton
@@ -96,8 +96,8 @@
   <ActionModal
     :open="isSuccessOpen"
     type="approve"
-    title="Account Created"
-    text="Your request has been sent. You will be contacted by one of our sales reps within the next 24hrs."
+    title="Invite Sent"
+    text="Your invite has been sent. An email to confirm invite will be recieved within the next few minutes."
     btnText="Done"
     :isCancel="false"
     :isAnother="true"
@@ -120,23 +120,23 @@
 import ProfileAddIcon from "@/assets/images/svgs/profile-add.svg";
 import { toast } from "vue3-toastify";
 import * as yup from "yup";
-import { addCustomer } from "~/services/userservices";
+import { sendAdminInvite } from "~/services/userservices";
 import AppUserSelector from "./AppUserSelector";
 
 const props = defineProps(["detail"]);
 const formValues = {
   email: "",
-  role: "superadmin",
-  subApps: [],
+  role: 1,
+  appCodes: [],
 };
 const roles = [
   {
     label: "Superadmin",
-    value: "superadmin",
+    value: 1,
   },
   {
     label: "Admin",
-    value: "admin",
+    value: 0,
   },
 ];
 const schema = yup.object({
@@ -144,9 +144,9 @@ const schema = yup.object({
     .string()
     .required("Email is required")
     .email("Please enter a valid email address"),
-  role: yup.string().required("Role is required"),
-  subApps: yup.array().when("role", {
-    is: "admin",
+  role: yup.number().required("Role is required"),
+  appCodes: yup.array().when("role", {
+    is: 0,
     then: (schema) =>
       schema
         .min(1, "At least one sub-app is required when the role is Admin") // Require at least one sub-app
@@ -183,19 +183,23 @@ const isOpen = inject("isOpen");
 
 const emits = defineEmits(["refresh"]);
 const onSubmit = handleSubmit(async (values) => {
-  console.log("🚀 ~ onSubmit ~ values:", values);
-  // try {
-  //   isLoading.value = true;
-  //   const response = await addCustomer(values);
 
-  //   if (response.status === 200) {
-  //     isSuccessOpen.value = true;
-  //     emits("refresh");
-  //   }
-  // } catch (error) {
-  //   toast.error(error.response?.data?.message || "An error occurred");
-  // } finally {
-  //   isLoading.value = false;
-  // }
+  const appList = authStore.appList.map((i) => i.code);
+
+  try {
+    isLoading.value = true;
+    const response = await sendAdminInvite(
+      values.role === 1 ? { ...values, appCodes: appList } : { ...values, appCodes: values.appCodes.map(i=>i.appCode) }
+    );
+
+    if (response.status === 200) {
+      isSuccessOpen.value = true;
+      emits("refresh");
+    }
+  } catch (error) {
+    toast.error(error.response?.data?.message || "An error occurred");
+  } finally {
+    isLoading.value = false;
+  }
 });
 </script>

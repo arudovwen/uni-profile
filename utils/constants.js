@@ -328,15 +328,21 @@ export const Navigation = [
     key: "security",
   },
 
+ 
+  {
+    name: "Users Management",
+    url: "/users-management",
+    key: "users-management",
+  },
+  {
+    name: "Applications",
+    url: "/my-applications",
+    key: "my-applications",
+  },
   {
     name: "Notifications",
     url: "/notifications",
     key: "notifications",
-  },
-  {
-    name: "User Management",
-    url: "/user-management",
-    key: "user-management",
   },
 ];
 export const SuperNavigation = [
@@ -386,7 +392,10 @@ export const userRoutes = [
   "profile",
   "notifications",
 ];
-
+export const RoleMap = {
+  0: 'Admin',
+  1: 'Superadmin'
+}
 export const UserNavigation = [
   {
     name: "Profile",

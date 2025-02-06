@@ -6,7 +6,7 @@ const urls = {
   CONFIRM_2FA: "v1/account/confirm",
   REGISTER: "/v1/onboarding/sign-up",
   RESEND_VERIFICATION: "/v1/register/resendverification",
-  REGISTER_INVITED_USER: "/v1/account/registerbusinessuser",
+  REGISTER_INVITED_USER: "/v1/register/admin",
   FORGOT_PASSWORD: "v1/account/forgot-password",
   RESET_PASSWORD: "v1/account/reset-password",
   CONFIRM_EMAIL: "v1/onboarding/confirm-email",
@@ -58,5 +58,8 @@ const urls = {
   GET_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
   ADD_SUBAPP: "admin/v1/subapplication",
   UPDATE_SUBAPP: "admin/v1/subapplication",
+
+  // Invitation
+  INVITATION: "admin/v1/Invitation"
 };
 export default urls;

@@ -1,89 +1,110 @@
 <template>
   <div class="w-full">
-    <!-- <div class="mb-6">
+    <div class="mb-6">
       <HeaderComponent
         title="Personal info"
         subtext="Update your photo and personal details here."
       />
-    </div> -->
-    <div class="w-full bg-white rounded-lg py-6 max-w-[800px]">
-      <form @submit.prevent="onSubmit" class="w-full grid gap-y-6">
-        <div class="flex gap-x-10">
-          <div class="lg:w-[300px] font-semibold text-sm">
-            Full Name <span class="text-red-500">*</span>
+    </div>
+    <div class="w-full bg-white rounded-lg py-6 border border-[#E9EAEB]">
+      <form @submit.prevent="onSubmit" class="w-full">
+        <div class="px-6 mb-6 flex gap-x-4 items-center">
+          <span
+            class="h-16 w-16 bg-gray-100 rounded-full block border border-[#E4E7EC]"
+          >
+            <img :src="photo" class="h-16 w-16 rounded-full object-cover" />
+          </span>
+          <div class="flex-1">
+            <FileUploadToo v-model="photo" accept="jpg, jpeg,png" />
           </div>
-          <div class="flex-1 grid gap-y-6">
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
+          <Textinput
+            placeholder=""
+            label="First name"
+            name="firstName"
+            v-bind="firstNameAtt"
+            v-model="firstName"
+            :error="errors.firstName"
+            :isCumpulsory="true"
+          />
+
+          <Textinput
+            placeholder=""
+            label="Last name"
+            name="lastName"
+            v-bind="lastNameAtt"
+            v-model="lastName"
+            :error="errors.lastName"
+            :isCumpulsory="true"
+          />
+
+          <div class="md:col-span-2">
             <Textinput
               placeholder=""
-              label="First name"
-              name="firstName"
-              v-bind="firstNameAtt"
-              v-model="firstName"
-              :error="errors.firstName"
+              label="Email address"
+              name="contactEmail"
+              v-bind="emailAtt"
+              v-model="contactEmail"
+              :error="errors.contactEmail"
               :isCumpulsory="true"
+              icon="fe:mail"
+              icon-position="left"
+              :disabled="!!contactEmail"
             />
+          </div>
+          <FormGroup
+            label="Phone number"
+            name="phone"
+            :error="errors.phone"
+            :isCumpulsory="true"
+          >
+            <FormsPhoneCodes v-model="phone" />
+          </FormGroup>
 
+          <FormGroup
+            label="Business type"
+            :error="errors.category"
+            name="category"
+            :isCumpulsory="true"
+          >
+            <Select
+              v-model="category"
+              :options="categorysOptions"
+              placeholder="Select type"
+              :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer ${
+                errors.tenor ? 'border-red-500' : 'border-[#D0D5DD]'
+              }`"
+            />
+          </FormGroup>
+
+          <div class="md:col-span-2">
             <Textinput
-              placeholder=""
-              label="Last name"
-              name="lastName"
-              v-bind="lastNameAtt"
-              v-model="lastName"
-              :error="errors.lastName"
               :isCumpulsory="true"
+              placeholder=""
+              label="Address"
+              name="address"
+              v-bind="addressAtt"
+              v-model="address"
+              :error="errors.address"
+              icon="majesticons:map-marker-area-line"
+              icon-position="left"
             />
           </div>
         </div>
-        <div class="border-t border-[#E9EAEB]"></div>
-        <div class="flex gap-x-10">
-          <div class="lg:w-[300px] font-semibold text-sm">
-            Email Address <span class="text-red-500">*</span>
-          </div>
-          <div class="flex-1">
-            <div>
-              <Textinput
-                placeholder=""
-                label=""
-                name="contactEmail"
-                v-bind="emailAtt"
-                v-model="contactEmail"
-                :error="errors.contactEmail"
-                :isCumpulsory="true"
-                icon="fe:mail"
-                icon-position="left"
-                :disabled="!!contactEmail"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="border-t border-[#E9EAEB]"></div>
-        <div class="flex gap-x-10">
-          <div class="lg:w-[300px] font-semibold text-sm">
-            Phone Number <span class="text-red-500">*</span>
-          </div>
-          <div class="flex-1">
-            <FormGroup
-              label=""
-              name="phone"
-              :error="errors.phone"
-              :isCumpulsory="true"
-            >
-              <FormsPhoneCodes v-model="phone" />
-            </FormGroup>
-          </div>
-        </div>
-
-        <!-- <div
+        <div
           class="flex gap-x-4 items-center justify-end border-t border-[#E9EAEB] pt-4 px-6"
         >
           <AppButton
             :disabled="isLoading"
             :isLoading="isLoading"
-            btnClass="bg-primary-500 text-white !px-8 !text-sm !py-[10px] disabled:cursor-not-allowed border  !rounded-lg border-primary-500"
+            btnClass="bg-primary-500
+      text-white !px-8 !text-sm !py-[10px] disabled:cursor-not-allowed border
+      !rounded-lg border-primary-500"
             type="submit"
             text="Save changes"
           />
-        </div> -->
+        </div>
       </form>
     </div>
   </div>
@@ -97,7 +118,6 @@ import {
   updateCompanyProfile,
   updateUserProfile,
 } from "~/services/settingservices";
-import { getSingleInvite } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 
 const form = reactive({
@@ -113,9 +133,9 @@ const isLoading = ref(false);
 
 const authStore = useAuthStore();
 const phoneRegex = /^[0-9]{18}$/;
-const  {id} = useRoute().params
+
 onMounted(() => {
-  getSingleInvite(id).then((res) => {
+  getUserProfile().then((res) => {
     if (res.status === 200) {
       const tempData = res.data.data;
       Object.keys(values).forEach((key) => {

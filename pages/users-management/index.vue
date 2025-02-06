@@ -1,14 +1,13 @@
 <template>
   <NuxtLayout>
-    <div class="container">
-        <PagesSuperadminUsers />
+    <div class="container py-10">
+        <PagesUsers />
     </div>
   </NuxtLayout>
 </template>
 
 <script setup>
 definePageMeta({
-  layout: "superadmin",
   middleware: "auth",
 });
 const route = useRoute();

@@ -17,7 +17,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     // Redirect non-superadmin users trying to access superadmin routes
     
     if (
-      mattaAuth.value.userCategory !== 2 &&
+      mattaAuth.value.userCategory !== 3 &&
       superadminRoutes.includes(to.name)
     ) {
       abortNavigation();
@@ -26,7 +26,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     // Redirect superadmin users trying to access non-superadmin routes
     if (
-      mattaAuth.value.userCategory === 2 &&
+      mattaAuth.value.userCategory === 3 &&
       !superadminRoutes.includes(to.name)
     ) {
       abortNavigation();
@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Handle unauthenticated user logic
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page if they're not already there
-    if (!to.path.includes("auth")) {
+    if (!to.path.includes("auth") && !to.path.includes("invited-user")) {
       abortNavigation();
       return navigateTo(
         `/auth/login${to.query.app ? `/${to.query.app}` : ""}?${new URLSearchParams({

@@ -129,9 +129,10 @@ const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
 });
 const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
-const handleFinalRedirect = () => {
+
+const handleFinalRedirect = (data) => {
   if (route.query.continue) {
-    handleRedirect(route, res.data.data.jwToken);
+    handleRedirect(route, data.jwToken);
     return;
   }
 
@@ -155,7 +156,7 @@ const onSubmit = handleSubmit((values) => {
         if (!res.data.data.is2FA && app) {
           authStore.setLoggedUser(res.data.data);
           saveAuthProfile(res.data.data);
-          handleFinalRedirect();
+          handleFinalRedirect(res.data.data);
           return;
         }
         isVerifyPin.value = true;
@@ -192,7 +193,7 @@ const handleFinalSubmit = async (token) => {
       if (res.status === 200) {
         authStore.setLoggedUser(res.data.data);
         saveAuthProfile(res.data.data);
-        handleFinalRedirect();
+        handleFinalRedirect(res.data.data);
       }
     })
     .catch((err) => {

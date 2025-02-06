@@ -8,6 +8,7 @@
           emptyTitle="No user available"
           :isLoading="loading"
           emptyType="user"
+          stattype="driver"
         >
           <template #table-row-action="{ row }">
             <Menu class="" as="div">
@@ -18,7 +19,7 @@
                 <MenuItems
                   class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-1 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
                 >
-                  <MenuItem>
+                  <MenuItem v-if="row.status !==0">>
                     <button
                       type="button"
                       @click="navigateTo(`/user-management/user-detail/1`)"
@@ -27,20 +28,20 @@
                       <AppIcon icon="iconamoon:edit-light" /> View Details
                     </button></MenuItem
                   >
-                  <MenuItem>
+                  <MenuItem v-if="row.status===0">
                     <button
                       type="button"
                       @click="
                         detail = row;
                         id = detail.id;
-                        isOpen = true;
+                        open = true;
                       "
                       class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                     >
                       <AppIcon icon="ic:outline-cancel" /> Cancel Invite
                     </button></MenuItem
                   >
-                  <MenuItem>
+                  <MenuItem v-if="row.status===1">>
                     <button
                       type="button"
                       @click="
@@ -53,7 +54,7 @@
                       <AppIcon icon="la:user-minus" /> Deactivate access
                     </button></MenuItem
                   >
-                  <MenuItem>
+                  <!-- <MenuItem>
                     <button
                       type="button"
                       @click="
@@ -65,7 +66,7 @@
                     >
                       <AppIcon icon="tabler:trash" /> Delete user
                     </button></MenuItem
-                  >
+                  > -->
                 </MenuItems>
               </Float>
             </Menu>
@@ -77,22 +78,12 @@
   <DeleteModal
     @deleteItem="handleDelete"
     @close="open = false"
-    title="Delete account"
-    text="Are you sure you want to delete this account? This action cannot be undone."
+    title="Cancel invite"
+    text="Are you sure you want to cancel this invitation? This action cannot be undone."
     :open="open"
     btnText="Yes, Delete"
   />
-  <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
-    <template #content>
-      <div class="h-full w-full bg-white rounded-lg p-6">
-        <PagesSettlementsForm
-          :id="id"
-          :detail="detail"
-          @refresh="getFinanceData()"
-        />
-      </div>
-    </template>
-  </IndexModal>
+
 </template>
 <script setup>
 definePageMeta({
@@ -100,13 +91,9 @@ definePageMeta({
 });
 import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import {
-  viewSettlement,
-  deleteSettlement,
-  autoSettlement,
-  getAutoSettlement,
-} from "~/services/settlementservice";
+
 import { Float } from "@headlessui-float/vue";
+import { getAllinvites, delSingleInvite } from "~/services/userservices";
 
 const id = ref(null);
 const open = ref(false);
@@ -114,7 +101,7 @@ const isOpen = ref(false);
 const setLoader = ref(false);
 const detail = ref(null);
 const authStore = useAuthStore();
-const isAutoSettlement = ref(false);
+
 const rows = ref([]);
 const loading = ref(false);
 const columns = [
@@ -127,15 +114,21 @@ const columns = [
 
   {
     header: "Role",
-    key: "role",
+    key: "roleName",
     isHtml: false,
     isStatus: false,
   },
   {
-    header: "Apps",
-    key: "apps",
+    header: "Email",
+    key: "email",
     isHtml: false,
     isStatus: false,
+  },
+  {
+    header: "Status",
+    key: "status",
+    isHtml: false,
+    isStatus: true,
   },
   {
     header: "Last active",
@@ -162,13 +155,11 @@ const tabs = [
     key: "roles",
   },
 ];
-const financeData = ref([]);
 
 onMounted(() => {
-  getSettlement();
-  getFinanceData();
+  getInvites();
 });
-const settlementValue = ref(null);
+
 const queryParams = reactive({
   Search: "",
   SortOrder: "",
@@ -176,60 +167,46 @@ const queryParams = reactive({
   PageSize: 10,
   Type: "",
 });
-const docLoading = ref(false);
-function getSettlement() {
-  setLoader.value = true;
-  getAutoSettlement()
-    .then((res) => {
-      if (res.status === 200) {
-        setLoader.value = false;
-        isAutoSettlement.value = res.data.data.autoSettlement;
-      }
-    })
-    .catch(() => {
-      setLoader.value = false;
+
+function getInvites() {
+  try {
+    loading.value = true;
+    getAllinvites(queryParams).then((res) => {
+      rows.value = res.data.data.map((i) => ({
+        ...i,
+        roleName: RoleMap[i.role],
+      }));
+      queryParams.totalCount = res.data.data.totalCount;
+      loading.value = false;
     });
-}
-function getFinanceData() {
-  docLoading.value = true;
-  viewSettlement(queryParams).then((res) => {
-    financeData.value = res.data.data;
-    queryParams.totalCount = res.data.data.totalCount;
-    docLoading.value = false;
-  });
+  } finally {
+    loading.value = false;
+  }
 }
 
-function deleteRequest(value) {
-  id.value = value;
-  open.value = true;
-}
-const document = ref({});
-function openRequest(val) {
-  detail.value = val;
-  isOpen.value = true;
-}
 const debounceSearch = debounce(() => {
-  getFinanceData();
+  getInvites();
 }, 800);
 const handleDelete = () => {
-  deleteSettlement(id.value)
+  delSingleInvite(id.value)
     .then((res) => {
       if (res.status === 200) {
-        getSettlements();
-        isSuccessOpen.value = true;
+        getInvites();
+        toast.success('Invitation cancelled')
+        open.value = true;
       }
     })
     .catch((err) => {
       errorText.value =
         err?.response?.data?.message ||
         err?.response?.data?.Message ||
-        "Account deletion failed";
+        "Invite deletion failed";
       isErrorOpen.value = true;
       isLoading.value = false;
     });
 };
 function handleSuccess() {
-  getFinanceData();
+  getInvites();
 }
 watch(
   () => [queryParams.Search],
@@ -240,23 +217,10 @@ watch(
 watch(
   () => [queryParams.PageNumber, queryParams.SortOrder],
   () => {
-    getFinanceData();
+    getInvites();
   }
 );
-watch(isAutoSettlement, (oldval, newval) => {
-  if (oldval === newval) return;
-  handleAutoSettlement();
-});
-function handleAutoSettlement() {
-  setLoader.value = true;
-  autoSettlement({ autoSettlement: isAutoSettlement.value })
-    .then((res) => {
-      setLoader.value = false;
-    })
-    .catch(() => {
-      setLoader.value = false;
-    });
-}
+
 provide("handleSuccess", handleSuccess);
 provide("isOpen", isOpen);
 </script>

@@ -93,7 +93,7 @@ const windowWidth = ref(0);
 const view = ref({ atTopOfPage: true });
 
 // Computed
-const showAppMenu = computed(() => authStore?.userInfo?.userCategory !== 2);
+const showAppMenu = computed(() => authStore?.userInfo?.userCategory !== 3 && authStore?.userInfo?.userCategory !== 0);
 
 const userInitials = computed(() => ({
   first: authStore.userInfo?.firstName?.slice(0, 1) || '',
@@ -101,7 +101,7 @@ const userInitials = computed(() => ({
 }));
 
 const displayName = computed(() => 
-  authStore?.userInfo?.userCategory !== 2
+  authStore?.userInfo?.userCategory !== 3
     ? authStore?.userInfo?.fullName
     : "Superadmin"
 );

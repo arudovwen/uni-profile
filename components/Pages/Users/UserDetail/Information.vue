@@ -6,7 +6,7 @@
         subtext="Update your photo and personal details here."
       />
     </div> -->
-    <div class="w-full bg-white rounded-lg py-6 max-w-[800px]">
+    <div class="w-full bg-white rounded-lg py-6 max-w-[800px] p-6 border border-[#E9EAEB]">
       <form @submit.prevent="onSubmit" class="w-full grid gap-y-6">
         <div class="flex gap-x-10">
           <div class="lg:w-[300px] font-semibold text-sm">
