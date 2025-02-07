@@ -2,7 +2,7 @@ import Axios from "axios";
 import { toast } from "vue3-toastify";
 
 // Max refresh attempts
-const MAX_REFRESH_ATTEMPTS = 3;
+const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
 
 // Base URL for API services
@@ -28,6 +28,10 @@ const createAxiosInstance = (service) => {
     async (error) => {
       if ([403].includes(error?.response?.status)) {
         try {
+          if (window.location.href.includes("/auth/logout")) {
+            authStore.clearAuth();
+            return Promise.reject(error);
+          }
           const newAccessToken = await handleTokenRefresh();
           error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return instance.request(error.config);

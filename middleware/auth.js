@@ -45,7 +45,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     if (!to.path.includes("auth") && !to.path.includes("invited-user")) {
       abortNavigation();
       return navigateTo(
-        `/auth/login${to.query.app ? `/${to.query.app}` : ""}?${new URLSearchParams({
+        `/auth/login${to.params.app ? `/${to.params.app}` : ""}?${new URLSearchParams({
           redirected_from: to.path,
           ...to.query,
         })}`
