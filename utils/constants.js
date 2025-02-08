@@ -328,7 +328,6 @@ export const Navigation = [
     key: "security",
   },
 
- 
   {
     name: "Users Management",
     url: "/users-management",
@@ -374,15 +373,13 @@ export const superadminRoutes = [
   "user-management",
   "user-management-user-detail-id",
   "application-management",
-  "audit-logs",
   "profile",
-  "application-management-action-id"
+  "application-management-action-id",
 ];
 
 export const adminRoutes = [
   "user-management",
   "settlements",
-  "audit-logs",
   "profile",
   "business-information",
 ];
@@ -392,10 +389,12 @@ export const userRoutes = [
   "profile",
   "notifications",
 ];
+export const univeralRoutes = ["audit-logs"];
 export const RoleMap = {
-  0: 'Admin',
-  1: 'Superadmin'
-}
+  0: "Central Admin",
+  1: "Superadmin",
+  2: "Member",
+};
 export const UserNavigation = [
   {
     name: "Profile",
@@ -421,6 +420,49 @@ export const UserNavigation = [
     name: "Applications",
     url: "/my-applications",
     key: "my-applications",
+  },
+  {
+    name: "Notifications",
+    url: "/notifications",
+    key: "notifications",
+  },
+];
+export const OwnerNavigation = [
+  {
+    name: "Profile",
+    url: "/",
+    key: "profile",
+  },
+  {
+    name: "Security",
+    url: "/security",
+    key: "security",
+  },
+  {
+    name: "Business Information",
+    url: "/business-information",
+    key: "business",
+  },
+  {
+    name: "User Management",
+    url: "/users-management",
+    key: "users-management",
+  },
+
+  {
+    name: "Settlement Accounts",
+    url: "/settlements",
+    key: "settlement",
+  },
+  {
+    name: "Applications",
+    url: "/my-applications",
+    key: "my-applications",
+  },
+  {
+    name: "Audit Logs",
+    url: "/audit-logs",
+    key: "audit-logs",
   },
   {
     name: "Notifications",

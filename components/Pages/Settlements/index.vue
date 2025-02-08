@@ -9,7 +9,7 @@
         title="Settlements account"
         subtext="Account where your funds would be paid into"
       />
-      <div>
+      <div v-if="authStore?.userInfo?.userCategory === 1">
         <AppButton
           @click="isOpen = true"
           text="Add settlement account"
@@ -31,6 +31,7 @@
                 >
                   {{ item }}
                 </th>
+                <th v-if="authStore?.userInfo?.userCategory === 1"></th>
               </tr>
             </thead>
 
@@ -61,7 +62,7 @@
                 <td
                   class="capitalize text-matta-black text-sm font-normal border-b py-4 px-6 border-[#EAECF0] whitespace-nowrap"
                 >
-                  <Menu class="relative" as="div">
+                  <Menu class="relative" as="div" v-if="authStore?.userInfo?.userCategory === 1">
                     <MenuButton
                       :id="`${item.accountName}+option`"
                       class="outline-none"
@@ -132,7 +133,7 @@
         btnClass="bg-primary-500 text-white rounded-lg px-[14px] py-[10px]"
       />
     </div> -->
-    <div class="max-w-[280px]">
+    <div class="max-w-[280px]" v-if="authStore?.userInfo?.userCategory === 1">
       <SwitchGroup>
         <div class="flex items-center justify-start gap-x-1">
           <SwitchLabel class="mr-4 whitespace-nowrap font-medium">{{
@@ -197,11 +198,11 @@ const detail = ref(null);
 const authStore = useAuthStore();
 const isAutoSettlement = ref(false);
 
-const theads = ["account name", "account number", "bank", ""];
+const theads = ["account name", "account number", "bank"];
 const financeData = ref([]);
 
 onMounted(() => {
-  getSettlement()
+  getSettlement();
   getFinanceData();
 });
 const settlementValue = ref(null);

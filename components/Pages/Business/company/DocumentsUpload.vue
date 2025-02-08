@@ -32,7 +32,7 @@
             >
           </div>
         </div>
-        <div>
+        <div v-if="authStore?.userInfo?.userCategory === 1">
           <button
             @click="addField(index)"
             type="button"
@@ -61,7 +61,7 @@ import FileUpload from "@/components/FileUpload.vue";
 const privateDocuments = ref([]);
 const props = defineProps(["documents", "hideUpdate", "isNonNigerian"]);
 const emit = defineEmits(["getDocs"]);
-
+const authStore = useAuthStore()
 onMounted(() => {
   privateDocuments.value = ensureDocumentTypes(props.documents);
 });

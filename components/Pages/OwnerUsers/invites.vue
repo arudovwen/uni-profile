@@ -5,28 +5,17 @@
     <div
       class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
-      <div class="relative flex items-center">
-        <span class="absolute left-4 text-[#667085]"
-          ><i class="uil uil-search"></i
-        ></span>
-        <input
-          type="search"
-          placeholder="Search user"
-          v-model="queryParams.Search"
-          class="border border-[#DFE5EC] text-sm rounded-lg w-full lg:w-[320px] h-11 pl-10 py-2 outline-none focus:outline-none"
-        />
-      </div>
+      <div></div>
       <div>
-        <SelectVueSelect
-          v-model="queryParams.userCatText"
-          :options="Options"
-          :reduce="(option) => option.value"
-          placeholder="Select role"
-          :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer  'border-[#D0D5DD]'`"
-          :clearable="false"
+        <AppButton
+          @click="isOpen = true"
+          text="Invite User"
+          icon="humbleicons:plus"
+          :btnClass="`!px-[10px] md:!px-[14px] !py-[10px] bg-primary-500 !text-white !text-sm`"
         />
       </div>
     </div>
+
     <div class="flex">
       <div class="w-full">
         <div class="">
@@ -38,8 +27,6 @@
               :isLoading="loading"
               emptyType="user"
               statType="driver"
-              :query="queryParams"
-              @onPageChange="(value) => (queryParams.PageNumber = value)"
             >
               <template #table-row-action="{ row }">
                 <Menu class="" as="div">
@@ -50,7 +37,7 @@
                     <MenuItems
                       class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-1 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
                     >
-                      <MenuItem>
+                      <MenuItem v-if="row.status == 1">
                         <button
                           type="button"
                           @click="
@@ -61,21 +48,46 @@
                           <AppIcon icon="iconamoon:edit-light" /> View Details
                         </button></MenuItem
                       >
-
-                      <MenuItem v-if="authStore?.userInfo?.userCategory === 3">
+                      <MenuItem v-if="row.status === 0">
                         <button
                           type="button"
                           @click="
                             detail = row;
-                            id = detail.contactEmail;
+                            id = detail.id;
                             open = true;
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
-                          <AppIcon icon="la:user-minus" />
-                          {{ !row.isActive ? "Enable" : "Deactivate" }} access
+                          <AppIcon icon="ic:outline-cancel" /> Cancel Invite
                         </button></MenuItem
                       >
+                      <MenuItem v-if="row.status === 0">
+                        <button
+                          type="button"
+                          @click="
+                            isResendOpen = true;
+                            detail = row;
+                            resendInvite();
+                          "
+                          class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                        >
+                          <AppIcon icon="mdi:email-resend-outline" /> Resend
+                          invite
+                        </button></MenuItem
+                      >
+                      <!-- <MenuItem>
+                    <button
+                      type="button"
+                      @click="
+                        detail = row;
+                        id = detail.id;
+                        isOpen = true;
+                      "
+                      class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                    >
+                      <AppIcon icon="tabler:trash" /> Delete user
+                    </button></MenuItem
+                  > -->
                     </MenuItems>
                   </Float>
                 </Menu>
@@ -84,24 +96,29 @@
           </div>
         </div>
       </div>
-      <ActionModal
-        @actionItem="handleDelete"
+      <DeleteModal
+        @deleteItem="handleDelete"
         @close="open = false"
-        :title="detail?.isActive ? 'Deactivate Access' : 'Enable access'"
-        :text="`Are you sure you want to ${
-          !detail?.isActive ? 'deactivate access' : 'enable access'
-        } for this user?`"
+        title="Cancel invite"
+        text="Are you sure you want to cancel this invitation? This action cannot be undone."
         :open="open"
-        :btnText="`Yes, ${!detail?.isActive ? 'Enable' : 'Deactivate'}`"
-        :imgUrl="
-          !detail?.isActive
-            ? '/images/enable-user.svg'
-            : '/images/revoke-user.svg'
-        "
-        type="approve"
+        btnText="Yes, Delete"
       />
     </div>
   </div>
+
+  <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
+    <template #content>
+      <div class="h-full w-full bg-white rounded-lg p-6">
+        <InviteForm @refresh="getInvites()" />
+      </div>
+    </template>
+  </IndexModal>
+  <Loader
+    :is-loader-open="isResendOpen"
+    @close-loader="isResendOpen = false"
+    text="Resending"
+  />
 </template>
 <script setup>
 definePageMeta({
@@ -111,64 +128,40 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getAllUsers, toggleUserStatus } from "~/services/userservices";
+import {
+  getAllinvites,
+  delSingleInvite,
+  resendAdminInvite,
+} from "~/services/userservices";
 import { toast } from "vue3-toastify";
-import moment from "moment";
+import InviteForm from "./InviteForm.vue";
 
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
+const setLoader = ref(false);
 const detail = ref(null);
-const authStore = useAuthStore();
-const Options = [
-  {
-    label: "Default",
-    value: "default",
-  },
-  {
-    label: "Superadmins",
-    value: "superadmins",
-  },
-  {
-    label: "Admins",
-    value: "admins",
-  },
-  {
-    label: "Others",
-    value: "others",
-  },
-];
-const RoleMapper = {
-  superadmins: [3],
-  admins: [0],
-  others: [1, 2],
-  default: [0, 1, 2, 3],
-};
+const isResendOpen = ref(false);
+
 const rows = ref([]);
-const loading = ref(false);
+const loading = ref(true);
 const columns = [
-  {
-    header: "Name",
-    key: "name",
-    isHtml: false,
-    isStatus: false,
-  },
+  // {
+  //   header: "Name",
+  //   key: "name",
+  //   isHtml: false,
+  //   isStatus: false,
+  // },
 
   {
     header: "Role",
-    key: "category",
+    key: "roleName",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Email",
-    key: "contactEmail",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Phone",
-    key: "phone",
+    key: "email",
     isHtml: false,
     isStatus: false,
   },
@@ -178,18 +171,23 @@ const columns = [
     isHtml: false,
     isStatus: true,
   },
-  {
-    header: "Last active",
-    key: "lastLoginTime",
-    isHtml: false,
-    isStatus: false,
-  },
 
   {
     header: "",
     key: "action",
     isHtml: false,
     isStatus: false,
+  },
+];
+const active = ref("users");
+const tabs = [
+  {
+    title: "Users",
+    key: "users",
+  },
+  {
+    title: "Roles",
+    key: "roles",
   },
 ];
 
@@ -201,54 +199,62 @@ const queryParams = reactive({
   Search: "",
   SortOrder: "",
   PageNumber: 1,
-  PageSize: 15,
-  userCatText: "",
-  userCategories: [0, 1, 2, 3],
-  total: 0,
+  PageSize: 10,
+  Type: "",
 });
 
-function getInvites() {
+async function getInvites() {
   loading.value = true;
   try {
-    getAllUsers(queryParams).then((res) => {
-      rows.value = res.data.data.map((i) => ({
-        ...i,
-        // roleName: RoleMap[i.role],
-        name: `${i.firstName} ${i.lastName}`,
-        lastLoginTime: i.lastLoginTime
-          ? moment(i.lastLoginTime).format("lll")
-          : null,
-        status: i.isActive ? 1 : 2,
-      }));
-      queryParams.total = res.data.totalCount;
-      loading.value = false;
-    });
-  } catch (err) {
-    loading.value = false;
+    const res = await getAllinvites(queryParams);
+    rows.value = res.data.data.map((i) => ({
+      ...i,
+      roleName: RoleMap[i.role],
+    }));
+    queryParams.totalCount = res.data.data.totalCount;
+  } catch (error) {
+    console.error('Error fetching invites:', error);
+    // Handle error appropriately - maybe show an error message to user
   } finally {
-    setTimeout(() => {
-      loading.value = false;
-    }, 5000);
+    loading.value = false;
   }
 }
+async function resendInvite() {
+  try {
+    isResendOpen.value = true;
+    const { role, appCodes, email } = detail.value;
+    const data = { role, appCodes, email };
 
+    const response = await resendAdminInvite(data);
+
+    if (response.status === 200) {
+      isResendOpen.value = false;
+    }
+  } catch (error) {
+    toast.error(error.response.data.message);
+  } finally {
+    if (isResendOpen.value) {
+      isResendOpen.value = false;
+    }
+  }
+}
 const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  toggleUserStatus(id.value)
+  delSingleInvite(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;
         getInvites();
-        toast.success("User Access updated");
+        toast.success("Invitation cancelled");
       }
     })
     .catch((err) => {
       toast.error(
         err?.response?.data?.message ||
           err?.response?.data?.Message ||
-          "Invite cancellation failed"
+          "Invite deletion failed"
       );
       isErrorOpen.value = true;
       isLoading.value = false;
@@ -264,19 +270,9 @@ watch(
   }
 );
 watch(
-  () => [
-    queryParams.PageNumber,
-    queryParams.SortOrder,
-    queryParams.userCategories,
-  ],
+  () => [queryParams.PageNumber, queryParams.SortOrder],
   () => {
     getInvites();
-  }
-);
-watch(
-  () => [queryParams.userCatText],
-  () => {
-    queryParams.userCategories = RoleMapper[queryParams.userCatText];
   }
 );
 

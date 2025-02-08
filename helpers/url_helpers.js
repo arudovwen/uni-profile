@@ -63,5 +63,11 @@ const urls = {
   INVITATION: "admin/v1/Invitation",
   GET_ALL_USERS: "admin/v1/user/get-users",
   TOGGLE_USER: (email)=>`admin/v1/user/users/${email}/toggle-status`,
+
+  OWNER_INVITES:"v1/register",
+  OWNER_SEND_INVITE: "v1/register/send-member-invite",
+  OWNER_GET_MEMBERS: "v1/register/get-members",
+  OWNER_TOGGLE_STATUS:(email)=> `v1/register/${email}/toggle-status`,
+  OWNERS_REGISTER_MEMBER: "v1/register/member",
 };
 export default urls;

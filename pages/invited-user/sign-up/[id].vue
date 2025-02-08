@@ -120,23 +120,33 @@
       subtext="Enter the  6-Digit verification code has been sent to your registered email address. Check your inbox."
     />
   </NuxtLayout>
+  <Loader
+    :is-loader-open="inviteLoading"
+    text="Fetching data"
+    @close-loader="inviteLoading = false"
+  />
 </template>
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import { getSingleInvite } from "~/services/userservices";
+import { getSingleInvite, registerMember } from "~/services/userservices";
 import { registerInvitedUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
 const { id } = route.params;
-
+const SubmitMapper = {
+  0: registerInvitedUser,
+  3: registerInvitedUser,
+  2: registerMember,
+};
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isVerified = ref(false);
+const detail = ref(null);
 const formValues = {
   email: "",
   firstName: "",
@@ -145,7 +155,7 @@ const formValues = {
   password: "",
   confirmPassword: "",
 };
-const step = ref(2);
+const step = ref(1);
 const schema = yup.object({
   firstName: yup.string().required("First name is required"),
   email: yup.string().email().required(),
@@ -158,7 +168,7 @@ const schema = yup.object({
     )
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-      "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
+      "PassworFaddd must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
     ),
 });
 
@@ -174,10 +184,14 @@ const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  registerInvitedUser({
+  const { appCodes, businessId } = detail.value;
+  SubmitMapper[detail.value.role]({
     ...values,
     confirmPassword: values.password,
     phoneNumber: values.phoneNumber,
+    appCodes,
+    businessId,
+    companyName:'companyName'
   })
     .then((res) => {
       if (res.status === 200) {
@@ -229,14 +243,20 @@ const handleFinalSubmit = (code) => {
       }
     });
 };
+const inviteLoading = ref(true)
+function getInviteData() {
+  getSingleInvite(id)
+    .then((res) => {
+      if (res.status === 200) {
+        setFieldValue("email", res.data.data.email);
+        detail.value = res.data.data;
+      }
+    })
+    .finally(() => {
+      inviteLoading.value = false;
+    });
+}
 onMounted(() => {
-
-  getSingleInvite(id).then((res) => {
-    if (res.status === 200) {
-      setFieldValue('email', res.data.data.email)
-      console.log("🚀 ~ getSingleInvite ~ res.data.data.email:", res.data.data.email)
-    }
-     
-  });
+  getInviteData()
 });
 </script>

@@ -4,9 +4,7 @@
       class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
     >
       <li
-        v-for="n in authStore?.userInfo?.userCategory == 0
-          ? Navigation
-          : UserNavigation"
+        v-for="n in NavMapper[authStore?.userInfo?.userCategory]"
         :key="n.name"
       >
         <NuxtLink :to="n.url">
@@ -30,4 +28,10 @@ import { Navigation, UserNavigation } from "@/utils/constants";
 
 const authStore = useAuthStore();
 const route = useRoute();
+
+const NavMapper = {
+  0: Navigation,
+  1: OwnerNavigation,
+  2: UserNavigation,
+};
 </script>

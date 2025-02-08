@@ -8,7 +8,7 @@
       <!-- Top bar   -->
       <div class="flex-1">
         <div class="">
-          <div v-if="!companyInfo.approvalStatus">
+          <div v-if="!companyInfo.approvalStatus && authStore?.userInfo?.userCategory === 1">
             <button
               type="button"
               @click="
@@ -34,7 +34,7 @@
       </div>
     </div>
     <div
-      v-if="!companyInfo.approvalStatus"
+      v-if="!companyInfo.approvalStatus && authStore?.userInfo?.userCategory === 1"
       class="flex justify-end pt-6 border-t px-6 border-[#EAECF0] gap-x-4 items-center w-full"
     >
       <AppButton

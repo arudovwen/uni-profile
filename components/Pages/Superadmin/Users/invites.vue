@@ -15,7 +15,7 @@
         />
       </div>
     </div>
-  
+
     <div class="flex">
       <div class="w-full">
         <div class="">
@@ -61,20 +61,19 @@
                           <AppIcon icon="ic:outline-cancel" /> Cancel Invite
                         </button></MenuItem
                       >
-                      <!-- <MenuItem v-if="row.status === 1"
-                        >
+                      <MenuItem v-if="row.status === 0">
                         <button
                           type="button"
                           @click="
+                            isResendOpen = true;
                             detail = row;
-                            id = detail.id;
-                            isOpen = true;
+                            resendInvite();
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
-                          <AppIcon icon="la:user-minus" /> Deactivate access
+                          <AppIcon icon="la:user-minus" /> Resend invite
                         </button></MenuItem
-                      > -->
+                      >
                       <!-- <MenuItem>
                     <button
                       type="button"
@@ -114,6 +113,11 @@
       </div>
     </template>
   </IndexModal>
+  <Loader
+    :is-loader-open="isResendOpen"
+    text="Resending"
+    @close-loader="isResendOpen = false"
+  />
 </template>
 <script setup>
 definePageMeta({
@@ -123,7 +127,11 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getAllinvites, delSingleInvite } from "~/services/userservices";
+import {
+  getAllinvites,
+  delSingleInvite,
+  resendAdminInvite,
+} from "~/services/userservices";
 import { toast } from "vue3-toastify";
 
 const id = ref(null);
@@ -131,7 +139,7 @@ const open = ref(false);
 const isOpen = ref(false);
 const setLoader = ref(false);
 const detail = ref(null);
-const authStore = useAuthStore();
+const isResendOpen = ref(false);
 
 const rows = ref([]);
 const loading = ref(false);
@@ -161,24 +169,12 @@ const columns = [
     isHtml: false,
     isStatus: true,
   },
-  
 
   {
     header: "",
     key: "action",
     isHtml: false,
     isStatus: false,
-  },
-];
-const active = ref("users");
-const tabs = [
-  {
-    title: "Users",
-    key: "users",
-  },
-  {
-    title: "Roles",
-    key: "roles",
   },
 ];
 
@@ -194,22 +190,22 @@ const queryParams = reactive({
   Type: "",
 });
 
-function getInvites() {
+async function getInvites() {
+  loading.value = true;
   try {
-    loading.value = true;
-    getAllinvites(queryParams).then((res) => {
-      rows.value = res.data.data.map((i) => ({
-        ...i,
-        roleName: RoleMap[i.role],
-      }));
-      queryParams.totalCount = res.data.data.totalCount;
-      loading.value = false;
-    });
+    const res = await getAllinvites(queryParams);
+    rows.value = res.data.data.map((i) => ({
+      ...i,
+      roleName: RoleMap[i.role],
+    }));
+    queryParams.totalCount = res.data.data.totalCount;
+  } catch (error) {
+    console.error('Error fetching invites:', error);
+    // Handle error appropriately - maybe show an error message to user
   } finally {
     loading.value = false;
   }
 }
-
 const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
@@ -232,6 +228,25 @@ const handleDelete = () => {
       isLoading.value = false;
     });
 };
+async function resendInvite() {
+  try {
+    isResendOpen.value = true;
+    const { role, appCodes, email } = detail.value;
+    const data = { role, appCodes, email };
+
+    const response = await resendAdminInvite(data);
+
+    if (response.status === 200) {
+      isResendOpen.value = false;
+    }
+  } catch (error) {
+    toast.error(error.response.data.message);
+  } finally {
+    if (isResendOpen.value) {
+      isResendOpen.value = false;
+    }
+  }
+}
 function handleSuccess() {
   getInvites();
 }

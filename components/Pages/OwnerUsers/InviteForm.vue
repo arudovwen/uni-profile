@@ -59,16 +59,7 @@
             />
           </FormGroup>
         </div>
-        <div v-if="values.role !== 1" class="mt-4">
-          <AppUserSelector
-            @getData="
-              (value) => {
-                setFieldValue('appCodes', value);
-              }
-            "
-          />
-          <p class="text-danger-500 block text-sm mt-1">{{ errors.appCodes }}</p>
-        </div>
+
         <div class="flex gap-x-4 pt-4 p-0 w-full z-30">
           <AppButton
             btnClass="w-full text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
@@ -92,7 +83,6 @@
       </form>
     </div>
   </div>
-
   <ActionModal
     :open="isSuccessOpen"
     type="approve"
@@ -120,23 +110,19 @@
 import ProfileAddIcon from "@/assets/images/svgs/profile-add.svg";
 import { toast } from "vue3-toastify";
 import * as yup from "yup";
-import { sendAdminInvite } from "~/services/userservices";
-import AppUserSelector from "./AppUserSelector";
+import { sendOwnerInvite } from "~/services/userservices";
 
+const authStore = useAuthStore();
 const props = defineProps(["detail"]);
 const formValues = {
   email: "",
-  role: 1,
-  appCodes: [],
+  role: 2,
+  appCodes: authStore.userInfo.subAppCodes,
 };
 const roles = [
   {
-    label: "Superadmin",
-    value: 1,
-  },
-  {
-    label: "Central Admin",
-    value: 0,
+    label: "Member",
+    value: 2,
   },
 ];
 const schema = yup.object({
@@ -173,7 +159,7 @@ const {
   validationSchema: schema,
   initialValues: formValues,
 });
-const authStore = useAuthStore();
+
 const [email, emailAtt] = defineField("email");
 const [role] = defineField("role");
 
@@ -184,13 +170,12 @@ const isOpen = inject("isOpen");
 const emits = defineEmits(["refresh"]);
 const onSubmit = handleSubmit(async (values) => {
 
-  const appList = authStore.appList.map((i) => i.code);
-
   try {
     isLoading.value = true;
-    const response = await sendAdminInvite(
-      values.role === 1 ? { ...values, appCodes: appList } : { ...values, appCodes: values.appCodes.map(i=>i.appCode) }
-    );
+    const response = await sendOwnerInvite({
+      ...values,
+      appCodes: authStore.userInfo.subAppCodes,
+    });
 
     if (response.status === 200) {
       isSuccessOpen.value = true;

@@ -15,8 +15,9 @@
     <div
       class="flex justify-end pt-6 border-t border-[#EAECF0] gap-x-4 items-center px-6 w-full"
       v-if="
-        !companyInfo?.approvalStatus ||
-        !companyDoc?.some((i) => i.documentType === 4)
+        (!companyInfo?.approvalStatus ||
+          !companyDoc?.some((i) => i.documentType === 4)) &&
+        authStore?.userInfo?.userCategory === 1
       "
     >
       <AppButton

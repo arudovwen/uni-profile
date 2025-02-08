@@ -11,12 +11,12 @@
         ></span>
         <input
           type="search"
-          placeholder="Search user"
+          placeholder="Search users"
           v-model="queryParams.Search"
           class="border border-[#DFE5EC] text-sm rounded-lg w-full lg:w-[320px] h-11 pl-10 py-2 outline-none focus:outline-none"
         />
       </div>
-      <div>
+      <!-- <div>
         <SelectVueSelect
           v-model="queryParams.userCatText"
           :options="Options"
@@ -25,7 +25,7 @@
           :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer  'border-[#D0D5DD]'`"
           :clearable="false"
         />
-      </div>
+      </div> -->
     </div>
     <div class="flex">
       <div class="w-full">
@@ -62,7 +62,7 @@
                         </button></MenuItem
                       >
 
-                      <MenuItem v-if="authStore?.userInfo?.userCategory === 3">
+                      <MenuItem v-if="authStore?.userInfo?.userCategory === 1">
                         <button
                           type="button"
                           @click="
@@ -102,6 +102,7 @@
       />
     </div>
   </div>
+
 </template>
 <script setup>
 definePageMeta({
@@ -111,7 +112,7 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getAllUsers, toggleUserStatus } from "~/services/userservices";
+import { getOwnerMembers, toggleMemberStatus } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
@@ -134,14 +135,14 @@ const Options = [
     value: "admins",
   },
   {
-    label: "Others",
-    value: "others",
+    label: "Members",
+    value: "members",
   },
 ];
 const RoleMapper = {
   superadmins: [3],
   admins: [0],
-  others: [1, 2],
+  members: [1, 2],
   default: [0, 1, 2, 3],
 };
 const rows = ref([]);
@@ -203,14 +204,14 @@ const queryParams = reactive({
   PageNumber: 1,
   PageSize: 15,
   userCatText: "",
-  userCategories: [0, 1, 2, 3],
+  userCategories: [2],
   total: 0,
 });
 
 function getInvites() {
   loading.value = true;
   try {
-    getAllUsers(queryParams).then((res) => {
+    getOwnerMembers(queryParams).then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,
         // roleName: RoleMap[i.role],
@@ -225,10 +226,6 @@ function getInvites() {
     });
   } catch (err) {
     loading.value = false;
-  } finally {
-    setTimeout(() => {
-      loading.value = false;
-    }, 5000);
   }
 }
 
@@ -236,7 +233,7 @@ const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  toggleUserStatus(id.value)
+  toggleMemberStatus(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;

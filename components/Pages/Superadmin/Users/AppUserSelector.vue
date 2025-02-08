@@ -36,8 +36,8 @@ const selectedApps = ref([]); // This will store the selected apps with appCode 
 const emits = defineEmits(["getData"]);
 const roles = [
   {
-    label: "Admin",
-    value: "admin",
+    label: "Superadmin",
+    value: "superadmin",
   },
   // Add more roles as needed
 ];
@@ -50,7 +50,7 @@ watch(
       .filter((app) => app.appCode)
       .map((app) => ({
         appCode: app.code,
-        role: "admin",
+        role: "superadmin",
       }));
   },
   { deep: true }
@@ -65,7 +65,7 @@ onMounted(() => {
   apps.value = authStore.appList.map((app) => ({
     ...app,
     appCode: false, // Initialize appCode as false (unselected)
-    role: "admin", // Initialize role as empty
+    role: "superadmin", // Initialize role as empty
   }));
 });
 </script>

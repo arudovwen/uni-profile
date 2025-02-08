@@ -1,11 +1,5 @@
 <template>
-
-    <img
-      src="@/assets/apps/ssologo.png"
-      alt="sso"
-      class="w-auto h-12"
-    />
-
+  <img src="@/assets/apps/mat.png" alt="sso" class="w-auto h-9" />
 </template>
 
 <script setup>

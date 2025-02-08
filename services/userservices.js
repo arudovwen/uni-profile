@@ -69,3 +69,28 @@ export async function getAllUsers(payload) {
 export async function toggleUserStatus(email) {
   return await ssoPost(`${urls.TOGGLE_USER(email)}`, {});
 }
+
+
+export async function getOwnerinvites(payload) {
+  return await ssoGet(
+    `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
+    {}
+  );
+}
+
+export async function getOwnerMembers(payload) {
+  return await ssoPost(`${urls.OWNER_GET_MEMBERS}`, cleanObject(payload));
+}
+
+export async function toggleMemberStatus(email) {
+  return await ssoPost(`${urls.OWNER_TOGGLE_STATUS(email)}`, {});
+}
+
+export async function sendOwnerInvite(data) {
+  return await ssoPost(`${urls.OWNER_SEND_INVITE}`, data);
+}
+
+
+export async function registerMember(data) {
+  return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
+}

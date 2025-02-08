@@ -179,6 +179,7 @@
       </div>
     </div>
     <div
+      v-if="authStore?.userInfo?.userCategory === 1"
       class="flex gap-x-4 items-center justify-end border-t border-[#E9EAEB] pt-6 px-6"
     >
       <AppButton
@@ -283,7 +284,7 @@ const [notes, notesAtt] = defineField("notes");
 const [country] = defineField("country");
 const [state] = defineField("state");
 const [city, cityAtt] = defineField("city");
-const [website, websiteAtt] = defineField("website");
+const [website] = defineField("website");
 
 const allcountries = computed(() => {
   return CountryList.map((item) => {

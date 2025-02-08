@@ -7,9 +7,9 @@
   />
   <img
     v-else
-    src="@/assets/apps/ssologo.png"
+    src="@/assets/apps/mat.png"
     alt="sso logo"
-    class="w-auto h-12"
+    class="w-auto h-10"
   />
 </template>
 

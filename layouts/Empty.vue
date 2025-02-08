@@ -3,7 +3,7 @@
     class="flex flex-col h-screen justify-start mt-12 lg:mt-auto pt-10"
   >
     <div class="mb-20 pb-2 z-10 container">
-      <AppLogo />
+      <AuthLogo />
     </div>
     <slot />
   </div>

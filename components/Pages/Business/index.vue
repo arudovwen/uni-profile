@@ -56,7 +56,6 @@
 <script setup>
 import { getBusinessProfile } from "~/services/settingservices";
 
-const authStore = useAuthStore();
 const companyInfo = ref(null);
 const title = ref("Business Information");
 const subtext = ref("Information about your company");
@@ -82,51 +81,53 @@ const form = reactive({
 });
 const isLoading = ref(true);
 function getData() {
-  getBusinessProfile()
-    .then((res) => {
-      if (res.status === 200) {
-        const { companyDocuments = [], ...companyProfile } = res.data.data;
-        const formatDocuments = (documents) => {
-          return documents.map((doc) => ({
-            ...doc,
-            urls:
-              doc.urls.length > 0
-                ? doc.urls.map((urlItem) => ({
-                    url: urlItem?.url || urlItem || "",
-                  }))
-                : [{ url: doc.url || "" }],
-          }));
-        };
+  try {
+    getBusinessProfile()
+      .then((res) => {
+        if (res.status === 200) {
+          const { companyDocuments = [], ...companyProfile } = res.data.data;
+          const formatDocuments = (documents) => {
+            return documents.map((doc) => ({
+              ...doc,
+              urls:
+                doc.urls.length > 0
+                  ? doc.urls.map((urlItem) => ({
+                      url: urlItem?.url || urlItem || "",
+                    }))
+                  : [{ url: doc.url || "" }],
+            }));
+          };
 
-        const tempData = {
-          ...companyProfile,
-          companyDocuments:
-            companyDocuments.length > 0
-              ? formatDocuments(companyDocuments)
-              : KybDocumentDefault,
-        };
+          const tempData = {
+            ...companyProfile,
+            companyDocuments:
+              companyDocuments.length > 0
+                ? formatDocuments(companyDocuments)
+                : KybDocumentDefault,
+          };
 
-        companyInfo.value = tempData;
-        Object.keys(tempData).forEach((key) => {
-          form[key] = tempData[key];
-        });
-        form.dateOfIncorporation = res.data.data.dateOfIncorporation;
-        if (companyDocuments.length > 0) {
-          const formattedDocData = formatDocuments(companyDocuments);
-          formData.kyb.companyDocuments =
-            res.data.data.country.toLowerCase() === "nigeria"
-              ? formattedDocData
-              : formattedDocData.filter((doc) =>
-                  [0, 4].includes(doc.documentType)
-                );
+          companyInfo.value = tempData;
+          Object.keys(tempData).forEach((key) => {
+            form[key] = tempData[key];
+          });
+          form.dateOfIncorporation = res.data.data.dateOfIncorporation;
+          if (companyDocuments.length > 0) {
+            const formattedDocData = formatDocuments(companyDocuments);
+            formData.kyb.companyDocuments =
+              res.data.data.country.toLowerCase() === "nigeria"
+                ? formattedDocData
+                : formattedDocData.filter((doc) =>
+                    [0, 4].includes(doc.documentType)
+                  );
+          }
+          isLoading.value = false;
         }
-        isLoading.value = false;
-      }
-    })
+      })
 
-    .catch((err) => {
-      isLoading.value = false;
-    });
+      .catch((err) => {
+        isLoading.value = false;
+      });
+  } catch (error) {}
 }
 onBeforeMount(() => {
   getData();
