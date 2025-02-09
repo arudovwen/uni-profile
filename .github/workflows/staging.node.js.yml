@@ -37,7 +37,7 @@ jobs:
             Copy-Item -Path C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist\* -Destination C:\inetpub\wwwroot\Staging.Profile.FrontEnd\ -recurse -Force
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: deployable-package
           path: C:\build\deployable-package.zip
