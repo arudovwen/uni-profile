@@ -47,7 +47,6 @@ function getData() {
 }
 onMounted(() => {
   const mattaProfiles = useCookie("mattaProfiles");
-  console.log("🚀 ~ onMounted ~ mattaProfiles:", mattaProfiles.value);
   getData();
 });
 </script>

@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { ssoPost } from "../helpers/api_helpers";
+import { ssoPost } from "../services/api_services";
 
 //Authentication
 export async function loginUser(user, config = {}) {
