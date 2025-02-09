@@ -16,9 +16,9 @@
                 <Switch
                   v-model="row.isTwoFactorAuthEnabled"
                   :class="
-                    row.isTwoFactorAuthEnabled ? 'bg-green-700' : 'bg-gray-200'
+                    row.isTwoFactorAuthEnabled ? 'bg-[#067647]' : 'bg-gray-200'
                   "
-                  class="relative inline-flex h-5 w-[38px] items-center rounded-full transition-colors focus:outline-none"
+                  class="relative inline-flex h-4 w-[34px] items-center rounded-full transition-colors focus:outline-none"
                   @click="toggleTwoFactorAuth(row)"
                 >
                   <span
@@ -27,7 +27,7 @@
                         ? 'translate-x-5'
                         : 'translate-x-[2px]'
                     "
-                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                    class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
                   />
                 </Switch>
               </div>

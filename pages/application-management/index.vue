@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout>
     <div class="">
-      <PagesSubApps />
+      <PagesApplicationManagement />
     </div>
   </NuxtLayout>
 </template>

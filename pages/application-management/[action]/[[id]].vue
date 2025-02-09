@@ -1,12 +1,13 @@
 <template>
     <NuxtLayout>
       <div class="">
-        <PagesSubAppsCreateForm />
+        <PagesApplicationManagementCreateForm />
       </div>
     </NuxtLayout>
   </template>
   
   <script setup>
+
   definePageMeta({
     layout: "superadmin",
     middleware: "auth",
