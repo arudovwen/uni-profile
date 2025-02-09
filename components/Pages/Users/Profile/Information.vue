@@ -3,7 +3,7 @@
     <div class="mb-6">
       <HeaderComponent
         title="Personal info"
-        subtext="Update your photo and personal details here."
+        subtext="Update your photo and personal detailghs here."
       />
     </div>
     <div class="w-full bg-white rounded-lg py-6 border border-[#E9EAEB]">
@@ -15,10 +15,12 @@
             <img :src="photo" class="h-16 w-16 rounded-full object-cover" />
           </span>
           <div class="flex-1">
-            <FileUploadToo v-model="photo" accept="jpg, jpeg,png" />
+            <FileUploadToo v-model="photo" accept="jpg, jpeg, png" />
           </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
+        <div
+          class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6"
+        >
           <Textinput
             placeholder=""
             label="First name"
@@ -139,9 +141,9 @@ onMounted(() => {
     if (res.status === 200) {
       const tempData = res.data.data;
       Object.keys(values).forEach((key) => {
-        form[key] = tempData[key];
-        if (tempData[key]) {
-          setFieldValue(key, tempData[key]);
+        form[key] = tempData?.[key];
+        if (tempData?.[key]) {
+          setFieldValue(key, tempData?.[key]);
         }
       });
     }

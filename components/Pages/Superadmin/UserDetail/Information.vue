@@ -119,9 +119,9 @@ onMounted(() => {
     if (res.status === 200) {
       const tempData = res.data.data;
       Object.keys(values).forEach((key) => {
-        form[key] = tempData[key];
-        if (tempData[key]) {
-          setFieldValue(key, tempData[key]);
+        form[key] = tempData?.[key];
+        if (tempData?.[key]) {
+          setFieldValue(key, tempData?.[key]);
         }
       });
     }

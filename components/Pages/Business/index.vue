@@ -108,7 +108,7 @@ function getData() {
 
           companyInfo.value = tempData;
           Object.keys(tempData).forEach((key) => {
-            form[key] = tempData[key];
+            form[key] = tempData?.[key];
           });
           form.dateOfIncorporation = res.data.data.dateOfIncorporation;
           if (companyDocuments.length > 0) {

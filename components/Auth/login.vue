@@ -35,6 +35,7 @@
             v-model="password"
             icon-position="left"
             v-bind="passwordAtt"
+            :hasicon="true"
             :error="errors.password"
           />
         </div>

@@ -1,12 +1,8 @@
 <template>
   <div class="w-full">
-    <!-- <div class="mb-6">
-      <HeaderComponent
-        title="Personal info"
-        subtext="Update your photo and personal details here."
-      />
-    </div> -->
-    <div class="w-full bg-white rounded-lg py-6 max-w-[800px] p-6 border border-[#E9EAEB]">
+    <div
+      class="w-full bg-white rounded-lg py-6 max-w-[800px] p-6 border border-[#E9EAEB]"
+    >
       <form @submit.prevent="onSubmit" class="w-full grid gap-y-6">
         <div class="flex gap-x-10">
           <div class="lg:w-[300px] font-semibold text-sm">
@@ -92,11 +88,7 @@
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import {
-  getUserProfile,
-  updateCompanyProfile,
-  updateUserProfile,
-} from "~/services/settingservices";
+import { getUserProfile, updateUserProfile } from "~/services/settingservices";
 import { getSingleInvite } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 
@@ -113,15 +105,27 @@ const isLoading = ref(false);
 
 const authStore = useAuthStore();
 const phoneRegex = /^[0-9]{18}$/;
-const  {id} = useRoute().params
+const { id } = useRoute().params;
 onMounted(() => {
   getSingleInvite(id).then((res) => {
     if (res.status === 200) {
       const tempData = res.data.data;
       Object.keys(values).forEach((key) => {
-        form[key] = tempData[key];
-        if (tempData[key]) {
-          setFieldValue(key, tempData[key]);
+        form[key] = tempData?.[key];
+        if (tempData?.[key]) {
+          setFieldValue(key, tempData?.[key]);
+        }
+      });
+    }
+  });
+
+  getUserProfile().then((res) => {
+    if (res.status === 200) {
+      const tempData = res.data.data;
+      Object.keys(values).forEach((key) => {
+        form[key] = tempData?.[key];
+        if (tempData?.[key]) {
+          setFieldValue(key, tempData?.[key]);
         }
       });
     }

@@ -7,7 +7,7 @@
         </div>
         <LayoutMobileSideComponent />
 
-        <div class="flex-1 h-full w-full lg:min-h-[80vh] overflow-auto bg-white">
+        <div class="flex-1 h-full w-full lg:min-h-[80vh] overflow-auto">
           <AppHeader :hideLogo="true" />
           <MobileHeader />
           <!-- <LayoutMainComponent /> -->

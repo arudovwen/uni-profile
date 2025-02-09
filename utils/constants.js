@@ -318,14 +318,9 @@ export const documentsOptions = {
 };
 export const Navigation = [
   {
-    name: "Profile",
+    name: "Settings",
     url: "/",
-    key: "profile",
-  },
-  {
-    name: "Security",
-    url: "/security",
-    key: "security",
+    key: "settings",
   },
 
   {
@@ -337,6 +332,11 @@ export const Navigation = [
     name: "Applications",
     url: "/my-applications",
     key: "my-applications",
+  },
+  {
+    name: "Audit Logs",
+    url: "/audit-logs",
+    key: "audit-logs",
   },
   {
     name: "Notifications",
@@ -389,7 +389,7 @@ export const userRoutes = [
   "profile",
   "notifications",
 ];
-export const univeralRoutes = ["audit-logs"];
+export const univeralRoutes = ["audit-logs", "user-management-user-detail-id"];
 export const RoleMap = {
   0: "Central Admin",
   1: "Superadmin",
@@ -397,15 +397,11 @@ export const RoleMap = {
 };
 export const UserNavigation = [
   {
-    name: "Profile",
+    name: "Settings",
     url: "/",
-    key: "profile",
+    key: "settings",
   },
-  {
-    name: "Security",
-    url: "/security",
-    key: "security",
-  },
+
   {
     name: "Business Information",
     url: "/business-information",
@@ -416,11 +412,11 @@ export const UserNavigation = [
     url: "/settlements",
     key: "settlement",
   },
-  {
-    name: "Applications",
-    url: "/my-applications",
-    key: "my-applications",
-  },
+  // {
+  //   name: "Applications",
+  //   url: "/my-applications",
+  //   key: "my-applications",
+  // },
   {
     name: "Notifications",
     url: "/notifications",
@@ -429,14 +425,9 @@ export const UserNavigation = [
 ];
 export const OwnerNavigation = [
   {
-    name: "Profile",
+    name: "Settings",
     url: "/",
-    key: "profile",
-  },
-  {
-    name: "Security",
-    url: "/security",
-    key: "security",
+    key: "settings",
   },
   {
     name: "Business Information",
@@ -454,11 +445,11 @@ export const OwnerNavigation = [
     url: "/settlements",
     key: "settlement",
   },
-  {
-    name: "Applications",
-    url: "/my-applications",
-    key: "my-applications",
-  },
+  // {
+  //   name: "Applications",
+  //   url: "/my-applications",
+  //   key: "my-applications",
+  // },
   {
     name: "Audit Logs",
     url: "/audit-logs",

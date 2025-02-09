@@ -1,16 +1,20 @@
 <template>
-  <NuxtLayout>
-    <div class="py-10">
-      <PagesProfileInformation />
-      
+  <NuxtLayout :name="layoutName">
+    <div :class=" authStore.userInfo?.userCategory === 3 ? '' : 'container py-10 max-w-[900px] mx-auto'">
+      <PagesSettings />
     </div>
   </NuxtLayout>
 </template>
 
 <script setup>
+const authStore = useAuthStore();
+
+const layoutName = computed(() => 
+  authStore.userInfo?.userCategory === 3 ? 'superadmin' : 'default'
+);
+
+// Define page meta with just the middleware
 definePageMeta({
-  layout: "superadmin",
-  middleware: "auth",
+  middleware: "auth"
 });
-const route = useRoute();
 </script>

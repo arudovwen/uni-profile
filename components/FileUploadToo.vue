@@ -19,7 +19,7 @@
       <span class="text-xs">
         <span class="block mb-1"
           ><span class="text-primary-500 font-medium">Click to upload</span> or drag and drop</span
-        ><span>SVG, PNG, JPG or GIF (max. 800x400px)</span>
+        ><span><span class="capitalize">{{accept}}</span></span>
       </span>
     </label>
   </div>

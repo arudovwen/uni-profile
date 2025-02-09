@@ -9,60 +9,31 @@
         emptyType="user"
         :isLoading="setLoader"
       >
-        <!-- Row Actions -->
         <template #table-row-action="{ row }">
-          <Menu class="" as="div">
-            <Float placement="bottom-end" :offset="4">
-              <MenuButton class="outline-none">
-                <AppIcon icon="heroicons:ellipsis-vertical-solid" />
-              </MenuButton>
-              <MenuItems
-                class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-2 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
-              >
-                <MenuItem>
-                  <button
-                    type="button"
-                    @click="
-                      detail = row;
-                      id = detail.id;
-                      isUpdateOpen = true;
-                    "
-                    class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap cursor-pointer w-full text-left"
-                  >
-                    Update Role
-                  </button></MenuItem
+          <div class="max-w-[280px]">
+            <SwitchGroup>
+              <div class="flex items-center justify-start gap-x-1">
+                <Switch
+                  v-model="row.isTwoFactorAuthEnabled"
+                  :class="
+                    row.isTwoFactorAuthEnabled ? 'bg-green-700' : 'bg-gray-200'
+                  "
+                  class="relative inline-flex h-5 w-[38px] items-center rounded-full transition-colors focus:outline-none"
+                  @click="toggleTwoFactorAuth(row)"
                 >
-                <MenuItem>
-                  <button
-                    type="button"
-                    @click="
-                      detail = row;
-                      id = detail.id;
-                      open = true;
+                  <span
+                    :class="
+                      row.isTwoFactorAuthEnabled
+                        ? 'translate-x-5'
+                        : 'translate-x-[2px]'
                     "
-                    class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap cursor-pointer w-full text-left"
-                  >
-                    Revoke access
-                  </button></MenuItem
-                >
-                <MenuItem>
-                  <button
-                    type="button"
-                    @click="
-                      detail = row;
-                      id = detail.id;
-                      isOpen = true;
-                    "
-                    class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap cursor-pointer w-full text-left"
-                  >
-                    Enable access
-                  </button></MenuItem
-                >
-              </MenuItems>
-            </Float>
-          </Menu>
+                    class="inline-block h-4 w-4 transform rounded-full bg-white transition-transform"
+                  />
+                </Switch>
+              </div>
+            </SwitchGroup>
+          </div>
         </template>
-
         <!-- Name Column -->
         <template #table-row-name="{ row }">
           <span class="capitalize flex gap-x-2 items-center">
@@ -119,13 +90,12 @@
 
 <script setup>
 import UpdateForm from "./UpdateForm";
-import { Float } from "@headlessui-float/vue";
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
+import { Switch, SwitchGroup } from "@headlessui/vue";
 import { getSubApps } from "~/services/userservices";
 
 import debounce from "lodash/debounce";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
@@ -160,7 +130,9 @@ function getData() {
     .then((res) => {
       if (res.status === 200) {
         setLoader.value = false;
-        rows.value = res.data.data.filter((i) => authStore.userInfo.subAppCodes.includes(i.code));
+        rows.value = res.data.data.filter((i) =>
+          authStore.userInfo.subAppCodes.includes(i.code)
+        );
       }
     })
     .catch(() => {

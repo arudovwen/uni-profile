@@ -54,7 +54,7 @@
                         <button
                           type="button"
                           @click="
-                            navigateTo(`/user-management/user-detail/${row.id}`)
+                            navigateTo(`/users-management/user-detail/${row.id}`)
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
