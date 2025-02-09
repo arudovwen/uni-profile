@@ -15,7 +15,7 @@
               <img :src="photo" class="h-16 w-16 rounded-full object-cover" />
             </span>
             <div class="flex-1">
-              <FileUploadToo v-model="photo" accept="jpg, jpeg,png" />
+              <FileUploadToo v-model="photo" accept="jpg, jpeg, png" />
             </div>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6">
@@ -167,17 +167,11 @@
     phone: yup.string().required("Phone number is required"),
     address: yup
       .string()
-      .required("Address is required")
       .min(5, "Address must be at least 5 characters")
       .max(100, "Address must be less than 100 characters"),
   
     photo: yup.mixed().required("Photo is required"),
-  
-    category: yup
-      .string()
-      .required("Business category is required")
-      .min(3, "Business category must be at least 3 characters")
-      .max(50, "Business category must be less than 50 characters"),
+ 
   });
   const { handleSubmit, defineField, errors, setFieldValue, setValues, values } =
     useForm({
@@ -190,7 +184,7 @@
   const [contactEmail, emailAtt] = defineField("contactEmail");
   const [phone] = defineField("phone");
   const [photo] = defineField("photo");
-  const [category] = defineField("category");
+
   const [address, addressAtt] = defineField("address");
   
   const onSubmit = handleSubmit((values) => {
@@ -200,6 +194,7 @@
     })
       .then((res) => {
         if (res.status === 200) {
+          isLoading.value = false;
           toast.success("Profile updated");
         }
       })

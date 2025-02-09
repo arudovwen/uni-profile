@@ -72,7 +72,7 @@ function handleEvent(e) {
   // Add more allowed extensions if needed
   const fileExtension = file.name.split(".").pop().toLowerCase();
 
-  if (!props.accept.split(",").includes(fileExtension)) {
+  if (!props.accept.split(", ").includes(fileExtension)) {
     // Show an error message or handle accordingly
     toast.error("Invalid file type. Please upload a document.");
     return;
@@ -90,7 +90,7 @@ function handleEvent(e) {
       .then((res) => {
         loading.value = false;
  
-        emits("update:modelValue", res.data.message);
+        emits("update:modelValue", res.data.data);
       })
       .catch((error) => {
         console.error("Error uploading file:", error);

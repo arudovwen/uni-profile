@@ -152,35 +152,25 @@ onMounted(() => {
 const formSchema = yup.object({
   firstName: yup
     .string()
-    .required("First name is required")
     .min(2, "First name must be at least 2 characters")
     .max(50, "First name must be less than 50 characters"),
 
   lastName: yup
     .string()
-    .required("Last name is required")
     .min(2, "Last name must be at least 2 characters")
     .max(50, "Last name must be less than 50 characters"),
 
   contactEmail: yup
     .string()
-    .required("Email is required")
     .email("Invalid email format"),
 
   phone: yup.string().required("Phone number is required"),
   address: yup
     .string()
-    .required("Address is required")
     .min(5, "Address must be at least 5 characters")
     .max(100, "Address must be less than 100 characters"),
 
   photo: yup.mixed().required("Photo is required"),
-
-  category: yup
-    .string()
-    .required("Business category is required")
-    .min(3, "Business category must be at least 3 characters")
-    .max(50, "Business category must be less than 50 characters"),
 });
 const { handleSubmit, defineField, errors, setFieldValue, setValues, values } =
   useForm({
