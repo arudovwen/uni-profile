@@ -80,7 +80,7 @@ const handleTokenRefresh = async () => {
     ] = `Bearer ${data.jwToken}`;
     return data.jwToken;
   } catch (error) {
-    authStore.signOut();
+    authStore.clearAuth();
     throw error;
   }
 };
