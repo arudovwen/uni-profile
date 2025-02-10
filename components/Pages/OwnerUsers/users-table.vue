@@ -42,7 +42,7 @@
               @onPageChange="(value) => (queryParams.PageNumber = value)"
             >
               <template #table-row-action="{ row }">
-                <Menu class="" as="div">
+                <Menu class="" as="div" >
                   <Float placement="bottom-end" :offset="4">
                     <MenuButton class="outline-none ml-auto block">
                       <AppIcon icon="heroicons:ellipsis-vertical-solid" />
@@ -50,11 +50,11 @@
                     <MenuItems
                       class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-1 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
                     >
-                      <MenuItem>
+                      <MenuItem  v-if="authStore?.userInfo?.userCategory === 1 && row.category.toLowerCase() == 'member'">
                         <button
                           type="button"
                           @click="
-                            navigateTo(`/users-management/user-detail/${row.id}`)
+                            navigateTo(`/users-management/user-detail/${row.id}?name=${row.name}`)
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
