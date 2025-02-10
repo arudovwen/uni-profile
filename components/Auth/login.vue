@@ -57,7 +57,6 @@
         </div>
 
         <span
-          v-if="app && app !== 5"
           class="flex items-center text-center text-sm text-[#182230] mt-9 darks:text-white/80 gap-x-1 justify-center"
         >
           Don’t have an account?
