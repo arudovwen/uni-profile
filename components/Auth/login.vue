@@ -61,7 +61,7 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/register/${app}`)"
+            :to="handleRouting(route, `/${auth}/register${app?`/${app}`:''}`)"
             class="font-medium text-primary-500"
             >Sign Up</NuxtLink
           >
