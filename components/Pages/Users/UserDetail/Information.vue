@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full">
+  <div   class="w-full bg-white rounded-lg py-6  p-6 border border-[#E9EAEB]">
     <div
-      class="w-full bg-white rounded-lg py-6 max-w-[800px] p-6 border border-[#E9EAEB]"
+      class="w-full max-w-[800px]"
     >
       <form @submit.prevent="onSubmit" class="w-full grid gap-y-6">
         <div class="flex gap-x-10">

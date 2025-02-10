@@ -3,7 +3,7 @@
     <!-- Table -->
     <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
       <CustomTable
-        :columns="columns"
+        :columns="filteredColumns"
         :rows="rows"
         emptyTitle="No application available"
         emptyType="user"
@@ -109,6 +109,11 @@ const columns = [
   { header: "", key: "action", isHtml: false, isStatus: false },
 ];
 
+const filteredColumns = computed(() =>
+  [0, 3, 1].includes(authStore?.userInfo?.userCategory)
+    ? columns
+    : columns.filter((i) => i.key !== "action")
+);
 onMounted(() => {
   getData();
 });
@@ -136,8 +141,9 @@ function getData() {
         setLoader.value = false;
         const tempData = res.data.data.map((i) => ({
           ...i,
-          isActive: detail.value.appCodes.includes(i.code),
+          isActive: detail.value?.appCodes?.includes(i.code),
         }));
+        console.log("🚀 ~ tempData ~ tempData:", tempData);
         rows.value = tempData;
       }
     })

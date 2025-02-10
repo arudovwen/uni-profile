@@ -54,7 +54,9 @@
                         <button
                           type="button"
                           @click="
-                            navigateTo(`/user-management/user-detail/${row.id}?name=${row.name}`)
+                            navigateTo(
+                              `/user-management/user-detail/${row.id}?name=${row.name}`
+                            )
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
                         >
@@ -209,8 +211,8 @@ const queryParams = reactive({
 
 function getInvites() {
   loading.value = true;
-  try {
-    getAllUsers(queryParams).then((res) => {
+  getAllUsers(queryParams)
+    .then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,
         // roleName: RoleMap[i.role],
@@ -221,15 +223,10 @@ function getInvites() {
         status: i.isActive ? 1 : 2,
       }));
       queryParams.total = res.data.totalCount;
+    })
+    .finally(() => {
       loading.value = false;
     });
-  } catch (err) {
-    loading.value = false;
-  } finally {
-    setTimeout(() => {
-      loading.value = false;
-    }, 5000);
-  }
 }
 
 const debounceSearch = debounce(() => {

@@ -6,7 +6,7 @@
     <div
       class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
-      <HeaderComponent title="John Snow" />
+      <HeaderComponent :title="name" />
     </div>
     <div>
       <AppTab
@@ -16,15 +16,13 @@
       />
     </div>
     <div class="flex">
-      <Information v-if="active === 'profile'" />
-      <Apps v-if="active === 'apps'" />
+      <PagesUsersUserDetailInformation v-if="active === 'profile'" />
+      <PagesUsersUserDetailApps v-if="active === 'apps'" />
     </div>
   </div>
 </template>
 <script setup>
-import Information from "./Information";
-import Apps from "./apps";
-
+const {name} = useRoute().query
 const active = ref("profile");
 const tabs = [
   {
