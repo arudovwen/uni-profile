@@ -320,7 +320,7 @@ export const Navigation = [
   {
     name: "Settings",
     url: "/",
-    key: "/",
+    key: "index",
   },
 
   {
@@ -399,7 +399,7 @@ export const UserNavigation = [
   {
     name: "Settings",
     url: "/",
-    key: "/",
+    key: "index",
   },
 
   {
@@ -427,7 +427,7 @@ export const OwnerNavigation = [
   {
     name: "Settings",
     url: "/",
-    key: "/",
+    key: "index",
   },
   {
     name: "Business Information",

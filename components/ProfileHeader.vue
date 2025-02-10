@@ -3,6 +3,7 @@
     <ul
       class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
     >
+
       <li
         v-for="n in NavMapper[authStore?.userInfo?.userCategory]"
         :key="n.name"
@@ -10,7 +11,7 @@
         <NuxtLink :to="n.url">
           <button
             :class="
-              route.path.includes(n.key)
+              route.name.includes(n.key)
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'border-transparent'
             "
