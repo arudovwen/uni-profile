@@ -14,6 +14,10 @@ const urls = {
   SOCIAL_REGISTER: "v1/register/social",
   SOCIAL_LOGIN: "v1/account/sociallogin",
   RESEND_2FA_OTP: "v1/account/resend-2fa-code",
+  USER_DETAIL: "v1/register/user-profile",
+
+  REGISTER_APP_REVOKE: "v1/register/apps/revoke-access",
+  OWNER_DISABLE_USER: "v1/account/disable-user",
 
   OXIDE_FLUX_REGISTER: "/v1/onboarding/sign-up",
   OXIDE_CONFIRM_EMAIL: "v1/onboarding/confirm-email",

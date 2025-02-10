@@ -94,3 +94,11 @@ export async function sendOwnerInvite(data) {
 export async function registerMember(data) {
   return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
 }
+
+export async function ownerDisableUser(data) {
+  return await ssoPost(`${urls.OWNER_DISABLE_USER}/${data}`, {});
+}
+
+export async function ownerRevokeAccess(data) {
+  return await ssoPost(`${urls.OWNER_DISABLE_USER}`, data);
+}

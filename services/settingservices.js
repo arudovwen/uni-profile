@@ -41,6 +41,9 @@ export async function updateBusinessProfile(data) {
 export async function getUserProfile() {
   return await ssoGet(urls.USER_PROFILE, config);
 }
+export async function getUserDetail(id) {
+  return await ssoGet(`${urls.USER_DETAIL}/${id}`, config);
+}
 export async function updateUserProfile(data) {
   return await ssoPut(`${urls.USER_PROFILE}`, data, config);
 }

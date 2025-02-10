@@ -62,12 +62,12 @@
                         </button></MenuItem
                       >
 
-                      <MenuItem v-if="authStore?.userInfo?.userCategory === 1">
+                      <MenuItem v-if="authStore?.userInfo?.userCategory === 1 && row.category.toLowerCase() == 'member'">
                         <button
                           type="button"
                           @click="
                             detail = row;
-                            id = detail.contactEmail;
+                            id = detail.id;
                             open = true;
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
@@ -112,7 +112,7 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getOwnerMembers, toggleMemberStatus } from "~/services/userservices";
+import { getOwnerMembers, ownerDisableUser } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
@@ -233,7 +233,7 @@ const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  toggleMemberStatus(id.value)
+  ownerDisableUser(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;

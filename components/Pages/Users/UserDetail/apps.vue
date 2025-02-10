@@ -14,18 +14,14 @@
             <SwitchGroup>
               <div class="flex items-center justify-start gap-x-1">
                 <Switch
-                  v-model="row.isTwoFactorAuthEnabled"
-                  :class="
-                    row.isTwoFactorAuthEnabled ? 'bg-[#067647]' : 'bg-gray-200'
-                  "
+                  v-model="row.isActive"
+                  :class="row.isActive ? 'bg-[#067647]' : 'bg-gray-200'"
                   class="relative inline-flex h-4 w-[34px] items-center rounded-full transition-colors focus:outline-none"
-                  @click="toggleTwoFactorAuth(row)"
+                  @click="toggleAccess(row)"
                 >
                   <span
                     :class="
-                      row.isTwoFactorAuthEnabled
-                        ? 'translate-x-5'
-                        : 'translate-x-[2px]'
+                      row.isActive ? 'translate-x-5' : 'translate-x-[2px]'
                     "
                     class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
                   />
@@ -91,11 +87,12 @@
 <script setup>
 import UpdateForm from "./UpdateForm";
 import { Switch, SwitchGroup } from "@headlessui/vue";
-import { getSubApps } from "~/services/userservices";
-
+import { getSubApps, ownerRevokeAccess } from "~/services/userservices";
+import { getUserDetail } from "~/services/settingservices";
 import debounce from "lodash/debounce";
 
 const authStore = useAuthStore();
+const { id: userId } = useRoute().params;
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
@@ -108,7 +105,7 @@ const columns = [
   // { header: "Role", key: "role", isHtml: false, isStatus: false },
   { header: "Last active", key: "lastActive", isHtml: false, isStatus: false },
 
-  { header: "Status", key: "isDisabled", isHtml: false, isStatus: false },
+  { header: "Status", key: "isActive", isHtml: false, isStatus: false },
   { header: "", key: "action", isHtml: false, isStatus: false },
 ];
 
@@ -126,20 +123,39 @@ const queryParams = reactive({
 
 function getData() {
   setLoader.value = true;
+  getUserDetail(userId).then((res) => {
+    if (res.status === 200) {
+      const tempData = res.data.data;
+      detail.value = tempData;
+    }
+  });
+
   getSubApps()
     .then((res) => {
       if (res.status === 200) {
         setLoader.value = false;
-        rows.value = res.data.data.filter((i) =>
-          authStore.userInfo.subAppCodes.includes(i.code)
-        );
+        const tempData = res.data.data.map((i) => ({
+          ...i,
+          isActive: detail.value.appCodes.includes(i.code),
+        }));
+        rows.value = tempData;
       }
     })
     .catch(() => {
       setLoader.value = false;
     });
 }
-
+function toggleAccess(data) {
+  ownerRevokeAccess({ email: detail.value?.contactEmail, appCode: data?.code })
+    .then((res) => {
+      if (res.status === 200) {
+        toast.info("Updated successfully");
+      }
+    })
+    .catch((err) => {
+      console.error("Failed to update 2FA status:", err);
+    });
+}
 const handleDelete = () => {
   // Handle delete logic here
 };

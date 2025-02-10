@@ -31,11 +31,15 @@
     <!-- Input Section -->
     <div
       class="relative !flex items-center input-control text-[#667085] z-[99]"
+      :class="disabled ? '!bg-[#f8fafc]' : ''"
     >
       <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
       <Listbox v-model="selectedCountryCode" class="z-[10]">
         <Float placement="bottom-end" :offset="4">
-          <ListboxButton class="pl-3 pr-4 bg-white border-r z-[2]">
+          <ListboxButton
+            :disabled="disabled"
+            class="pl-3 pr-4 bg-white border-r z-[2] disabled:bg-transparent"
+          >
             {{ selectedCountryCode || "Select Country Code" }}
           </ListboxButton>
           <ListboxOptions
@@ -58,7 +62,7 @@
         <input
           v-model="phoneNumber"
           type="number"
-          class="w-full px-3 outline-none"
+          class="w-full px-3 outline-none disabled:bg-transparent py-[1px]"
           :placeholder="placeholder"
           :error="error"
           :readonly="isReadonly"
@@ -189,6 +193,9 @@ watch(
   box-shadow: 0px 1px 2px #1018280d;
   border-radius: 8px;
   border: 1px solid #d0d5dd;
+}
+.input-control:disabled {
+  background: #f8fafc;
 }
 /* Hide the number input caret (spinner) in most browsers */
 input[type="number"]::-webkit-outer-spin-button,

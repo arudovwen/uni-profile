@@ -17,6 +17,7 @@
               v-model="firstName"
               :error="errors.firstName"
               :isCumpulsory="true"
+              disabled
             />
 
             <Textinput
@@ -27,6 +28,7 @@
               v-model="lastName"
               :error="errors.lastName"
               :isCumpulsory="true"
+              disabled
             />
           </div>
         </div>
@@ -47,7 +49,7 @@
                 :isCumpulsory="true"
                 icon="fe:mail"
                 icon-position="left"
-                :disabled="!!contactEmail"
+                disabled
               />
             </div>
           </div>
@@ -63,8 +65,9 @@
               name="phone"
               :error="errors.phone"
               :isCumpulsory="true"
+              
             >
-              <FormsPhoneCodes v-model="phone" />
+              <PhoneNumber v-model="phone" disabled />
             </FormGroup>
           </div>
         </div>
@@ -88,7 +91,7 @@
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { getUserProfile, updateUserProfile } from "~/services/settingservices";
+import { getUserDetail, updateUserProfile } from "~/services/settingservices";
 import { getSingleInvite } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 
@@ -104,7 +107,6 @@ const form = reactive({
 const isLoading = ref(false);
 
 const authStore = useAuthStore();
-const phoneRegex = /^[0-9]{18}$/;
 const { id } = useRoute().params;
 onMounted(() => {
   getSingleInvite(id).then((res) => {
@@ -119,7 +121,7 @@ onMounted(() => {
     }
   });
 
-  getUserProfile().then((res) => {
+  getUserDetail(id).then((res) => {
     if (res.status === 200) {
       const tempData = res.data.data;
       Object.keys(values).forEach((key) => {

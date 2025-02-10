@@ -79,7 +79,7 @@
     </Listbox>
     <input
       v-model="phone"
-      placeholder="08160723884"
+      placeholder="0816*******"
       type="tel"
       class="flex-1 px-4 outline-none h-full py-2 text-sm !shadow-none"
     />

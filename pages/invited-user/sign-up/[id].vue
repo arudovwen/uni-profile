@@ -184,14 +184,14 @@ const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  const { appCodes, businessId } = detail.value;
+  const { appCodes, businessId, companyName  } = detail.value;
   SubmitMapper[detail.value.role]({
     ...values,
     confirmPassword: values.password,
     phoneNumber: values.phoneNumber,
     appCodes,
     businessId,
-    companyName:'companyName'
+    companyName
   })
     .then((res) => {
       if (res.status === 200) {
