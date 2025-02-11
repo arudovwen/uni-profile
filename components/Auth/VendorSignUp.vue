@@ -267,7 +267,7 @@ const handleFinalSubmit = (code) => {
         toast.success("Sign up successful");
 
         isLoading.value = false;
-        window.location.replace(redirected_from || "/");
+        window.location.replace(redirected_from || "/business-information");
       }
     })
 
