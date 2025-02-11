@@ -139,7 +139,7 @@ const route = useRoute();
 const { id } = route.params;
 const SubmitMapper = {
   0: registerInvitedUser,
-  3: registerInvitedUser,
+  1: registerInvitedUser,
   2: registerMember,
 };
 const authStore = useAuthStore();
@@ -168,7 +168,7 @@ const schema = yup.object({
     )
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-      "PassworFaddd must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
+      "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
     ),
 });
 
