@@ -15,11 +15,20 @@
         :accept="accept"
         :multiple="multiple"
       />
-      <SvgsUploadSvg />
+      <div
+        v-if="loading"
+        class="h-11 w-11 border border-gray-100 rounded flex items-center justify-center"
+      >
+        <FileLoader />
+      </div>
+      <SvgsUploadSvg v-else />
       <span class="text-xs">
         <span class="block mb-1"
-          ><span class="text-primary-500 font-medium">Click to upload</span> or drag and drop</span
-        ><span><span class="capitalize">{{accept}}</span></span>
+          ><span class="text-primary-500 font-medium">Click to upload</span> or
+          drag and drop</span
+        ><span
+          ><span class="capitalize">{{ accept }}</span></span
+        >
       </span>
     </label>
   </div>
@@ -89,7 +98,7 @@ function handleEvent(e) {
     uploaddocument(data)
       .then((res) => {
         loading.value = false;
- 
+
         emits("update:modelValue", res.data.data);
       })
       .catch((error) => {

@@ -121,6 +121,7 @@ const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
 const detail = ref(null);
+
 const authStore = useAuthStore();
 const Options = [
   {
