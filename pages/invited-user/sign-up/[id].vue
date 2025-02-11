@@ -192,7 +192,7 @@ const onSubmit = handleSubmit((values) => {
     phoneNumber: values.phoneNumber,
     appCodes,
     businessId,
-    companyName,
+    companyName: companyName || "companyName",
   })
     .then((res) => {
       if (res.status === 200) {
