@@ -175,6 +175,7 @@ const onSubmit = handleSubmit(async (values) => {
     const response = await sendOwnerInvite({
       ...values,
       appCodes: authStore.userInfo.subAppCodes,
+      companyName: authStore.userInfo.companyName,
     });
 
     if (response.status === 200) {
