@@ -1,8 +1,6 @@
 <template>
-  <div   class="w-full bg-white rounded-lg py-6  p-6 border border-[#E9EAEB]">
-    <div
-      class="w-full max-w-[800px]"
-    >
+  <div class="w-full bg-white rounded-lg py-6 p-6 border border-[#E9EAEB]">
+    <div class="w-full max-w-[800px]">
       <form @submit.prevent="onSubmit" class="w-full grid gap-y-6">
         <div class="flex gap-x-10">
           <div class="lg:w-[300px] font-semibold text-sm">
@@ -46,7 +44,6 @@
                 v-bind="emailAtt"
                 v-model="contactEmail"
                 :error="errors.contactEmail"
-                :isCumpulsory="true"
                 icon="fe:mail"
                 icon-position="left"
                 disabled
@@ -65,7 +62,6 @@
               name="phone"
               :error="errors.phone"
               :isCumpulsory="true"
-              
             >
               <PhoneNumber v-model="phone" disabled />
             </FormGroup>
@@ -152,11 +148,7 @@ const formSchema = yup.object({
     .email("Invalid email format"),
 
   phone: yup.string().required("Phone number is required"),
-  address: yup
-    .string()
-    .required("Address is required")
-    .min(5, "Address must be at least 5 characters")
-    .max(100, "Address must be less than 100 characters"),
+  address: yup.string(),
 
   photo: yup.mixed().required("Photo is required"),
 

@@ -92,11 +92,7 @@
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import {
-  getUserProfile,
-  updateCompanyProfile,
-  updateUserProfile,
-} from "~/services/settingservices";
+import { updateUserProfile } from "~/services/settingservices";
 import { getSingleInvite } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 
@@ -113,7 +109,7 @@ const isLoading = ref(false);
 
 const authStore = useAuthStore();
 const phoneRegex = /^[0-9]{18}$/;
-const  {id} = useRoute().params
+const { id } = useRoute().params;
 onMounted(() => {
   getSingleInvite(id).then((res) => {
     if (res.status === 200) {
@@ -146,11 +142,7 @@ const formSchema = yup.object({
     .email("Invalid email format"),
 
   phone: yup.string().required("Phone number is required"),
-  address: yup
-    .string()
-    .required("Address is required")
-    .min(5, "Address must be at least 5 characters")
-    .max(100, "Address must be less than 100 characters"),
+  address: yup.string(),
 
   photo: yup.mixed().required("Photo is required"),
 
