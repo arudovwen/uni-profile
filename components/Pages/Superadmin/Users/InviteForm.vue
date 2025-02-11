@@ -202,4 +202,8 @@ const onSubmit = handleSubmit(async (values) => {
     isLoading.value = false;
   }
 });
+
+onMounted(()=>{
+  authStore.getAppsData();
+})
 </script>

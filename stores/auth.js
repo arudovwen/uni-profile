@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { logoutUser } from "~/services/authservices";
+import { getSubApps } from "~/services/userservices";
 
 const cookieDomain =
   process.env.NODE_ENV === "production" ? ".matta.trade" : "localhost";
@@ -62,6 +63,18 @@ export const useAuthStore = defineStore(
         return;
       }
       authUsers.value.push(obj);
+    }
+    function getAppsData() {
+      getSubApps().then((res) => {
+        if (res.status === 200) {
+          const rows = res.data.data.map((i) => ({
+            ...i,
+            url: `${i.url}/auth/validate?token=${jwToken.value}`,
+            defaultUrl: i.url,
+          }));
+          setAppList(rows);
+        }
+      });
     }
     function removeObjectByToken(jwToken) {
       authUsers.value = authUsers?.value?.filter(
@@ -131,6 +144,7 @@ export const useAuthStore = defineStore(
       saveAuthUser,
       appList,
       setAppList,
+      getAppsData
     };
   },
   {
