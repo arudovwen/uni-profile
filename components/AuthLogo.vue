@@ -3,7 +3,7 @@
     v-if="appInfo?.logoUrl"
     :src="appInfo.logoUrl"
     :alt="appInfo.name"
-    class="w-auto h-8"
+    class="w-auto h-7"
   />
   <img
     v-else
