@@ -34,7 +34,10 @@
         />
       </div>
 
-      <div v-if="formValues.accountName">
+      <div class="flex  items-center justify-center" v-if="loadingUser">
+        <FileLoader />
+      </div>
+      <div v-if="formValues.accountName && !loadingUser">
         <Textinput
           placeholder=""
           label="Account name"
@@ -187,11 +190,12 @@ const onSubmit = handleSubmit((values) => {
       isLoading.value = false;
     });
 });
-
+const loadingUser = ref(false);
 watch(
   () => [values.accountNumber, values.bankCode],
   () => {
     if (values.accountNumber?.length === 10 && values.bankCode) {
+      loadingUser.value = true;
       validateAccount({
         bankCode: values.bankCode,
         accountNumber: values.accountNumber,
@@ -199,8 +203,10 @@ watch(
         .then((res) => {
           formValues.accountName = res.data.data.responseBody.accountName;
           setFieldValue("accountName", res.data.data.responseBody.accountName);
+          loadingUser.value = false;
         })
         .catch((err) => {
+          loadingUser.value = false;
           toast.error("Invalid account number");
         });
     }

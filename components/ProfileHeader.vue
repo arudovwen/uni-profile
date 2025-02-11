@@ -5,7 +5,7 @@
     >
 
       <li
-        v-for="n in NavMapper[authStore?.userInfo?.userCategory]"
+        v-for="n in NavMapper[authStore?.userInfo?.userCategory] || UserNavigation"
         :key="n.name"
       >
         <NuxtLink :to="n.url">
