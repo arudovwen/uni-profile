@@ -179,7 +179,7 @@ const formValues = {
 };
 const step = ref(1);
 const schema = yup.object({
-  appCode: yup.string().required(),
+  appCode: yup.string().nullable(),
   email: yup
     .string()
     .required("Email is required")
