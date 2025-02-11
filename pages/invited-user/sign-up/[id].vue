@@ -137,6 +137,7 @@ import { saveAuthProfile } from "~/utils/saveAuthProfile";
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
 const { id } = route.params;
+const { stage, email: routeEmail } = route.query;
 const SubmitMapper = {
   0: registerInvitedUser,
   1: registerInvitedUser,
@@ -184,19 +185,20 @@ const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  const { appCodes, businessId, companyName  } = detail.value;
+  const { appCodes, businessId, companyName } = detail.value;
   SubmitMapper[detail.value.role]({
     ...values,
     confirmPassword: values.password,
     phoneNumber: values.phoneNumber,
     appCodes,
     businessId,
-    companyName
+    companyName,
   })
     .then((res) => {
       if (res.status === 200) {
         isVerifyPin.value = true;
         step.value = 2;
+        navigateTo(`${route.path}?stage=2&email=${values.email}`);
         isLoading.value = false;
       }
     })
@@ -243,13 +245,15 @@ const handleFinalSubmit = (code) => {
       }
     });
 };
-const inviteLoading = ref(true)
+const inviteLoading = ref(true);
 function getInviteData() {
   getSingleInvite(id)
     .then((res) => {
       if (res.status === 200) {
-        setFieldValue("email", res.data.data.email);
-        detail.value = res.data.data;
+        if (res.data.data) {
+          setFieldValue("email", res.data.data?.email);
+          detail.value = res.data.data;
+        }
       }
     })
     .finally(() => {
@@ -257,6 +261,12 @@ function getInviteData() {
     });
 }
 onMounted(() => {
-  getInviteData()
+  getInviteData();
+  if (stage) {
+    step.value = stage;
+  }
+  if (routeEmail) {
+    setFieldValue("email", routeEmail);
+  }
 });
 </script>
