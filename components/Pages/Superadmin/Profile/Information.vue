@@ -80,7 +80,6 @@
 
           <div class="md:col-span-2">
             <Textinput
-              :isCumpulsory="true"
               placeholder=""
               label="Address"
               name="address"
