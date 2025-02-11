@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col items-center justify-center p-4 h-[400px] text-gray-400 text-center"
+    class="flex flex-col items-center justify-center p-4 h-[280px] text-gray-400 text-center"
     :class="className"
   >
     <div class="mx-24 flex justify-center">
