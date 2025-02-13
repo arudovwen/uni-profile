@@ -15,7 +15,7 @@
 
       <!-- Right Side Menu Section -->
       <div class="flex flex-row justify-start items-center p-0 gap-5">
-        <AppMenu v-if="showAppMenu" />
+        <AppMenu />
 
         <Menu as="div" class="relative">
           <MenuButton class="outline-none">
@@ -92,8 +92,6 @@ const isOpen = ref(false);
 const windowWidth = ref(0);
 const view = ref({ atTopOfPage: true });
 
-// Computed
-const showAppMenu = computed(() => authStore?.userInfo?.userCategory !== 3 && authStore?.userInfo?.userCategory !== 0);
 
 const userInitials = computed(() => ({
   first: authStore.userInfo?.firstName?.slice(0, 1) || '',

@@ -36,18 +36,37 @@ import DotsGrid from "@/assets/images/svgs/dots-grid.svg";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { getSubApps } from "~/services/userservices";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const rows = ref([]);
 function getData() {
-  getSubApps().then((res) => {
-    if (res.status === 200) {
-      rows.value = res.data.data.map((i) => ({
-        ...i,
-        url: `${i.url}/auth/validate?token=${authStore.jwToken}`,
-      }));
-    }
-  });
+  getSubApps()
+    .then((res) => {
+      if (res.status === 200) {
+        rows.value = res.data.data.map((i) => {
+          // Extract the URL and apply category-based changes
+          const baseUrl = i.url.replace(
+            "https://",
+            [0, 3].includes(authStore.userInfo.userCategory)
+              ? "https://admin."
+              : "https://"
+          );
+          // Add the token query to the URL
+          const fullUrl = `${baseUrl}/auth/validate?token=${authStore.jwToken}`;
+
+          // Return the modified object
+          return {
+            ...i,
+            url: fullUrl,
+          };
+        });
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching sub-apps:", error);
+      // Optionally, you could update `rows.value` to show an error state
+    });
 }
+
 onMounted(() => {
   getData();
 });
