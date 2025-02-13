@@ -130,8 +130,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 import { Float } from "@headlessui-float/vue";
 import {
   getAllinvites,
-  delSingleInvite,
-  resendAdminInvite,
+  delOwnerInvite,
+  resendOwnerInvite,
 } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import InviteForm from "./InviteForm.vue";
@@ -225,7 +225,7 @@ async function resendInvite() {
     const { role, appCodes, email } = detail.value;
     const data = { role, appCodes, email };
 
-    const response = await resendAdminInvite(data);
+    const response = await resendOwnerInvite(data);
 
     if (response.status === 200) {
       isResendOpen.value = false;
@@ -242,7 +242,7 @@ const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  delSingleInvite(id.value)
+  delOwnerInvite(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;

@@ -108,3 +108,12 @@ export async function ownerDisableUser(data) {
 export async function ownerRevokeAccess(data) {
   return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
 }
+
+export async function resendOwnerInvite(data) {
+  return await ssoPost(`v1/owner/re-send-invite`, data);
+}
+
+
+export async function delOwnerInvite(id) {
+  return await ssoDelete(`v1/owner/invites/cancel/${id}`, {});
+}

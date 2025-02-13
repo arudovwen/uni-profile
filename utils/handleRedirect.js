@@ -1,4 +1,4 @@
-export function handleRedirect(route, { token, userCategory }, app) {
+export function handleRedirect(route, { jwToken, userCategory }, app) {
   const authStore = useAuthStore();
   const url = authStore.appList?.find((i) => i.code === app)?.defaultUrl;
 
@@ -8,7 +8,7 @@ export function handleRedirect(route, { token, userCategory }, app) {
         "https://",
         [0, 3].includes(userCategory) ? "https://admin." : "https://"
       ) || route.query.continue
-    }/auth/validate?token=${token}`
+    }/auth/validate?token=${jwToken}`
   );
 }
 
