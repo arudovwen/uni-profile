@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full">
+  <div class="w-full max-w-[800px] mx-auto">
     <!-- Top bar   -->
 
     <div
@@ -23,10 +23,10 @@
             <CustomTable
               :columns="columns"
               :rows="rows"
-              emptyTitle="No user available"
+              emptyTitle="No invite available"
               :isLoading="loading"
               emptyType="user"
-              statType="driver"
+              statType="invite"
             >
               <template #table-row-action="{ row }">
                 <Menu class="" as="div">
@@ -48,19 +48,7 @@
                           <AppIcon icon="iconamoon:edit-light" /> View Details
                         </button></MenuItem
                       >
-                      <MenuItem v-if="row.status === 0">
-                        <button
-                          type="button"
-                          @click="
-                            detail = row;
-                            id = detail.id;
-                            open = true;
-                          "
-                          class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
-                        >
-                          <AppIcon icon="ic:outline-cancel" /> Cancel Invite
-                        </button></MenuItem
-                      >
+
                       <MenuItem v-if="row.status === 0">
                         <button
                           type="button"
@@ -73,6 +61,19 @@
                         >
                           <AppIcon icon="mdi:email-resend-outline" /> Resend
                           invite
+                        </button></MenuItem
+                      >
+                      <MenuItem v-if="row.status === 0">
+                        <button
+                          type="button"
+                          @click="
+                            detail = row;
+                            id = detail.id;
+                            open = true;
+                          "
+                          class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                        >
+                          <AppIcon icon="ic:outline-cancel" /> Cancel Invite
                         </button></MenuItem
                       >
                       <!-- <MenuItem>
@@ -213,7 +214,7 @@ async function getInvites() {
     }));
     queryParams.totalCount = res.data.data.totalCount;
   } catch (error) {
-    console.error('Error fetching invites:', error);
+    console.error("Error fetching invites:", error);
     // Handle error appropriately - maybe show an error message to user
   } finally {
     loading.value = false;

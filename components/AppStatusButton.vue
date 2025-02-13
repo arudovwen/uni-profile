@@ -94,6 +94,21 @@ const Driver = {
   },
 };
 
+const InviteStatus = {
+  0: {
+    text: "Pending",
+    className: StatusClass[0],
+  },
+  1: {
+    text: "Active",
+    className: StatusClass[1],
+  },
+  2: {
+    text: "Cancelled",
+    className: StatusClass[4],
+  },
+};
+
 const AdminVehicle = {
   0: {
     text: "Pending",
@@ -333,6 +348,10 @@ const PaymentStatus = {
 const Stats = computed(() => {
   if (props.stattype === "driver") {
     return Driver;
+  }
+
+  if (props.stattype === "invite") {
+    return InviteStatus
   }
   if (props.stattype === "vehicle") {
     return VehicleStatus;

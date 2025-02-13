@@ -115,5 +115,5 @@ export async function resendOwnerInvite(data) {
 
 
 export async function delOwnerInvite(id) {
-  return await ssoDelete(`v1/owner/invites/cancel/${id}`, {});
+  return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
 }
