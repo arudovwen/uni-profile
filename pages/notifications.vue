@@ -1,5 +1,5 @@
 <template>
-    <NuxtLayout>
+    <NuxtLayout :name="layoutName">
       <div class="py-10">
         <PagesNotification />
       </div>
@@ -11,5 +11,9 @@
     middleware: "auth",
   });
   const route = useRoute();
+  const authStore = useAuthStore()
+const layoutName = computed(() =>
+  [0, 3].includes(authStore.userInfo?.userCategory) ? "superadmin" : "default"
+);
   </script>
   

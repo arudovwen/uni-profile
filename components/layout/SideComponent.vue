@@ -31,6 +31,14 @@
                     v-if="item.key === 'user-management'"
                     :active="isActive(item)"
                   />
+                  <SvgsUsersSvg
+                    v-if="item.key === 'users-management'"
+                    :active="isActive(item)"
+                  />
+                  <SvgsAppSvg
+                    v-if="item.key === 'my-applications'"
+                    :active="isActive(item)"
+                  />
                   <SvgsOrdersSvg
                     v-if="item.key === 'profile'"
                     :active="isActive(item)"
@@ -42,6 +50,10 @@
                   />
                   <SvgsNotificationSvg
                     v-if="item.key === 'notifications'"
+                    :active="isActive(item)"
+                  />
+                  <SvgsSettingSvg
+                    v-if="item.key === 'index'"
                     :active="isActive(item)"
                   />
                 </span>
@@ -62,8 +74,14 @@
   </aside>
 </template>
 <script setup>
+
 const route = useRoute();
-const mappedNavigation = computed(() => SuperNavigation);
+const authStore = useAuthStore()
+const NavMapper = {
+  0: Navigation,
+  1: SuperNavigation,
+};
+const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCategory]);
 
 const isActive = (item) => {
   return (

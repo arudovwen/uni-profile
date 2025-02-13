@@ -1,6 +1,12 @@
 <template>
   <NuxtLayout :name="layoutName">
-    <div :class=" authStore.userInfo?.userCategory === 3 ? '' : 'container py-10 max-w-[900px] mx-auto'">
+    <div
+      :class="
+        authStore.userInfo?.userCategory === 3
+          ? ''
+          : 'container py-10 max-w-[900px] mx-auto'
+      "
+    >
       <PagesSettings />
     </div>
   </NuxtLayout>
@@ -9,12 +15,12 @@
 <script setup>
 const authStore = useAuthStore();
 
-const layoutName = computed(() => 
-  authStore.userInfo?.userCategory === 3 ? 'superadmin' : 'default'
+const layoutName = computed(() =>
+  [0, 3].includes(authStore.userInfo?.userCategory) ? "superadmin" : "default"
 );
 
 // Define page meta with just the middleware
 definePageMeta({
-  middleware: "auth"
+  middleware: "auth",
 });
 </script>

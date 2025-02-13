@@ -16,7 +16,7 @@
           class="border border-[#DFE5EC] text-sm rounded-lg w-full lg:w-[320px] h-11 pl-10 py-2 outline-none focus:outline-none"
         />
       </div>
-      <div>
+      <div v-if="authStore?.userInfo?.userCategory === 3">
         <SelectVueSelect
           v-model="queryParams.userCatText"
           :options="Options"
@@ -55,7 +55,13 @@
                           type="button"
                           @click="
                             navigateTo(
-                              `/user-management/user-detail/${row.id}?name=${row.name}`
+                              `/user${
+                                authStore?.userInfo?.userCategory === 3
+                                  ? ''
+                                  : 's'
+                              }-management/user-detail/${row.id}?name=${
+                                row.name
+                              }`
                             )
                           "
                           class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
@@ -113,7 +119,11 @@ import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
 
 import { Float } from "@headlessui-float/vue";
-import { getAllUsers, toggleUserStatus } from "~/services/userservices";
+import {
+  getAllUsers,
+  toggleUserStatus,
+  getCentralAdminUsers,
+} from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
@@ -206,13 +216,13 @@ const queryParams = reactive({
   PageNumber: 1,
   PageSize: 15,
   userCatText: "",
-  userCategories: [0, 1, 2, 3],
+  userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3] : null,
   total: 0,
 });
 
 function getInvites() {
   loading.value = true;
-  getAllUsers(queryParams)
+  getCentralAdminUsers(queryParams)
     .then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,

@@ -77,6 +77,12 @@ export async function getOwnerinvites(payload) {
     {}
   );
 }
+export async function getCentralAdminUsers(payload) {
+  return await ssoGet(
+    `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(cleanObject(payload))}`,
+    {}
+  );
+}
 
 export async function getOwnerMembers(payload) {
   return await ssoPost(`${urls.OWNER_GET_MEMBERS}`, cleanObject(payload));
@@ -100,5 +106,5 @@ export async function ownerDisableUser(data) {
 }
 
 export async function ownerRevokeAccess(data) {
-  return await ssoPost(`${urls.OWNER_DISABLE_USER}`, data);
+  return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
 }

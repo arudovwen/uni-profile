@@ -119,7 +119,9 @@
             >
               Already have an account?
               <NuxtLink
-                :to="handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)"
+                :to="
+                  handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)
+                "
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
               >
@@ -150,7 +152,7 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
-import { registerUser,confirmRegister } from "~/services/authservices";
+import { registerUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 
 const props = defineProps({
@@ -175,7 +177,7 @@ const formValues = {
   confirmPassword: "",
   companyName: "",
   AgentReferralCode: "",
-  appCode: app
+  appCode: app,
 };
 const step = ref(1);
 const schema = yup.object({
@@ -248,26 +250,27 @@ const onSubmit = handleSubmit((values) => {
 
 const handleFinalSubmit = (code) => {
   isLoading.value = true;
- confirmRegister({
-      code,
-      otpCode: code,
-      email: email.value || route.query.email,
-    })
+  confirmRegister({
+    code,
+    otpCode: code,
+    email: email.value || route.query.email,
+  })
     .then((res) => {
       if (res.status === 200) {
         isVerified.value = true;
-        authStore.setLoggedUser(res.data.data);
-        authStore.setHasPin(res.data.data.hasTransactionPIN);
-        saveAuthProfile(res.data.data);
-      
-        if (route.query.continue) {
-          handleRedirect(route, res.data.data.jwToken);
+        const data = res.data.data;
+        authStore.setLoggedUser(data);
+        authStore.setHasPin(data.hasTransactionPIN);
+        saveAuthProfile(data);
+
+        if (route.query.continue || app) {
+          handleRedirect(route, data, app);
           return;
         }
         toast.success("Sign up successful");
 
         isLoading.value = false;
-        window.location.replace(redirected_from || "/business-information");
+        window.location.replace(intialRoute[data?.userCategory]);
       }
     })
 

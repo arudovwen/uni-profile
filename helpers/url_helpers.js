@@ -19,6 +19,8 @@ const urls = {
   REGISTER_APP_REVOKE: "v1/register/apps/revoke-access",
   OWNER_DISABLE_USER: "v1/account/disable-user",
 
+  CENRTAL_ADMIN_GET_USERS: "admin/v1/user/get-users-by-admin",
+
   OXIDE_FLUX_REGISTER: "/v1/onboarding/sign-up",
   OXIDE_CONFIRM_EMAIL: "v1/onboarding/confirm-email",
   OXIDE_ONBOARDING_SIGNUP: "v1/onboarding/sign-up-with-matta-account",
@@ -73,5 +75,6 @@ const urls = {
   OWNER_GET_MEMBERS: "v1/register/get-members",
   OWNER_TOGGLE_STATUS:(email)=> `v1/register/${email}/toggle-status`,
   OWNERS_REGISTER_MEMBER: "v1/register/member",
+  OWNER_REVOKE_ACCESS: "v1/owner/apps/revoke-access",
 };
 export default urls;

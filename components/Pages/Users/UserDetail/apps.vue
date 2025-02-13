@@ -42,9 +42,8 @@
           </span>
         </template>
 
-        <!-- Status Column -->
-        <template #table-row-isDisabled="{ row }">
-          <AppStatusButton stattype="driver" :status="row.isDisabled ? 2 : 1" />
+        <template #table-row-status="{ row }">
+          <AppStatusButton stattype="driver" :status="!row.isActive ? 2 : 1" />
         </template>
       </CustomTable>
     </div>
@@ -105,12 +104,12 @@ const columns = [
   // { header: "Role", key: "role", isHtml: false, isStatus: false },
   { header: "Last active", key: "lastActive", isHtml: false, isStatus: false },
 
-  { header: "Status", key: "isActive", isHtml: false, isStatus: false },
+  { header: "Status", key: "status", isHtml: false, isStatus: false },
   { header: "", key: "action", isHtml: false, isStatus: false },
 ];
 
 const filteredColumns = computed(() =>
-  [0, 3, 1].includes(authStore?.userInfo?.userCategory)
+  [1].includes(authStore?.userInfo?.userCategory)
     ? columns
     : columns.filter((i) => i.key !== "action")
 );
@@ -132,24 +131,24 @@ function getData() {
     if (res.status === 200) {
       const tempData = res.data.data;
       detail.value = tempData;
+      getSubApps()
+        .then((res) => {
+          if (res.status === 200) {
+            setLoader.value = false;
+            const tempData = res.data.data.map((i) => ({
+              ...i,
+              isActive: detail.value?.appCodes?.includes(i.code),
+              status: detail.value?.appCodes?.includes(i.code),
+            }));
+
+            rows.value = tempData;
+          }
+        })
+        .catch(() => {
+          setLoader.value = false;
+        });
     }
   });
-
-  getSubApps()
-    .then((res) => {
-      if (res.status === 200) {
-        setLoader.value = false;
-        const tempData = res.data.data.map((i) => ({
-          ...i,
-          isActive: detail.value?.appCodes?.includes(i.code),
-        }));
-        console.log("🚀 ~ tempData ~ tempData:", tempData);
-        rows.value = tempData;
-      }
-    })
-    .catch(() => {
-      setLoader.value = false;
-    });
 }
 function toggleAccess(data) {
   ownerRevokeAccess({ email: detail.value?.contactEmail, appCode: data?.code })

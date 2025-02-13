@@ -132,20 +132,15 @@ const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
 
 const handleFinalRedirect = (data) => {
-  if (route.query.continue) {
-    handleRedirect(route, data.jwToken, app);
+  if (route.query.continue || app) {
+    handleRedirect(route, data, app);
     return;
   }
 
-  if (route.query.redirected_from && route.query.redirected_from !== "/") {
-    isLoading.value = false;
-    window.location.replace(route.query.redirected_from);
-    return;
-  }
+
   toast.success("Login successful");
-
   isLoading.value = false;
-  window.location.replace(`/`);
+  window.location.replace(intialRoute[data?.userCategory]);
 };
 const onSubmit = handleSubmit((values) => {
   formValues.email = values.email;

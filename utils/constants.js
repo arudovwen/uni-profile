@@ -318,9 +318,9 @@ export const documentsOptions = {
 };
 export const Navigation = [
   {
-    name: "Settings",
-    url: "/",
-    key: "index",
+    name: "Applications",
+    url: "/my-applications",
+    key: "my-applications",
   },
 
   {
@@ -328,16 +328,18 @@ export const Navigation = [
     url: "/users-management",
     key: "users-management",
   },
-  {
-    name: "Applications",
-    url: "/my-applications",
-    key: "my-applications",
-  },
+
   {
     name: "Audit Logs",
     url: "/audit-logs",
     key: "audit-logs",
   },
+  {
+    name: "Settings",
+    url: "/",
+    key: "index",
+  },
+
   {
     name: "Notifications",
     url: "/notifications",
@@ -464,3 +466,10 @@ export const OwnerNavigation = [
 
 export const nigeriaTypes = [0, 1, 2, 3, 4];
 export const nonNigeriaTypes = [0, 4];
+
+export const intialRoute = {
+  0: "/my-applications",
+  1: "/business-information",
+  2: "/business-information",
+  3: "/user-management",
+};
