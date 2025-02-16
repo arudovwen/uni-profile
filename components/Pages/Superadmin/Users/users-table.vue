@@ -131,7 +131,10 @@ const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
 const detail = ref(null);
-
+const GetUsersMapper = {
+  0: getCentralAdminUsers,
+  3: getAllUsers,
+};
 const authStore = useAuthStore();
 const Options = [
   {
@@ -222,7 +225,7 @@ const queryParams = reactive({
 
 function getInvites() {
   loading.value = true;
-  getCentralAdminUsers(queryParams)
+  GetUsersMapper[authStore?.userInfo?.userCategory](queryParams)
     .then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,

@@ -79,7 +79,7 @@ const route = useRoute();
 const authStore = useAuthStore()
 const NavMapper = {
   0: Navigation,
-  1: SuperNavigation,
+  3: SuperNavigation,
 };
 const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCategory]);
 
