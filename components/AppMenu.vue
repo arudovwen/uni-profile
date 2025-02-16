@@ -42,9 +42,9 @@ function getData() {
   getSubApps()
     .then((res) => {
       if (res.status === 200) {
-        rows.value = res.data.data.map((i) => {
+        rows.value = res.data.data?.map((i) => {
           // Extract the URL and apply category-based changes
-          const baseUrl = i.url.replace(
+          const baseUrl = i.url?.replace(
             "https://",
             [0, 3].includes(authStore.userInfo.userCategory)
               ? "https://admin."

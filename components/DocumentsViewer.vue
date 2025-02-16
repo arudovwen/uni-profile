@@ -59,7 +59,7 @@
                 >
                 <span class="text-xs text-[#475467]">
                   {{
-                    `${docName(document.documentType, type).replaceAll(
+                    `${docName(document.documentType, type)?.replaceAll(
                       " ",
                       "_"
                     )}.${docType(document.url)}`

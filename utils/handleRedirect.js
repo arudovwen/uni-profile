@@ -4,7 +4,7 @@ export function handleRedirect(route, { jwToken, userCategory }, app) {
 
   return window.location.replace(
     `${
-      url.replace(
+      url?.replace(
         "https://",
         [0, 3].includes(userCategory) ? "https://admin." : "https://"
       ) || route.query.continue
