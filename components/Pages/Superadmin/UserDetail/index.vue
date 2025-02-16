@@ -15,14 +15,24 @@
         :active="active"
       />
     </div>
-    <div class="flex">
+    <div class="flex w-full">
       <PagesUsersUserDetailInformation v-if="active === 'profile'" />
-      <PagesUsersUserDetailApps v-if="active === 'apps'" />
+      <div v-if="active === 'apps'" class="w-full">
+        <PagesSuperadminUserDetailApps
+          v-if="authStore?.userInfo?.userCategory === 3"
+        />
+        <PagesUsersUserDetailApps v-else />
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-const {name} = useRoute().query
+const authStore = useAuthStore();
+import { getUserDetail } from "~/services/settingservices";
+
+const { name } = useRoute().query;
+const { id } = useRoute().params;
+const userData = ref(null)
 const active = ref("profile");
 const tabs = [
   {
@@ -34,4 +44,19 @@ const tabs = [
     key: "apps",
   },
 ];
+function getUserData() {
+  getUserDetail(id).then((res) => {
+    if (res.status === 200) {
+      myUserApps.value = res.data.data.appCodes;
+      userData.value = res.data.data
+    }
+  });
+}
+const myUserApps = ref([]);
+onMounted(() => {
+  getUserData();
+});
+provide("myUserApps", myUserApps);
+provide("getUserData", getUserData);
+provide('userData', userData)
 </script>

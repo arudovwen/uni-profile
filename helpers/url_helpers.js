@@ -16,7 +16,7 @@ const urls = {
   RESEND_2FA_OTP: "v1/account/resend-2fa-code",
   USER_DETAIL: "v1/register/user-profile",
 
-  REGISTER_APP_REVOKE: "v1/register/apps/revoke-access",
+  REGISTER_APP_REVOKE: "admin/v1/subapplication/apps/revoke-access",
   OWNER_DISABLE_USER: "v1/account/disable-user",
 
   CENRTAL_ADMIN_GET_USERS: "admin/v1/user/get-users-by-admin",

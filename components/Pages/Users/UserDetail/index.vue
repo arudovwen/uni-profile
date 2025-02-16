@@ -25,8 +25,10 @@
 <script setup>
 import Information from "./Information";
 import Apps from "./apps";
+import { getUserDetail } from "~/services/settingservices";
 
-const {name} = useRoute().query
+const { name } = useRoute().query;
+const { id } = useRoute().params;
 const active = ref("profile");
 const tabs = [
   {
@@ -38,4 +40,13 @@ const tabs = [
     value: "apps",
   },
 ];
+const myUserApps = ref([]);
+onMounted(() => {
+  getUserDetail(id).then((res) => {
+    if (res.status === 200) {
+      myUserApps.value = res.data.data.subAppCodes;
+    }
+  });
+});
+provide("myUserApps", myUserApps);
 </script>

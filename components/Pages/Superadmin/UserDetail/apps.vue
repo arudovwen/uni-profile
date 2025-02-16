@@ -4,7 +4,7 @@
     <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
       <CustomTable
         :columns="columns"
-        :rows="rows"
+        :rows="filteredRow"
         emptyTitle="No application available"
         emptyType="user"
         :isLoading="setLoader"
@@ -19,20 +19,7 @@
               <MenuItems
                 class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-2 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
               >
-                <MenuItem>
-                  <button
-                    type="button"
-                    @click="
-                      detail = row;
-                      id = detail.id;
-                      isUpdateOpen = true;
-                    "
-                    class="py-2 px-5 hover:bg-gray-50 text-sm whitespace-nowrap cursor-pointer w-full text-left"
-                  >
-                    Update Role
-                  </button></MenuItem
-                >
-                <MenuItem>
+                <MenuItem v-if="row.isDisabled">
                   <button
                     type="button"
                     @click="
@@ -45,7 +32,7 @@
                     Revoke access
                   </button></MenuItem
                 >
-                <MenuItem>
+                <MenuItem v-if="!row.isDisabled">
                   <button
                     type="button"
                     @click="
@@ -77,7 +64,10 @@
 
         <!-- Status Column -->
         <template #table-row-isDisabled="{ row }">
-          <AppStatusButton stattype="driver" :status="row.isDisabled ? 2 : 1" />
+          <AppStatusButton
+            stattype="driver"
+            :status="!row.isDisabled ? 2 : 1"
+          />
         </template>
       </CustomTable>
     </div>
@@ -92,6 +82,7 @@
     :open="open"
     btnText="Yes, Revoke"
     imgUrl="/images/revoke-user.svg"
+    :loading="loading"
   />
   <ActionModal
     @deleteItem="handleDelete"
@@ -102,6 +93,7 @@
     btnText="Yes, Enable"
     imgUrl="/images/enable-user.svg"
     type="approve"
+    :loading="loading"
   />
 
   <IndexModal
@@ -121,10 +113,12 @@
 import UpdateForm from "./UpdateForm";
 import { Float } from "@headlessui-float/vue";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
-import { getSubApps } from "~/services/userservices";
+import { getSubApps, revokeAccess } from "~/services/userservices";
 
 import debounce from "lodash/debounce";
+import { toast } from "vue3-toastify";
 
+const myUserApps = inject("myUserApps");
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
@@ -132,15 +126,16 @@ const isUpdateOpen = ref(false);
 const setLoader = ref(false);
 const detail = ref(null);
 const rows = ref([]);
+const userData = inject("userData");
 const columns = [
   { header: "Application", key: "name", isHtml: false, isStatus: false },
-  { header: "Role", key: "role", isHtml: false, isStatus: false },
+  // { header: "Role", key: "role", isHtml: false, isStatus: false },
   { header: "Last active", key: "lastActive", isHtml: false, isStatus: false },
 
   { header: "Status", key: "isDisabled", isHtml: false, isStatus: false },
   { header: "", key: "action", isHtml: false, isStatus: false },
 ];
-
+const getUserData = inject("getUserData");
 onMounted(() => {
   getData();
 });
@@ -166,9 +161,31 @@ function getData() {
       setLoader.value = false;
     });
 }
-
+const filteredRow = computed(() =>
+  rows.value.map((i) => ({
+    ...i,
+    isDisabled: myUserApps.value?.includes(i.code) || false,
+  }))
+);
+const loading = ref(false)
 const handleDelete = () => {
+  loading.value = true
   // Handle delete logic here
+  revokeAccess({
+    email: userData.value.contactEmail,
+    appCode: detail.value.code,
+  }).then((res) => {
+    if (res.status === 200) {
+      isOpen.value = false;
+      open.value = false;
+      toast.success("Status updated");
+      getUserData();
+      loading.value = false
+    }
+  }).catch(err=>{
+    toast.error(err.response?.data?.message)
+    loading.value = false
+  });
 };
 
 watch(

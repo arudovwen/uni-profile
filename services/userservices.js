@@ -40,6 +40,10 @@ export async function editSubApp(data) {
   return await ssoPut(`${urls.UPDATE_SUBAPP}`, data);
 }
 
+export async function revokeAccess(data) {
+  return await ssoPost(`${urls.REGISTER_APP_REVOKE}`, data);
+}
+
 export async function sendAdminInvite(data) {
   return await ssoPost(`${urls.INVITATION}/send-admin-invite`, data);
 }
