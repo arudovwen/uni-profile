@@ -46,7 +46,6 @@ function getData() {
   });
 }
 onMounted(() => {
-  const mattaProfiles = useCookie("mattaProfiles");
   getData();
 });
 </script>

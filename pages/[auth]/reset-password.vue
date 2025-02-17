@@ -71,7 +71,7 @@
           />
         </div>
         <NuxtLink
-          :to="`/auth/login${app ? `/${app}`:''}`"
+          :to="`/auth/login${app ? `/${app}` : ''}`"
           class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           @click="emit('close')"
         >
@@ -131,6 +131,7 @@ const formValues = {
   email: route.query.email,
 };
 const { app } = route.params;
+const { appCode, userCategory } = route.query;
 const schema = yup.object({
   password: yup
     .string()
@@ -163,7 +164,9 @@ const onSubmit = handleSubmit((values) => {
 
         setTimeout(() => {
           toast.success("Password Reset successful");
-          router.push(`/auth/login${app ? `/${app}`:''}`);
+          !appCode
+            ? router.push(`/auth/login`)
+            : handleResetRedirect(userCategory, appCode);
         }, 2000);
       }
     })
