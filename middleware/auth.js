@@ -43,16 +43,24 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Handle unauthenticated user logic
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page if they're not already there
-    if (!to.path.includes("auth") && !to.path.includes("invited-user")) {
+    if (!to.path?.includes("auth") && !to.path?.includes("invited-user")) {
       abortNavigation();
-      return navigateTo(
-        `/auth/login${
-          to.params.app ? `/${to.params.app}` : ""
-        }?${new URLSearchParams({
-          redirected_from: to.path,
-          ...to.query,
-        })}`
-      );
+  
+      // Create the base URL for redirection
+      let redirectUrl = `/auth/login${to.params.app ? `/${to.params.app}` : ""}`;
+  
+      // Prepare the query parameters
+      const queryParams = new URLSearchParams(to.query);
+  
+      // Add redirected_from only if to.path is valid
+      if (to.path) {
+        queryParams.set("redirected_from", to.path);
+      }
+  
+      // Append query parameters to the URL
+      redirectUrl += `?${queryParams.toString()}`;
+  
+      return navigateTo(redirectUrl);
     }
   }
 });

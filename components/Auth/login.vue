@@ -41,7 +41,7 @@
         </div>
         <span class="block text-sm text-primary-500 darks:text-white/80 mb-10">
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/forgot-password`)"
+            :to="handleRouting(route, `/${auth}/forgot-password${app?`/${app}`:''}`)"
             class="font-medium"
             >Forgot password?</NuxtLink
           >
