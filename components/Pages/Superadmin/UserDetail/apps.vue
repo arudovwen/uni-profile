@@ -19,7 +19,7 @@
               <MenuItems
                 class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-2 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
               >
-                <MenuItem v-if="row.isDisabled">
+                <MenuItem v-if="row.isDisabled || authStore.userInfo.userCategory !== 3">
                   <button
                     type="button"
                     @click="
@@ -32,7 +32,7 @@
                     Revoke access
                   </button></MenuItem
                 >
-                <MenuItem v-if="!row.isDisabled">
+                <MenuItem v-if="!row.isDisabled || authStore.userInfo.userCategory !== 3">
                   <button
                     type="button"
                     @click="
@@ -75,7 +75,7 @@
 
   <!-- Delete Modal -->
   <DeleteModal
-    @deleteItem="handleDelete"
+    @deleteItem="handleAccess"
     @close="open = false"
     title="Revoke Access"
     text="Are you sure you want to revoke this user’s access"
@@ -85,7 +85,7 @@
     :loading="loading"
   />
   <ActionModal
-    @deleteItem="handleDelete"
+    @actionItem="handleAccess"
     @close="isOpen = false"
     title="Enable Access"
     text="Are you sure you want to re-activate this user’s access"
@@ -113,11 +113,12 @@
 import UpdateForm from "./UpdateForm";
 import { Float } from "@headlessui-float/vue";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
-import { getSubApps, revokeAccess } from "~/services/userservices";
+import { getSubApps, adminToggleAccess } from "~/services/userservices";
 
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
 
+const authStore = useAuthStore()
 const myUserApps = inject("myUserApps");
 const id = ref(null);
 const open = ref(false);
@@ -168,10 +169,10 @@ const filteredRow = computed(() =>
   }))
 );
 const loading = ref(false)
-const handleDelete = () => {
+const handleAccess = () => {
   loading.value = true
   // Handle delete logic here
-  revokeAccess({
+  adminToggleAccess({
     email: userData.value.contactEmail,
     appCode: detail.value.code,
   }).then((res) => {

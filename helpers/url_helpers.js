@@ -79,6 +79,6 @@ const urls = {
 
   // Audit logs 
   ADMINS_GET_AUDIT_LOGS: "admin/v1/audit/get-all",
-  OWNER_GET_AUDIT_LOGS: "v1/owner/audit/get-all",
+  OWNER_GET_AUDIT_LOGS: "v1/owner/get-audit-logs",
 };
 export default urls;

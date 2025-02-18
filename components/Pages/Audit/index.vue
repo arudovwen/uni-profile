@@ -9,7 +9,7 @@
       <div></div>
     </div>
     <div>
-      <div class="max-w-[250px] mb-6">
+      <div class="max-w-[250px] mb-6" v-if="authStore?.userInfo?.userCategory === 3">
         <SelectVueSelect
           :options="users"
           v-model="queryParams.userId"
@@ -87,7 +87,9 @@ const GetUsersMapper = {
 };
 onMounted(() => {
   getAuditData();
+  if(authStore?.userInfo?.userCategory === 3){
   getUsers();
+  }
 });
 
 const queryParams = reactive({
