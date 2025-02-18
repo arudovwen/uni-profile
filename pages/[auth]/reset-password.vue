@@ -10,7 +10,7 @@
           <SecuritySafeIcon v-else />
         </div>
         <h1
-          class="text-[#182230] darks:text-white mb-[10px] mt-4 text-[30px] font-bold text-center"
+          class="text-[#182230] darks:text-white mb-[6px] mt-4 text-[30px] font-bold text-center"
         >
           Reset Password
         </h1>
@@ -50,7 +50,22 @@
               iconType="password"
             />
           </div>
-
+          <div class="text-sm mb-6 font-normal">
+            <span>
+              Didn't receive an OTP,
+              <button
+                v-if="!isResending"
+                class="font-semibold pl-1 text-primary-500"
+                @click.prevent="resendOtp"
+                :disabled="isResending || countdown > 0"
+              >
+                Click to resend
+              </button>
+              <span v-if="countdown > 0" class="ml-2"
+                >Resend available in {{ countdown }}s</span
+              >
+            </span>
+          </div>
           <div class="grid gap-y-[22px] mb-9">
             <AppButton
               type="submit"
@@ -124,6 +139,9 @@ const isResetSuccess = ref(false);
 const isVerified = ref(true);
 const route = useRoute();
 const router = useRouter();
+const countdown = ref(0);
+const isResending = ref(false);
+
 const formValues = {
   confirmPassword: "",
   password: "",
@@ -203,12 +221,30 @@ const verifyOtp = (token) => {
     });
 };
 
-onMounted(() => {
-  console.log("Ypp");
+function resendOtp() {
+  if (countdown.value === 0) {
+    resend2FA({ email: route.query.email })
+      .then((res) => {
+        if (res.status === 200) {
+          // Start the countdown
+          countdown.value = 60;
+          isResending.value = true;
 
-  resend2FA({ email: route.query.email }).then((res) => {
-    if (res.status === 200) {
-    }
-  });
-});
+          const interval = setInterval(() => {
+            countdown.value--;
+            if (countdown.value <= 0) {
+              clearInterval(interval);
+              isResending.value = false;
+            }
+          }, 1000);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response.data.Message);
+      });
+
+    // Logic to actually resend the OTP can go here
+  }
+}
+onMounted(() => {});
 </script>
