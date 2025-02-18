@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full  ">
+  <div class="w-full">
     <!-- Top bar   -->
 
     <div
@@ -8,62 +8,45 @@
       <HeaderComponent title="Audit Logs" subtext="Manage your logs here." />
       <div></div>
     </div>
+    <div>
+      <div class="max-w-[250px] mb-6">
+        <SelectVueSelect
+          :options="users"
+          v-model="queryParams.userId"
+          :reduce="(option) => option.value"
+          :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer`"
+          placeholder="Select user"
+        />
+      </div>
+    </div>
     <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
       <CustomTable
         :columns="columns"
-        :rows="rows"
+        :rows="auditData"
         emptyTitle="No Logs available"
-        :isLoading="loading"
+        :isLoading="docLoading"
         emptyType="user"
+        :query="queryParams"
+        @onPageChange="(value) => (queryParams.PageNumber = value)"
       />
     </div>
   </div>
-  <DeleteModal
-    @deleteItem="handleDelete"
-    @close="open = false"
-    title="Delete account"
-    text="Are you sure you want to delete this account? This action cannot be undone."
-    :open="open"
-    btnText="Yes, Delete"
-  />
-  <IndexModal :isOpen="isOpen" @togglePopup="isOpen = false" v-if="isOpen">
-    <template #content>
-      <div class="h-full w-full bg-white rounded-lg p-6">
-        <PagesSettlementsForm
-          :id="id"
-          :detail="detail"
-          @refresh="getFinanceData()"
-        />
-      </div>
-    </template>
-  </IndexModal>
 </template>
 <script setup>
 definePageMeta({
   layout: "dashboard",
 });
 import debounce from "lodash/debounce";
-import { Menu, MenuButton, MenuItems } from "@headlessui/vue";
-import {
-  viewSettlement,
-  deleteSettlement,
-  autoSettlement,
-  getAutoSettlement,
-} from "~/services/settlementservice";
+import { getAllUsers, getCentralAdminUsers } from "~/services/userservices";
+import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
+import moment from "moment";
 
-const id = ref(null);
-const open = ref(false);
-const isOpen = ref(false);
-const setLoader = ref(false);
-const detail = ref(null);
 const authStore = useAuthStore();
-const isAutoSettlement = ref(false);
-const rows = ref([]);
 const loading = ref(false);
 const columns = [
   {
     header: "Name",
-    key: "name",
+    key: "userName",
     isHtml: false,
     isStatus: false,
   },
@@ -87,81 +70,74 @@ const columns = [
     isStatus: false,
   },
   {
-    header: "",
-    key: "action",
+    header: "activity",
+    key: "activity",
     isHtml: false,
     isStatus: false,
   },
 ];
-const financeData = ref([]);
-
+const auditData = ref([]);
+const GetAudit = {
+  1: getOwnerAudit,
+  3: getAdminAudit,
+};
+const GetUsersMapper = {
+  0: getCentralAdminUsers,
+  3: getAllUsers,
+};
 onMounted(() => {
-  getSettlement();
-  getFinanceData();
+  getAuditData();
+  getUsers();
 });
-const settlementValue = ref(null);
+
 const queryParams = reactive({
   Search: "",
   SortOrder: "",
   PageNumber: 1,
   PageSize: 10,
-  Type: "",
+  BusinessId: "",
+  userId: "",
+  total:0
+});
+const userParams = reactive({
+  Search: "",
+  SortOrder: "",
+  PageNumber: 1,
+  PageSize: 1500000,
+  userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3] : null,
+  total: 0,
 });
 const docLoading = ref(false);
-function getSettlement() {
-  setLoader.value = true;
-  getAutoSettlement()
-    .then((res) => {
-      if (res.status === 200) {
-        setLoader.value = false;
-        isAutoSettlement.value = res.data.data.autoSettlement;
-      }
-    })
-    .catch(() => {
-      setLoader.value = false;
-    });
-}
-function getFinanceData() {
+const users = ref([]);
+function getAuditData() {
   docLoading.value = true;
-  viewSettlement(queryParams).then((res) => {
-    financeData.value = res.data.data;
-    queryParams.totalCount = res.data.data.totalCount;
+  GetAudit[authStore.userInfo.userCategory](queryParams).then((res) => {
+    auditData.value = res.data.data.map((i) => ({
+      ...i,
+      lastActive: moment(i.created).format("lll"),
+      app: authStore.appList.find((j) => j.appCode === i.appCode)?.name,
+    }));
+    queryParams.total = res.data.totalCount;
     docLoading.value = false;
   });
 }
-
-function deleteRequest(value) {
-  id.value = value;
-  open.value = true;
-}
-const document = ref({});
-function openRequest(val) {
-  detail.value = val;
-  isOpen.value = true;
+function getUsers() {
+  loading.value = true;
+  GetUsersMapper[authStore?.userInfo?.userCategory](userParams)
+    .then((res) => {
+      users.value = res.data.data.map((i) => ({
+        label: `${i.firstName} ${i.lastName}`,
+        value: i.id,
+      }));
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 }
 const debounceSearch = debounce(() => {
-  getFinanceData();
+  getAuditData();
 }, 800);
-const handleDelete = () => {
-  deleteSettlement(id.value)
-    .then((res) => {
-      if (res.status === 200) {
-        getSettlements();
-        isSuccessOpen.value = true;
-      }
-    })
-    .catch((err) => {
-      errorText.value =
-        err?.response?.data?.message ||
-        err?.response?.data?.Message ||
-        "Account deletion failed";
-      isErrorOpen.value = true;
-      isLoading.value = false;
-    });
-};
-function handleSuccess() {
-  getFinanceData();
-}
+
 watch(
   () => [queryParams.Search],
   () => {
@@ -169,25 +145,9 @@ watch(
   }
 );
 watch(
-  () => [queryParams.PageNumber, queryParams.SortOrder],
+  () => [queryParams.PageNumber, queryParams.BusinessId, queryParams.userId],
   () => {
-    getFinanceData();
+    getAuditData();
   }
 );
-watch(isAutoSettlement, (oldval, newval) => {
-  if (oldval === newval) return;
-  handleAutoSettlement();
-});
-function handleAutoSettlement() {
-  setLoader.value = true;
-  autoSettlement({ autoSettlement: isAutoSettlement.value })
-    .then((res) => {
-      setLoader.value = false;
-    })
-    .catch(() => {
-      setLoader.value = false;
-    });
-}
-provide("handleSuccess", handleSuccess);
-provide("isOpen", isOpen);
 </script>

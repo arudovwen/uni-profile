@@ -16,7 +16,7 @@ const urls = {
   RESEND_2FA_OTP: "v1/account/resend-2fa-code",
   USER_DETAIL: "v1/register/user-profile",
 
-  REGISTER_APP_REVOKE: "admin/v1/subapplication/apps/revoke-access",
+  REGISTER_APP_REVOKE: "admin/v1/subapplication/apps/toggle-access",
   OWNER_DISABLE_USER: "v1/account/disable-user",
 
   CENRTAL_ADMIN_GET_USERS: "admin/v1/user/get-users-by-admin",
@@ -75,6 +75,10 @@ const urls = {
   OWNER_GET_MEMBERS: "v1/register/get-members",
   OWNER_TOGGLE_STATUS:(email)=> `v1/register/${email}/toggle-status`,
   OWNERS_REGISTER_MEMBER: "v1/register/member",
-  OWNER_REVOKE_ACCESS: "v1/owner/apps/revoke-access",
+  OWNER_REVOKE_ACCESS: "v1/owner/apps/toggle-access",
+
+  // Audit logs 
+  ADMINS_GET_AUDIT_LOGS: "admin/v1/audit/get-all",
+  OWNER_GET_AUDIT_LOGS: "v1/owner/audit/get-all",
 };
 export default urls;
