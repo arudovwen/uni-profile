@@ -34,7 +34,7 @@ jobs:
     
     - name: Archive production artifacts (Windows)
       run: |
-            Copy-Item -Path C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\dist\* -Destination C:\inetpub\wwwroot\Staging.Profile.FrontEnd\ -recurse -Force
+            Copy-Item -Path C:\profile-actions-runner\_work\Universal.Profile.Frontend\Universal.Profile.Frontend\.output\public\* -Destination C:\inetpub\wwwroot\Staging.Profile.FrontEnd\ -recurse -Force
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
