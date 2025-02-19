@@ -162,7 +162,6 @@ const onSubmit = handleSubmit((values) => {
     })
 
     .catch((err) => {
-      console.log("🚀 ~ onSubmit ~ err:", err);
       isLoading.value = false;
       if (!err.response.data) return;
       const { data } = err.response;

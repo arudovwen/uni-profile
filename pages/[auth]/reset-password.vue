@@ -54,6 +54,7 @@
             <span>
               Didn't receive an OTP,
               <button
+              type="button"
                 v-if="!isResending"
                 class="font-semibold pl-1 text-primary-500"
                 @click.prevent="resendOtp"
@@ -180,12 +181,10 @@ const onSubmit = handleSubmit((values) => {
       if (res.status === 200) {
         isResetSuccess.value = true;
 
-        setTimeout(() => {
-          toast.success("Password Reset successful");
-          !appCode
-            ? router.push(`/auth/login`)
-            : handleResetRedirect(usercategory, appCode);
-        }, 2000);
+        toast.success("Password Reset successful");
+        !appCode
+          ? router.push(`/auth/login`)
+          : handleResetRedirect(usercategory, appCode);
       }
     })
 
@@ -246,5 +245,4 @@ function resendOtp() {
     // Logic to actually resend the OTP can go here
   }
 }
-
 </script>
