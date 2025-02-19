@@ -149,7 +149,7 @@ const formValues = {
   email: route.query.email,
 };
 const { app } = route.params;
-const { appCode, userCategory } = route.query;
+const { appCode, usercategory } = route.query;
 const schema = yup.object({
   password: yup
     .string()
@@ -184,7 +184,7 @@ const onSubmit = handleSubmit((values) => {
           toast.success("Password Reset successful");
           !appCode
             ? router.push(`/auth/login`)
-            : handleResetRedirect(userCategory, appCode);
+            : handleResetRedirect(usercategory, appCode);
         }, 2000);
       }
     })
@@ -246,5 +246,5 @@ function resendOtp() {
     // Logic to actually resend the OTP can go here
   }
 }
-onMounted(() => {});
+
 </script>
