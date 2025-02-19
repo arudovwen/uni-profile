@@ -20,7 +20,7 @@ export function handleResetRedirect(userCategory, app) {
       "https://",
       [0, 3].includes(parseInt(userCategory)) ? "https://admin." : "https://"
     ) || route.query.continue
-  }/auth/login`;
+  }/login`;
   // console.log("gotoUrl",gotoUrl)
   return window.location.replace(gotoUrl);
 }
