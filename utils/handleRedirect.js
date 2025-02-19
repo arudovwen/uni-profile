@@ -18,9 +18,10 @@ export function handleResetRedirect(userCategory, app) {
   const gotoUrl = `${
     url?.replace(
       "https://",
-      [0, 3].includes(userCategory) ? "https://admin." : "https://"
+      [0, 3].includes(parseInt(userCategory)) ? "https://admin." : "https://"
     ) || route.query.continue
   }/auth/login`;
+  // console.log("gotoUrl",gotoUrl)
   return window.location.replace(gotoUrl);
 }
 export function handleAppRedirect(app) {
