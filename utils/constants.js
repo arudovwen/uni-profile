@@ -10,7 +10,7 @@ export const AppsObject = {
     label: "Flux",
     url:
       process.env.NODE_ENV === "production"
-        ? "https://dev.deltalog.co"
+        ? "https://staging.deltalog.co"
         : "http://localhost:3000",
     appId: 1,
     logo: Flux,
@@ -23,7 +23,7 @@ export const AppsObject = {
     label: "Oxide",
     url:
       process.env.NODE_ENV === "production"
-        ? "https://dev.oxide.matta.trade"
+        ? "https://staging.oxide.matta.trade"
         : "http://localhost:3001",
     appId: 3,
     logo: Oxide,
@@ -36,7 +36,7 @@ export const AppsObject = {
     label: "Matta",
     url:
       process.env.NODE_ENV === "production"
-        ? "https://dev.matta.trade"
+        ? "https://staging.matta.trade"
         : "http://localhost:3002",
     appId: 0,
     logo: Matta,
@@ -49,7 +49,7 @@ export const AppsObject = {
 
     url:
       process.env.NODE_ENV === "production"
-        ? "https://dev.orbital.matta.trade"
+        ? "https://staging.orbital.matta.trade"
         : "http://localhost:3040",
     appId: 4,
     logo: Orbital,
@@ -62,7 +62,7 @@ export const AppsObject = {
     label: "Mattapedia",
     url:
       process.env.NODE_ENV === "production"
-        ? "https://dev.mattapedia.matta.trade"
+        ? "https://staging.mattapedia.matta.trade"
         : "http://localhost:3003",
     appId: 5,
     logo: Mattapedia,
@@ -404,16 +404,16 @@ export const UserNavigation = [
     key: "index",
   },
 
-  {
-    name: "Business Information",
-    url: "/business-information",
-    key: "business",
-  },
-  {
-    name: "Settlement Accounts",
-    url: "/settlements",
-    key: "settlement",
-  },
+  // {
+  //   name: "Business Information",
+  //   url: "/business-information",
+  //   key: "business",
+  // },
+  // {
+  //   name: "Settlement Accounts",
+  //   url: "/settlements",
+  //   key: "settlement",
+  // },
   // {
   //   name: "Applications",
   //   url: "/my-applications",
