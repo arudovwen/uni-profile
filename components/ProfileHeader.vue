@@ -11,7 +11,7 @@
         <NuxtLink :to="n.url">
           <button
             :class="
-              route.name.includes(n.key)
+              route?.name?.includes(n.key)
                 ? 'bg-primary-500 text-white border-primary-500'
                 : 'border-transparent'
             "

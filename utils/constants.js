@@ -1,11 +1,14 @@
-import Matta from "@/assets/apps/mat.png";
-import Oxide from "@/assets/apps/oxide.png";
-import Flux from "@/assets/apps/flu.png";
-import Orbital from "@/assets/apps/orbital.png";
-import Mattapedia from "@/assets/apps/mattapedia.png";
-import {} from "~/services/authservices";
+const isProduction = process.env.NODE_ENV === "production";
+const cookieDomain = isProduction ? ".matta.trade" : "localhost";
 
-
+export const defaultOptions = {
+  domain: cookieDomain,
+  path: "/",
+  secure: isProduction,
+  sameSite: "Strict",
+  maxAge: 60 * 60 * 24 * 7, // 7 days default
+  httpOnly: false, // false by default to allow JS access
+};
 export const countryCodes = {
   "+1": "United States (+1)",
   "+44": "United Kingdom (+44)",

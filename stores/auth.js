@@ -2,19 +2,13 @@ import { defineStore } from "pinia";
 import { logoutUser } from "~/services/authservices";
 import { getSubApps } from "~/services/userservices";
 
-const cookieDomain =
-  process.env.NODE_ENV === "production" ? ".matta.trade" : "localhost";
 
 export const useAuthStore = defineStore(
-  "matta_auth",
+  "matta_user",
   () => {
     const appList = ref([]);
-    const mattaAuth = useCookie("mattaAuth", {
-      domain: cookieDomain,
-      path: "/",
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Lax",
-    });
+    const mattaAuth = useCookie("mattaAuth", defaultOptions);
+
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -152,12 +146,7 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({
-        domain: cookieDomain,
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-      }),
+      storage: persistedState.localStorage,
     },
   }
 );
