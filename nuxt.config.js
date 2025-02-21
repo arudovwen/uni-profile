@@ -131,54 +131,54 @@ export default defineNuxtConfig({
 
   devtools: { enabled: process.env.NODE_ENV === "development" },
 
-  // pwa: {
-  //   registerType: "autoUpdate",
-  //   manifest: {
-  //     name: "Oxide",
-  //     short_name: "Oxide",
-  //     theme_color: "#1570EF",
-  //     display: "standalone",
-  //     icons: [
-  //       {
-  //         src: "/icons/android-icon-96x96.png",
-  //         sizes: "96x96",
-  //         type: "image/png",
-  //       },
-  //       {
-  //         src: "/icons/android-icon-144x144.png",
-  //         sizes: "144x144",
-  //         type: "image/png",
-  //       },
-  //       {
-  //         src: "/icons/android-icon-192x192.png",
-  //         sizes: "192x192",
-  //         type: "image/png",
-  //         purpose: "any",
-  //       },
-  //     ],
-  //     screenshots: [
-  //       {
-  //         src: "/shot2.png",
-  //         type: "image/png",
-  //         sizes: "436x720",
-  //         form_factor: "narrow",
-  //       },
-  //       {
-  //         src: "/shot1.png",
-  //         type: "image/png",
-  //         sizes: "1280x686",
-  //         form_factor: "wide",
-  //       },
-  //     ],
-  //   },
-  //   workbox: {
-  //     globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
-  //   },
-  //   client: {
-  //     installPrompt: true,
-  //     periodicSyncForUpdates: 3600,
-  //   },
-  // },
+  pwa: {
+    registerType: "autoUpdate",
+    manifest: {
+      name: "Matta Profile",
+      short_name: "Matta Profile",
+      theme_color: "#1570EF",
+      display: "standalone",
+      icons: [
+        {
+          src: "/icons/android-icon-96x96.png",
+          sizes: "96x96",
+          type: "image/png",
+        },
+        {
+          src: "/icons/android-icon-144x144.png",
+          sizes: "144x144",
+          type: "image/png",
+        },
+        {
+          src: "/icons/android-icon-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
+          purpose: "any",
+        },
+      ],
+      screenshots: [
+        {
+          src: "/shot2.png",
+          type: "image/png",
+          sizes: "436x720",
+          form_factor: "narrow",
+        },
+        {
+          src: "/shot1.png",
+          type: "image/png",
+          sizes: "1280x686",
+          form_factor: "wide",
+        },
+      ],
+    },
+    workbox: {
+      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+    },
+    client: {
+      installPrompt: true,
+      periodicSyncForUpdates: 3600,
+    },
+  },
 
   app: {
     head: {

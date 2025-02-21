@@ -9,7 +9,12 @@ export const useAuthStore = defineStore(
   "matta_auth",
   () => {
     const appList = ref([]);
-    const mattaAuth = useCookie("mattaAuth");
+    const mattaAuth = useCookie("mattaAuth", {
+      domain: cookieDomain,
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+    });
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -82,7 +87,6 @@ export const useAuthStore = defineStore(
       );
     }
     const logOut = async () => {
-    
       const route = useRoute();
       try {
         isLoggingOut.value = true;
@@ -93,18 +97,18 @@ export const useAuthStore = defineStore(
         if (response.status === 200) {
           localStorage.clear();
           isLoggingOut.value = false;
-        
+
           clearCookies().then(() => {
-            mattaAuth.value = null
+            mattaAuth.value = null;
             loggedUser.value = null;
             handleAppRedirect(route.params.appId);
           });
         }
       } catch (error) {
         isLoggingOut.value = false;
-       
+
         clearCookies().then(() => {
-          mattaAuth.value = null
+          mattaAuth.value = null;
           loggedUser.value = null;
           handleAppRedirect(route.params.appId);
         });
@@ -112,9 +116,8 @@ export const useAuthStore = defineStore(
     };
 
     const clearAuth = () => {
-     
       clearCookies().then(() => {
-        mattaAuth.value = null
+        mattaAuth.value = null;
         loggedUser.value = null;
         handleAppRedirect(route.params.appId);
       });
@@ -144,7 +147,7 @@ export const useAuthStore = defineStore(
       saveAuthUser,
       appList,
       setAppList,
-      getAppsData
+      getAppsData,
     };
   },
   {
