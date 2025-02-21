@@ -11,19 +11,4 @@ const route = useRoute();
 const { app } = route.params;
 const auth = useAuthStore();
 
-onMounted(() => {
-  if (auth.isLoggedIn && auth.jwToken) {
-    const encodededToken = encodeURIComponent(auth.jwToken);
-    window.location.href = `${AppsObject[app]?.url}/auth/validate/app?token=${encodededToken}`;
-    return;
-  }
-  navigateTo(
-    `/auth/login${
-      route.query.app ? `/${route.query.app}` : ""
-    }?${new URLSearchParams({
-      redirected_from: route.path,
-      ...route.query,
-    })}`
-  );
-});
 </script>

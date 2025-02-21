@@ -62,18 +62,6 @@ export default defineNuxtConfig({
     },
   },
 
-  cache: {
-    useHostPrefix: false,
-    pages: ["/"],
-
-    store: {
-      type: "memory",
-      max: 100,
-      // number of seconds to store this page in cache
-      ttl: 60,
-    },
-  },
-
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.API_BASE_URL,
@@ -83,7 +71,7 @@ export default defineNuxtConfig({
       APP_MONNIFYISTEST: process.env.APP_MONNIFYISTEST,
       APP_MONNIFYISTESTMODE: process.env.APP_MONNIFYISTESTMODE,
       TINY_MCE: process.env.APP_TINYMCE_KEY,
-      apiBase: process.env.NUXT_PUBLIC_API_BASE
+      apiBase: process.env.NUXT_PUBLIC_API_BASE,
     },
   },
 
@@ -102,7 +90,7 @@ export default defineNuxtConfig({
   },
 
   plugins: ["~/plugins/axios.js"],
-  
+
   googleSignIn: {
     clientId:
       "56799988480-4d51egljupar9la4djc2tknjodn2vsj5.apps.googleusercontent.com",
@@ -172,7 +160,8 @@ export default defineNuxtConfig({
       ],
     },
     workbox: {
-      globPatterns: ["**/*.{js,css,html,png,svg,ico}"],
+      globPatterns: ["**/*.{js,css,html,png,svg,ico,json}"],
+      maximumFileSizeToCacheInBytes: 5000000,
     },
     client: {
       installPrompt: true,

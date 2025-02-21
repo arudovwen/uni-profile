@@ -37,13 +37,13 @@
             </div>
             <div v-if="!isLoading">
               <div v-if="active === 1" class="w-full">
-                <PagesBusinessCompanyInformation />
+                <LazyPagesBusinessCompanyInformation />
               </div>
               <div v-if="active === 2" class="w-full">
-                <div class="w-full"><PagesBusinessCompanyDocuments /></div>
+                <div class="w-full"><LazyPagesBusinessCompanyDocuments /></div>
               </div>
               <div v-if="active === 3" class="w-full">
-                <div class="w-full"><PagesBusinessCompanyDirectors /></div>
+                <div class="w-full"><LazyPagesBusinessCompanyDirectors /></div>
               </div>
             </div>
           </div>

@@ -5,73 +5,7 @@ import Orbital from "@/assets/apps/orbital.png";
 import Mattapedia from "@/assets/apps/mattapedia.png";
 import {} from "~/services/authservices";
 
-export const AppsObject = {
-  1: {
-    label: "Flux",
-    url:
-      process.env.NODE_ENV === "production"
-        ? "https://staging.deltalog.co"
-        : "http://localhost:3000",
-    appId: 1,
-    logo: Flux,
-    authBgUrl: "/images/heavy-duty.png",
-    authText: "Move, Store, and Distribute with Flux",
-    authSubText:
-      "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
-  },
-  3: {
-    label: "Oxide",
-    url:
-      process.env.NODE_ENV === "production"
-        ? "https://staging.oxide.matta.trade"
-        : "http://localhost:3001",
-    appId: 3,
-    logo: Oxide,
-    authBgUrl: "/images/oxide.png",
-    authText: "Payments, Financing, and Cross-border Payments",
-    authSubText:
-      "Seamless payments and financing for Africa's Manufacturing Industry",
-  },
-  0: {
-    label: "Matta",
-    url:
-      process.env.NODE_ENV === "production"
-        ? "https://staging.matta.trade"
-        : "http://localhost:3002",
-    appId: 0,
-    logo: Matta,
-    authBgUrl: "/images/heavy-duty.png",
-    authText: "",
-    authSubText: "",
-  },
-  4: {
-    label: "Orbital",
 
-    url:
-      process.env.NODE_ENV === "production"
-        ? "https://staging.orbital.matta.trade"
-        : "http://localhost:3040",
-    appId: 4,
-    logo: Orbital,
-    authBgUrl: "/images/orbital.png",
-    authText: "Move, Store, and Distribute with Orbital",
-    authSubText:
-      "Seamless Fulfillment Solutions for Africa's Manufacturing Industry",
-  },
-  5: {
-    label: "Mattapedia",
-    url:
-      process.env.NODE_ENV === "production"
-        ? "https://staging.mattapedia.matta.trade"
-        : "http://localhost:3003",
-    appId: 5,
-    logo: Mattapedia,
-    authBgUrl: "/images/heavy-duty.png",
-    authText: "",
-    authSubText: "",
-    registerUrl: "",
-  },
-};
 export const countryCodes = {
   "+1": "United States (+1)",
   "+44": "United Kingdom (+44)",
