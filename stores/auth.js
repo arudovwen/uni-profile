@@ -6,6 +6,7 @@ import { getSubApps } from "~/services/userservices";
 export const useAuthStore = defineStore(
   "matta_user",
   () => {
+    const { encrypt } = useEncryption();
     const appList = ref([]);
     const mattaAuth = useCookie("mattaAuth", defaultOptions);
 
@@ -16,7 +17,7 @@ export const useAuthStore = defineStore(
     const language = ref(window?.navigator?.language);
 
     const isLoggedIn = computed(() => !!mattaAuth.value);
-    const refresh_token = computed(() => mattaAuth?.value?.refreshToken);
+    const refreshToken = computed(() => mattaAuth?.value?.refreshToken);
     const jwToken = computed(() => mattaAuth?.value?.jwToken);
     const roles = computed(() => mattaAuth?.value?.roles);
     const userId = computed(() => mattaAuth?.value?.id);
@@ -38,7 +39,7 @@ export const useAuthStore = defineStore(
       setLoggedUser(userInfo);
     }
     function setRefreshToken(value) {
-      let userInfo = { ...loggedUser?.value, refresh_token: value };
+      let userInfo = { ...loggedUser?.value, refreshToken: value };
       setLoggedUser(userInfo);
     }
     function updateUser(value) {
@@ -68,7 +69,7 @@ export const useAuthStore = defineStore(
         if (res.status === 200) {
           const rows = res.data.data.map((i) => ({
             ...i,
-            url: `${i.url}/auth/validate?token=${jwToken.value}`,
+            url: `${i.url}/auth/validate?token=${encodeURIComponent(encrypt(jwToken.value))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
             defaultUrl: i.url,
           }));
           setAppList(rows);
@@ -86,7 +87,7 @@ export const useAuthStore = defineStore(
         isLoggingOut.value = true;
         const response = await logoutUser({
           token: jwToken.value,
-          refreshToken: refresh_token.value,
+          refreshToken: refreshToken.value,
         });
         if (response.status === 200) {
           localStorage.clear();
@@ -119,7 +120,7 @@ export const useAuthStore = defineStore(
     return {
       updateUser,
       isLoggedIn,
-      refresh_token,
+      refreshToken,
       jwToken,
       roles,
       userId,

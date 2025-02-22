@@ -19,7 +19,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       isRefreshing.value = true;
       try {
         const { data } = await axios.post(`${API_BASE_URL}/sso/v1/Account/refreshtoken`, {
-          token: authStore.refresh_token,
+          token: authStore.refreshToken,
           ipAddress: "",
         });
 

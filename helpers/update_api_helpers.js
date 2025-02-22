@@ -22,7 +22,7 @@ const handleTokenRefresh = async () => {
     isRefreshing = true;
     try {
       const { data } = await axiosSSO.post("/v1/Account/refreshtoken", {
-        token: authStore.refresh_token,
+        token: authStore.refreshToken,
         ipAddress: "",
       });
 

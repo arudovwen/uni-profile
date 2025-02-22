@@ -7,7 +7,7 @@ export default createStore({
   state: {
     loggedUser: "",
     cartItems: [],
-    refresh_token: "",
+    refreshToken: "",
     jwToken: "",
     isLoggedIn: false,
     roles: [],
@@ -21,7 +21,7 @@ export default createStore({
     token: (state) => (state.loggedUser ? state.loggedUser.jwToken : null),
     cartItems: (state) => state.cartItems,
     accessToken: (state) => state.jwToken,
-    refreshToken: (state) => state.refresh_token,
+    refreshToken: (state) => state.refreshToken,
     cartTotal: (state) => state.cartItems.length,
     markets: (state) => state.markets,
     totalAmount: (state) => {
@@ -38,7 +38,7 @@ export default createStore({
       state.roles = data.roles;
       state.isLoggedIn = true;
       state.userId = data.id;
-      state.refresh_token = data.refreshToken;
+      state.refreshToken = data.refreshToken;
       state.jwToken = data.jwToken;
     },
     setUserId(state, id) {
@@ -48,7 +48,7 @@ export default createStore({
       state.markets = data;
     },
     setRefreshToken(state, refreshToken) {
-      state.refresh_token = refreshToken;
+      state.refreshToken = refreshToken;
     },
     setAccessToken(state, token) {
       state.jwToken = token;
@@ -56,7 +56,7 @@ export default createStore({
 
     clearUserData(state) {
       state.loggedUser = {};
-      state.refresh_token = "";
+      state.refreshToken = "";
       state.jwToken = "";
       state.isLoggedIn = false;
       state.userId = "";

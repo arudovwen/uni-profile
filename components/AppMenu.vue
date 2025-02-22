@@ -36,6 +36,7 @@ import DotsGrid from "@/assets/images/svgs/dots-grid.svg";
 import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import { getSubApps } from "~/services/userservices";
 
+const { encrypt } = useEncryption();
 const authStore = useAuthStore();
 const rows = ref([]);
 function getData() {
@@ -51,7 +52,7 @@ function getData() {
               : "https://"
           );
           // Add the token query to the URL
-          const fullUrl = `${baseUrl}/auth/validate?token=${authStore.jwToken}`;
+          const fullUrl = `${baseUrl}/auth/validate?token=${encodeURIComponent(encrypt(authStore.jwToken))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`;
 
           // Return the modified object
           return {

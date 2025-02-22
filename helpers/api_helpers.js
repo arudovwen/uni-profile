@@ -69,7 +69,7 @@ const handleTokenRefresh = async () => {
     refreshAttemptCount += 1;
 
     const { data } = await axiosApi.post("/v1/Account/refreshtoken", {
-      token: authStore.refresh_token,
+      token: authStore.refreshToken,
       ipAddress: "",
     });
 

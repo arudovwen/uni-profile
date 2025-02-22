@@ -6,7 +6,7 @@
 </template>
 <script setup>
 import { getSubApps } from "~/services/userservices";
-
+const { encrypt } = useEncryption();
 useHead(
   {
     script: [
@@ -38,7 +38,7 @@ function getData() {
     if (res.status === 200) {
       const rows = res.data.data.map((i) => ({
         ...i,
-        url: `${i.url}/auth/validate?token=${authStore.jwToken}`,
+        url: `${i.url}/auth/validate?token=${encodeURIComponent(encrypt(authStore.jwToken))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
         defaultUrl: i.url,
       }));
       authStore.setAppList(rows);
