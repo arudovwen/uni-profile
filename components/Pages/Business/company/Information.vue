@@ -38,6 +38,7 @@
         :isCumpulsory="true"
         icon="fe:mail"
         icon-position="left"
+        :disabled="true"
       />
       <FormGroup
         label="Phone number"
@@ -250,7 +251,7 @@ const formSchema = yup.object({
   address: yup
     .string()
     .required("Company address is required")
-    .min(5, "Address must be at least 5 characters long"),
+    .min(2, "Address must be at least 5 characters long"),
 
   city: yup
     .string()
