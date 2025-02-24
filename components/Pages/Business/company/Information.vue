@@ -38,7 +38,7 @@
         :isCumpulsory="true"
         icon="fe:mail"
         icon-position="left"
-        :disabled="!companyEmail"
+        :disabled="(!!companyEmail && !!form?.onboardingStatus)"
       />
       <FormGroup
         label="Phone number"
@@ -207,6 +207,7 @@ import { updateCompanyProfile } from "~/services/settingservices";
 import { toast } from "vue3-toastify";
 
 const form = inject("form");
+console.log("🚀 ~ form:", form)
 const isLoading = ref(false);
 const active = inject("active");
 const authStore = useAuthStore();
@@ -262,7 +263,8 @@ const formSchema = yup.object({
     .string()
     // .required("Description is required")
     // .min(10, "Description must be at least 10 characters long")
-    .max(500, "Description cannot exceed 500 characters"),
+    .max(500, "Description cannot exceed 500 characters")
+    .nullable()
 });
 
 const { handleSubmit, defineField, errors, setFieldValue, setValues, values } =
