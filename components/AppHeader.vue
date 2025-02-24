@@ -105,9 +105,7 @@ const userInitials = computed(() => ({
   last: authStore.userInfo?.lastName?.slice(0, 1) || "",
 }));
 
-const displayName = computed(() =>
-  authStore?.userInfo?.firstName ? authStore?.userInfo?.fullName : "Superadmin"
-);
+const displayName = computed(() => authStore?.userInfo?.fullName);
 
 // Styles
 const searchInputClass = "!shadow-none !border-none !bg-[#F2F4F7] !text-base";

@@ -38,7 +38,7 @@
         :isCumpulsory="true"
         icon="fe:mail"
         icon-position="left"
-        :disabled="true"
+        :disabled="!companyEmail"
       />
       <FormGroup
         label="Phone number"
