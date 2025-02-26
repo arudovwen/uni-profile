@@ -2,14 +2,14 @@ import { defineStore } from "pinia";
 import { logoutUser } from "~/services/authservices";
 import { getSubApps } from "~/services/userservices";
 
-
 export const useAuthStore = defineStore(
   "matta_user",
   () => {
+    const route = useRoute();
     const { encrypt } = useEncryption();
     const appList = ref([]);
     const mattaAuth = useCookie("mattaAuth", defaultOptions);
-
+    const mattaProfiles = useCookie("mattaProfiles", defaultOptions);
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -69,7 +69,9 @@ export const useAuthStore = defineStore(
         if (res.status === 200) {
           const rows = res.data.data.map((i) => ({
             ...i,
-            url: `${i.url}/auth/validate?token=${encodeURIComponent(encrypt(jwToken.value))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
+            url: `${i.url}/auth/validate?token=${encodeURIComponent(
+              encrypt(jwToken.value)
+            )}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
             defaultUrl: i.url,
           }));
           setAppList(rows);
@@ -81,8 +83,16 @@ export const useAuthStore = defineStore(
         (obj) => obj.jwToken !== jwToken
       );
     }
+    const clearAuth = () => {
+      clearCookies().then(() => {
+        mattaAuth.value = null;
+        loggedUser.value = null;
+        mattaProfiles.value = null;
+        handleAppRedirect(route.params.appId);
+      });
+    };
     const logOut = async () => {
-      const route = useRoute();
+    
       try {
         isLoggingOut.value = true;
         const response = await logoutUser({
@@ -93,30 +103,15 @@ export const useAuthStore = defineStore(
           localStorage.clear();
           isLoggingOut.value = false;
 
-          clearCookies().then(() => {
-            mattaAuth.value = null;
-            loggedUser.value = null;
-            handleAppRedirect(route.params.appId);
-          });
+          clearAuth();
         }
       } catch (error) {
         isLoggingOut.value = false;
 
-        clearCookies().then(() => {
-          mattaAuth.value = null;
-          loggedUser.value = null;
-          handleAppRedirect(route.params.appId);
-        });
+        clearAuth();
       }
     };
 
-    const clearAuth = () => {
-      clearCookies().then(() => {
-        mattaAuth.value = null;
-        loggedUser.value = null;
-        handleAppRedirect(route.params.appId);
-      });
-    };
     return {
       updateUser,
       isLoggedIn,

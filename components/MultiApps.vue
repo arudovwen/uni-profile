@@ -117,7 +117,7 @@
 </template>
 <script setup>
 const authStore = useAuthStore();
-const mattaProfiles = useCookie("mattaProfiles");
+const mattaProfiles = useCookie("mattaProfiles", defaultOptions);
 defineEmits([
   "close",
   "click",
