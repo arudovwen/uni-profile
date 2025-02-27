@@ -15,7 +15,7 @@ const urls = {
   SOCIAL_LOGIN: "v1/account/sociallogin",
   RESEND_2FA_OTP: "v1/account/resend-2fa-code",
   USER_DETAIL: "v1/register/user-profile",
-
+  GET_TOKEN_INFORMATION: "v1/account/token-login",
   REGISTER_APP_REVOKE: "admin/v1/subapplication/apps/toggle-access",
   OWNER_DISABLE_USER: "v1/account/disable-user",
 

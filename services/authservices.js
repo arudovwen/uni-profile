@@ -19,7 +19,9 @@ export async function logOut() {
   // googleLogout();
   authStore.logOut();
 }
-
+export async function getTokenInfo(config = {}) {
+  return await ssoPost(`${urls.GET_TOKEN_INFORMATION}`, {}, config);
+}
 export async function registerInvitedUser(user, config = {}) {
   return await ssoPost(urls.REGISTER_INVITED_USER, user, config);
 }

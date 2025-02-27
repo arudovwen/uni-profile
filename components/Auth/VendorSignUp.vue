@@ -74,7 +74,6 @@
                 v-bind="companyNameAtt"
                 v-model="companyName"
                 :error="errors.companyName"
-                :isCumpulsory="type !== 'register' && main"
               />
             </div>
             <div class="lg:col-span-2">
@@ -162,7 +161,7 @@ const props = defineProps({
 });
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
-const { type, app, auth } = route.params;
+const { app, auth } = route.params;
 const { redirected_from, query_step } = route.query;
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
