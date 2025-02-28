@@ -30,7 +30,7 @@ onMounted(async () => {
     };
     authStore.setLoggedUser(userData);
     saveAuthProfile(userData);
-    handleFinalRedirect(userData);
+    window.location.replace(intialRoute[userData?.userCategory]);
     return;
   }
 });
