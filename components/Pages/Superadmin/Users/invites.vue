@@ -37,7 +37,7 @@
                     <MenuItems
                       class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-1 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
                     >
-                      <MenuItem v-if="row.status == 1">
+                      <!-- <MenuItem v-if="row.status == 1">
                         <button
                           type="button"
                           @click="
@@ -47,7 +47,7 @@
                         >
                           <AppIcon icon="iconamoon:edit-light" /> View Details
                         </button></MenuItem
-                      >
+                      > -->
                       <MenuItem v-if="row.status === 0">
                         <button
                           type="button"

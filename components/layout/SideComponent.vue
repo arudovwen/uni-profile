@@ -85,7 +85,7 @@ const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCateg
 
 const isActive = (item) => {
   return (
-    item.url === route.path ||
+    route.path.includes(item.key) ||
     item?.childRoutes?.some((child) => child === route.path)
   );
 };

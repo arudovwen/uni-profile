@@ -9,14 +9,11 @@
       <div></div>
     </div>
     <div>
-      <div class="max-w-[250px] mb-6" v-if="authStore?.userInfo?.userCategory === 3">
-        <SelectVueSelect
-          :options="users"
-          v-model="queryParams.userId"
-          :reduce="(option) => option.value"
-          :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer`"
-          placeholder="Select user"
-        />
+      <div
+        class="max-w-[250px] mb-6"
+        v-if="authStore?.userInfo?.userCategory === 3"
+      >
+        <CustomSearchSelect v-model="queryParams.userId" />
       </div>
     </div>
     <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
@@ -87,8 +84,8 @@ const GetUsersMapper = {
 };
 onMounted(() => {
   getAuditData();
-  if(authStore?.userInfo?.userCategory === 3){
-  getUsers();
+  if (authStore?.userInfo?.userCategory === 3) {
+    getUsers();
   }
 });
 
@@ -99,7 +96,7 @@ const queryParams = reactive({
   PageSize: 10,
   BusinessId: "",
   userId: "",
-  total:0
+  total: 0,
 });
 const userParams = reactive({
   Search: "",
