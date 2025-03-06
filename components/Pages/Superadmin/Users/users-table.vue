@@ -107,6 +107,7 @@
             : '/images/revoke-user.svg'
         "
         type="approve"
+        :loading="toggleStatus"
       />
     </div>
   </div>
@@ -242,27 +243,32 @@ function getInvites() {
       loading.value = false;
     });
 }
-
+const toggleStatus = ref(false)
 const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
+  toggleStatus.value = true
   toggleUserStatus(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;
         getInvites();
         toast.success("User Access updated");
+  toggleStatus.value = false
+
       }
     })
     .catch((err) => {
       toast.error(
         err?.response?.data?.message ||
           err?.response?.data?.Message ||
-          "Invite cancellation failed"
+          "User Deactivation failed"
       );
       isErrorOpen.value = true;
       isLoading.value = false;
+  toggleStatus.value = false
+
     });
 };
 function handleSuccess() {
