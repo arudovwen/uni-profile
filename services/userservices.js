@@ -71,7 +71,7 @@ export async function getAllUsers(payload) {
 }
 
 export async function toggleUserStatus(email) {
-  return await ssoPost(`${urls.TOGGLE_USER(encodeURIComponent(email))}`, {});
+  return await ssoPost(`${urls.TOGGLE_USER(email)}`, {});
 }
 
 
