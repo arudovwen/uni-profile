@@ -1,6 +1,7 @@
 import urls from "../helpers/url_helpers";
 import { post, get, mattaPost } from "../helpers/api_helpers";
 import store from "../store";
+import { ssoPost } from "./api_services";
 
 const config = {
   headers: { Authorization: `Bearer ${store.getters.accessToken}` },
@@ -8,10 +9,10 @@ const config = {
 //Authentication
 
 export async function uploadfile(data) {
-  return await mattaPost(urls.UPLOAD_FILE, data, config);
+  return await ssoPost(urls.UPLOAD_FILE, data, config);
 }
 export async function uploaddocument(data) {
-  return await mattaPost(urls.UPLOAD_DOCUMENT, data, config);
+  return await ssoPost(urls.UPLOAD_DOCUMENT, data, config);
 }
 
 export async function setaccountype(data) {

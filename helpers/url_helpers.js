@@ -27,7 +27,7 @@ const urls = {
 
   FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
 
- REGISTER: "/v1/register",
+  REGISTER: "/v1/register",
   ORBITAL_CONFIRM_EMAIL: "v1/account/confirm-email",
 
   //Customers
@@ -68,16 +68,16 @@ const urls = {
   // Invitation
   INVITATION: "admin/v1/Invitation",
   GET_ALL_USERS: "admin/v1/user/get-users",
-  TOGGLE_USER: (email)=>`admin/v1/user/users/${email}/toggle-status`,
+  TOGGLE_USER: `admin/v1/user/toggle-status`,
 
-  OWNER_INVITES:"v1/register",
+  OWNER_INVITES: "v1/register",
   OWNER_SEND_INVITE: "v1/register/send-member-invite",
   OWNER_GET_MEMBERS: "v1/register/get-members",
-  OWNER_TOGGLE_STATUS:(email)=> `v1/register/${email}/toggle-status`,
+  OWNER_TOGGLE_STATUS: "v1/owner/toggle-status",
   OWNERS_REGISTER_MEMBER: "v1/register/member",
   OWNER_REVOKE_ACCESS: "v1/owner/apps/toggle-access",
 
-  // Audit logs 
+  // Audit logs
   ADMINS_GET_AUDIT_LOGS: "admin/v1/audit/get-all",
   OWNER_GET_AUDIT_LOGS: "v1/owner/get-audit-logs",
 };

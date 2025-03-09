@@ -71,9 +71,8 @@ export async function getAllUsers(payload) {
 }
 
 export async function toggleUserStatus(email) {
-  return await ssoPost(`${urls.TOGGLE_USER(email)}`, {});
+  return await ssoPost(`${urls.TOGGLE_USER}`, { email });
 }
-
 
 export async function getOwnerinvites(payload) {
   return await ssoGet(
@@ -83,7 +82,9 @@ export async function getOwnerinvites(payload) {
 }
 export async function getCentralAdminUsers(payload) {
   return await ssoGet(
-    `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(cleanObject(payload))}`,
+    `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(
+      cleanObject(payload)
+    )}`,
     {}
   );
 }
@@ -93,13 +94,12 @@ export async function getOwnerMembers(payload) {
 }
 
 export async function toggleMemberStatus(email) {
-  return await ssoPost(`${urls.OWNER_TOGGLE_STATUS(email)}`, {});
+  return await ssoPost(`${urls.OWNER_TOGGLE_STATUS}`, { email });
 }
 
 export async function sendOwnerInvite(data) {
   return await ssoPost(`${urls.OWNER_SEND_INVITE}`, data);
 }
-
 
 export async function registerMember(data) {
   return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
@@ -116,7 +116,6 @@ export async function ownerRevokeAccess(data) {
 export async function resendOwnerInvite(data) {
   return await ssoPost(`v1/owner/re-send-invite`, data);
 }
-
 
 export async function delOwnerInvite(id) {
   return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
