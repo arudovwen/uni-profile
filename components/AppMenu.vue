@@ -41,30 +41,33 @@ const authStore = useAuthStore();
 const rows = ref([]);
 function getData() {
   getSubApps()
-    .then((res) => {
-      if (res.status === 200) {
-        rows.value = res.data.data?.map((i) => {
-          // Extract the URL and apply category-based changes
-          const baseUrl = i.url?.replace(
+    .then(res => {
+      if (res.status === 200 && res.data.data) {
+        const isAdminUser = [0, 3].includes(authStore.userInfo.userCategory);
+        
+        rows.value = res.data.data.map(i => {
+          if (!i.url) return { ...i, url: "" };
+          
+          let baseUrl = i.url.replace(
             "https://",
-            [0, 3].includes(authStore.userInfo.userCategory)
-              ? "https://admin."
-              : "https://"
+            isAdminUser ? "https://admin." : "https://"
           );
-          // Add the token query to the URL
-          const fullUrl = `${baseUrl}/auth/validate?token=${encodeURIComponent(encrypt(authStore.jwToken))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`;
-
-          // Return the modified object
-          return {
-            ...i,
-            url: fullUrl,
-          };
+          
+          if (baseUrl.includes("app.fluxafrica") && isAdminUser) {
+            baseUrl = baseUrl.replace("app.", "");
+          }
+          
+          const encryptedJWT = encrypt(authStore.jwToken);
+          const encryptedRefresh = encrypt(authStore.refreshToken);
+          const fullUrl = `${baseUrl}/auth/validate?token=${encodeURIComponent(encryptedJWT)}&code=${encodeURIComponent(encryptedRefresh)}`;
+          
+          return { ...i, url: fullUrl };
         });
       }
     })
-    .catch((error) => {
+    .catch(error => {
       console.error("Error fetching sub-apps:", error);
-      // Optionally, you could update `rows.value` to show an error state
+      rows.value = []; // Clear or reset rows on error
     });
 }
 
