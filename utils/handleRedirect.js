@@ -44,7 +44,7 @@ export function handleResetRedirect(userCategory, app) {
       const isAdminUser = [0, 3].includes(parseInt(userCategory));
       targetUrl = appInfo.defaultUrl.replace(
         "https://",
-        isAdminUser ? "https://admin." : "https://"
+        isAdminUser ? "https://admin." : "https://"                          
       );
       
       // Handle the app.fluxafrica case
