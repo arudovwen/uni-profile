@@ -25,3 +25,4 @@ logs
 sw.*
 coverage
 .scannerwork
+.qodo

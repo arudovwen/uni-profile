@@ -246,7 +246,7 @@ const formSchema = yup.object({
     otherwise: (schema) => schema.notRequired(),
   }),
 
-  website: yup.string().nullable(),
+  website: yup.string().nullable().url("Website must be a valid url"),
   // .required("Company website is required"),
 
   address: yup
