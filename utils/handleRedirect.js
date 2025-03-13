@@ -7,7 +7,7 @@ export function handleRedirect(route, { jwToken, userCategory, refreshToken }, a
   if (app) {
     const appInfo = authStore.appList?.find(i => i.code === app);
     if (appInfo?.defaultUrl) {
-      const isAdminUser = [0, 3].includes(userCategory);
+      const isAdminUser = [0, 3, 4].includes(userCategory);
       targetUrl = appInfo.defaultUrl.replace(
         "https://",
         isAdminUser ? "https://admin." : "https://"
@@ -41,7 +41,7 @@ export function handleResetRedirect(userCategory, app) {
   if (app) {
     const appInfo = authStore.appList?.find(i => i.code === app);
     if (appInfo?.defaultUrl) {
-      const isAdminUser = [0, 3].includes(parseInt(userCategory));
+      const isAdminUser = [0, 3, 4].includes(parseInt(userCategory));
       targetUrl = appInfo.defaultUrl.replace(
         "https://",
         isAdminUser ? "https://admin." : "https://"                          

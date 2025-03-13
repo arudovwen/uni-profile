@@ -43,7 +43,7 @@ function getData() {
   getSubApps()
     .then(res => {
       if (res.status === 200 && res.data.data) {
-        const isAdminUser = [0, 3].includes(authStore.userInfo.userCategory);
+        const isAdminUser = [0, 3, 4].includes(authStore.userInfo.userCategory);
         
         rows.value = res.data.data.map(i => {
           if (!i.url) return { ...i, url: "" };
