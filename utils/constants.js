@@ -409,4 +409,5 @@ export const intialRoute = {
   1: "/business-information",
   2: "/business-information",
   3: "/user-management",
+  4: "/",
 };
