@@ -1,9 +1,11 @@
 <template>
   <div
     class="formGroup relative"
-    :class="`${error ? 'has-error' : ''} ${horizontal ? 'flex' : ''} ${
-      validate ? 'is-valid' : ''
-    }`"
+    :class="{
+      'has-error': error,
+      'flex': horizontal,
+      'is-valid': validate
+    }"
   >
     <!-- Label Section -->
     <label
@@ -15,7 +17,7 @@
       :data-testid="label"
     >
       {{ label }} <RedDot v-if="isCumpulsory" />
-      <span v-show="isOptional" class="text-[#98A2B3]">(Optional)</span>
+      <span v-if="isOptional" class="text-[#98A2B3]">(Optional)</span>
       <span
         v-if="info"
         data-toggle="tooltip"
@@ -29,18 +31,14 @@
     </label>
 
     <!-- Input Section -->
-    <div
-      class="relative !flex items-center input-control text-[#667085] z-[99]"
-      :class="disabled ? '!bg-[#f8fafc]' : ''"
-    >
+    <div class="relative flex items-center input-control text-[#667085] z-[99]">
       <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
-      <Listbox v-model="selectedCountryCode" class="z-[10]">
-        <Float placement="bottom-end" :offset="4">
-          <ListboxButton
-            :disabled="disabled"
-            class="pl-3 pr-4 bg-white border-r z-[2] disabled:bg-transparent"
-          >
-            {{ selectedCountryCode || "Select Country Code" }}
+      
+      <!-- Country Code Dropdown -->
+      <Listbox v-model="phoneData.countryCode" class="z-[10]">
+        <Float placement="bottom-end" :offset="4" :flip="true">
+          <ListboxButton class="pl-3 pr-4 bg-white border-r z-[2] whitespace-nowrap">
+            {{ phoneData.countryCode || "+234" }}
           </ListboxButton>
           <ListboxOptions
             class="w-full bg-white border rounded-md shadow-lg max-h-[400px] overflow-y-auto"
@@ -51,7 +49,7 @@
               :value="code"
               class="px-4 py-2 cursor-pointer hover:bg-gray-100 z-[2]"
             >
-              {{ country }}
+              {{ code }} - {{ country }}
             </ListboxOption>
           </ListboxOptions>
         </Float>
@@ -60,14 +58,13 @@
       <!-- Phone Number Input -->
       <div class="relative flex items-center flex-1 z-[1]">
         <input
-          v-model="phoneNumber"
-          type="number"
-          class="w-full px-3 outline-none disabled:bg-transparent py-[1px]"
+          v-model="phoneData.number"
+          type="tel"
+          inputmode="numeric"
+          class="w-full px-3 outline-none"
           :placeholder="placeholder"
-          :error="error"
           :readonly="isReadonly"
           :disabled="disabled"
-          :validate="validate"
         />
 
         <!-- Validation/Success Icon -->
@@ -75,58 +72,57 @@
           <span v-if="validate" class="text-success-500">
             <AppIcon icon="bi:check-lg" />
           </span>
-          <div v-show="icon || iconType" class="text-[#667085]">
-            <AppIcon v-show="icon" :icon="icon" />
+          <div v-if="icon || iconType" class="text-[#667085]">
+            <AppIcon v-if="icon" :icon="icon" />
           </div>
           <span class="text-sm"><slot name="suffix"></slot></span>
         </div>
 
-        <!-- Error Message or Tooltip -->
+        <!-- Error Icon -->
         <span class="flex absolute right-0">
           <span v-if="error" class="text-danger-500 mr-2">
             <AppIcon icon="heroicons-outline:information-circle" />
           </span>
         </span>
       </div>
-
-      <!-- Error/Success Tooltip -->
-      <span v-if="validate" class="text-success-500 text-sm block">
-        {{ validate }}
-      </span>
-
-      <!-- Description -->
-      <span
-        v-if="description"
-        class="block placeholder-[#f9bb64] text-[#475467] font-light leading-4 text-xs mt-2"
-      >
-        {{ description }}
-      </span>
     </div>
-    <span v-if="error" class="text-danger-500 text-sm block">
+
+    <!-- Validation Messages -->
+    <span v-if="validate" class="text-success-500 text-sm block mt-1">
+      {{ validate }}
+    </span>
+    <span v-else-if="error" class="text-danger-500 text-sm block mt-1">
       {{ error }}
+    </span>
+    
+    <!-- Description -->
+    <span
+      v-if="description"
+      class="block text-[#475467] font-light leading-4 text-xs mt-2"
+    >
+      {{ description }}
     </span>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { reactive, defineProps, defineEmits, watch, onMounted } from "vue";
 import { Float } from "@headlessui-float/vue";
 import {
   Listbox,
   ListboxButton,
   ListboxOption,
   ListboxOptions,
-} from "@headlessui/vue"; // Headless UI for the country code dropdown
-import { countryCodes } from "~/utils/constants";
+} from "@headlessui/vue";
+import { countryCodes } from "@/utils/constants";
+import AppIcon from "@/components/AppIcon.vue";
+import RedDot from "@/components/RedDot.vue";
 
 const emit = defineEmits(["update:modelValue"]);
-// Define props
+
 const props = defineProps({
   iconType: String,
-  placeholder: {
-    type: String,
-    default: "081xxxxxxxx",
-  },
+  placeholder: String,
   label: String,
   classLabel: String,
   classInput: String,
@@ -134,7 +130,7 @@ const props = defineProps({
   isCumpulsory: Boolean,
   isOptional: Boolean,
   name: String,
-  modelValue: { type: [String, Number], default: "" },
+  modelValue: { type: String, default: "" },
   error: String,
   hasIcon: Boolean,
   isReadonly: Boolean,
@@ -146,42 +142,83 @@ const props = defineProps({
   icon: String,
   iconPosition: String,
   isMask: Boolean,
-  options: {
-    type: Object,
-    default: () => ({ creditCard: true, delimiter: "-" }),
-  },
   infoTitle: String,
   info: Boolean,
   suffix: String,
 });
 
-// Reactive properties for selected country code and phone number
-const selectedCountryCode = ref("+234");
-const phoneNumber = ref(null);
+// Use reactive object for better syncing of related properties
+const phoneData = reactive({
+  countryCode: "+234",
+  number: "",
+});
 
+// Parse the incoming value more robustly
+const parsePhoneValue = (value) => {
+  if (!value) return { countryCode: "+234", number: "" };
+  
+  // Handle different separator styles
+  const separators = ['-', ' '];
+  let countryCode = "+234";
+  let number = "";
+  
+  for (const separator of separators) {
+    if (value.includes(separator)) {
+      const [code, ...rest] = value.split(separator);
+      countryCode = code;
+      number = rest.join(separator);
+      return { countryCode, number };
+    }
+  }
+  
+  // If no separator found but starts with +, try to extract country code
+  if (value.startsWith('+')) {
+    // Look for first non-digit after +
+    const match = value.match(/^\+(\d+)(.*)$/);
+    if (match) {
+      countryCode = `+${match[1]}`;
+      number = match[2];
+      return { countryCode, number };
+    }
+  }
+  
+  // Default fallback - assume the whole value is the number
+  return { countryCode: "+234", number: value };
+};
+
+// Format the output in a consistent way
+const formatPhoneOutput = () => {
+  const { countryCode, number } = phoneData;
+  if (!number) return "";
+  return `${countryCode}-${number}`;
+};
+
+// Initialize from props
 onMounted(() => {
   if (props.modelValue) {
-    const tempData = props.modelValue.split("-");
-    selectedCountryCode.value = tempData[0];
-    phoneNumber.value = tempData[1];
+    const { countryCode, number } = parsePhoneValue(props.modelValue);
+    phoneData.countryCode = countryCode;
+    phoneData.number = number;
   }
 });
+
+// Watch for changes and emit updated value
 watch(
-  () => [selectedCountryCode.value, phoneNumber.value],
+  phoneData,
   () => {
-    emit(
-      "update:modelValue",
-      `${selectedCountryCode.value}-${phoneNumber.value}`
-    );
-  }
+    emit("update:modelValue", formatPhoneOutput());
+  },
+  { deep: true }
 );
+
+// Also watch for external modelValue changes
 watch(
-  () => [props.modelValue],
-  () => {
-    if (props.modelValue) {
-      const tempData = props.modelValue.split("-");
-      selectedCountryCode.value = tempData[0];
-      phoneNumber.value = tempData[1];
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue !== formatPhoneOutput()) {
+      const { countryCode, number } = parsePhoneValue(newValue);
+      phoneData.countryCode = countryCode;
+      phoneData.number = number;
     }
   }
 );
@@ -190,29 +227,16 @@ watch(
 <style scoped>
 .input-control {
   color: #101828;
-  box-shadow: 0px 1px 2px #1018280d;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 8px;
   border: 1px solid #d0d5dd;
 }
-.input-control:disabled {
-  background: #f8fafc;
-}
-/* Hide the number input caret (spinner) in most browsers */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
 
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-.has-error input {
+.has-error .input-control {
   border-color: #e74c3c;
 }
 
-.is-valid input {
+.is-valid .input-control {
   border-color: #2ecc71;
 }
 
@@ -222,5 +246,16 @@ input[type="number"] {
 
 .text-success-500 {
   color: #2ecc71;
+}
+
+/* Remove spinners for number input */
+input[type="tel"]::-webkit-outer-spin-button,
+input[type="tel"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="tel"] {
+  -moz-appearance: textfield;
 }
 </style>
