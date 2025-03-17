@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
-  const mattaAuth = useCookie("mattaAuth", defaultOptions);
+  const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
 
   // Check if the user is authenticated
   const isAuthenticated = !!mattaAuth.value;

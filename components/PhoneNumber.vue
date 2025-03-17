@@ -31,7 +31,7 @@
     </label>
 
     <!-- Input Section -->
-    <div class="relative flex items-center input-control text-[#667085] z-[99]">
+    <div class="relative !flex items-center input-control text-[#667085] z-[99]">
       <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
       
       <!-- Country Code Dropdown -->
