@@ -158,6 +158,7 @@ function onDelete() {
 }
 
 async function handleSubmit() {
+  const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
   if (!form.directors.length) return;
   isLoading.value = true;
   const data = {
@@ -173,6 +174,13 @@ async function handleSubmit() {
         // Object.keys(data).forEach((key) => {
         //   form[key] = data[key];
         // });
+        const updateData = {
+        hasCompleteBusinessProfile: true,
+        onboardingStatus: 2,
+      }
+      authStore.updateUserInfo(updateData);
+      mattaAuth.value = {...mattaAuth.value, ...updateData}
+
         toast.success("Information saved");
         isLoading.value = false;
       }
