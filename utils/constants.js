@@ -328,7 +328,14 @@ export const userRoutes = [
   "profile",
   "notifications",
 ];
-export const univeralRoutes = ["audit-logs", "user-management-user-detail-id"];
+export const univeralRoutes = [
+  "audit-logs",
+  "user-management-user-detail-id",
+  "account-login-app",
+  "account-forgot-password",
+  "account-reset-password",
+  "account-type-app",
+];
 export const RoleMap = {
   0: "Central Admin",
   1: "Superadmin",
