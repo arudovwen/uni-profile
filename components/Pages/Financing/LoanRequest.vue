@@ -5,7 +5,7 @@
         label="How much do you require?"
         :error="errors.amountRequired"
         name="amountRequired"
-        :isCumpulsory="true"
+        :isRequired="true"
         classLabel="!normal-case"
       >
         <CurrencyInput
@@ -21,7 +21,7 @@
         />
       </FormGroup>
 
-      <FormGroup  classLabel="!normal-case" label="Tenor" :error="errors.tenor" name="tenor"  :isCumpulsory="true">
+      <FormGroup  classLabel="!normal-case" label="Tenor" :error="errors.tenor" name="tenor"  :isRequired="true">
         <Select
           v-model="tenor"
           :options="options"

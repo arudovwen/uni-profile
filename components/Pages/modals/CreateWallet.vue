@@ -22,7 +22,7 @@
             name="bvn"
             v-bind="bvnAtt"
             v-model="bvn"
-            :error="errors?.['bvn']" isCumpulsory
+            :error="errors?.['bvn']" isRequired
           />
         </div>
 
@@ -42,7 +42,7 @@
           v-if="!hasSettlement"
           label="Bank"
           :error="errors.bankCode"
-          name="bankCode" isCumpulsory
+          name="bankCode" isRequired
         >
           <SelectVueSelect
             v-model="bankCode"
@@ -56,7 +56,7 @@
           />
         </FormGroup>
         <div class="" v-if="!hasSettlement">
-          <Textinput isCumpulsory
+          <Textinput isRequired
             placeholder="Account number"
             label="Account number"
             name="accountNumber"

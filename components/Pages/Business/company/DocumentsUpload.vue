@@ -2,7 +2,7 @@
   <div class="grid gap-y-[18px]">
     <div v-for="(doc, index) in privateDocuments" :key="index">
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         formClass="col-span-2 grid grid-cols-1 gap-y-4"
       >
         <div v-for="(file, idx) in doc?.urls" :key="idx" class="mb-4 last:mb-0">
@@ -11,7 +11,7 @@
             <FileUpload
               :label="documentsOptions[doc.documentType]?.title"
               :id="documentsOptions[doc.documentType]?.short"
-              :isCumpulsory="true"
+              :isRequired="true"
               v-model="file.url"
             />
             <button

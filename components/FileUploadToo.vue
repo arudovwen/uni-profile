@@ -60,7 +60,7 @@ const props = defineProps({
   accept: {
     default: "pdf,jpeg,jpg,png",
   },
-  isCumpulsory: {
+  isRequired: {
     default: false,
   },
   lClass: {

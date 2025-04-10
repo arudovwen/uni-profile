@@ -25,7 +25,7 @@
                 v-bind="firstNameAtt"
                 v-model="firstName"
                 :error="errors.firstName"
-                isCumpulsory
+                isRequired
               />
             </div>
             <div>
@@ -37,7 +37,7 @@
                 v-bind="lastNameAtt"
                 v-model="lastName"
                 :error="errors.lastName"
-                isCumpulsory
+                isRequired
               />
             </div>
             <div>
@@ -48,7 +48,7 @@
                 name="email"
                 iconType="email"
                 icon-position="left"
-                isCumpulsory
+                isRequired
                 v-model="email"
                 disabled
               />
@@ -61,7 +61,7 @@
                 v-bind="phoneNumberAtt"
                 v-model="phoneNumber"
                 :error="errors.phoneNumber"
-                isCumpulsory
+                isRequired
               />
             </div>
 
@@ -76,7 +76,7 @@
                 v-model="password"
                 :error="errors.password"
                 icon-position="left"
-                isCumpulsory
+                isRequired
                 hasicon
                 description="Must be at least 8 characters."
               />

@@ -2,7 +2,7 @@
 <template>
   <div class="w-full">
     <label v-if="label" class="block text-sm mb-[10px] text-[#475467]"
-      >{{ label }} <RedDot v-if="isCumpulsory"
+      >{{ label }} <RedDot v-if="isRequired"
     /></label>
     <div
       class="flex-1 rounded-lg py-1 pr-[14px] pl-2 h-12 text-sm w-full border border-[##EAECF0] placeholder:text-[#B6B7B9] bg-[#F9FAFB] focus:outline-matta-black/20 flex items-center"
@@ -62,7 +62,7 @@ const props = defineProps({
   modelValue: { default: "" },
   multiple: { default: false },
   accept: { default: "pdf,jpeg,jpg,png" },
-  isCumpulsory: { default: false },
+  isRequired: { default: false },
   lClass: { default: " max-w-[300px] xl:max-w-[380px]" },
 });
 

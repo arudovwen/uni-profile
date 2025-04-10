@@ -14,7 +14,7 @@
               v-bind="firstNameAtt"
               v-model="firstName"
               :error="errors.firstName"
-              :isCumpulsory="true"
+              :isRequired="true"
               disabled
             />
 
@@ -25,7 +25,7 @@
               v-bind="lastNameAtt"
               v-model="lastName"
               :error="errors.lastName"
-              :isCumpulsory="true"
+              :isRequired="true"
               disabled
             />
           </div>
@@ -61,7 +61,7 @@
               label=""
               name="phone"
               :error="errors.phone"
-              :isCumpulsory="true"
+              :isRequired="true"
             >
               <PhoneNumber v-model="phone" disabled />
             </FormGroup>

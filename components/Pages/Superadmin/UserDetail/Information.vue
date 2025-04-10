@@ -20,7 +20,7 @@
               v-bind="firstNameAtt"
               v-model="firstName"
               :error="errors.firstName"
-              :isCumpulsory="true"
+              :isRequired="true"
             />
 
             <Textinput
@@ -30,7 +30,7 @@
               v-bind="lastNameAtt"
               v-model="lastName"
               :error="errors.lastName"
-              :isCumpulsory="true"
+              :isRequired="true"
             />
           </div>
         </div>
@@ -48,7 +48,7 @@
                 v-bind="emailAtt"
                 v-model="contactEmail"
                 :error="errors.contactEmail"
-                :isCumpulsory="true"
+                :isRequired="true"
                 icon="fe:mail"
                 icon-position="left"
                 :disabled="!!contactEmail"
@@ -66,7 +66,7 @@
               label=""
               name="phone"
               :error="errors.phone"
-              :isCumpulsory="true"
+              :isRequired="true"
             >
               <FormsPhoneCodes v-model="phone" />
             </FormGroup>

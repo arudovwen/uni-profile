@@ -11,7 +11,7 @@
           v-bind="firstNameAtt"
           v-model="firstName"
           :error="errors.firstName"
-          isCumpulsory
+          isRequired
         />
       </div>
 
@@ -24,7 +24,7 @@
           v-bind="lastNameAtt"
           v-model="lastName"
           :error="errors.lastName"
-          isCumpulsory
+          isRequired
         />
       </div>
     </div>
@@ -38,11 +38,11 @@
           v-bind="emailAtt"
           v-model="email"
           :error="errors.email"
-          isCumpulsory
+          isRequired
         />
       </div>
       <div class="mb-6">
-        <FormGroup  isCumpulsory label="Phone number" :error="errors.phone">
+        <FormGroup  isRequired label="Phone number" :error="errors.phone">
           <FormsPhoneCodes v-model="phone" />
         </FormGroup>
       </div>
@@ -57,11 +57,11 @@
           v-bind="bvnAtt"
           v-model="bvn"
           :error="errors.bvn"
-          isCumpulsory
+          isRequired
         />
       </div>
       <div class="mb-6">
-        <FormGroup isCumpulsory label="Date of birth" :error="errors.dob" name="dob">
+        <FormGroup isRequired label="Date of birth" :error="errors.dob" name="dob">
           <ClientOnly>
             <VueDatePicker
               auto-apply
@@ -107,7 +107,7 @@
           label="Upload ID (Passport, Driver’s License, or NIN)"
           id="identityUrl"
           :modelValue="form.identityUrl"
-          :isCumpulsory="true"
+          :isRequired="true"
         />
         <button
           @click="downloadFile(form.identityUrl, 'Identity card')"
@@ -129,7 +129,7 @@
           label="Upload Utility Bill"
           id="utilityBillUrl"
           :modelValue="form.utilityBillUrl"
-          :isCumpulsory="true"
+          :isRequired="true"
         />
         <button
           @click="downloadFile(form.utilityBillUrl, 'Identity card')"
@@ -151,7 +151,7 @@
           label="Upload Signature"
           id="signatureUrl"
           :modelValue="form.signatureUrl"
-          :isCumpulsory="true"
+          :isRequired="true"
         />
         <button
           @click="downloadFile(form.signatureUrl, 'Signature')"

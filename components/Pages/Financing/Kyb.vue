@@ -9,7 +9,7 @@
           v-bind="companyNameAtt"
           v-model="companyName"
           :error="errors.companyName"
-          :isCumpulsory="true"
+          :isRequired="true"
         />
       </div>
       <Textinput
@@ -20,18 +20,18 @@
         v-model="email"
         :error="errors.email"
         disabled
-        :isCumpulsory="true"
+        :isRequired="true"
       />
       <FormGroup
         label="Phone number"
         name="phone"
         :error="errors.phone"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <FormsPhoneCodes v-model="phone" />
       </FormGroup>
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="Country"
         :error="errors.country"
         name="sector"
@@ -46,7 +46,7 @@
         />
       </FormGroup>
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="State"
         :error="errors.state"
         name="state"
@@ -65,7 +65,7 @@
         label="Date of incorporation"
         name="dateOfIncorporation"
         :error="errors.dateOfIncorporation"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <ClientOnly>
           <VueDatePicker
@@ -83,7 +83,7 @@
         label="Business type"
         :error="errors.category"
         name="category"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <Select
           v-model="category"
@@ -96,7 +96,7 @@
       </FormGroup>
 
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="Sector"
         :error="errors.sector"
         name="sector"
@@ -129,11 +129,11 @@
         v-bind="tinAtt"
         v-model="tin"
         :error="errors.tin"
-        :isCumpulsory="true"
+        :isRequired="true"
       />
       <div>
         <Textinput
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="City"
           name="city"
@@ -144,7 +144,7 @@
       </div>
       <div class="md:col-span-2">
         <Textinput
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="Business address"
           name="address"
@@ -155,7 +155,7 @@
       </div>
       <div class="md:col-span-2">
         <Textarea
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="Brief description of the company"
           name="description"

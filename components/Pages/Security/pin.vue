@@ -17,7 +17,7 @@
             v-bind="oldPinAtt"
             v-model="oldPin"
             :error="errors.oldPin"
-            isCumpulsory
+            isRequired
           />
 
           <Textinput
@@ -28,7 +28,7 @@
             v-bind="newPinAtt"
             v-model="newPin"
             :error="errors.newPin"
-            isCumpulsory
+            isRequired
             description="Your new pin must be 4 characters."
           />
 
@@ -40,7 +40,7 @@
             v-bind="confirmPinAtt"
             v-model="confirmPin"
             :error="errors.confirmPin"
-            isCumpulsory
+            isRequired
           />
         </div>
         <div

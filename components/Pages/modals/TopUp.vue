@@ -11,7 +11,7 @@
           :error="errors.amount"
           name="amount"
           classLabel="!normal-case"
-          isCumpulsory
+          isRequired
         >
           <div class="flex items-center">
             <CurrencyInput

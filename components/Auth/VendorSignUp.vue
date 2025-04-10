@@ -65,7 +65,7 @@
                 isCumpulsory
               />
             </div>
-            <div class="lg:col-span-2">
+            <div class="">
               <Textinput
                 placeholder="Company Name"
                 label="Company name"
@@ -76,7 +76,18 @@
                 :error="errors.companyName"
               />
             </div>
-            <div class="lg:col-span-2">
+            <FormGroup label="Country" :error="errors.country" name="sector">
+              <SelectVueSelect
+                :options="allcountries"
+                v-model="country"
+                :reduce="(country) => country"
+                :clearable="false"
+                :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer ${
+                  errors.country ? 'border-red-500' : 'border-[#D0D5DD]'
+                }`"
+              />
+            </FormGroup>
+            <div class="">
               <Textinput
                 placeholder="Create a password"
                 label="Password"
@@ -92,7 +103,7 @@
                 description="Must be at least 8 characters."
               />
             </div>
-            <div class="lg:col-span-2">
+            <div class="">
               <Textinput
                 placeholder=""
                 label="Referral Code (Optional)"
@@ -153,6 +164,7 @@ import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { registerUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
+import countries from "~/utils/countries.json";
 
 const props = defineProps({
   main: {
@@ -162,7 +174,6 @@ const props = defineProps({
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
 const { app, auth } = route.params;
-const { redirected_from, query_step } = route.query;
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
@@ -177,7 +188,19 @@ const formValues = {
   companyName: "",
   AgentReferralCode: "",
   appCode: app,
+  country: getCountryFromBrowserRegion(),
 };
+
+const allcountries = computed(() => {
+  return countries
+    .filter((item) =>
+      ["nigeria", "ghana", "south africa", "ivory coast"].includes(
+        item.name?.toLowerCase()
+      )
+    )
+    .map((item) => item.name);
+});
+
 const step = ref(1);
 const schema = yup.object({
   appCode: yup.string().nullable(),
@@ -202,6 +225,7 @@ const schema = yup.object({
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
       "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
     ),
+  country: yup.string().required(),
 });
 
 const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
@@ -215,6 +239,7 @@ const [firstName, firstNameAtt] = defineField("firstName");
 const [lastName, lastNameAtt] = defineField("lastName");
 const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 const [companyName, companyNameAtt] = defineField("companyName");
+const [country] = defineField("country");
 const [AgentReferralCode, AgentReferralCodeAtt] =
   defineField("AgentReferralCode");
 
@@ -284,6 +309,7 @@ const handleFinalSubmit = (code) => {
     });
 };
 onMounted(() => {
+  getCountryFromBrowserRegion()
   if (route.query.email) {
     step.value = 2;
   }

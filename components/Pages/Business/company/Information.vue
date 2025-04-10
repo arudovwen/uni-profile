@@ -8,14 +8,14 @@
         v-bind="companyNameAtt"
         v-model="companyName"
         :error="errors.companyName"
-        :isCumpulsory="true"
+        :isRequired="true"
       />
 
       <FormGroup
         label="Date of incorporation"
         name="dateOfIncorporation"
         :error="errors.dateOfIncorporation"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <ClientOnly>
           <VueDatePicker
@@ -35,7 +35,7 @@
         v-bind="emailAtt"
         v-model="companyEmail"
         :error="errors.companyEmail"
-        :isCumpulsory="true"
+        :isRequired="true"
         icon="fe:mail"
         icon-position="left"
         :disabled="(!!companyEmail && !!form?.onboardingStatus)"
@@ -44,12 +44,12 @@
         label="Phone number"
         name="companyPhone"
         :error="errors.companyPhone"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <FormsPhoneCodes v-model="companyPhone" />
       </FormGroup>
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="Country"
         :error="errors.country"
         name="sector"
@@ -64,7 +64,7 @@
         />
       </FormGroup>
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="State"
         :error="errors.state"
         name="state"
@@ -79,7 +79,7 @@
         />
       </FormGroup>
       <FormGroup
-        :isCumpulsory="true"
+        :isRequired="true"
         label="Business Sector"
         :error="errors.sector"
         name="sector"
@@ -98,7 +98,7 @@
         label="Business category"
         :error="errors.category"
         name="category"
-        :isCumpulsory="true"
+        :isRequired="true"
       >
         <Select
           v-model="category"
@@ -119,7 +119,7 @@
         v-bind="registrationNoAtt"
         v-model="registrationNo"
         :error="errors.registrationNo"
-        :isCumpulsory="true"
+        :isRequired="true"
       />
       <Textinput
         v-if="country?.toLowerCase() === 'nigeria'"
@@ -129,12 +129,12 @@
         v-bind="tinAtt"
         v-model="tin"
         :error="errors.tin"
-        :isCumpulsory="true"
+        :isRequired="true"
       />
 
       <div class="md:col-span-2">
         <Textinput
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="Business address"
           name="address"
@@ -157,7 +157,7 @@
       </div>
       <div>
         <Textinput
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="City"
           name="city"
@@ -168,7 +168,7 @@
       </div>
       <div class="md:col-span-2">
         <Textarea
-          :isCumpulsory="true"
+          :isRequired="true"
           placeholder=""
           label="Brief description of the company"
           name="notes"

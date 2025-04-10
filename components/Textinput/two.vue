@@ -13,7 +13,7 @@
       :for="name"
       :data-testid="label"
     >
-      {{ label }} <RedDot v-if="isCumpulsory" />
+      {{ label }} <RedDot v-if="isRequired" />
       <span v-show="isOptional" class="text-[#98A2B3]">(Optional)</span>
       <span
         v-if="info"
@@ -162,7 +162,7 @@ const props = defineProps({
     default: "text",
     //required: true,
   },
-  isCumpulsory: {
+  isRequired: {
     type: Boolean,
     default: false,
   },

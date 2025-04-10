@@ -4,7 +4,7 @@
       <FormGroup
         class="col-span-2"
         label="Bank Statement (6 months statement is required)"
-        isCumpulsory
+        isRequired
       >
         <div class="grid gap-y-7 mb-4">
           <div
@@ -42,7 +42,7 @@
         </div>
       </FormGroup>
 
-      <FormGroup class="col-span-2" label="Proforma Invoice" isCumpulsory>
+      <FormGroup class="col-span-2" label="Proforma Invoice" isRequired>
         <div class="grid gap-y-7 mb-4">
           <div
             v-for="(file, idx) in formData?.supportingDocuments[1].urls"
@@ -82,7 +82,7 @@
         label="Evidence of previously successful supply contracts (PO and Paid Invoices)"
         class="col-span-2"
         v-if="id == 1 || id == 3"
-        isCumpulsory
+        isRequired
       >
         <div class="grid gap-y-7 mb-6">
           <div

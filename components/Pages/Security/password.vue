@@ -17,7 +17,7 @@
             v-bind="oldPasswordAtt"
             v-model="oldPassword"
             :error="errors.oldPassword"
-            isCumpulsory
+            isRequired
             iconType="password"
             icon-position="left"
             :hasicon="true"
@@ -31,7 +31,7 @@
             v-bind="newPasswordAtt"
             v-model="newPassword"
             :error="errors.newPassword"
-            isCumpulsory
+            isRequired
             description="Your new password must be more than 8 characters."
             iconType="password"
             icon-position="left"
@@ -46,7 +46,7 @@
             v-bind="confirmPasswordAtt"
             v-model="confirmPassword"
             :error="errors.confirmPassword"
-            isCumpulsory
+            isRequired
             iconType="password"
             icon-position="left"
             :hasicon="true"

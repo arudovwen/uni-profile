@@ -2,7 +2,7 @@
   <div class="flex">
     <div class="w-[280px] flex  flex-col">
       <span class="text-sm font-semibold text-[#344054]"
-        >{{ label }} <RedDot v-if="isCumpulsory"
+        >{{ label }} <RedDot v-if="isRequired"
       /></span>
       <span class="text-sm text-[#344054]">{{ subtext }}</span>
     </div>
@@ -13,7 +13,7 @@
 </template>
 <script setup>
 defineProps({
-  isCumpulsory: {
+  isRequired: {
     default: false,
   },
   label: {

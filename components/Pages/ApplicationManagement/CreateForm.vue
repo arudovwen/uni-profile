@@ -18,7 +18,7 @@
             v-bind="nameAtt"
             v-model="name"
             :error="errors.name"
-            :isCumpulsory="true"
+            :isRequired="true"
           />
         </FormGroupV2>
         <hr class="border-[#E4E7EC] my-6" />
@@ -31,7 +31,7 @@
             v-bind="urlAtt"
             v-model="url"
             :error="errors.url"
-            :isCumpulsory="true"
+            :isRequired="true"
           />
         </FormGroupV2>
         <hr class="border-[#E4E7EC] my-6" />
@@ -40,19 +40,19 @@
             placeholder="Enter application description"
             v-model="description"
             :error="errors.description"
-            :isCumpulsory="true"
+            :isRequired="true"
           />
         </FormGroupV2>
         <hr class="border-[#E4E7EC] my-6" />
         <FormGroupV2 label="Application logo" subtext="Upload the app logo.">
           <FormGroup label="" :error="errors.logoUrl" name="logoUrl">
-            <FileUpload id="iconUrl" v-model="logoUrl" :isCumpulsory="true" />
+            <FileUpload id="iconUrl" v-model="logoUrl" :isRequired="true" />
           </FormGroup>
         </FormGroupV2>
         <hr class="border-[#E4E7EC] my-6" />
         <FormGroupV2 label="Application Icon" subtext="Upload the app favicon">
           <FormGroup label="" :error="errors.iconUrl" name="iconUrl">
-            <FileUpload id="iconUrl" v-model="iconUrl" :isCumpulsory="true" />
+            <FileUpload id="iconUrl" v-model="iconUrl" :isRequired="true" />
           </FormGroup>
         </FormGroupV2>
         <hr class="border-[#E4E7EC] my-6" />

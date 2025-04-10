@@ -9,7 +9,7 @@
           :error="errors.withdrawalAmount"
           name="withdrawalAmount"
           classLabel="!normal-case"
-          isCumpulsory
+          isRequired
         >
           <div class="flex items-center">
             <CurrencyInput
@@ -28,7 +28,7 @@
           </div>
         </FormGroup>
         <FormGroup
-          isCumpulsory
+          isRequired
           label="Bank"
           :error="errors.bankCode"
           name="bankCode"
@@ -46,7 +46,7 @@
         </FormGroup>
         <div class="">
           <Textinput
-            isCumpulsory
+            isRequired
             placeholder="Account number"
             label="Account number"
             name="accountNumber"

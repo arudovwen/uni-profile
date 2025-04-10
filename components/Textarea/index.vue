@@ -115,7 +115,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    isCumpulsory: {
+    isRequired: {
       type: Boolean,
       default: false,
     },

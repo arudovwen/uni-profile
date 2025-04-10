@@ -164,7 +164,7 @@
             </div>
             <div class="">
               <Textinput
-                isCumpulsory
+                isRequired
                 placeholder="NIN"
                 label="NIN"
                 type="text"
@@ -176,7 +176,7 @@
             </div>
             <div class="">
               <Textinput
-                isCumpulsory
+                isRequired
                 placeholder="drivers License Number"
                 label="drivers License Number"
                 type="text"

@@ -6,7 +6,7 @@
     <form @submit.prevent="onSubmit" class="flex flex-col gap-y-6 w-full">
       <FormGroup
         label="Bank"
-        isCumpulsory
+        isRequired
         :error="errors.bankCode"
         name="bankCode"
       >
@@ -23,7 +23,7 @@
       </FormGroup>
       <div>
         <Textinput
-          isCumpulsory
+          isRequired
           placeholder=""
           label="Account number"
           name="accountNumber"

@@ -10,7 +10,7 @@
       :class="`${classLabel}  input-label flex gap-x-1 items-center`"
       :for="name"
     >
-      {{ label }} <RedDot v-if="isCumpulsory" /> <span v-if="isOptional" class=" font-medium text-gray-400">(Optional)</span>
+      {{ label }} <RedDot v-if="isRequired" /> <span v-if="isOptional" class=" font-medium text-gray-400">(Optional)</span>
       <span
         v-if="info"
         data-toggle="tooltip"
@@ -93,7 +93,7 @@ export default {
     description: {
       type: String,
     },
-    isCumpulsory: {
+    isRequired: {
       type: Boolean,
       default: false,
     },

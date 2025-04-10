@@ -26,7 +26,7 @@
             v-bind="firstNameAtt"
             v-model="firstName"
             :error="errors.firstName"
-            :isCumpulsory="true"
+            :isRequired="true"
           />
 
           <Textinput
@@ -36,7 +36,7 @@
             v-bind="lastNameAtt"
             v-model="lastName"
             :error="errors.lastName"
-            :isCumpulsory="true"
+            :isRequired="true"
           />
 
           <div >
@@ -47,7 +47,7 @@
               v-bind="emailAtt"
               v-model="contactEmail"
               :error="errors.contactEmail"
-              :isCumpulsory="true"
+              :isRequired="true"
               icon="fe:mail"
               icon-position="left"
               :disabled="!!contactEmail"
@@ -57,7 +57,7 @@
             label="Phone number"
             name="phone"
             :error="errors.phone"
-            :isCumpulsory="true"
+            :isRequired="true"
           >
             <FormsPhoneCodes v-model="phone" />
           </FormGroup>
@@ -66,7 +66,7 @@
             label="Business type"
             :error="errors.category"
             name="category"
-            :isCumpulsory="true"
+            :isRequired="true"
           >
             <Select
               v-model="category"
@@ -80,7 +80,7 @@
 
           <div class="md:col-span-2">
             <Textinput
-              :isCumpulsory="true"
+              :isRequired="true"
               placeholder=""
               label="Address"
               name="address"
