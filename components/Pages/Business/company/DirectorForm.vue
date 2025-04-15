@@ -42,14 +42,16 @@
         />
       </div>
       <div class="mb-6">
-  
-        <FormGroup  isRequired label="Phone number" :error="errors.phone">
+        <FormGroup isRequired label="Phone number" :error="errors.phone">
           <PhoneNumber v-model="phone" />
         </FormGroup>
       </div>
     </div>
     <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-x-4">
-      <div class="mb-6" v-if="companyInfo?.country?.toLowerCase()=== 'nigeria'">
+      <div
+        class="mb-6"
+        v-if="companyInfo?.country?.toLowerCase() === 'nigeria'"
+      >
         <Textinput
           placeholder=""
           label="BVN"
@@ -62,7 +64,12 @@
         />
       </div>
       <div class="mb-6">
-        <FormGroup isRequired label="Date of birth" :error="errors.dob" name="dob">
+        <FormGroup
+          isRequired
+          label="Date of birth"
+          :error="errors.dob"
+          name="dob"
+        >
           <ClientOnly>
             <VueDatePicker
               auto-apply
@@ -101,7 +108,7 @@
     </div>
 
     <div class="lg:col-span-2 mb-6">
-      <FormGroup  
+      <FormGroup
         :error="isFieldTouched('identityUrl') ? errors.identityUrl : ''"
       >
         <FileUpload
@@ -113,17 +120,17 @@
         <button
           @click="downloadFile(form.identityUrl, 'Identity card')"
           download
-            class="outline-none"
+          class="outline-none"
           v-if="form.identityUrl"
         >
           <span class="block text-xs text-blue-500 mt-1"
             >Download Identity card</span
-          ></button
-        >
+          >
+        </button>
       </FormGroup>
     </div>
     <div class="lg:col-span-2 mb-6">
-      <FormGroup  
+      <FormGroup
         :error="isFieldTouched('utilityBillUrl') ? errors.utilityBillUrl : ''"
       >
         <FileUpload
@@ -140,8 +147,8 @@
         >
           <span class="block text-xs text-blue-500 mt-1"
             >Download Utility Bill</span
-          ></button
-        >
+          >
+        </button>
       </FormGroup>
     </div>
     <div class="lg:col-span-2 mb-6">
@@ -158,12 +165,12 @@
           @click="downloadFile(form.signatureUrl, 'Signature')"
           download
           v-if="form.signatureUrl"
-            class="outline-none"
+          class="outline-none"
         >
           <span class="block text-xs text-blue-500 mt-1"
             >Download Signature</span
-          ></button
-        >
+          >
+        </button>
       </FormGroup>
     </div>
     <div class="flex justify-end gap-x-4 mt-8 w-full">
@@ -204,11 +211,11 @@ const form = reactive({
   bvn: "",
   dob: "",
   linkedIn: "",
-  address:"",
+  address: "",
   signatureUrl: "",
   identityUrl: "",
   utilityBillUrl: "",
-  country:companyInfo?.value?.country
+  country: companyInfo?.value?.country,
 });
 const schema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
@@ -219,8 +226,13 @@ const schema = yup.object().shape({
     .required("Email is required"),
   phone: yup.string().required("Phone number is required"),
   address: yup.string().required("Home address is required"),
-  dob: yup.date().typeError("Invalid date").required("Date of birth is required").nullable(),
-  linkedIn: yup.string(), // No validation for LinkedIn URL
+  dob: yup
+    .date()
+    .typeError("Invalid date")
+    .required("Date of birth is required")
+    .max(new Date(), "Date of birth must be in the past")
+    .nullable(),
+  linkedIn: yup.string().url("Invalid URL"),
   signatureUrl: yup.string().required("Signature URL is required"),
   identityUrl: yup.string().required("Identity URL is required"),
   utilityBillUrl: yup.string().required("Utility Bill is required"),
@@ -250,7 +262,6 @@ const [dob] = defineField("dob");
 const [linkedIn, linkedInAtt] = defineField("linkedIn");
 const [address, addressAtt] = defineField("address");
 
-
 onMounted(() => {
   if (props.director) {
     form.firstName = props.director.firstName;
@@ -260,13 +271,13 @@ onMounted(() => {
     form.bvn = props.director.bvn;
     form.dob = new Date(props.director.dob);
     form.linkedIn = props.director.linkedIn;
-    form.address = props.director.address
+    form.address = props.director.address;
     form.signatureUrl = props.director.signatureUrl;
     form.identityUrl = props.director.identityUrl;
-    form.utilityBillUrl = props.director.utilityBillUrl
-    Object.keys(props.director).forEach(item=>{
-       setFieldValue(item, props.director[item])
-    })
+    form.utilityBillUrl = props.director.utilityBillUrl;
+    Object.keys(props.director).forEach((item) => {
+      setFieldValue(item, props.director[item]);
+    });
   }
 });
 const isLoading = ref(false);
