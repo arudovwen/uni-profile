@@ -53,7 +53,7 @@ function getData() {
             isAdminUser ? "https://admin." : "https://"
           );
           
-          if (baseUrl.includes("app.fluxafrica") && isAdminUser) {
+          if (baseUrl.includes("app.") && isAdminUser) {
             baseUrl = baseUrl.replace("app.", "");
           }
           
