@@ -22,7 +22,7 @@
       <button
         type="button"
         @click="triggerFileInput"
-        class="text-xs text-white border border-[#1570Ef] !bg-[#1570EF] rounded px-5 py-[10px] active:scale-[.95] leading-normal flex justify-center"
+        class="text-xs text-white border border-[#021242] !bg-[#021242] rounded px-5 py-[10px] active:scale-[.95] leading-normal flex justify-center"
       >
         <div
           v-if="loading"

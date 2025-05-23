@@ -125,7 +125,7 @@ export default defineNuxtConfig({
     manifest: {
       name: "Matta Profile",
       short_name: "Matta Profile",
-      theme_color: "#1570EF",
+      theme_color: "#021242",
       display: "standalone",
       icons: [
         {
@@ -227,7 +227,7 @@ export default defineNuxtConfig({
         }, // Add relevant keywords
         { name: "author", content: "Success Ahon" }, // Add author information
         { name: "robots", content: "index, follow" }, // Control search engine indexing
-        { name: "theme-color", content: "#1570EF" }, // Set the theme color for mobile browsers
+        { name: "theme-color", content: "#021242" }, // Set the theme color for mobile browsers
       ],
       script: [{ src: "https://sdk.monnify.com/plugin/monnify.js" }],
     },

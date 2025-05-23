@@ -42,7 +42,7 @@ defineEmits(["closeLoader"]);
   animation: 1s spin linear infinite;
 }
 .loader:after {
-  color: #1570ef;
+  color: #021242;
   transform: rotateY(70deg);
   animation-delay: 0.4s;
 }

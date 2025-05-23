@@ -13,6 +13,6 @@
 }
 
 .loader {
-  @apply border-t-4 border-[#1570EF] border-solid rounded-full h-8 w-8 animate-spin;
+  @apply border-t-4 border-[#021242] border-solid rounded-full h-8 w-8 animate-spin;
 }
 </style>
