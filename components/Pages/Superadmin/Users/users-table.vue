@@ -146,6 +146,10 @@ const Options = [
     label: "Superadmins",
     value: "superadmins",
   },
+   {
+    label: "Central Admins",
+    value: "central admins",
+  },
   {
     label: "Admins",
     value: "admins",
@@ -158,8 +162,9 @@ const Options = [
 const RoleMapper = {
   superadmins: [3],
   admins: [0],
+  'central admins': [4],
   others: [1, 2],
-  default: [0, 1, 2, 3],
+  default: [0, 1, 2, 3, 4],
 };
 const rows = ref([]);
 const loading = ref(false);
