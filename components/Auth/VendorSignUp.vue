@@ -157,6 +157,14 @@
       subtext="Enter the  6-Digit verification code has been sent to your registered email address. Check your inbox."
     />
   </NuxtLayout>
+  <noscript v-if="app === 'MAT678'">
+    <iframe
+      src="https://www.googletagmanager.com/ns.html?id=GTM-M7KP6CJG"
+      height="0"
+      width="0"
+      style="display: none; visibility: hidden"
+    ></iframe>
+  </noscript>
 </template>
 <script setup>
 import { useForm } from "vee-validate";
@@ -178,6 +186,25 @@ const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isVerified = ref(false);
+if (app === "MAT678") {
+  useHead({
+    script: [
+      {
+        id: "gtm-init", // this ID must match the key in __dangerouslyDisableSanitizersByTagID
+        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-M7KP6CJG');`,
+        type: "text/javascript",
+      },
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      "gtm-init": ["innerHTML"],
+    },
+  });
+}
+
 const formValues = {
   email: "",
   firstName: "",
@@ -309,7 +336,7 @@ const handleFinalSubmit = (code) => {
     });
 };
 onMounted(() => {
-  getCountryFromBrowserRegion()
+  getCountryFromBrowserRegion();
   if (route.query.email) {
     step.value = 2;
   }
