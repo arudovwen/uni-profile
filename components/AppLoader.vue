@@ -27,7 +27,7 @@
   animation: 1s spin linear infinite;
 }
 .loader:after {
-  color: #1570EF;
+  color: #021242;
   transform: rotateY(70deg);
   animation-delay: 0.4s;
 }

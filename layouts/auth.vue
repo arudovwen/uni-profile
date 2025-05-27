@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-[#1570ef01]">
+  <div class="relative bg-[#02124201]">
     <div
       class="bg-[#FFFFFF] min-h-screen w-screen bg-contain bg-center max-w-[1980px] mx-auto lg:flex justify-center items-center relative p-4"
     >

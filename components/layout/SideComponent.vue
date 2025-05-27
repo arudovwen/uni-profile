@@ -18,7 +18,7 @@
             <router-link
               :to="item.url"
               :class="`flex flex-row items-center p-2 gap-2 w-full h-[40px] bg-blue rounded-[6px] ${
-                isActive(item) && 'bg-[#1570EF] !text-[#ffffff]'
+                isActive(item) && 'bg-[#021242] !text-[#ffffff]'
               }`"
             >
               <div class="flex flex-row items-center p-2 gap-x-3">

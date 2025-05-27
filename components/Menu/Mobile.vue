@@ -6,7 +6,7 @@
       )"
       :key="n.name"
       @click="activeKey = n.name"
-      class="flex gap-x-1 items-center group-hover:text-[#1570EF] justify-between text-sm font-medium text-[#182230]"
+      class="flex gap-x-1 items-center group-hover:text-[#021242] justify-between text-sm font-medium text-[#182230]"
     >
       {{ n.name }}
       <AppIcon icon="pepicons-pencil:angle-right" />
@@ -16,7 +16,7 @@
       
     >
      <NuxtLink to="/finance">
-     <span class="flex gap-x-1 items-center group-hover:text-[#1570EF] justify-between text-sm font-medium text-[#182230]"> Finance
+     <span class="flex gap-x-1 items-center group-hover:text-[#021242] justify-between text-sm font-medium text-[#182230]"> Finance
       <AppIcon icon="pepicons-pencil:angle-right" /></span>
      </NuxtLink>
     </li> -->
@@ -32,7 +32,7 @@
     <li
       v-for="cat in handleDropDown()"
       :key="cat.title"
-      class="flex gap-x-1 items-center group-hover:text-[#1570EF] justify-between text-sm font-medium text-[#182230]"
+      class="flex gap-x-1 items-center group-hover:text-[#021242] justify-between text-sm font-medium text-[#182230]"
     >
       <NuxtLink
         v-if="activeKey.toLowerCase() !== 'finance'"
@@ -59,11 +59,11 @@
         {{ cat.title }}
       </button>
     </li>
-    <li   class="flex gap-x-1 items-center group-hover:text-[#1570EF] justify-between text-sm font-medium text-[#182230] mt-2">
+    <li   class="flex gap-x-1 items-center group-hover:text-[#021242] justify-between text-sm font-medium text-[#182230] mt-2">
       <NuxtLink
         to="/request-product"
-        activeClass="text-[#1570EF] font-medium"
-        class="flex gap-x-1 items-center group-hover:text-[#1570EF]"
+        activeClass="text-[#021242] font-medium"
+        class="flex gap-x-1 items-center group-hover:text-[#021242]"
       >
         Request a product</NuxtLink
       >

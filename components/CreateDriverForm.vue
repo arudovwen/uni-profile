@@ -88,7 +88,7 @@
             <div
               class="flex-none flex justify-center items-center order-0 flex-grow-0 w-[48px] h-[48px] bg-[#D1E9FF] border-[8px] border-[#EFF8FF] rounded-[28px]"
             >
-              <ProfileAddIcon class="text-[#1570EF] !h-[24px] !w-[24px]" />
+              <ProfileAddIcon class="text-[#021242] !h-[24px] !w-[24px]" />
             </div>
 
             <div class="text-left flex-none order-0 self-stretch flex-grow-0">

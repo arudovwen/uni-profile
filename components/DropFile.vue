@@ -391,7 +391,7 @@ const handleFile = (file) => {
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  color: #1570EF;
+  color: #021242;
 }
 
 .separator-text {
