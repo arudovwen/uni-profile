@@ -9,6 +9,14 @@ export const defaultOptions = {
   maxAge: 60 * 60 * 24 * 7, // 7 days default
   httpOnly: false, // false by default to allow JS access
 };
+
+export const appCodeColorMap = {
+  OXI742: "#1570EF",
+  MAT763: "#1570EF",
+  MAT678: "#1570EF",
+  FLU120: "#021242",
+};
+
 export const countryCodes = {
   "+1": "United States (+1)",
   "+44": "United Kingdom (+44)",

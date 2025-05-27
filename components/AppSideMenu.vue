@@ -90,7 +90,7 @@
                           <span
                             v-if="authStore.isLoggedIn"
                             @click="logOut()"
-                            class="flex gap-x-1 text-xs text-[#021242] font-medium"
+                            class="flex gap-x-1 text-xs text-[#1570EF] font-medium"
                             ><AppIcon
                               icon="octicon:sign-out-16"
                               class="text-sm"

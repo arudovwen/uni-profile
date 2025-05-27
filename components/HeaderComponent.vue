@@ -5,7 +5,7 @@
   >
     <div class="flex-1">
       <span
-        class="cursor-pointer flex flex-row justify-start items-center text-[#021242] mb-6"
+        class="cursor-pointer flex flex-row justify-start items-center text-[#1570EF] mb-6"
         v-if="canGoback"
         @click="backRoute ? navigateTo(backRoute) : router.go(-1)"
       >

@@ -189,6 +189,6 @@ provide("isOpen", isOpen);
 }
 
 nav .NuxtLink-active.NuxtLink-exact-active {
-  color: #021242;
+  color: #1570EF;
 }
 </style>

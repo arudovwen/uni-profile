@@ -2,7 +2,7 @@
   <NuxtLayout v-if="step === 1" name="auth">
     <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
       <h1
-        class="text-[#182230] darks:text-white mb-4 text-3xl font-medium w-full"
+        class="text-[#021242] darks:text-white mb-4 text-3xl font-medium w-full"
       >
         Log In {{ authStore.appList.find((i) => i.code === app)?.name ?? "" }}
       </h1>
@@ -39,20 +39,32 @@
             :error="errors.password"
           />
         </div>
-        <span class="block text-sm text-primary-500 darks:text-white/80 mb-10">
+        <span
+          class="block text-sm darks:text-white/80 mb-10"
+          :style="{ color: color }"
+        >
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/forgot-password${app?`/${app}`:''}`)"
+            :to="
+              handleRouting(
+                route,
+                `/${auth}/forgot-password${app ? `/${app}` : ''}`
+              )
+            "
             class="font-medium"
             >Forgot password?</NuxtLink
           >
         </span>
         <div class="grid gap-y-[22px]">
-          <AppButton
+            <AppButton
             type="submit"
             :isLoading="isLoading"
             :isDisabled="isLoading || !meta.valid"
             text="Sign In"
             btnClass="btn-primary !py-3"
+            :style="{
+              background: isLoading || !meta.valid ? '' : color,
+            
+            }"
           />
         </div>
 
@@ -61,8 +73,11 @@
         >
           Don’t have an account?
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/register${app?`/${app}`:''}`)"
-            class="font-medium text-primary-500"
+            :to="
+              handleRouting(route, `/${auth}/register${app ? `/${app}` : ''}`)
+            "
+            class="font-medium"
+            :style="{ color: color }"
             >Sign Up</NuxtLink
           >
         </span>
@@ -104,7 +119,7 @@ const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const { app, auth } = route.params;
-
+const color = appCodeColorMap[app] || "#1570EF";
 const step = ref(1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
@@ -136,7 +151,6 @@ const handleFinalRedirect = (data) => {
     handleRedirect(route, data, app);
     return;
   }
-
 
   toast.success("Login successful");
   isLoading.value = false;

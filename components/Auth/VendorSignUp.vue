@@ -3,7 +3,7 @@
     <div class="w-full lg:w-[600px] mx-auto">
       <div>
         <h1
-          class="text-[#101828] darks:text-white mb-[4px] text-[30px] font-medium"
+          class="text-[#021242] darks:text-white mb-[4px] text-[30px] font-medium"
         >
           Sign Up
         </h1>
@@ -122,6 +122,9 @@
                 text="Sign Up"
                 btnClass="normal-case btn-primary !py-3"
                 :isDisabled="isLoading || !meta.valid"
+                :style="{
+                  background: isLoading || !meta.valid ? '' : color,
+                }"
               />
             </div>
             <span
@@ -132,6 +135,7 @@
                 :to="
                   handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)
                 "
+                 :style="{ color: color }"
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
               >
@@ -179,9 +183,11 @@ const props = defineProps({
     default: true,
   },
 });
+
 const emits = defineEmits(["close", "toggleAuth"]);
 const route = useRoute();
 const { app, auth } = route.params;
+const color = appCodeColorMap[app] || "#1570EF";
 const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);

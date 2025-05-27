@@ -10,7 +10,7 @@
           <SecuritySafeIcon v-else />
         </div>
         <h1
-          class="text-[#182230] darks:text-white mb-[10px] mt-4 text-[30px] font-bold text-center"
+          class="text-[#021242] darks:text-white mb-[10px] mt-4 text-[30px] font-bold text-center"
         >
           Reset Password
         </h1>
@@ -68,6 +68,9 @@
             :isDisabled="isLoading"
             text="Continue"
             btnClass="btn-primary !py-3"
+             :style="{
+                  background: isLoading || !meta.valid ? '' : color,
+                }"
           />
         </div>
         <NuxtLink
@@ -76,7 +79,7 @@
           @click="emit('close')"
         >
           <AppIcon icon="eva:arrow-back-fill" />
-          <span class="font-normal"> Back </span>
+          <span class="font-normal"   :style="{ color: color }"> Back </span>
         </NuxtLink>
       </div>
     </div>
@@ -131,6 +134,7 @@ const formValues = {
   email: route.query.email,
 };
 const { app } = route.params;
+const color = appCodeColorMap[app] || "#1570EF";
 const schema = yup.object({
   password: yup
     .string()

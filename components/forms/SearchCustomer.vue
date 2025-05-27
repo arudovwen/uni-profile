@@ -102,7 +102,7 @@
     "
     >{{ error }}</span
   >
-  <span @click="isOpen = true" class="text-[#021242]"
+  <span @click="isOpen = true" class="text-[#1570EF]"
     >+ Create a new customer</span
   >
   <Center>

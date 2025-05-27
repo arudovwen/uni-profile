@@ -6,7 +6,7 @@
           <AuthSmsNotificationIcon />
         </div>
         <h1
-          :class="`text-[#182230] darks:text-white mb-3 text-3xl font-medium ${
+          :class="`text-[#021242] darks:text-white mb-3 text-3xl font-medium ${
             isSent ? 'text-center' : ''
           }`"
         >
@@ -40,21 +40,29 @@
               :isDisabled="isLoading || !meta.valid"
               text="Reset Password"
               btnClass="btn-primary !py-3"
+              :style="{
+                background: isLoading || !meta.valid ? '' : color,
+              }"
             />
           </div>
           <NuxtLink
-             :to="handleRouting(route, `/auth/login`)"
+            :to="handleRouting(route, `/auth/login`)"
             class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           >
             <AppIcon icon="eva:arrow-back-fill" />
-            <span class="font-normal"> Back to Login </span>
+            <span class="font-normal" :style="{ color: color }">
+              Back to Login
+            </span>
           </NuxtLink>
         </form>
         <div class="pt-5" v-if="isSent">
-          <NuxtLink  :to="handleRouting(route, `/auth/login`)" class="w-full">
+          <NuxtLink :to="handleRouting(route, `/auth/login`)" class="w-full">
             <AppButton
               text="Return to Login"
               btnClass="btn-primary !py-3 w-full !normal-case"
+              :style="{
+                background: isLoading || !meta.valid ? '' : color,
+              }"
             />
           </NuxtLink>
         </div>
@@ -74,7 +82,8 @@ import { toast } from "vue3-toastify";
 import { forgotPassword } from "~/services/authservices";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
-const {app} = useRoute().params
+const { app } = useRoute().params;
+const color = appCodeColorMap[app] || "#1570EF";
 const title1 = "Forgot password";
 const title2 = "Check your email";
 const text1 =
