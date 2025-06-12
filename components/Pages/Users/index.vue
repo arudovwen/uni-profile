@@ -1,9 +1,9 @@
 <template>
-  <div class="w-full mx-auto max-w-[900px]">
+  <div class="w-full mx-auto max-w-[900]">
     <!-- Top bar   -->
 
     <div
-      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+      class="flex flex-col mb-6 lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
       <HeaderComponent
         title="User Management"
