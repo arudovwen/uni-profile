@@ -291,6 +291,32 @@ export const Navigation = [
     key: "notifications",
   },
 ];
+export const PlatformAdminNavigation = [
+  {
+    name: "Applications",
+    url: "/my-applications",
+    key: "my-applications",
+  },
+
+  {
+    name: "Users Management",
+    url: "/users-management",
+    key: "users-management",
+  },
+
+
+  {
+    name: "Settings",
+    url: "/",
+    key: "index",
+  },
+
+  {
+    name: "Notifications",
+    url: "/notifications",
+    key: "notifications",
+  },
+];
 export const SuperNavigation = [
   {
     name: "User Management",

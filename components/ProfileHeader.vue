@@ -1,11 +1,11 @@
 <template>
   <div class="bg-white border-t border-b border-[#E4E7EC]">
     <ul
-      class="flex gap-x-1 items-center justify-start py-3 container overflow-auto"
+      class="container flex items-center justify-start py-3 overflow-auto gap-x-1"
     >
-
       <li
-        v-for="n in NavMapper[authStore?.userInfo?.userCategory] || UserNavigation"
+        v-for="n in NavMapper[authStore?.userInfo?.userCategory] ||
+        UserNavigation"
         :key="n.name"
       >
         <NuxtLink :to="n.url">
@@ -34,5 +34,6 @@ const NavMapper = {
   0: Navigation,
   1: OwnerNavigation,
   2: UserNavigation,
+  4: PlatformAdminNavigation,
 };
 </script>

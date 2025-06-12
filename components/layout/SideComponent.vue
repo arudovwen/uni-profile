@@ -9,7 +9,7 @@
         <AppLogo />
       </div>
       <nav class="flex flex-col items-start px-[16px] gap-[8px] w-full z-0">
-        <ul class="grid gap-y-2 w-full">
+        <ul class="grid w-full gap-y-2">
           <li
             v-for="item in mappedNavigation"
             :key="item.name"
@@ -80,6 +80,7 @@ const authStore = useAuthStore()
 const NavMapper = {
   0: Navigation,
   3: SuperNavigation,
+  4: Navigation,
 };
 const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCategory]);
 

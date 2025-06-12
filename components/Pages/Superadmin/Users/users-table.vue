@@ -3,7 +3,7 @@
     <!-- Top bar   -->
 
     <div
-      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+      class="flex flex-col mb-6 lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
       <div class="relative flex items-center">
         <span class="absolute left-4 text-[#667085]"
@@ -44,7 +44,7 @@
               <template #table-row-action="{ row }">
                 <Menu class="" as="div">
                   <Float placement="bottom-end" :offset="4">
-                    <MenuButton class="outline-none ml-auto block">
+                    <MenuButton class="block ml-auto outline-none">
                       <AppIcon icon="heroicons:ellipsis-vertical-solid" />
                     </MenuButton>
                     <MenuItems
@@ -64,7 +64,7 @@
                               }`
                             )
                           "
-                          class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                          class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                         >
                           <AppIcon icon="iconamoon:edit-light" /> View Details
                         </button></MenuItem
@@ -78,7 +78,7 @@
                             id = detail.contactEmail;
                             open = true;
                           "
-                          class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                          class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                         >
                           <AppIcon icon="la:user-minus" />
                           {{ !row.isActive ? "Enable" : "Deactivate" }} access
@@ -135,6 +135,7 @@ const detail = ref(null);
 const GetUsersMapper = {
   0: getCentralAdminUsers,
   3: getAllUsers,
+  4: getCentralAdminUsers,
 };
 const authStore = useAuthStore();
 const Options = [
@@ -146,7 +147,7 @@ const Options = [
     label: "Superadmins",
     value: "superadmins",
   },
-   {
+  {
     label: "Central Admins",
     value: "central admins",
   },
@@ -162,7 +163,7 @@ const Options = [
 const RoleMapper = {
   superadmins: [3],
   admins: [0],
-  'central admins': [4],
+  "central admins": [4],
   others: [1, 2],
   default: [0, 1, 2, 3, 4],
 };
@@ -248,20 +249,19 @@ function getInvites() {
       loading.value = false;
     });
 }
-const toggleStatus = ref(false)
+const toggleStatus = ref(false);
 const debounceSearch = debounce(() => {
   getInvites();
 }, 800);
 const handleDelete = () => {
-  toggleStatus.value = true
+  toggleStatus.value = true;
   toggleUserStatus(id.value)
     .then((res) => {
       if (res.status === 200) {
         open.value = false;
         getInvites();
         toast.success("User Access updated");
-  toggleStatus.value = false
-
+        toggleStatus.value = false;
       }
     })
     .catch((err) => {
@@ -272,8 +272,7 @@ const handleDelete = () => {
       );
       isErrorOpen.value = true;
       isLoading.value = false;
-  toggleStatus.value = false
-
+      toggleStatus.value = false;
     });
 };
 function handleSuccess() {

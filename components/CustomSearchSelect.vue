@@ -3,7 +3,7 @@
     <Combobox v-model="selectedOption">
       <div class="relative mt-1">
         <div
-          class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left  border border-[#EAECF0] input sm:text-sm"
+          class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm"
         >
           <ComboboxInput
             :class="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer px-3 outline-none focus:outline-none`"
@@ -20,7 +20,7 @@
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="h-5 w-5 text-gray-400"
+              class="w-5 h-5 text-gray-400"
             >
               <path
                 stroke-linecap="round"
@@ -37,17 +37,17 @@
         >
           <ComboboxOptions
             v-if="showOptions"
-            class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
+            class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
           >
             <div
               v-if="isLoading"
-              class="relative cursor-default select-none py-2 px-4 text-gray-500"
+              class="relative px-4 py-2 text-gray-500 cursor-default select-none"
             >
               Loading...
             </div>
             <div
               v-else-if="filteredOptions.length === 0"
-              class="relative cursor-default select-none py-2 px-4 text-gray-600"
+              class="relative px-4 py-2 text-gray-600 cursor-default select-none"
             >
               No results found.
             </div>
@@ -84,7 +84,7 @@
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
                     stroke="currentColor"
-                    class="h-5 w-5"
+                    class="w-5 h-5"
                   >
                     <path
                       stroke-linecap="round"
@@ -149,6 +149,7 @@ const searchTimeout = ref(null);
 const GetUsersMapper = {
   0: getCentralAdminUsers,
   3: getAllUsers,
+  4: getCentralAdminUsers,
 };
 
 // Debounced search handler to prevent too many API calls

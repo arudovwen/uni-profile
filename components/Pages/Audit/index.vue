@@ -3,7 +3,7 @@
     <!-- Top bar   -->
 
     <div
-      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+      class="flex flex-col mb-6 lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
       <HeaderComponent title="Audit Logs" subtext="Manage your logs here." />
       <div></div>
@@ -77,10 +77,13 @@ const auditData = ref([]);
 const GetAudit = {
   1: getOwnerAudit,
   3: getAdminAudit,
+  4: getAdminAudit,
 };
+
 const GetUsersMapper = {
   0: getCentralAdminUsers,
   3: getAllUsers,
+  4: getCentralAdminUsers,
 };
 onMounted(() => {
   getAuditData();
