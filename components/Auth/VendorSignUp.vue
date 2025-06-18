@@ -225,13 +225,7 @@ const formValues = {
 };
 
 const allcountries = computed(() => {
-  return countries
-    .filter((item) =>
-      ["nigeria", "ghana", "south africa", "ivory coast"].includes(
-        item.name?.toLowerCase()
-      )
-    )
-    .map((item) => item.name);
+  return countries.map((item) => item.name);
 });
 
 const step = ref(1);
