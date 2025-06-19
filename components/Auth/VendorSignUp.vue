@@ -135,7 +135,7 @@
                 :to="
                   handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)
                 "
-                 :style="{ color: color }"
+                :style="{ color: color }"
                 class="font-medium text-primary-500"
                 >Log in</NuxtLink
               >
@@ -208,6 +208,26 @@ if (app === "MAT678") {
     __dangerouslyDisableSanitizersByTagID: {
       "gtm-init": ["innerHTML"],
     },
+  });
+}
+
+if (app === "FLU120") {
+  useHead({
+    script: [
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-9YFZLVNCG5",
+        async: true,
+      },
+      {
+        children: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-9YFZLVNCG5');
+        `,
+        type: "text/javascript",
+      },
+    ],
   });
 }
 
