@@ -9,7 +9,7 @@
         </h1>
         <p class="mb-8 text-base darks:text-white/80">Create an Account</p>
       </div>
-      <div class="flex gap-x-1 items-center w-full">
+      <div class="flex items-center w-full gap-x-1">
         <div class="w-full">
           <form
             v-if="step === 1"
@@ -115,13 +115,58 @@
                 :isCumpulsory="false"
               />
             </div>
+
+            <div
+              v-if="app === 'MAT678'"
+              class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
+            >
+              <Checkbox
+                v-model.value="subscribe"
+                label="I agree to the "
+                labelClass="text-xs lg:text-sm"
+              />
+              <span>
+                <NuxtLink
+                  to="https://matta.trade/terms-and-conditions"
+                  class="text-[#2176FF]"
+                  external
+                  target="_blank"
+                  >Terms of services
+                </NuxtLink>
+                and
+                <NuxtLink
+                  to="https://matta.trade/privacy-policies"
+                  class="text-[#2176FF]"
+                  external
+                  target="_blank"
+                  >Policy</NuxtLink
+                >
+                of Matta Trade
+              </span>
+            </div>
+            <div
+              class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
+            >
+              <Checkbox
+                v-model.value="subscribe"
+                label="I agree to the "
+                labelClass="text-xs lg:text-sm"
+              />
+              <span>
+                I agree to receive Matta’s newsletter with price insights,
+                product alerts, and sourcing deals. You can unsubscribe anytime.
+              </span>
+            </div>
+
             <div class="lg:col-span-2 grid gap-y-[22px] mb-[13px] mt-4">
               <AppButton
                 type="submit"
                 :isLoading="isLoading"
                 text="Sign Up"
                 btnClass="normal-case btn-primary !py-3"
-                :isDisabled="isLoading || !meta.valid"
+                :isDisabled="
+                  isLoading || !meta.valid || (app === 'MAT678' && !agree)
+                "
                 :style="{
                   background: isLoading || !meta.valid ? '' : color,
                 }"
@@ -242,6 +287,8 @@ const formValues = {
   AgentReferralCode: "",
   appCode: app,
   country: getCountryFromBrowserRegion(),
+  agree: false,
+  subscribe: false,
 };
 
 const allcountries = computed(() => {
@@ -273,6 +320,8 @@ const schema = yup.object({
       "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
     ),
   country: yup.string().required(),
+  agree: yup.boolean(),
+  subscribe: yup.boolean(),
 });
 
 const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
@@ -289,6 +338,8 @@ const [companyName, companyNameAtt] = defineField("companyName");
 const [country] = defineField("country");
 const [AgentReferralCode, AgentReferralCodeAtt] =
   defineField("AgentReferralCode");
+const [agree] = defineField("agree");
+const [subscribe] = defineField("subscribe");
 
 const router = useRouter();
 
