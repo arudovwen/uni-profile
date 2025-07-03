@@ -121,7 +121,7 @@
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
             >
               <Checkbox
-                v-model.value="subscribe"
+                v-model.value="agree"
                 label="I agree to the "
                 labelClass="text-xs lg:text-sm"
               />
