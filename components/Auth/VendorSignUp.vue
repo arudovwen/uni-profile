@@ -144,7 +144,7 @@
                 of Matta Trade
               </span>
             </div>
-            <div
+            <div   v-if="app === 'MAT678'"
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
             >
               <Checkbox
