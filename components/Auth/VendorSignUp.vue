@@ -144,7 +144,7 @@
                 of Matta Trade
               </span>
             </div>
-            <div   v-if="app === 'MAT678'"
+            <!-- <div   v-if="app === 'MAT678'"
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
             >
               <Checkbox
@@ -156,7 +156,7 @@
                 I agree to receive Matta’s newsletter with price insights,
                 product alerts, and sourcing deals. You can unsubscribe anytime.
               </span>
-            </div>
+            </div> -->
 
             <div class="lg:col-span-2 grid gap-y-[22px] mb-[13px] mt-4">
               <AppButton
