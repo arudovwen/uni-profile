@@ -16,8 +16,19 @@
           class="border border-[#DFE5EC] text-sm rounded-lg w-full lg:w-[320px] h-11 pl-10 py-2 outline-none focus:outline-none"
         />
       </div>
-      <div v-if="authStore?.userInfo?.userCategory === 3">
+
+      <div class="flex items-center gap-x-3">
         <SelectVueSelect
+          v-model="queryParams.appCode"
+          :options="[{ label: 'Default', value: '' }, ...Apps]"
+          :reduce="(option) => option.value"
+          placeholder="Select app"
+          :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer  'border-[#D0D5DD]'`"
+          :clearable="false"
+        />
+
+        <SelectVueSelect
+          v-if="authStore?.userInfo?.userCategory === 3"
           v-model="queryParams.userCatText"
           :options="Options"
           :reduce="(option) => option.value"
@@ -228,6 +239,7 @@ const queryParams = reactive({
   userCatText: "",
   userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3] : null,
   total: 0,
+  appCode: "",
 });
 
 function getInvites() {
@@ -278,6 +290,9 @@ const handleDelete = () => {
 function handleSuccess() {
   getInvites();
 }
+const Apps = computed(() =>
+  authStore.appList.map((i) => ({ label: i.name, value: i.code }))
+);
 watch(
   () => [queryParams.Search],
   () => {
@@ -289,6 +304,7 @@ watch(
     queryParams.PageNumber,
     queryParams.SortOrder,
     queryParams.userCategories,
+    queryParams.appCode,
   ],
   () => {
     getInvites();
