@@ -147,9 +147,9 @@ const searchQuery = ref("");
 const searchTimeout = ref(null);
 
 const GetUsersMapper = {
-  0: getCentralAdminUsers,
+  0: getAllUsers,
   3: getAllUsers,
-  4: getCentralAdminUsers,
+  4: getAllUsers,
 };
 
 // Debounced search handler to prevent too many API calls

@@ -81,9 +81,9 @@ const GetAudit = {
 };
 
 const GetUsersMapper = {
-  0: getCentralAdminUsers,
+  0: getAllUsers,
   3: getAllUsers,
-  4: getCentralAdminUsers,
+  4: getAllUsers,
 };
 onMounted(() => {
   getAuditData();
