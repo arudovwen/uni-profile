@@ -144,9 +144,9 @@ const open = ref(false);
 const isOpen = ref(false);
 const detail = ref(null);
 const GetUsersMapper = {
-  0: getCentralAdminUsers,
+  0: getAllUsers,
   3: getAllUsers,
-  4: getCentralAdminUsers,
+  4: getAllUsers,
 };
 const authStore = useAuthStore();
 const Options = [
