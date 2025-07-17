@@ -237,7 +237,7 @@ const queryParams = reactive({
   PageNumber: 1,
   PageSize: 15,
   userCatText: "",
-  userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3] : null,
+  userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3, 4] : null,
   total: 0,
   appCode: "",
 });
