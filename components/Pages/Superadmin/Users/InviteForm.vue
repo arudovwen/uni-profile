@@ -67,9 +67,9 @@
               }
             "
           />
-          <p class="text-danger-500 block text-sm mt-1">{{ errors.appCodes }}</p>
+          <p class="block mt-1 text-sm text-danger-500">{{ errors.appCodes }}</p>
         </div>
-        <div class="flex gap-x-4 pt-4 p-0 w-full z-30">
+        <div class="z-30 flex w-full p-0 pt-4 gap-x-4">
           <AppButton
             btnClass="w-full text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
             type="button"
@@ -135,7 +135,7 @@ const roles = [
     value: 1,
   },
   {
-    label: "Central Admin",
+    label: "Platform Admin",
     value: 0,
   },
 ];

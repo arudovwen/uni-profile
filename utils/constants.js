@@ -371,7 +371,7 @@ export const univeralRoutes = [
   "account-type-app",
 ];
 export const RoleMap = {
-  0: "Central Admin",
+  0: "Platform Admin",
   1: "Superadmin",
   2: "Member",
 };
