@@ -281,7 +281,8 @@ function getInvites() {
     .then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,
-        // roleName: RoleMap[i.role],
+        signUpAppCode: authStore.appList.find((j) => j.code === i.signUpAppCode)
+          ?.name,
         name: `${i.firstName} ${i.lastName}`,
         lastLoginTime: i.lastLoginTime
           ? moment(i.lastLoginTime).format("lll")
