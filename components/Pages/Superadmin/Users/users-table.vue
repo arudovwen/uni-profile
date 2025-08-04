@@ -18,6 +18,21 @@
       </div>
 
       <div class="flex items-center gap-x-3">
+        <div class="min-w-[240px]">
+          <ClientOnly>
+            <VueDatePicker
+              auto-apply
+              v-model="date"
+              range
+              multi-calendars
+              placeholder="Select dates"
+              :time-picker="false"
+              input-class-name=""
+              no-today
+              :enable-time-picker="false"
+            />
+          </ClientOnly>
+        </div>
         <SelectVueSelect
           v-model="queryParams.appCode"
           :options="[{ label: 'Default', value: '' }, ...Apps]"
@@ -129,7 +144,8 @@ definePageMeta({
 });
 import debounce from "lodash/debounce";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import { Float } from "@headlessui-float/vue";
 import {
   getAllUsers,
@@ -206,19 +222,33 @@ const columns = [
     isHtml: false,
     isStatus: false,
   },
+
   {
-    header: "Status",
-    key: "status",
+    header: "SignupApp",
+    key: "signUpAppCode",
     isHtml: false,
-    isStatus: true,
+    isStatus: false,
   },
+
+  {
+    header: "CreatedOn",
+    key: "created",
+    isHtml: false,
+    isStatus: false,
+  },
+
   {
     header: "Last active",
     key: "lastLoginTime",
     isHtml: false,
     isStatus: false,
   },
-
+  {
+    header: "Status",
+    key: "status",
+    isHtml: false,
+    isStatus: true,
+  },
   {
     header: "",
     key: "action",
@@ -230,16 +260,19 @@ const columns = [
 onMounted(() => {
   getInvites();
 });
-
+const date = ref(null);
 const queryParams = reactive({
   Search: "",
   SortOrder: "",
   PageNumber: 1,
   PageSize: 15,
   userCatText: "",
-  userCategories: authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3, 4] : null,
+  userCategories:
+    authStore?.userInfo?.userCategory === 3 ? [0, 1, 2, 3, 4] : null,
   total: 0,
   appCode: "",
+  from: null,
+  to: null,
 });
 
 function getInvites() {
@@ -253,6 +286,7 @@ function getInvites() {
         lastLoginTime: i.lastLoginTime
           ? moment(i.lastLoginTime).format("lll")
           : null,
+        created: i.created ? moment(i.created).format("lll") : null,
         status: i.isActive ? 1 : 2,
       }));
       queryParams.total = res.data.totalCount;
@@ -305,6 +339,8 @@ watch(
     queryParams.SortOrder,
     queryParams.userCategories,
     queryParams.appCode,
+    queryParams.from,
+    queryParams.to,
   ],
   () => {
     getInvites();
@@ -316,7 +352,15 @@ watch(
     queryParams.userCategories = RoleMapper[queryParams.userCatText];
   }
 );
-
+watch(date, () => {
+  if (date.value) {
+    queryParams.from = moment(date.value[0]).format("yyyy-MM-DD");
+    queryParams.to = moment(date.value[1]).format("yyyy-MM-DD");
+  } else {
+    queryParams.from = null;
+    queryParams.to = null;
+  }
+});
 provide("handleSuccess", handleSuccess);
 provide("isOpen", isOpen);
 </script>
