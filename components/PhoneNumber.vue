@@ -1,10 +1,10 @@
 <template>
   <div
-    class="formGroup relative"
+    class="relative formGroup"
     :class="{
       'has-error': error,
-      'flex': horizontal,
-      'is-valid': validate
+      flex: horizontal,
+      'is-valid': validate,
     }"
   >
     <!-- Label Section -->
@@ -24,32 +24,36 @@
         data-placement="top"
         data-animation="false"
         :title="infoTitle"
-        class="cursor-pointer h-4 w-4 flex items-center justify-center"
+        class="flex items-center justify-center w-4 h-4 cursor-pointer"
       >
         <AppIcon icon="quill:info" iconClass="text-gray-600" />
       </span>
     </label>
 
     <!-- Input Section -->
-    <div class="relative !flex items-center input-control text-[#667085] z-[99]">
+    <div
+      class="relative !flex items-center input-control text-[#667085] z-[99]"
+    >
       <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
-      
+
       <!-- Country Code Dropdown -->
       <Listbox v-model="phoneData.countryCode" class="z-[10]">
         <Float placement="bottom-end" :offset="4" :flip="true">
-          <ListboxButton class="pl-3 pr-4 bg-white border-r z-[2] whitespace-nowrap">
+          <ListboxButton
+            class="pl-3 pr-4 bg-white border-r z-[2] whitespace-nowrap"
+          >
             {{ phoneData.countryCode || "+234" }}
           </ListboxButton>
           <ListboxOptions
             class="w-full bg-white border rounded-md shadow-lg max-h-[400px] overflow-y-auto"
           >
             <ListboxOption
-              v-for="(country, code) in countryCodes"
+              v-for="(country, code) in countries"
               :key="code"
-              :value="code"
+              :value="`+${country.phone}`"
               class="px-4 py-2 cursor-pointer hover:bg-gray-100 z-[2]"
             >
-              {{ code }} - {{ country }}
+              +{{ country.phone }} - {{ country.label }}
             </ListboxOption>
           </ListboxOptions>
         </Float>
@@ -68,7 +72,7 @@
         />
 
         <!-- Validation/Success Icon -->
-        <div class="flex absolute top-1/2 -translate-y-1/2 right-4 text-xl">
+        <div class="absolute flex text-xl -translate-y-1/2 top-1/2 right-4">
           <span v-if="validate" class="text-success-500">
             <AppIcon icon="bi:check-lg" />
           </span>
@@ -79,8 +83,8 @@
         </div>
 
         <!-- Error Icon -->
-        <span class="flex absolute right-0">
-          <span v-if="error" class="text-danger-500 mr-2">
+        <span class="absolute right-0 flex">
+          <span v-if="error" class="mr-2 text-danger-500">
             <AppIcon icon="heroicons-outline:information-circle" />
           </span>
         </span>
@@ -88,13 +92,13 @@
     </div>
 
     <!-- Validation Messages -->
-    <span v-if="validate" class="text-success-500 text-sm block mt-1">
+    <span v-if="validate" class="block mt-1 text-sm text-success-500">
       {{ validate }}
     </span>
-    <span v-else-if="error" class="text-danger-500 text-sm block mt-1">
+    <span v-else-if="error" class="block mt-1 text-sm text-danger-500">
       {{ error }}
     </span>
-    
+
     <!-- Description -->
     <span
       v-if="description"
@@ -114,7 +118,8 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/vue";
-import { countryCodes } from "@/utils/constants";
+import countries from "~/utils/countrycodes.js";
+
 import AppIcon from "@/components/AppIcon.vue";
 import RedDot from "@/components/RedDot.vue";
 
@@ -156,12 +161,12 @@ const phoneData = reactive({
 // Parse the incoming value more robustly
 const parsePhoneValue = (value) => {
   if (!value) return { countryCode: "+234", number: "" };
-  
+
   // Handle different separator styles
-  const separators = ['-', ' '];
+  const separators = ["-", " "];
   let countryCode = "+234";
   let number = "";
-  
+
   for (const separator of separators) {
     if (value.includes(separator)) {
       const [code, ...rest] = value.split(separator);
@@ -170,9 +175,9 @@ const parsePhoneValue = (value) => {
       return { countryCode, number };
     }
   }
-  
+
   // If no separator found but starts with +, try to extract country code
-  if (value.startsWith('+')) {
+  if (value.startsWith("+")) {
     // Look for first non-digit after +
     const match = value.match(/^\+(\d+)(.*)$/);
     if (match) {
@@ -181,7 +186,7 @@ const parsePhoneValue = (value) => {
       return { countryCode, number };
     }
   }
-  
+
   // Default fallback - assume the whole value is the number
   return { countryCode: "+234", number: value };
 };
