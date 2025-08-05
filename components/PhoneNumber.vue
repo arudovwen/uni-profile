@@ -7,7 +7,7 @@
       'is-valid': validate,
     }"
   >
-    <!-- Label Section -->
+    <!-- Label -->
     <label
       v-if="label"
       :class="`${classLabel} ${
@@ -20,9 +20,6 @@
       <span v-if="isOptional" class="text-[#98A2B3]">(Optional)</span>
       <span
         v-if="info"
-        data-toggle="tooltip"
-        data-placement="top"
-        data-animation="false"
         :title="infoTitle"
         class="flex items-center justify-center w-4 h-4 cursor-pointer"
       >
@@ -30,36 +27,37 @@
       </span>
     </label>
 
-    <!-- Input Section -->
+    <!-- Input Group -->
     <div
       class="relative !flex items-center input-control text-[#667085] z-[99]"
     >
       <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
 
       <!-- Country Code Dropdown -->
-      <Listbox v-model="phoneData.countryCode" class="z-[10]">
+      <Combobox v-model="selectedCountry">
         <Float placement="bottom-end" :offset="4" :flip="true">
-          <ListboxButton
-            class="pl-3 pr-4 bg-white border-r z-[2] whitespace-nowrap"
-          >
-            {{ phoneData.countryCode || "+234" }}
-          </ListboxButton>
-          <ListboxOptions
+          <ComboboxInput
+            class="pl-3 pr-2 bg-white border-r z-[2] whitespace-nowrap outline-none max-w-16"
+            :displayValue="(country) => country?.phone || '+234'"
+            placeholder="+234"
+             @change="query = $event.target.value"
+          />
+          <ComboboxOptions
             class="w-full bg-white border rounded-md shadow-lg max-h-[400px] overflow-y-auto"
           >
-            <ListboxOption
-              v-for="(country, code) in countries"
-              :key="code"
-              :value="`+${country.phone}`"
+            <ComboboxOption
+              v-for="country in filteredCountryList"
+              :key="country.code"
+              :value="country"
               class="px-4 py-2 cursor-pointer hover:bg-gray-100 z-[2]"
             >
-              +{{ country.phone }} - {{ country.label }}
-            </ListboxOption>
-          </ListboxOptions>
+              {{ country.phone }} - {{ country.label }}
+            </ComboboxOption>
+          </ComboboxOptions>
         </Float>
-      </Listbox>
+      </Combobox>
 
-      <!-- Phone Number Input -->
+      <!-- Phone Input -->
       <div class="relative flex items-center flex-1 z-[1]">
         <input
           v-model="phoneData.number"
@@ -70,8 +68,7 @@
           :readonly="isReadonly"
           :disabled="disabled"
         />
-
-        <!-- Validation/Success Icon -->
+        <!-- Icons -->
         <div class="absolute flex text-xl -translate-y-1/2 top-1/2 right-4">
           <span v-if="validate" class="text-success-500">
             <AppIcon icon="bi:check-lg" />
@@ -82,7 +79,7 @@
           <span class="text-sm"><slot name="suffix"></slot></span>
         </div>
 
-        <!-- Error Icon -->
+        <!-- Error -->
         <span class="absolute right-0 flex">
           <span v-if="error" class="mr-2 text-danger-500">
             <AppIcon icon="heroicons-outline:information-circle" />
@@ -91,7 +88,7 @@
       </div>
     </div>
 
-    <!-- Validation Messages -->
+    <!-- Messages -->
     <span v-if="validate" class="block mt-1 text-sm text-success-500">
       {{ validate }}
     </span>
@@ -110,32 +107,31 @@
 </template>
 
 <script setup>
-import { reactive, defineProps, defineEmits, watch, onMounted } from "vue";
-import { Float } from "@headlessui-float/vue";
+import { ref, reactive, defineProps, defineEmits, watch, onMounted, computed } from 'vue'
+import { Float } from '@headlessui-float/vue'
 import {
-  Listbox,
-  ListboxButton,
-  ListboxOption,
-  ListboxOptions,
-} from "@headlessui/vue";
-import countries from "~/utils/countrycodes.js";
+  Combobox,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from '@headlessui/vue'
 
-import AppIcon from "@/components/AppIcon.vue";
-import RedDot from "@/components/RedDot.vue";
+import AppIcon from '@/components/AppIcon.vue'
+import RedDot from '@/components/RedDot.vue'
+import countries from '~/utils/countrycodes.js'
 
-const emit = defineEmits(["update:modelValue"]);
-
+// Props
 const props = defineProps({
   iconType: String,
   placeholder: String,
   label: String,
   classLabel: String,
   classInput: String,
-  type: { type: String, default: "text" },
+  type: { type: String, default: 'text' },
   isRequired: Boolean,
   isOptional: Boolean,
   name: String,
-  modelValue: { type: String, default: "" },
+  modelValue: { type: String, default: '' },
   error: String,
   hasIcon: Boolean,
   isReadonly: Boolean,
@@ -150,83 +146,78 @@ const props = defineProps({
   infoTitle: String,
   info: Boolean,
   suffix: String,
-});
+})
 
-// Use reactive object for better syncing of related properties
+// Emits
+const emit = defineEmits(['update:modelValue'])
+
+// Reactive state
 const phoneData = reactive({
-  countryCode: "+234",
-  number: "",
-});
+  number: '',
+})
+const selectedCountry = ref(null)
+const query = ref('')
 
-// Parse the incoming value more robustly
-const parsePhoneValue = (value) => {
-  if (!value) return { countryCode: "+234", number: "" };
+// Country list
+const countryList = computed(() =>
+  Object.entries(countries).map(([code, country]) => ({
+    code,
+    label: country.label,
+    phone: `+${country.phone}`,
+  }))
+)
 
-  // Handle different separator styles
-  const separators = ["-", " "];
-  let countryCode = "+234";
-  let number = "";
+// Filtered list for Combobox
+const filteredCountryList = computed(() => {
+  if (!query.value) return countryList.value
+  return countryList.value.filter((c) =>
+    `${c.label} ${c.phone}`.toLowerCase().includes(query.value.toLowerCase())
+  )
+})
 
-  for (const separator of separators) {
-    if (value.includes(separator)) {
-      const [code, ...rest] = value.split(separator);
-      countryCode = code;
-      number = rest.join(separator);
-      return { countryCode, number };
-    }
-  }
-
-  // If no separator found but starts with +, try to extract country code
-  if (value.startsWith("+")) {
-    // Look for first non-digit after +
-    const match = value.match(/^\+(\d+)(.*)$/);
-    if (match) {
-      countryCode = `+${match[1]}`;
-      number = match[2];
-      return { countryCode, number };
-    }
-  }
-
-  // Default fallback - assume the whole value is the number
-  return { countryCode: "+234", number: value };
-};
-
-// Format the output in a consistent way
+// Formatting logic
 const formatPhoneOutput = () => {
-  const { countryCode, number } = phoneData;
-  if (!number) return "";
-  return `${countryCode}-${number}`;
-};
+  const number = phoneData.number
+  const code = selectedCountry.value?.phone || '+234'
+  return number ? `${code}-${number}` : ''
+}
 
-// Initialize from props
+const parsePhoneValue = (value) => {
+  if (!value) return { code: '+234', number: '' }
+  const parts = value.split(/[-\s]/)
+  const code = parts[0]
+  const number = parts.slice(1).join(' ')
+  return { code, number }
+}
+
+// Initialize value
 onMounted(() => {
   if (props.modelValue) {
-    const { countryCode, number } = parsePhoneValue(props.modelValue);
-    phoneData.countryCode = countryCode;
-    phoneData.number = number;
+    const { code, number } = parsePhoneValue(props.modelValue)
+    selectedCountry.value = countryList.value.find((c) => c.phone === code) || null
+    phoneData.number = number
   }
-});
+})
 
-// Watch for changes and emit updated value
+// Sync modelValue
 watch(
   phoneData,
   () => {
-    emit("update:modelValue", formatPhoneOutput());
+    emit('update:modelValue', formatPhoneOutput())
   },
   { deep: true }
-);
+)
 
-// Also watch for external modelValue changes
 watch(
   () => props.modelValue,
   (newValue) => {
     if (newValue !== formatPhoneOutput()) {
-      const { countryCode, number } = parsePhoneValue(newValue);
-      phoneData.countryCode = countryCode;
-      phoneData.number = number;
+      const { code, number } = parsePhoneValue(newValue)
+      selectedCountry.value = countryList.value.find((c) => c.phone === code) || null
+      phoneData.number = number
     }
   }
-);
+)
 </script>
 
 <style scoped>
@@ -253,14 +244,13 @@ watch(
   color: #2ecc71;
 }
 
-/* Remove spinners for number input */
-input[type="tel"]::-webkit-outer-spin-button,
-input[type="tel"]::-webkit-inner-spin-button {
+input[type='tel']::-webkit-outer-spin-button,
+input[type='tel']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="tel"] {
+input[type='tel'] {
   -moz-appearance: textfield;
 }
 </style>
