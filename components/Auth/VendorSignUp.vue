@@ -408,8 +408,22 @@ const handleFinalSubmit = (code) => {
 };
 onMounted(() => {
   getCountryFromBrowserRegion();
-  if (route.query.email) {
+  if (route.query.email && !route.query.firstName) {
     step.value = 2;
+  }
+  const queryParams = [
+    "firstName",
+    "lastName",
+    // "phoneNumber",
+    "email",
+    // "companyName",
+  ];
+  const isAllParamsPresent = queryParams.every((param) => route.query[param]);
+
+  if (isAllParamsPresent) {
+    queryParams.forEach((param) => {
+      setFieldValue(param, route.query[param]);
+    });
   }
 });
 </script>
