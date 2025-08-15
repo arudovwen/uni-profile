@@ -277,10 +277,10 @@ if (app === "FLU120") {
 }
 
 const formValues = {
-  email: "",
-  firstName: "",
-  lastName: "",
-  phoneNumber: "",
+  email: route.query?.email || "",
+  firstName: route.query?.firstName || "",
+  lastName: route.query?.lastName || "",
+  phoneNumber: route.query?.phoneNumber || "",
   password: "",
   confirmPassword: "",
   companyName: "",
@@ -411,19 +411,19 @@ onMounted(() => {
   if (route.query.email && !route.query.firstName) {
     step.value = 2;
   }
-  const queryParams = [
-    "firstName",
-    "lastName",
-    // "phoneNumber",
-    "email",
-    // "companyName",
-  ];
-  const isAllParamsPresent = queryParams.every((param) => route.query[param]);
+  // const queryParams = [
+  //   "firstName",
+  //   "lastName",
+  //   "phoneNumber",
+  //   "email",
+  //   // "companyName",
+  // ];
+  // const isAllParamsPresent = queryParams.every((param) => route.query[param]);
 
-  if (isAllParamsPresent) {
-    queryParams.forEach((param) => {
-      setFieldValue(param, route.query[param]);
-    });
-  }
+  // if (isAllParamsPresent) {
+  //   queryParams.forEach((param) => {
+  //     setFieldValue(param, route.query[param]);
+  //   });
+  // }
 });
 </script>
