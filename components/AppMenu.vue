@@ -13,7 +13,7 @@
       <MenuItem v-for="item in rows" :key="item.name"
         ><a target="_blank" :href="item?.url">
           <button
-            class="p-2 rounded-lg bg-primary-50/40 text-sm flex flex-col items-center gap-y-1 font-medium w-full"
+            class="flex flex-col items-center w-full p-2 text-sm font-medium rounded-lg bg-primary-50/40 gap-y-1"
           >
             <span>
               <img
@@ -40,7 +40,7 @@ const { encrypt } = useEncryption();
 const authStore = useAuthStore();
 const rows = ref([]);
 function getData() {
-  getSubApps()
+  getSubApps({isDisabled: false})
     .then(res => {
       if (res.status === 200 && res.data.data) {
         const isAdminUser = [0, 3, 4].includes(authStore.userInfo.userCategory);

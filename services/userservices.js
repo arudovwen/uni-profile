@@ -31,7 +31,7 @@ export async function addSubApp(data) {
 }
 
 export async function getSubApps(data) {
-  return await ssoGet(`${urls.GET_SUBAPPS}`, {});
+  return await ssoGet(`${urls.GET_SUBAPPS}?${new URLSearchParams(data)}`, {});
 }
 export async function getSubApp(id) {
   return await ssoGet(`${urls.GET_SUBAPP(id)}`, {});
