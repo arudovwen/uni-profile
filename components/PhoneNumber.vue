@@ -166,7 +166,7 @@ const props = defineProps({
 });
 
 // Emits
-const emit = defineEmits(["update:modelValue", "error"]);
+const emit = defineEmits(["update:modelValue", "setError"]);
 
 // Reactive state
 const phoneData = reactive({ number: "" });
@@ -209,9 +209,10 @@ const parsePhoneValue = (value) => {
 // Computed error
 const phoneError = computed(() => {
   const len = phoneData.number.length;
+  if (props.error) return props.error;
   if (len === 0 && props.isRequired) return "Phone number is required";
-  if (len < min.value) return `Minimum length is ${min.value}`;
-  if (len > max.value) return `Maximum length is ${max.value}`;
+  if (len > 0 && len < min.value) return `Minimum length is ${min.value}`;
+  if (len > 0 && len > max.value) return `Maximum length is ${max.value}`;
   return "";
 });
 
@@ -230,7 +231,7 @@ watch(
   phoneData,
   () => {
     emit("update:modelValue", formatPhoneOutput());
-    emit("error", phoneError.value || null);
+    emit("setError", phoneError.value || null);
   },
   { deep: true }
 );
@@ -255,15 +256,25 @@ watch(
   border-radius: 8px;
   border: 1px solid #d0d5dd;
 }
-.has-error .input-control { border-color: #e74c3c; }
-.is-valid .input-control { border-color: #2ecc71; }
-.text-danger-500 { color: #e74c3c; }
-.text-success-500 { color: #2ecc71; }
+.has-error .input-control {
+  border-color: #e74c3c;
+}
+.is-valid .input-control {
+  border-color: #2ecc71;
+}
+.text-danger-500 {
+  color: #e74c3c;
+}
+.text-success-500 {
+  color: #2ecc71;
+}
 
-input[type='tel']::-webkit-outer-spin-button,
-input[type='tel']::-webkit-inner-spin-button {
+input[type="tel"]::-webkit-outer-spin-button,
+input[type="tel"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type='tel'] { -moz-appearance: textfield; }
+input[type="tel"] {
+  -moz-appearance: textfield;
+}
 </style>

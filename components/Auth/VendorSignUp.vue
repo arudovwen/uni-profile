@@ -55,13 +55,18 @@
               />
             </div>
             <div>
-              <LazyPhoneNumber
+              <PhoneNumber
                 label="Phone number"
                 type="tel"
                 name="phoneNumber"
                 v-bind="phoneNumberAtt"
                 v-model="phoneNumber"
                 :error="errors.phoneNumber"
+                @setError="
+                  (val) => {
+                    phoneError = val;
+                  }
+                "
                 isCumpulsory
               />
             </div>
@@ -165,10 +170,14 @@
                 text="Sign Up"
                 btnClass="normal-case btn-primary !py-3"
                 :isDisabled="
-                  isLoading || !meta.valid || (app === 'MAT678' && !agree)
+                  isLoading ||
+                  !meta.valid ||
+                  (app === 'MAT678' && !agree) ||
+                  !!phoneError
                 "
                 :style="{
-                  background: isLoading || !meta.valid ? '' : color,
+                  background: isLoading || !meta.valid ||
+                  !!phoneError ? '' : color,
                 }"
               />
             </div>
@@ -237,6 +246,8 @@ const authStore = useAuthStore();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isVerified = ref(false);
+const phoneError = ref(null);
+
 if (app === "MAT678") {
   useHead({
     script: [
@@ -324,7 +335,7 @@ const schema = yup.object({
   subscribe: yup.boolean(),
 });
 
-const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
+const { handleSubmit, defineField, errors, meta, setFieldError } = useForm({
   validationSchema: schema,
   initialValues: formValues,
 });
@@ -343,7 +354,12 @@ const [subscribe] = defineField("subscribe");
 
 const router = useRouter();
 
-const onSubmit = handleSubmit((values) => {
+const onSubmit = handleSubmit(async (values) => {
+  const { valid } = await validateField("phoneNumber");
+  if (!valid) {
+    return; // stops submission
+  }
+
   isLoading.value = true;
   registerUser({
     ...values,
@@ -406,6 +422,8 @@ const handleFinalSubmit = (code) => {
       }
     });
 };
+console.log(errors);
+
 onMounted(() => {
   getCountryFromBrowserRegion();
   if (route.query.email && !route.query.firstName) {
