@@ -355,11 +355,6 @@ const [subscribe] = defineField("subscribe");
 const router = useRouter();
 
 const onSubmit = handleSubmit(async (values) => {
-  const { valid } = await validateField("phoneNumber");
-  if (!valid) {
-    return; // stops submission
-  }
-
   isLoading.value = true;
   registerUser({
     ...values,
@@ -422,7 +417,6 @@ const handleFinalSubmit = (code) => {
       }
     });
 };
-console.log(errors);
 
 onMounted(() => {
   getCountryFromBrowserRegion();
