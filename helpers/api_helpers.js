@@ -4,6 +4,7 @@ import { toast } from "vue3-toastify";
 // Max refresh attempts
 const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
+let hasLoggedOut = false; // Track if logout has already been called
 
 // Base URL for API services
 const BASE_URL = "https://dev.gateway.matta.trade";
@@ -28,10 +29,6 @@ const createAxiosInstance = (service) => {
     async (error) => {
       if ([403].includes(error?.response?.status)) {
         try {
-          if (window.location.href.includes("/auth/logout")) {
-            authStore.clearAuth();
-            return Promise.reject(error);
-          }
           const newAccessToken = await handleTokenRefresh();
           error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
           return instance.request(error.config);
@@ -51,17 +48,20 @@ const createAxiosInstance = (service) => {
   return instance;
 };
 
-const axiosApi = createAxiosInstance("market");
+// Create axios instances for each service
+const axiosApi = createAxiosInstance("matta");
 const axiosSSO = createAxiosInstance("sso");
-const mattaApi = createAxiosInstance("matta");
+const marketApi = createAxiosInstance("market");
 const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux");
-
+const currencyApi = createAxiosInstance("currency");
+const oxideApi = createAxiosInstance("oxide");
+const notificationApi = createAxiosInstance("notification");
 // Handle token refresh logic
 const handleTokenRefresh = async () => {
   const authStore = useAuthStore();
   if (refreshAttemptCount >= MAX_REFRESH_ATTEMPTS) {
-    authStore.clearAuth();
+    authStore.signOut();
     throw new Error("Max refresh attempts reached");
   }
 
@@ -80,17 +80,22 @@ const handleTokenRefresh = async () => {
     ] = `Bearer ${data.jwToken}`;
     return data.jwToken;
   } catch (error) {
-    authStore.clearAuth();
-    throw error;
+    throw error; // Don't clear auth here, handled later in the error handler
   }
 };
 
 // Handle errors when refreshing token
 const handleRefreshError = () => {
   const authStore = useAuthStore();
-  authStore.logOut();
+  if (hasLoggedOut) return; // Ensure logout only happens once
+  if (window.location.pathname !== "/checkout") {
+    toast.info("Your session has expired");
+    hasLoggedOut = true; // Flag logout to prevent multiple logouts
+    authStore.logOut(); // Perform the logout only once
+  }
 };
 
+// General API methods for each service
 const createApiMethods = (apiInstance) => ({
   get: (url, config = {}) => apiInstance.get(url, config),
   post: (url, data, config = {}) => apiInstance.post(url, data, config),
@@ -98,18 +103,23 @@ const createApiMethods = (apiInstance) => ({
   delete: (url, config = {}) => apiInstance.delete(url, config),
 });
 
-const apiMethods = createApiMethods(axiosApi);
-const mattaMethods = createApiMethods(mattaApi);
-const ssoMethods = createApiMethods(axiosSSO);
-const walletMethods = createApiMethods(walletApi);
-const deltaMethods = createApiMethods(deltaApi);
+// Create API methods for each service
+export const apiMethods = createApiMethods(axiosApi);
+export const marketMethods = createApiMethods(marketApi);
+export const ssoMethods = createApiMethods(axiosSSO);
+export const walletMethods = createApiMethods(walletApi);
+export const deltaMethods = createApiMethods(deltaApi);
+export const currencyMethods = createApiMethods(currencyApi);
+export const oxideMethods = createApiMethods(oxideApi);
+export const notificationMethods = createApiMethods(notificationApi);
+
 
 // Export the API methods
 export const { get, post, put, delete: del } = apiMethods;
-export const mattaGet = mattaMethods.get;
-export const mattaPost = mattaMethods.post;
-export const mattaPut = mattaMethods.put;
-export const mattaDelete = mattaMethods.delete;
+export const marketGet = marketMethods.get;
+export const marketPost = marketMethods.post;
+export const marketPut = marketMethods.put;
+export const marketDelete = marketMethods.delete;
 
 export const ssoGet = ssoMethods.get;
 export const ssoPost = ssoMethods.post;
@@ -125,3 +135,19 @@ export const deltaGet = deltaMethods.get;
 export const deltaPost = deltaMethods.post;
 export const deltaPut = deltaMethods.put;
 export const deltaDelete = deltaMethods.delete;
+
+export const currencyGet = currencyMethods.get;
+export const currencyPost = currencyMethods.post;
+export const currencyPut = currencyMethods.put;
+export const currencyDelete = currencyMethods.delete;
+
+export const oxideGet = oxideMethods.get;
+export const oxidePost = oxideMethods.post;
+export const oxidePut = oxideMethods.put;
+export const oxideDelete = oxideMethods.delete;
+
+
+export const notificationGet = notificationMethods.get;
+export const notificationPost = notificationMethods.post;
+export const notificationPut = notificationMethods.put;
+export const notificationDelete = notificationMethods.delete;

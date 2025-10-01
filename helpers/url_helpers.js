@@ -80,5 +80,12 @@ const urls = {
   // Audit logs
   ADMINS_GET_AUDIT_LOGS: "admin/v1/audit/get-all",
   OWNER_GET_AUDIT_LOGS: "v1/owner/get-audit-logs",
+
+  //notifcations
+  GET_NOTIFICATION: "v1/notification",
+  GET_NOTIFICATION_SETTINGS: "v1/notification/getsettings",
+  UPDATE_NOTIFICATION_SETTINGS: "v1/notification/updatesettings",
+  MARK_NOTIFICATION: "v1/notification/markasviewed",
+  MARK_ALL_NOTIFICATION: "v1/notification/markallasviewed",
 };
 export default urls;
