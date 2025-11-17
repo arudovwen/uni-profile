@@ -113,11 +113,12 @@
                 placeholder=""
                 label="Referral Code (Optional)"
                 type="text"
-                name="AgentReferralCode"
-                v-bind="AgentReferralCodeAtt"
-                v-model="AgentReferralCode"
-                :error="errors.AgentReferralCode"
+                name="referral_code"
+                v-bind="referral_codeAtt"
+                v-model="referral_code"
+                :error="errors.referral_code"
                 :isCumpulsory="false"
+                :disabled="!!route.query?.referral_code"
               />
             </div>
 
@@ -149,19 +150,6 @@
                 of Matta Trade
               </span>
             </div>
-            <!-- <div   v-if="app === 'MAT678'"
-              class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
-            >
-              <Checkbox
-                v-model.value="subscribe"
-                label="I agree to the "
-                labelClass="text-xs lg:text-sm"
-              />
-              <span>
-                I agree to receive Matta’s newsletter with price insights,
-                product alerts, and sourcing deals. You can unsubscribe anytime.
-              </span>
-            </div> -->
 
             <div class="lg:col-span-2 grid gap-y-[22px] mb-[13px] mt-4">
               <AppButton
@@ -176,8 +164,8 @@
                   !!phoneError
                 "
                 :style="{
-                  background: isLoading || !meta.valid ||
-                  !!phoneError ? '' : color,
+                  background:
+                    isLoading || !meta.valid || !!phoneError ? '' : color,
                 }"
               />
             </div>
@@ -209,7 +197,7 @@
       :is-loading="isLoading"
       @handleSubmit="handleFinalSubmit"
       :isLoading="isLoading"
-      :email="email || route.query.email"
+      :email="email || newEmail"
       :is-verified="isVerified"
       continue-link="/"
       subtext="Enter the  6-Digit verification code has been sent to your registered email address. Check your inbox."
@@ -232,27 +220,34 @@ import { registerUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import countries from "~/utils/countries.json";
 
-const props = defineProps({
-  main: {
-    default: true,
-  },
-});
-
-const emits = defineEmits(["close", "toggleAuth"]);
+// ----------------------------
+// Basic Setup
+// ----------------------------
 const route = useRoute();
+const router = useRouter();
 const { app, auth } = route.params;
-const color = appCodeColorMap[app] || "#1570EF";
 const authStore = useAuthStore();
+const newEmail = useCookie("email", defaultOptions);
+
+const color = appCodeColorMap[app] || "#1570EF";
+const step = ref(1);
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isVerified = ref(false);
 const phoneError = ref(null);
 
+const allcountries = computed(() => {
+  return countries.map((item) => item.name);
+});
+
+// ----------------------------
+// Head Scripts by App Type
+// ----------------------------
 if (app === "MAT678") {
   useHead({
     script: [
       {
-        id: "gtm-init", // this ID must match the key in __dangerouslyDisableSanitizersByTagID
+        id: "gtm-init",
         innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -287,55 +282,46 @@ if (app === "FLU120") {
   });
 }
 
+// ----------------------------
+// Form Setup
+// ----------------------------
 const formValues = {
-  email: route.query?.email || "",
-  firstName: route.query?.firstName || "",
-  lastName: route.query?.lastName || "",
-  phoneNumber: route.query?.phoneNumber || "",
+  email: "",
+  firstName: "",
+  lastName: "",
+  phoneNumber: "",
   password: "",
   confirmPassword: "",
   companyName: "",
-  AgentReferralCode: "",
+  referral_code: "",
+  referral_code: route.query.referral_code || "",
   appCode: app,
   country: getCountryFromBrowserRegion(),
   agree: false,
   subscribe: false,
 };
 
-const allcountries = computed(() => {
-  return countries.map((item) => item.name);
-});
-
-const step = ref(1);
 const schema = yup.object({
   appCode: yup.string().nullable(),
-  email: yup
-    .string()
-    .required("Email is required")
-    .email("Please enter a valid email address"),
-  firstName: yup.string().required("First name is required"),
-  companyName: yup.string().when("business_UserType", {
-    is: (val) => val == 0,
-    then: (schema) => schema.notRequired(),
-    otherwise: (schema) => schema.required("Company name is required"),
-  }),
-  lastName: yup.string().required("Last name is required"),
-  phoneNumber: yup.string().required("Phone number is required"),
+  email: yup.string().required().email(),
+  firstName: yup.string().required(),
+  lastName: yup.string().required(),
+  phoneNumber: yup.string().required(),
+  companyName: yup.string().optional(),
   password: yup
     .string()
-    .required(
-      "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
-    )
+    .required()
     .matches(
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-      "Password must be at least 8 characters, must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).{8,}$/,
+      "Password must meet complexity requirements."
     ),
   country: yup.string().required(),
   agree: yup.boolean(),
   subscribe: yup.boolean(),
+  referral_code: yup.string().optional(),
 });
 
-const { handleSubmit, defineField, errors, meta, setFieldError } = useForm({
+const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
   validationSchema: schema,
   initialValues: formValues,
 });
@@ -347,95 +333,101 @@ const [lastName, lastNameAtt] = defineField("lastName");
 const [phoneNumber, phoneNumberAtt] = defineField("phoneNumber");
 const [companyName, companyNameAtt] = defineField("companyName");
 const [country] = defineField("country");
-const [AgentReferralCode, AgentReferralCodeAtt] =
-  defineField("AgentReferralCode");
+const [referral_code, referral_codeAtt] = defineField("referral_code");
 const [agree] = defineField("agree");
 const [subscribe] = defineField("subscribe");
 
-const router = useRouter();
+// ----------------------------
+// Autofill From Query Params
+// ----------------------------
+const autofillFromQuery = () => {
+  const queryParams = [
+    "firstName",
+    "lastName",
+    "phoneNumber",
+    "email",
+    "referral_code",
+  ];
 
-const onSubmit = handleSubmit(async (values) => {
-  isLoading.value = true;
-  registerUser({
-    ...values,
-    confirmPassword: values.password,
-    phoneNumber: values.phoneNumber,
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        isVerifyPin.value = true;
-        step.value = 2;
-        isLoading.value = false;
-        setQuery(router, route.path, { email: values.email, ...route.query });
-      }
-    })
-    .catch((err) => {
-      isLoading.value = false;
-      if (err?.response?.data?.message || err?.response?.data?.Message) {
-        toast.error(
-          err?.response?.data?.message ||
-            err?.response?.data?.Message ||
-            "Something went wrong"
-        );
-      }
-    });
-});
+  queryParams.forEach((param) => {
+    if (route.query[param]) setFieldValue(param, route.query[param]);
+  });
 
-const handleFinalSubmit = (code) => {
-  isLoading.value = true;
-  confirmRegister({
-    code,
-    otpCode: code,
-    email: email.value || route.query.email,
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        isVerified.value = true;
-        const data = res.data.data;
-        authStore.setLoggedUser(data);
-        authStore.setHasPin(data.hasTransactionPIN);
-        saveAuthProfile(data);
-
-        if (route.query.continue || app) {
-          handleRedirect(route, data, app);
-          return;
-        }
-        toast.success("Sign up successful");
-
-        isLoading.value = false;
-        window.location.replace(intialRoute[data?.userCategory]);
-      }
-    })
-
-    .catch((err) => {
-      isLoading.value = false;
-
-      if (!err?.response?.data) return;
-      const { data } = err.response;
-      if (data?.message || data?.Message) {
-        toast.error(data?.message || data?.Message);
-      }
-    });
-};
-
-onMounted(() => {
-  getCountryFromBrowserRegion();
-  if (route.query.email && !route.query.firstName) {
+  // auto open OTP screen if returning user already added email
+  if (newEmail.value) {
     step.value = 2;
   }
-  // const queryParams = [
-  //   "firstName",
-  //   "lastName",
-  //   "phoneNumber",
-  //   "email",
-  //   // "companyName",
-  // ];
-  // const isAllParamsPresent = queryParams.every((param) => route.query[param]);
+};
 
-  // if (isAllParamsPresent) {
-  //   queryParams.forEach((param) => {
-  //     setFieldValue(param, route.query[param]);
-  //   });
-  // }
+// ----------------------------
+// Submit - Step 1
+// ----------------------------
+const onSubmit = handleSubmit(async (values) => {
+  isLoading.value = true;
+
+  try {
+    const res = await registerUser({
+      ...values,
+      confirmPassword: values.password,
+    });
+
+    if (res.status === 200) {
+      newEmail.value = values.email;
+      isVerifyPin.value = true;
+      step.value = 2;
+    }
+  } catch (err) {
+    toast.error(
+      err?.response?.data?.message ||
+        err?.response?.data?.Message ||
+        "Something went wrong"
+    );
+  } finally {
+    isLoading.value = false;
+  }
+});
+
+// ----------------------------
+// Submit - OTP Verification
+// ----------------------------
+const handleFinalSubmit = async (code) => {
+  isLoading.value = true;
+
+  try {
+    const res = await confirmRegister({
+      code,
+      otpCode: code,
+      email: email.value || newEmail.value,
+    });
+
+    if (res.status === 200) {
+      const data = res.data.data;
+      isVerified.value = true;
+
+      authStore.setLoggedUser(data);
+      authStore.setHasPin(data.hasTransactionPIN);
+      saveAuthProfile(data);
+      newEmail.value = null;
+      if (route.query.continue || app) {
+        handleRedirect(route, data, app);
+        return;
+      }
+
+      toast.success("Sign up successful");
+      window.location.replace(intialRoute[data.userCategory]);
+    }
+  } catch (err) {
+    const msg = err?.response?.data?.message || err?.response?.data?.Message;
+    msg && toast.error(msg);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// ----------------------------
+// Mounted
+// ----------------------------
+onMounted(() => {
+  autofillFromQuery();
 });
 </script>

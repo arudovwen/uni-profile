@@ -15,7 +15,7 @@
         {{ subtext }}
       </p>
 
-      <div class="flex gap-x-2 justify-center mb-8" v-if="!isVerified">
+      <div class="flex justify-center mb-8 gap-x-2" v-if="!isVerified">
         <v-otp-input
           ref="otpInput"
           v-model:value="form.otp"
@@ -27,7 +27,7 @@
           :placeholder="['-', '-', '-', '-', '-', '-']"
         />
       </div>
-      <div class="flex gap-x-4 mb-1">
+      <div class="flex mb-1 gap-x-4">
         <NuxtLink
           v-if="isVerified"
           :to="continueLink"
@@ -45,12 +45,12 @@
         >
           <span>
             <span
-              class="flex gap-x-4 justify-center items-center"
+              class="flex items-center justify-center gap-x-4"
               v-if="isLoading"
               ><span> Processing...</span>
               <i
                 v-if="isLoading"
-                class="fa fa-spinner fa-spin text-white"
+                class="text-white fa fa-spinner fa-spin"
                 aria-hidden="true"
               ></i
             ></span>
@@ -58,12 +58,12 @@
           </span>
         </button>
       </div>
-      <div class="text-sm mb-8 font-normal" v-if="!isVerified">
+      <div class="mb-8 text-sm font-normal" v-if="!isVerified">
         <span>
           Didn't receive the Email,
           <button
             v-if="!isResending"
-            class="font-semibold pl-1 text-primary-500"
+            class="pl-1 font-semibold text-primary-500"
             @click.prevent="resendOTP"
             :disabled="isResending || countdown > 0"
           >
@@ -76,7 +76,7 @@
       </div>
       <div>
         <button
-          class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
+          class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           @click="emit('close')"
         >
           <AppIcon icon="eva:arrow-back-fill" />
@@ -85,11 +85,13 @@
       </div>
     </form>
   </div>
+  
 </template>
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resend2FA } from "~/services/authservices";
 import { toast } from "vue3-toastify";
+
 
 const props = defineProps({
   title: {
