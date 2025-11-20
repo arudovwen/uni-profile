@@ -369,6 +369,7 @@ const onSubmit = handleSubmit(async (values) => {
     const res = await registerUser({
       ...values,
       confirmPassword: values.password,
+      AgentReferralCode: values.referral_code
     });
 
     if (res.status === 200) {
