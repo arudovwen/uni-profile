@@ -279,12 +279,16 @@ export const Navigation = [
     url: "/audit-logs",
     key: "audit-logs",
   },
+  // {
+  //   name: "Settings",
+  //   url: "/",
+  //   key: "index",
+  // },
   {
-    name: "Settings",
-    url: "/",
-    key: "index",
+    name: "Profile",
+    url: "/profile",
+    key: "profile",
   },
-
   {
     name: "Notifications",
     url: "/notifications",
@@ -305,12 +309,16 @@ export const PlatformAdminNavigation = [
   },
 
 
+  // {
+  //   name: "Settings",
+  //   url: "/",
+  //   key: "index",
+  // },
   {
-    name: "Settings",
-    url: "/",
-    key: "index",
+    name: "Profile",
+    url: "/profile",
+    key: "profile",
   },
-
   {
     name: "Notifications",
     url: "/notifications",
@@ -346,20 +354,17 @@ export const superadminRoutes = [
   "user-management",
   "user-management-user-detail-id",
   "application-management",
-  "profile",
   "application-management-action-id",
 ];
 
 export const adminRoutes = [
   "user-management",
   "settlements",
-  "profile",
   "business-information",
 ];
 export const userRoutes = [
   "security",
   "settlements",
-  "profile",
   "notifications",
 ];
 export const univeralRoutes = [
@@ -369,6 +374,7 @@ export const univeralRoutes = [
   "account-forgot-password",
   "account-reset-password",
   "account-type-app",
+  "profile"
 ];
 export const RoleMap = {
   0: "Platform Admin",

@@ -75,6 +75,7 @@ const columns = [
 ];
 const auditData = ref([]);
 const GetAudit = {
+  0: getAdminAudit,
   1: getOwnerAudit,
   3: getAdminAudit,
   4: getAdminAudit,

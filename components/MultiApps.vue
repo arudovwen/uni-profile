@@ -3,12 +3,12 @@
 
   <ul class="grid">
     <li
-      v-for="item in mattaProfiles"
+      v-for="item in profileList"
       @click="switchProfile(item)"
       class="px-4 flex gap-x-3 items-center text-sm border-b py-[10px] hover:bg-gray-50 cursor-pointer"
     >
       <span
-        class="h-10 w-10 rounded-full flex items-center border border-blue-100 justify-center bg-blue-50 uppercase font-semibold"
+        class="flex items-center justify-center w-10 h-10 font-semibold uppercase border border-blue-100 rounded-full bg-blue-50"
         >{{ item.firstName.slice(0, 1) }}{{ item.lastName.slice(0, 1) }}</span
       >
       <span class="flex flex-col">
@@ -25,7 +25,7 @@
             },
           })
         "
-        class="flex gap-x-3 items-center text-sm"
+        class="flex items-center text-sm gap-x-3"
       >
         <span
           class="h-10 w-10 rounded-full flex items-center r border border-[#D0D5DD] justify-center bg-[#F2F4F7]"
@@ -39,7 +39,7 @@
     <li class="px-4 py-[10px]">
       <button
         @click="isSigniningOut = true"
-        class="flex gap-x-3 items-center text-sm"
+        class="flex items-center text-sm gap-x-3"
       >
         <span
           class="h-10 w-10 rounded-full flex items-center r border border-[#D0D5DD] justify-center bg-[#F2F4F7]"
@@ -54,16 +54,16 @@
 
   <ModalCenter v-if="isSigniningOut">
     <template #default>
-      <div class="bg-white p-6 sm:pb-4 rounded-lg" v-if="isSigniningOut">
-        <div class="flex justify-between mb-5 items-center">
-          <h4 class="font-medium text-matta-black text-xl">Sign Out</h4>
+      <div class="p-6 bg-white rounded-lg sm:pb-4" v-if="isSigniningOut">
+        <div class="flex items-center justify-between mb-5">
+          <h4 class="text-xl font-medium text-matta-black">Sign Out</h4>
         </div>
 
-        <p class="text-sm text-matta-black mb-2">
+        <p class="mb-2 text-sm text-matta-black">
           Are you sure you want to sign out?
         </p>
 
-        <div class="flex justify-between gap-x-2 items-center mt-8">
+        <div class="flex items-center justify-between mt-8 gap-x-2">
           <button
             type="button"
             @click="isSigniningOut = false"
@@ -85,16 +85,16 @@
   </ModalCenter>
   <ModalCenter v-if="isAnother">
     <template #default>
-      <div class="bg-white p-6 sm:pb-4 rounded-lg" v-if="isAnother">
-        <div class="flex justify-between mb-5 items-center">
-          <h4 class="font-medium text-matta-black text-xl">Sign Out</h4>
+      <div class="p-6 bg-white rounded-lg sm:pb-4" v-if="isAnother">
+        <div class="flex items-center justify-between mb-5">
+          <h4 class="text-xl font-medium text-matta-black">Sign Out</h4>
         </div>
 
-        <p class="text-sm text-matta-black mb-2">
+        <p class="mb-2 text-sm text-matta-black">
           Are you sure you want to sign out?
         </p>
 
-        <div class="flex justify-between gap-x-2 items-center mt-8">
+        <div class="flex items-center justify-between mt-8 gap-x-2">
           <button
             type="button"
             @click="isSigniningOut = false"
@@ -142,11 +142,15 @@ const isSigniningOut = ref(false);
 function handleLogout() {
   window.location.href = "/auth/logout";
 }
-
-function switchProfile(data){
-  authStore.setLoggedUser(data)
-  saveAuthProfile(data)
-  window.location.reload()
+const profileList = computed(() =>
+  mattaProfiles.value?.filter(
+    (item) => item.email !== authStore?.userInfo?.email
+  )
+);
+function switchProfile(data) {
+  authStore.setLoggedUser(data);
+  saveAuthProfile(data);
+  window.location.href = "/";
 }
 provide("isOpen", isSigniningOut);
 </script>

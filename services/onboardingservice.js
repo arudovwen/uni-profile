@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { post, get, mattaPost } from "../helpers/api_helpers";
+import { post } from "../helpers/api_helpers";
 import store from "../store";
 import { ssoPost } from "./api_services";
 
