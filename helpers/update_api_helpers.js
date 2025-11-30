@@ -5,11 +5,11 @@ import { toast } from "vue3-toastify";
 const API_URL = "https://dev.gateway.oxide.matta.trade/api/";
 const SSO_URL = "https://dev.sso.matta.trade/api/";
 const WALLET_URL = "https://dev.wallets.matta.trade/api/";
-const Matta_URL = "https://dev.gateway.matta.trade/api/";
+const Matta_URL = "http://dev.proxy.oxidefinance.com/api/";
 const DELTALOG_URL = "https://dev.gateway.deltalog.co/api/";
 const ORBITAL_URL = "https://dev.market.matta.trade/api/";
 
-const apiBaseUrl = (service) => `https://dev.gateway.matta.trade/${service}/`;
+const apiBaseUrl = (service) => `http://dev.proxy.oxidefinance.com/${service}/`;
 
 let isRefreshing = false;
 let pendingRequests = [];
@@ -66,7 +66,7 @@ const handleRefreshError = () => {
 
 // Create Axios instances with interceptors
 const createAxiosInstance = (service) => {
-  const apiBaseUrl = (service) => `https://dev.gateway.matta.trade/${service}/`;
+  const apiBaseUrl = (service) => `http://dev.proxy.oxidefinance.com/${service}/`;
 
   const instance = Axios.create({ baseURL: apiBaseUrl(service) });
   instance.defaults.withCredentials = false;
