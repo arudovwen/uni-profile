@@ -37,7 +37,7 @@
         >
           <ComboboxOptions
             v-if="showOptions"
-            class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
+            class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm z-50"
           >
             <div
               v-if="isLoading"
@@ -120,7 +120,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-
+  modelValue: {
+    type: Object,
+    default: null,
+  },
   minSearchLength: {
     type: Number,
     default: 2,
@@ -197,6 +200,9 @@ const fetchSearchResults = async () => {
     filteredOptions.value = response.data.data.map((i) => ({
       label: `${i.firstName} ${i.lastName}`,
       value: i.id,
+      email: i.email || i.contactEmail || "",
+      firstName: i.firstName,
+      lastName: i.lastName,
     }));
   } catch (error) {
     console.error("Error fetching search results:", error);
@@ -205,6 +211,13 @@ const fetchSearchResults = async () => {
     isLoading.value = false;
   }
 };
+
+// Watch for external modelValue changes
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    selectedOption.value = newVal;
+  }
+}, { immediate: true });
 
 // Watch for selection changes
 watch(selectedOption, (newVal) => {

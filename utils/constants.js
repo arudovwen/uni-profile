@@ -308,7 +308,6 @@ export const PlatformAdminNavigation = [
     key: "users-management",
   },
 
-
   // {
   //   name: "Settings",
   //   url: "/",
@@ -344,6 +343,11 @@ export const SuperNavigation = [
     key: "audit-logs",
   },
   {
+    name: "Referral Management",
+    url: "/referral-management",
+    key: "referral-management",
+  },
+  {
     name: "Profile",
     url: "/profile",
     key: "profile",
@@ -355,18 +359,20 @@ export const superadminRoutes = [
   "user-management-user-detail-id",
   "application-management",
   "application-management-action-id",
+  "referral-management",
+  "referral-management-create",
+  "referral-management-edit-id",
 ];
 
 export const adminRoutes = [
   "user-management",
   "settlements",
   "business-information",
+  "referral-management",
+  "referral-management-create",
+  "referral-management-edit-id",
 ];
-export const userRoutes = [
-  "security",
-  "settlements",
-  "notifications",
-];
+export const userRoutes = ["security", "settlements", "notifications"];
 export const univeralRoutes = [
   "audit-logs",
   "user-management-user-detail-id",
@@ -374,7 +380,7 @@ export const univeralRoutes = [
   "account-forgot-password",
   "account-reset-password",
   "account-type-app",
-  "profile"
+  "profile",
 ];
 export const RoleMap = {
   0: "Platform Admin",

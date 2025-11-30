@@ -87,5 +87,13 @@ const urls = {
   UPDATE_NOTIFICATION_SETTINGS: "v1/notification/updatesettings",
   MARK_NOTIFICATION: "v1/notification/markasviewed",
   MARK_ALL_NOTIFICATION: "v1/notification/markallasviewed",
+
+  // Referral Management
+  GENERATE_REFERRAL_CODE: "admin/v1/referalls/generate-code",
+  CREATE_REFERRAL: "admin/v1/referalls/add",
+  UPDATE_REFERRAL: "admin/v1/referalls",
+  GET_REFERRAL: (id) => `admin/v1/referalls/${id}`,
+  GET_REFERRALS: "admin/v1/referalls/get-all",
+  DELETE_REFERRAL: (id, version = "1") => `admin/v${version}/referalls/delete/${id}`,
 };
 export default urls;

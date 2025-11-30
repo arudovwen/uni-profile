@@ -120,3 +120,43 @@ export async function resendOwnerInvite(data) {
 export async function delOwnerInvite(id) {
   return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
 }
+
+export async function generateReferralCode() {
+  return await ssoGet(urls.GENERATE_REFERRAL_CODE, config);
+}
+
+export async function createReferral(data) {
+  return await ssoPost(urls.CREATE_REFERRAL, data);
+}
+
+export async function updateReferral(data) {
+  return await ssoPut(urls.UPDATE_REFERRAL, data);
+}
+
+export async function getReferral(id) {
+  return await ssoGet(urls.GET_REFERRAL(id), {});
+}
+
+export async function getReferrals(queryParams) {
+  return await ssoGet(
+    `${urls.GET_REFERRALS}?${new URLSearchParams(queryParams)}`,
+    {}
+  );
+}
+
+export async function getReferralByCode(referralCode) {
+  return await ssoPost(`admin/v1/referalls/get-all`, {
+    referralCode,
+  });
+}
+
+export async function updateReferralStatus(referralCode, status) {
+  return await ssoPost(`admin/v1/referalls/update-status`, {
+    referralCode,
+    status,
+  });
+}
+
+export async function deleteReferral(id, version = "1") {
+  return await ssoDelete(urls.DELETE_REFERRAL(id, version), {});
+}

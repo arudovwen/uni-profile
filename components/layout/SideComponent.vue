@@ -35,6 +35,10 @@
                     v-if="item.key === 'users-management'"
                     :active="isActive(item)"
                   />
+                  <SvgsUsersSvg
+                    v-if="item.key === 'referral-management'"
+                    :active="isActive(item)"
+                  />
                   <SvgsAppSvg
                     v-if="item.key === 'my-applications'"
                     :active="isActive(item)"
@@ -67,22 +71,22 @@
               </div>
             </router-link>
           </li>
-       
         </ul>
       </nav>
     </div>
   </aside>
 </template>
 <script setup>
-
 const route = useRoute();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const NavMapper = {
   0: Navigation,
   3: SuperNavigation,
   4: Navigation,
 };
-const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCategory]);
+const mappedNavigation = computed(
+  () => NavMapper[authStore?.userInfo?.userCategory]
+);
 
 const isActive = (item) => {
   return (

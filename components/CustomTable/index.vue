@@ -1,6 +1,9 @@
 <template>
   <div
-    class="border-[#EAECF0] border rounded-lg w-full bg-white shadow-custom-table"
+    :class="[
+      'border-[#EAECF0] border rounded-lg w-full bg-white shadow-custom-table',
+      className
+    ]"
   >
     <!-- Table Header (with Search and Filter) -->
     <div
@@ -73,7 +76,7 @@
           <tr
             v-for="(row, index) in rows"
             :key="index"
-            class="border-b border-[#EAECF0] hover:bg-gray-100"
+            class="border-b hover:bg-gray-100"
           >
             <td
               v-for="column in columns"
@@ -248,6 +251,7 @@ const props = defineProps({
   placeholder: String,
   isBalance: Boolean,
   emptyTitleClass: String,
+  className: String,
   query: Object,
 });
 

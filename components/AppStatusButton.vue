@@ -94,6 +94,17 @@ const Driver = {
   },
 };
 
+const ReferralCode = {
+  0: {
+    text: "Active",
+    className: StatusClass[1],
+  },
+  1: {
+    text: "Inactive",
+    className: StatusClass[4],
+  },
+};
+
 const InviteStatus = {
   0: {
     text: "Pending",
@@ -349,9 +360,12 @@ const Stats = computed(() => {
   if (props.stattype === "driver") {
     return Driver;
   }
+  if (props.stattype === "referral") {
+    return ReferralCode;
+  }
 
   if (props.stattype === "invite") {
-    return InviteStatus
+    return InviteStatus;
   }
   if (props.stattype === "vehicle") {
     return VehicleStatus;
