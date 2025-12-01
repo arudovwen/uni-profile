@@ -289,6 +289,11 @@ export const Navigation = [
     url: "/profile",
     key: "profile",
   },
+     {
+    name: "Leaderboard",
+    url: "/referral-leaderboard",
+    key: "referral-leaderboard",
+  },
   {
     name: "Notifications",
     url: "/notifications",
@@ -347,6 +352,7 @@ export const SuperNavigation = [
     url: "/referral-management",
     key: "referral-management",
   },
+ 
   {
     name: "Profile",
     url: "/profile",
@@ -381,6 +387,7 @@ export const univeralRoutes = [
   "account-reset-password",
   "account-type-app",
   "profile",
+  "referral-leaderboard"
 ];
 export const RoleMap = {
   0: "Platform Admin",
@@ -447,6 +454,12 @@ export const OwnerNavigation = [
     url: "/audit-logs",
     key: "audit-logs",
   },
+   {
+    name: "Leaderboard",
+    url: "/referral-leaderboard",
+    key: "referral-leaderboard",
+  },
+  
   {
     name: "Notifications",
     url: "/notifications",

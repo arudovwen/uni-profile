@@ -1,6 +1,6 @@
 <template>
   <div
-    class="formGroup relative"
+    class="relative formGroup"
     :class="`${containerClass} ${error ? 'has-error' : ''}  ${
       horizontal ? 'flex' : ''
     }  ${validate ? 'is-valid' : ''} `"
@@ -21,7 +21,7 @@
         data-placement="top"
         data-animation="false"
         :title="infoTitle"
-        class="cursor-pointer h-4 w-4 flex items-center justify-center"
+        class="flex items-center justify-center w-4 h-4 cursor-pointer"
       >
         <AppIcon icon="quill:info" iconClass="text-gray-600" />
       </span>
@@ -32,7 +32,7 @@
         :name="name"
         :data-testid="name"
         :placeholder="placeholder"
-        :class="`${classInput} input-control  w-full block placeholder-[#f9bb64] focus:outline-none h-[44px] ${
+        :class="`${classInput} input-control  w-full block placeholder-[#f9bb64] focus:outline-none h-[42px] ${
           hasicon ? 'pr-10' : ''
         } ${iconPosition === 'left' ? '!pl-10' : 'pr-10'} `"
         :value="value"
@@ -45,7 +45,7 @@
         v-if="!isMask"
       />
       <cleave
-        :class="`${classInput} cleave !border-none input-control block placeholder-[#f9bb64] w-full  focus:outline-none h-[44px] `"
+        :class="`${classInput} cleave !border-none input-control block placeholder-[#f9bb64] w-full  focus:outline-none h-[42px] `"
         :name="name"
         :placeholder="placeholder"
         :value="value"
@@ -86,8 +86,8 @@
         </div>
         <span class="text-sm"> <slot name="suffix"></slot></span>
       </div>
-      <span class="flex absolute right-0">
-        <span v-if="errorMessage && types !== 'date'" class="text-danger-500 mr-2">
+      <span class="absolute right-0 flex">
+        <span v-if="errorMessage && types !== 'date'" class="mr-2 text-danger-500">
           <AppIcon icon="heroicons-outline:information-circle" />
         </span>
         <span

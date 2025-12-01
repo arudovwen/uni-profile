@@ -7,7 +7,7 @@
         }}</span>
       </div>
       <div
-        class="flex flex-row items-start w-full h-[44px] bg-white border border-gray-300 rounded-lg shadow-sm"
+        class="flex flex-row items-start w-full h-[42px] bg-white border border-gray-300 rounded-lg shadow-sm"
       >
         <div
           class="flex flex-row items-center flex-grow px-3.5 py-3 gap-2 bg-gray-50 border-y border-l border-gray-300 rounded-l-lg"

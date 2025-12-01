@@ -2,7 +2,7 @@
   <div class="fixed top-16 w-[600px]">
     <Combobox v-model="selectedOptions" multiple>
       <div
-        class="relative mb-5 w-full cursor-default rounded-lg min-h-[44px] border border-[#D0D5DD] bg-white py-2 pl-3 pr-10 text-left shadow-[0px_1px_2px_rgba(16,24,40,0.05)] sm:text-sm"
+        class="relative mb-5 w-full cursor-default rounded-lg min-h-[42px] border border-[#D0D5DD] bg-white py-2 pl-3 pr-10 text-left shadow-[0px_1px_2px_rgba(16,24,40,0.05)] sm:text-sm"
       >
         <ul v-if="selectedOptions.length > 0" class="flex flex-wrap gap-3">
           <li
@@ -18,7 +18,7 @@
         <ComboboxInput
           :placeholder="placeholder"
           :displayValue="(option) => option.name"
-          class="relative w-full mb-3 cursor-default outline-0 rounded-lg min-h-[44px] border border-[#D0D5DD] bg-white py-2 pl-3 pr-10 text-left shadow-[0px_1px_2px_rgba(16,24,40,0.05)] sm:text-sm"
+          class="relative w-full mb-3 cursor-default outline-0 rounded-lg min-h-[42px] border border-[#D0D5DD] bg-white py-2 pl-3 pr-10 text-left shadow-[0px_1px_2px_rgba(16,24,40,0.05)] sm:text-sm"
         />
         <ComboboxOptions>
           <ComboboxOption

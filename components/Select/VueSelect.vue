@@ -182,7 +182,7 @@ watch(() => props.modelValue, (newValue) => {
 <style lang="scss">
 .formGroup {
   .vs__dropdown-toggle {
-    @apply bg-transparent border border-[#D0D5DD] rounded-lg min-h-[44px] text-[#475467] text-sm;
+    @apply bg-transparent border border-[#D0D5DD] rounded-lg min-h-[42px] text-[#475467] text-sm;
     
     &::placeholder {
       @apply text-[#CDD2DA] text-sm;

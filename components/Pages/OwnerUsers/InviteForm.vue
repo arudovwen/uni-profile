@@ -60,7 +60,7 @@
           </FormGroup>
         </div>
 
-        <div class="flex gap-x-4 pt-4 p-0 w-full z-30">
+        <div class="z-30 flex w-full p-0 pt-4 gap-x-4">
           <AppButton
             btnClass="w-full text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
             type="button"

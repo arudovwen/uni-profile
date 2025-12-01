@@ -11,9 +11,9 @@
       v-if="hasSearch || hasFilter"
     >
       <div
-        class="flex gap-x-4 flex-col lg:flex-row gap-y-4 justify-between w-full px-6"
+        class="flex flex-col justify-between w-full px-6 gap-x-4 lg:flex-row gap-y-4"
       >
-        <div v-if="title" class="flex gap-x-2 items-center">
+        <div v-if="title" class="flex items-center gap-x-2">
           <p
             class="w-fit font-Onest font-semibold text-[18px] leading-[28px] text-[#101828]"
           >
@@ -42,7 +42,7 @@
           />
         </div>
 
-        <div class="flex gap-x-4 items-center" v-if="hasFilter">
+        <div class="flex items-center gap-x-4" v-if="hasFilter">
           <FilterButton
             v-model="filter"
             :options="filterOptions"
@@ -59,9 +59,9 @@
     </div>
 
     <!-- Table Content -->
-    <div class="overflow-x-auto rounded-lg w-full" v-if="!isLoading">
+    <div class="w-full overflow-x-auto rounded-lg" v-if="!isLoading">
       <table aria-describedby="true" class="table-auto w-full z-[10]">
-        <thead v-if="rows?.length">
+        <thead >
           <tr class="border-b border-[#EAECF0]">
             <th
               v-for="column in columns"

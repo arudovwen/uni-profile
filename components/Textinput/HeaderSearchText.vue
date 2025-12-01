@@ -34,7 +34,7 @@
         :name="name"
         :data-testid="name"
         :placeholder="placeholder"
-        :class="`${classInput} lg:bg-gray-600 input-control  w-[20px] block focus:outline-none h-[44px] ${
+        :class="`${classInput} lg:bg-gray-600 input-control  w-[20px] block focus:outline-none h-[42px] ${
           hasicon ? 'pr-10' : ''
         } ${iconPosition === 'left' ? '!pl-10' : 'pr-10'} `"
         :value="modelValue"
@@ -47,7 +47,7 @@
         v-if="!isMask"
       />
       <cleave
-        :class="`${classInput} cleave !border-none input-control block w-full  focus:outline-none h-[44px] `"
+        :class="`${classInput} cleave !border-none input-control block w-full  focus:outline-none h-[42px] `"
         :name="name"
         :placeholder="placeholder"
         :value="modelValue"

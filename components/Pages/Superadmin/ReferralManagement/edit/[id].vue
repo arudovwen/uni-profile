@@ -13,12 +13,12 @@
     <div class="flex flex-row py-9 gap-x-20 px-[30px]">
       <div class="flex flex-col gap-1">
         <span
-          class="font-manrope font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
+          class=" font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
         >
           Campaign Details
         </span>
         <span
-          class="font-manrope font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
+          class=" font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
           >Update the campaign info
         </span>
       </div>
@@ -83,7 +83,7 @@
                 v-model="assignedApps"
                 multiple
               >
-                <div class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm min-h-[44px] py-2 px-3">
+                <div class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm min-h-[42px] py-2 px-3">
                   <div v-if="assignedApps.length > 0" class="flex flex-wrap gap-2 mb-1">
                     <span
                       v-for="app in assignedApps"

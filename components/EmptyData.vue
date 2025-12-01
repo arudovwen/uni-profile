@@ -3,7 +3,7 @@
     class="flex flex-col items-center justify-center p-4 h-[280px] text-gray-400 text-center"
     :class="className"
   >
-    <div class="mx-24 flex justify-center">
+    <div class="flex justify-center mx-24">
       <div class="mb-6">
         <img
           :src="EmptyIcon"
@@ -13,12 +13,12 @@
         <BoxIcon class="!h-auto !w-20" v-else />
       </div>
     </div>
-    <p :class="titleClass" class="text-lg text-[#475467] mb-2">
+    <p :class="titleClass" class="mb-2 text-gray-400">
       {{ title || "No data available" }}
     </p>
     <p
       v-if="subtext"
-      class="text-sm text-[#475467] max-w-[352px] mx-auto text-center"
+      class="text-sm text-gray-400 max-w-[352px] mx-auto text-center"
     >
       {{ subtext }}
     </p>
@@ -32,11 +32,9 @@
   </div>
 </template>
 <script setup>
-import UserIcon from "/assets/images/svgs/user-01.svg";
 import EmptyIcon from "/images/settle.png";
-import SettlementsIcon from "/assets/images/svgs/settlements.svg";
 import BoxIcon from "/assets/images/svgs/ic-folder-empty.svg";
-import TruckIcon from "@/assets/images/svgs/truck-01.svg";
+
 defineProps([
   "title",
   "subtext",

@@ -3,41 +3,19 @@
     <div
       class="flex flex-col bg-white w-full border-1px rounded-[10px] border-[#F4F7FE]"
     >
-      <div class="flex flex-row justify-between py-5 px-6">
-        <div class="flex flex-col gap-1">
-          <span
-            class="font-manrope font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
-          >
-            Referral Management System
-          </span>
-          <span
-            class="font-manrope font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
-            >Manage all referral codes
-          </span>
-        </div>
-        <AppButton
-          text="New Referral Code"
-          :icon="`humbleicons:plus`"
-          :btnClass="`!bg-[#165EF0] h-10 border-[#165EF0] !text-[14px] !py-2.5 !leading-5 text-white `"
-          iconClass="text-sm md:text-base"
-          @click="navigateTo('/referral-management/create')"
-        />
-      </div>
-      <div
-        class="border-y-[1px] border-[#EAECF0] py-4 px-6 flex flex-row items-center gap-3"
-      >
+      <div class="flex flex-row items-center gap-3 px-6 pb-4">
         <div
-          class="relative border-[1px] rounded-md border-[#DFE5EC] flex flex-row gap-2 px-4 items-center"
+          class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
         >
           <span class="text-[#667085]">
-            <i class="uil uil-search"> </i>
+            <AppIcon icon="uil-search" icon-class="text-xl" />
           </span>
           <input
             type="search"
-            placeholder="Search by referral code"
+            placeholder="Search by code"
             v-model="queryParams.ReferralCode"
             @input="debounceSearch"
-            class="font-manrope font-medium text-[16px] leading-6 tracking-normal rounded-lg w-full lg:w-[320px] h-11 outline-none focus:outline-none"
+            class="flex-1 text-sm font-medium outline-none focus:outline-none"
           />
         </div>
         <filter-button
@@ -47,14 +25,14 @@
           :classInput="`min-w-[100px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer  'border-[#D0D5DD]'`"
         />
       </div>
-      <div class="mb-6 bg-white w-full">
+      <div class="w-full mb-6 bg-white">
         <div
           v-if="!loading && rows.length < 1"
           class="flex flex-col items-center gap-4 py-[140px]"
         >
           <svgs-loudspeaker />
           <span
-            class="font-manrope font-semibold text-[16px] leading-6 tracking-normal text-center"
+            class="font-semibold text-[16px] leading-6 tracking-normal text-center"
             >No referral code has been created</span
           >
           <AppButton
@@ -94,12 +72,12 @@
             </div>
           </template>
           <template #table-row-created_On="{ row }">
-            <span>{{ moment(row.created_On).format("DD MMM YYYY") }}</span>
+            <span>{{ moment(row.created_On).format("lll") }}</span>
           </template>
           <template #table-row-action="{ row }">
             <Menu class="" as="div">
               <Float placement="bottom-end" :offset="4">
-                <MenuButton class="outline-none ml-auto block">
+                <MenuButton class="block ml-auto outline-none">
                   <AppIcon icon="heroicons:ellipsis-vertical-solid" />
                 </MenuButton>
                 <MenuItems
@@ -109,7 +87,7 @@
                     <button
                       type="button"
                       @click="handleEdit(row)"
-                      class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                      class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                     >
                       Edit Referral code
                     </button></MenuItem
@@ -119,7 +97,7 @@
                       <button
                         type="button"
                         @click="handleActivate(row)"
-                        class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                        class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                       >
                         Deactivate Code
                       </button>
@@ -130,7 +108,7 @@
                       <button
                         type="button"
                         @click="handleDeactivate(row)"
-                        class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                        class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                       >
                         Activate Code
                       </button>
@@ -140,7 +118,7 @@
                     <button
                       type="button"
                       @click="handleDelete(row)"
-                      class="py-2 px-5 hover:bg-gray-50 text-base whitespace-nowrap cursor-pointer w-full text-left flex gap-x-2 items-center"
+                      class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
                     >
                       Delete code
                     </button>

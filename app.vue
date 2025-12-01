@@ -56,7 +56,7 @@ html {
   box-sizing: border-box;
 }
 body {
-  font-family: "Rubik", sans-serif;
+  font-family: "Onest", sans-serif;
   color: #475467;
 }
 

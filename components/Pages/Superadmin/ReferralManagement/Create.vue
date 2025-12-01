@@ -3,29 +3,29 @@
     <div
       class="flex flex-row gap-x-4 border-b-[#F4F7FE] border-b-[1px] py-6 px-[30px]"
     >
-      <span @click="navigateTo('/referral-management')">
+      <button type="button" aria-label="back" @click="navigateTo('/referral-management')">
         <ArrowLeft />
-      </span>
+      </button>
       <span class="font-semibold text-[18px] leading-[28px] text-[#101828]"
-        >Create Referral</span
+        >New Referral</span
       >
     </div>
     <div class="flex flex-row py-9 gap-x-20 px-[30px]">
       <div class="flex flex-col gap-1">
         <span
-          class="font-manrope font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
+          class=" font-semibold text-sm text-[#101828]"
         >
           Campaign Details
         </span>
         <span
-          class="font-manrope font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
+          class=" font-normal text-xs  text-[#475467]"
           >Provide the required campaign info
         </span>
       </div>
       <div class="flex flex-col gap-y-20 w-full max-w-[644px]">
-        <div class="w-full grid grid-cols-2 gap-x-[18px] gap-y-6">
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
+        <div class="w-full grid lg:grid-cols-2 gap-x-[18px] gap-y-6">
+          <div class="">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Referral Code
             </label>
             <Textinput
@@ -38,28 +38,8 @@
               v-model="referralCode"
               :error="errors.referralCode"
             />
-          </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
-              Assigned User
-            </label>
-            <CustomSearchSelect
-              :modelValue="selectedUserData"
-              @update:modelValue="(value) => {
-                selectedUserData = value;
-                assignedUser = value?.value;
-              }"
-              min-search-length="1"
-              placeholder="Search users..."
-              apiEndpoint="admin/v1/user/get-users"
-              @option-selected="handleUserSelected"
-            />
-            <span v-if="errors.assignedUser" class="text-red-500 text-sm">
-              {{ errors.assignedUser }}
-            </span>
-          </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
+          </div> <div class="">
+            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">
               Department
             </label>
             <Textinput
@@ -71,19 +51,39 @@
               :error="errors.assignedDepartment"
             />
           </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]"> Apps </label>
+          <div class="">
+            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">
+              Assigned User
+            </label>
+            <CustomSearchSelect
+              :modelValue="selectedUserData"
+              @update:modelValue="(value) => {
+                selectedUserData = value;
+                assignedUser = value?.value;
+              }"
+              :min-search-length="1"
+              placeholder="Search users..."
+              apiEndpoint="admin/v1/user/get-users"
+              @option-selected="handleUserSelected"
+            />
+            <span v-if="errors.assignedUser" class="text-sm text-red-500">
+              {{ errors.assignedUser }}
+            </span>
+          </div>
+         
+          <div class="lg:col-span-2">
+            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">Assigned Apps </label>
             <div class="relative">
               <Combobox
                 v-model="assignedApps"
                 multiple
               >
-                <div class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm min-h-[44px] py-2 px-3">
+                <div class="relative w-full px-3 py-2 overflow-hidden text-left bg-white rounded-lg cursor-default input-control sm:text-sm">
                   <div v-if="assignedApps.length > 0" class="flex flex-wrap gap-2 mb-1">
                     <span
                       v-for="app in assignedApps"
                       :key="app"
-                      class="inline-flex items-center gap-1 px-2 py-1 rounded bg-primary-100 text-primary-600 text-xs"
+                      class="inline-flex items-center gap-1 px-2 py-1 text-sm rounded bg-primary-100 text-primary-600"
                     >
                       {{ getAppName(app) }}
                       <button
@@ -125,7 +125,7 @@
                   leaveTo="opacity-0"
                 >
                   <ComboboxOptions
-                    class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm z-50"
+                    class="absolute z-50 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
                   >
                     <div
                       v-if="appOptions.length === 0"
@@ -141,8 +141,8 @@
                     >
                       <li
                         :class="[
-                          'relative cursor-default select-none py-2 pl-10 pr-4',
-                          active ? 'bg-primary-300 text-white' : 'text-secondary-500',
+                          'relative cursor-default select-none py-2 pl-10 pr-4 flex justify-between',
+                          active ? 'bg-primary-500 text-white' : 'text-secondary-500',
                         ]"
                       >
                         <span
@@ -156,7 +156,7 @@
                         <span
                           v-if="selected"
                           :class="[
-                            'absolute inset-y-0 left-0 flex items-center pl-3',
+                            ' inset-y-0 left-0 flex items-center pl-3',
                             active ? 'text-white' : 'text-primary-600',
                           ]"
                         >
@@ -181,20 +181,20 @@
                 </TransitionRoot>
               </Combobox>
             </div>
-            <span v-if="errors.assignedApps" class="text-red-500 text-sm">
+            <span v-if="errors.assignedApps" class="text-sm text-red-500">
               {{ errors.assignedApps }}
             </span>
           </div>
         </div>
         <div class="flex flex-row justify-end gap-x-4">
           <AppButton
-            btnClass="!px-[15px] border-[#D0D5DD] border-[1px] text-[#344054] py-2 h-[40px]"
+            btnClass="!px-9 !border-[#D0D5DD] border text-sm text-[#344054] !py-[9px] !leading-none !text-sm "
             @click="navigateTo('/referral-management')"
             type="button"
             text="Cancel"
           />
           <AppButton
-            btnClass="!px-[15px] btn-primary py-2 h-[40px]"
+            btnClass="!px-[15px] btn-primary !py-[9px] !text-sm !leading-none"
             @click="onSubmit"
             type="submit"
             :is-disabled="!meta.valid"
