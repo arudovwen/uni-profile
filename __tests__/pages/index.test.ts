@@ -26,7 +26,7 @@ describe("IndexPage", () => {
             categoriesCount: 2,
             marketColor: "#F9CBE4",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/a1394d8a-7ef2-484b-941c-df08afa51b20.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/a1394d8a-7ef2-484b-941c-df08afa51b20.jpg",
           },
           {
             id: 64,
@@ -36,7 +36,7 @@ describe("IndexPage", () => {
             categoriesCount: 5,
             marketColor: "#E0F7B0",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/212047d0-6f1a-45eb-ab84-42a6f6cb18fd.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/212047d0-6f1a-45eb-ab84-42a6f6cb18fd.jpg",
           },
           {
             id: 8,
@@ -46,7 +46,7 @@ describe("IndexPage", () => {
             categoriesCount: 5,
             marketColor: "#C9E2FA",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/2deb7c23-ba53-4ed7-b0ab-049b36243a88.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/2deb7c23-ba53-4ed7-b0ab-049b36243a88.jpg",
           },
           {
             id: 231,
@@ -56,7 +56,7 @@ describe("IndexPage", () => {
             categoriesCount: 0,
             marketColor: "#969696",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/ecb70ca2-73e5-4a51-acf7-1e520b7b039b.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/ecb70ca2-73e5-4a51-acf7-1e520b7b039b.jpg",
           },
           {
             id: 230,
@@ -66,7 +66,7 @@ describe("IndexPage", () => {
             categoriesCount: 1,
             marketColor: "string",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/9527460f-1eb2-47bf-874e-a7e361561dbc.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/9527460f-1eb2-47bf-874e-a7e361561dbc.jpg",
           },
           {
             id: 262,
@@ -76,7 +76,7 @@ describe("IndexPage", () => {
             categoriesCount: 0,
             marketColor: "",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/9137f8cf-545e-471d-8908-275f5cfdfb9d.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/9137f8cf-545e-471d-8908-275f5cfdfb9d.jpg",
           },
           {
             id: 4,
@@ -86,7 +86,7 @@ describe("IndexPage", () => {
             categoriesCount: 6,
             marketColor: "#BBE5AC",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/f3583450-eb1d-4210-bcea-02ba9677456c.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/f3583450-eb1d-4210-bcea-02ba9677456c.jpg",
           },
           {
             id: 1,
@@ -96,7 +96,7 @@ describe("IndexPage", () => {
             categoriesCount: 7,
             marketColor: "#A9CAFF",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/4926bf09-3e04-4c0e-aca6-2beba4708a07.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/4926bf09-3e04-4c0e-aca6-2beba4708a07.jpg",
           },
           {
             id: 5,
@@ -106,7 +106,7 @@ describe("IndexPage", () => {
             categoriesCount: 5,
             marketColor: "#D0C9FF",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/052f5e84-adfc-4ddd-832e-8405dae72e50.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/052f5e84-adfc-4ddd-832e-8405dae72e50.jpg",
           },
           {
             id: 7,
@@ -116,7 +116,7 @@ describe("IndexPage", () => {
             categoriesCount: 2,
             marketColor: "#F6F396",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/4b0d0578-3a2a-4788-ad28-41c86d0fb7f0.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/4b0d0578-3a2a-4788-ad28-41c86d0fb7f0.jpg",
           },
           {
             id: 2,
@@ -126,7 +126,7 @@ describe("IndexPage", () => {
             categoriesCount: 6,
             marketColor: "#C8F6EE",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/9151a52a-5ba8-4ef7-9bb1-6d79b38b5de8.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/9151a52a-5ba8-4ef7-9bb1-6d79b38b5de8.jpg",
           },
           {
             id: 9,
@@ -136,7 +136,7 @@ describe("IndexPage", () => {
             categoriesCount: 4,
             marketColor: "#f4a950",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/89c41390-b138-49cf-b9f0-c4fbdd1223da.jpg",
+              "https://dev.proxy.oxidefinance.com/uploads/89c41390-b138-49cf-b9f0-c4fbdd1223da.jpg",
           },
           {
             id: 3,
@@ -146,7 +146,7 @@ describe("IndexPage", () => {
             categoriesCount: 8,
             marketColor: "#969696",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/0e9d4178-b7d5-4ad6-8bf7-853b050a20db.png",
+              "https://dev.proxy.oxidefinance.com/uploads/0e9d4178-b7d5-4ad6-8bf7-853b050a20db.png",
           },
           {
             id: 282,
@@ -156,7 +156,7 @@ describe("IndexPage", () => {
             categoriesCount: 4,
             marketColor: "",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/3ed4d48d-d6dc-4280-ac6c-915c16d2618f.png",
+              "https://dev.proxy.oxidefinance.com/uploads/3ed4d48d-d6dc-4280-ac6c-915c16d2618f.png",
           },
           {
             id: 6,
@@ -166,7 +166,7 @@ describe("IndexPage", () => {
             categoriesCount: 1,
             marketColor: "#FDD0AF",
             bgUrl:
-              "http://dev.proxy.oxidefinance.com/uploads/3bd43003-8a2e-42ff-bab5-0843c376822e.png",
+              "https://dev.proxy.oxidefinance.com/uploads/3bd43003-8a2e-42ff-bab5-0843c376822e.png",
           },
         ],
       },
@@ -225,7 +225,7 @@ describe("IndexPage", () => {
               packType: "Plastic drum",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/9e905f49-50d4-40ae-9b40-fa797d255756.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/9e905f49-50d4-40ae-9b40-fa797d255756.jpg",
               isAvailable: true,
               customerId: "3379915000002081001",
               manufacturer: "BASF",
@@ -290,7 +290,7 @@ describe("IndexPage", () => {
               packType: "Metal drum",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/47d3e928-4ffc-4b6d-bd6b-88ff0ee95c35.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/47d3e928-4ffc-4b6d-bd6b-88ff0ee95c35.jpg",
               isAvailable: true,
               customerId: "3379915000003144001",
               manufacturer: "BASF",
@@ -342,7 +342,7 @@ describe("IndexPage", () => {
               packType: "Plastic drum",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/b9c6f47b-66ed-461e-92f8-23ff99b49001.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/b9c6f47b-66ed-461e-92f8-23ff99b49001.jpg",
               isAvailable: true,
               customerId: "3379915000002081001",
               manufacturer: "BASF",
@@ -381,7 +381,7 @@ describe("IndexPage", () => {
               packType: "Carton",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/ffd3d069-aa44-4b7c-84d0-06d26b953e40.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/ffd3d069-aa44-4b7c-84d0-06d26b953e40.jpg",
               isAvailable: true,
               customerId: "3379915000002081001",
               manufacturer: "Phamazell",
@@ -433,7 +433,7 @@ describe("IndexPage", () => {
               packType: "Cylinder",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/ec112a4c-a73d-4316-b79c-e5b581da247d.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/ec112a4c-a73d-4316-b79c-e5b581da247d.jpg",
               isAvailable: true,
               customerId: "3379915000003722002",
               manufacturer: "Defoamers Inc",
@@ -472,7 +472,7 @@ describe("IndexPage", () => {
               packType: "Carton",
               logo: null,
               converPhoto:
-                "http://dev.proxy.oxidefinance.com/uploads/61081b95-0837-4f33-9d68-a35c84c3ae36.jpg",
+                "https://dev.proxy.oxidefinance.com/uploads/61081b95-0837-4f33-9d68-a35c84c3ae36.jpg",
               isAvailable: true,
               customerId: "3379915000002081001",
               manufacturer: "BASF",

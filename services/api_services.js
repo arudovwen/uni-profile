@@ -7,7 +7,7 @@ let refreshAttemptCount = 0;
 
 
 // Base URL for API services
-const BASE_URL = "http://dev.proxy.oxidefinance.com";
+const BASE_URL = "https://dev.proxy.oxidefinance.com";
 
 console.log("🚀 ~ getBaseUrl():", process.env)
 // Create an Axios instance with custom configuration
