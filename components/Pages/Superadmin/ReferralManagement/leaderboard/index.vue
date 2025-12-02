@@ -102,6 +102,12 @@ const columns = [
     isHtml: false,
     isStatus: false,
   },
+   {
+    header: "Name",
+    key: "name",
+    isHtml: false,
+    isStatus: false,
+  },
   {
     header: "Total referrals",
     key: "assignedUser",
