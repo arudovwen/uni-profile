@@ -1,5 +1,5 @@
 const isProduction = process.env.NODE_ENV === "production";
-const cookieDomain = isProduction ? ".matta.trade" : "localhost";
+const cookieDomain = isProduction ? ".oxidefinance.com" : "localhost";
 
 export const defaultOptions = {
   domain: cookieDomain,

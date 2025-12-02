@@ -157,11 +157,11 @@ const navs = [
     links: [
       {
         title: "About Us",
-        url: "https://corporate.matta.trade/",
+        url: "https://corporate.oxidefinance.com/",
       },
       {
         title: "Careers",
-        url: "https://corporate.matta.trade/",
+        url: "https://corporate.oxidefinance.com/",
       },
       {
         title: "Newsletter",
