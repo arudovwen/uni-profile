@@ -3,7 +3,10 @@
     <div
       class="flex flex-col bg-white w-full border-1px rounded-[10px] border-[#F4F7FE]"
     >
-      <div v-if="!hideHeader" class="flex flex-row justify-between px-6 py-5 border-b border-[#EAECF0]">
+      <div
+        v-if="!hideHeader"
+        class="flex flex-row justify-between px-6 py-5 border-b border-[#EAECF0]"
+      >
         <div class="flex flex-col gap-1">
           <span
             class="font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
@@ -16,7 +19,7 @@
           </span>
         </div>
       </div>
-      <div class="gap-3 px-6" :class="customClass?'pb-4':''">
+      <div class="flex gap-3 px-6 " :class="customClass ? 'pb-4' : ''">
         <div
           class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
         >
@@ -26,10 +29,25 @@
           <input
             type="search"
             placeholder="Search "
-            v-model="queryParams.ReferralCode"
+            v-model="queryParams.search"
             @input="debounceSearch"
             class="flex-1 text-sm font-medium outline-none focus:outline-none"
           />
+        </div>
+        <div class="min-w-[240px]">
+          <ClientOnly>
+            <VueDatePicker
+              auto-apply
+              v-model="date"
+              range
+              multi-calendars
+              placeholder="Select dates"
+              :time-picker="false"
+              input-class-name=""
+              no-today
+              :enable-time-picker="false"
+            />
+          </ClientOnly>
         </div>
       </div>
       <div class="w-full mb-6 bg-white">
@@ -68,23 +86,26 @@
 <script setup>
 import CustomTable from "~/components/CustomTable/index.vue";
 import AppStatusButton from "~/components/AppStatusButton.vue";
-
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
 import { getReferralLeaderboard } from "~/services/userservices";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
+import moment from "moment";
 
 defineProps({
   customClass: {
     type: String,
     default: "py-10",
   },
-  hideHeader:{
+  hideHeader: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
+const date = ref(null);
 const queryParams = reactive({
-  ReferralCode: "",
+  search: "",
   SortOrder: "",
   PageNumber: 1,
   PageSize: 10,
@@ -92,6 +113,8 @@ const queryParams = reactive({
   userCategories: [2],
   status: "",
   total: 0,
+  from: null,
+  to: null,
 });
 
 const rows = ref([]);
@@ -103,7 +126,7 @@ const columns = [
     isHtml: false,
     isStatus: false,
   },
-   {
+  {
     header: "Name",
     key: "userName",
     isHtml: false,
@@ -149,7 +172,7 @@ async function fetchReferrals() {
   loading.value = true;
   try {
     const res = await getReferralLeaderboard(queryParams);
-    rows.value = res.data?.data
+    rows.value = res.data?.data;
     queryParams.total = res.data.totalCount || 0;
   } catch (error) {
     console.error("Error fetching referrals:", error);
@@ -162,7 +185,15 @@ async function fetchReferrals() {
     loading.value = false;
   }
 }
-
+watch(date, () => {
+  if (date.value) {
+    queryParams.from = moment(date.value[0]).format("yyyy-MM-DD");
+    queryParams.to = moment(date.value[1]).format("yyyy-MM-DD");
+  } else {
+    queryParams.from = null;
+    queryParams.to = null;
+  }
+});
 const debounceSearch = debounce(() => {
   queryParams.PageNumber = 1;
   fetchReferrals();
@@ -170,7 +201,7 @@ const debounceSearch = debounce(() => {
 
 // Watch for pagination changes
 watch(
-  () => queryParams.PageNumber,
+  () => [queryParams.PageNumber, queryParams.from, queryParams.to],
   () => {
     fetchReferrals();
   }
