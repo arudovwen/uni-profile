@@ -95,5 +95,6 @@ const urls = {
   GET_REFERRAL: (id) => `admin/v1/referalls/${id}`,
   GET_REFERRALS: "admin/v1/referalls/get-all",
   DELETE_REFERRAL: (id, version = "1") => `admin/v${version}/referalls/delete/${id}`,
+  GET_REFERRAL_LEADERBOARD: 'admin/v1/referalls/leaderboard'
 };
 export default urls;

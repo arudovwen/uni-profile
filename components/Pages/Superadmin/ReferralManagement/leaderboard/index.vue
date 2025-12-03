@@ -69,8 +69,9 @@
 import CustomTable from "~/components/CustomTable/index.vue";
 import AppStatusButton from "~/components/AppStatusButton.vue";
 
-import { getReferrals } from "~/services/userservices";
+import { getReferralLeaderboard } from "~/services/userservices";
 import debounce from "lodash/debounce";
+import { toast } from "vue3-toastify";
 
 defineProps({
   customClass: {
@@ -98,62 +99,57 @@ const loading = ref(false);
 const columns = [
   {
     header: "Rank",
-    key: "index",
+    key: "rank",
     isHtml: false,
     isStatus: false,
   },
    {
     header: "Name",
-    key: "name",
+    key: "userName",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Total referrals",
-    key: "assignedUser",
+    key: "totalReferrals",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Matta",
-    key: "assignedDepartment",
+    key: "matta",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Orbital",
-    key: "assignedApps",
+    key: "orbital",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Oxide",
-    key: "created_On",
+    key: "oxide",
     isHtml: false,
     isStatus: false,
   },
   {
     header: "Flux",
-    key: "status",
+    key: "flux",
     isHtml: false,
     isStatus: false,
   },
 ];
 
 onMounted(() => {
-//   fetchReferrals();
+  fetchReferrals();
 });
 
 async function fetchReferrals() {
   loading.value = true;
   try {
-    const res = await getReferrals(queryParams);
-    rows.value = res.data.data.map((row, index) => ({
-      index: index + 1,
-      ...row,
-    }));
-    queryParams.total = res.data.totalCount || 0;
-
+    const res = await getReferralLeaderboard(queryParams);
+    rows.value = res.data?.data
     queryParams.total = res.data.totalCount || 0;
   } catch (error) {
     console.error("Error fetching referrals:", error);

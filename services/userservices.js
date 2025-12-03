@@ -149,6 +149,12 @@ export async function getReferralByCode(referralCode) {
     referralCode,
   });
 }
+export async function getReferralLeaderboard(queryParams) {
+  return await ssoGet(
+    `${urls.GET_REFERRAL_LEADERBOARD}?${new URLSearchParams(cleanObject(queryParams))}`,
+    {}
+  );
+}
 
 export async function updateReferralStatus(referralCode, status) {
   return await ssoPost(`admin/v1/referalls/update-status`, {
