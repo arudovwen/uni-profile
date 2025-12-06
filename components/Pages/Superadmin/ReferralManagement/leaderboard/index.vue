@@ -19,7 +19,7 @@
           </span>
         </div>
       </div>
-      <div class="flex gap-3 px-6 " :class="customClass ? 'pb-4' : ''">
+      <div class="flex gap-3 px-6" :class="customClass ? 'pb-4' : ''">
         <div
           class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
         >
@@ -49,6 +49,13 @@
             />
           </ClientOnly>
         </div>
+        <button
+          @click="exportToCSVHandler"
+          :disabled="isExporting || rows.length === 0"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0066CC] text-white font-medium text-sm hover:bg-[#0052A3] disabled:bg-[#D0D5DD] disabled:text-[#98A2B3] disabled:cursor-not-allowed transition-colors"
+        >
+          <span>{{ isExporting ? "Exporting..." : "Export to CSV" }}</span>
+        </button>
       </div>
       <div class="w-full mb-6 bg-white">
         <CustomTable
@@ -92,6 +99,7 @@ import { getReferralLeaderboard } from "~/services/userservices";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
 import moment from "moment";
+import { exportToCSV } from "~/utils/exportToCSV";
 
 defineProps({
   customClass: {
@@ -119,6 +127,7 @@ const queryParams = reactive({
 
 const rows = ref([]);
 const loading = ref(false);
+const isExporting = ref(false);
 const columns = [
   {
     header: "Rank",
@@ -198,6 +207,40 @@ const debounceSearch = debounce(() => {
   queryParams.PageNumber = 1;
   fetchReferrals();
 }, 800);
+
+const exportToCSVHandler = async () => {
+  if (rows.value.length === 0) {
+    toast.error("No data to export");
+    return;
+  }
+
+  isExporting.value = true;
+  try {
+    // Define the CSV column mapping with proper header names
+    const csvColumns = [
+      { header: "Rank", key: "rank" },
+      { header: "User Name", key: "userName" },
+      { header: "Orbital Onboards", key: "orbital" },
+      { header: "Flux Onboards", key: "flux" },
+      { header: "Matta Onboards", key: "matta" },
+      { header: "Oxide Onboards", key: "oxide" },
+      { header: "Total Onboarded Customers", key: "totalReferrals" },
+    ];
+
+    // Generate filename with current date
+    const today = moment().format("YYYY-MM-DD");
+    const fileName = `Referral_Leaderboard_${today}`;
+
+    // Export the data
+    exportToCSV(rows.value, csvColumns, fileName);
+    toast.success("Leaderboard data exported successfully");
+  } catch (error) {
+    console.error("Error exporting CSV:", error);
+    toast.error("Failed to export leaderboard data");
+  } finally {
+    isExporting.value = false;
+  }
+};
 
 // Watch for pagination changes
 watch(
