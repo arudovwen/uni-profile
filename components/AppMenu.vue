@@ -66,7 +66,8 @@ function getData() {
       }
     })
     .catch(error => {
-      console.error("Error fetching sub-apps:", error);
+      
+      error("Error fetching sub-apps:", error);
       rows.value = []; // Clear or reset rows on error
     });
 }

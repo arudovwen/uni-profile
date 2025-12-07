@@ -12,7 +12,7 @@
         >
           <AppLogo :dark="true" />
         </div>
-        <div class="w-full flex justify-center items-center mb-6">
+        <div class="flex items-center justify-center w-full mb-6">
           <div
             class="flex flex-col items-start p-0 px-[4px] gap-[8px] w-[279px] z-0"
           >
@@ -26,7 +26,7 @@
         <nav
           class="flex flex-col items-start p-0 px-[4px] gap-[8px] w-full h-[184px] z-0"
         >
-          <ul class="grid gap-y-2 w-full">
+          <ul class="grid w-full gap-y-2">
             <li
               v-for="item in mappedNavigation"
               :key="item.name"
@@ -106,13 +106,13 @@
                 class="flex flex-col items-start p-0 w-[179px] h-[40px] text-[#ffffff] flex-none order-1 flex-grow-0"
               >
                 <!-- Main Text -->
-                <p class="font-Onest font-semibold text-sm text-black">
+                <p class="text-sm font-semibold text-black font-Onest">
                   {{ authStore.loggedUser?.fullName }}
                 </p>
 
                 <!-- Supporting Text -->
                 <p
-                  class="text-sm font-normal font-onest truncate text-gray-500"
+                  class="text-sm font-normal text-gray-500 truncate font-onest"
                 >
                   {{ authStore.loggedUser?.email }}
                 </p>
@@ -153,24 +153,24 @@
   </div>
   <ModalCenter v-if="isSigningOut">
     <template #default>
-      <div class="bg-white p-6 sm:pb-4 rounded-lg" v-if="isSigningOut">
-        <div class="flex justify-between mb-5 items-center">
-          <h4 class="font-medium text-matta-black text-xl">Sign Out</h4>
+      <div class="p-6 bg-white rounded-lg sm:pb-4" v-if="isSigningOut">
+        <div class="flex items-center justify-between mb-5">
+          <h4 class="text-xl font-medium text-matta-black">Sign Out</h4>
           <!-- <i
-            class="uil uil-times cursor-pointer text-lg"
+            class="text-lg cursor-pointer uil uil-times"
             @click="isSigniningOut = false"
           ></i> -->
         </div>
 
-        <p class="text-sm text-matta-black mb-2">
+        <p class="mb-2 text-sm text-matta-black">
           Are you sure you want to sign out?
         </p>
 
-        <div class="flex justify-between gap-x-2 items-center mt-8">
+        <div class="flex items-center justify-between mt-8 gap-x-2">
           <button
             type="button"
             @click="isSigningOut = false"
-            class="appearance-none border min-w-[140px] w-1/2 leading-none px-8 py-3 rounded-lg text-matta-black hover:bg-gray-100 text-[13px] uppercase"
+            class="appearance-none border min-w-[140px] w-1/2 leading-none px-8 py-3 rounded-lg text-matta-black hover:bg-gray-100 text-sm"
           >
             Cancel
           </button>
@@ -178,7 +178,7 @@
           <button
             type="button"
             @click="logOut"
-            class="appearance-none border min-w-[140px] w-1/2 border-primary-500 leading-none px-8 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px] uppercase"
+            class="appearance-none border min-w-[140px] w-1/2 border-primary-500 leading-none px-8 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-sm "
           >
             Yes
           </button>

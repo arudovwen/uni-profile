@@ -3,7 +3,11 @@
     <div
       class="flex flex-row gap-x-4 border-b-[#F4F7FE] border-b-[1px] py-6 px-[30px]"
     >
-      <button type="button" aria-label="back" @click="navigateTo('/referral-management')">
+      <button
+        type="button"
+        aria-label="back"
+        @click="navigateTo('/referral-management')"
+      >
         <ArrowLeft />
       </button>
       <span class="font-semibold text-[18px] leading-[28px] text-[#101828]"
@@ -12,13 +16,10 @@
     </div>
     <div class="flex flex-row py-9 gap-x-20 px-[30px]">
       <div class="flex flex-col gap-1">
-        <span
-          class=" font-semibold text-sm text-[#101828]"
-        >
+        <span class="font-semibold text-sm text-[#101828]">
           Campaign Details
         </span>
-        <span
-          class=" font-normal text-xs  text-[#475467]"
+        <span class="font-normal text-xs text-[#475467]"
           >Provide the required campaign info
         </span>
       </div>
@@ -33,34 +34,40 @@
               type="text"
               name="referralCode"
               iconType="code"
-              disabled
+              :disabled="referralData?.id"
               v-bind="referralCodeAtt"
               v-model="referralCode"
               :error="errors.referralCode"
             />
-          </div> <div class="">
-            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">
+          </div>
+          <div></div>
+          <div class="">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Department
             </label>
-            <Textinput
-              placeholder="Department"
-              type="text"
+
+            <FormsDepartmentDropdown
+              label=""
               name="assignedDepartment"
               v-bind="assignedDepartmentAtt"
               v-model="assignedDepartment"
               :error="errors.assignedDepartment"
+           
             />
+           
           </div>
           <div class="">
-            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Assigned User
             </label>
             <CustomSearchSelect
               :modelValue="selectedUserData"
-              @update:modelValue="(value) => {
-                selectedUserData = value;
-                assignedUser = value?.value;
-              }"
+              @update:modelValue="
+                (value) => {
+                  selectedUserData = value;
+                  assignedUser = value?.value;
+                }
+              "
               :min-search-length="1"
               placeholder="Search users..."
               apiEndpoint="admin/v1/user/get-users"
@@ -70,16 +77,20 @@
               {{ errors.assignedUser }}
             </span>
           </div>
-         
+
           <div class="lg:col-span-2">
-            <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">Assigned Apps </label>
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5"
+              >Assigned Apps
+            </label>
             <div class="relative">
-              <Combobox
-                v-model="assignedApps"
-                multiple
-              >
-                <div class="relative w-full px-3 py-2 overflow-hidden text-left bg-white rounded-lg cursor-default input-control sm:text-sm">
-                  <div v-if="assignedApps.length > 0" class="flex flex-wrap gap-2 mb-1">
+              <Combobox v-model="assignedApps" multiple>
+                <div
+                  class="relative w-full px-3 py-2 overflow-hidden text-left bg-white rounded-lg cursor-default input-control sm:text-sm"
+                >
+                  <div
+                    v-if="assignedApps.length > 0"
+                    class="flex flex-wrap gap-2 mb-1"
+                  >
                     <span
                       v-for="app in assignedApps"
                       :key="app"
@@ -142,7 +153,9 @@
                       <li
                         :class="[
                           'relative cursor-default select-none py-2 pl-10 pr-4 flex justify-between',
-                          active ? 'bg-primary-500 text-white' : 'text-secondary-500',
+                          active
+                            ? 'bg-primary-500 text-white'
+                            : 'text-secondary-500',
                         ]"
                       >
                         <span
@@ -207,17 +220,18 @@
       </div>
     </div>
   </div>
+ 
 </template>
 <script setup>
 import { toast } from "vue3-toastify";
 import * as yup from "yup";
 import ArrowLeft from "~/components/Svgs/ArrowLeft.vue";
 import CustomSearchSelect from "~/components/CustomSearchSelect.vue";
-import { 
-  generateReferralCode, 
-  getSubApps, 
+import {
+  generateReferralCode,
+  getSubApps,
   createReferral,
-  updateReferral 
+  updateReferral,
 } from "~/services/userservices";
 import {
   Combobox,
@@ -275,7 +289,7 @@ onMounted(async () => {
       error.response?.data?.message || "Failed to generate referral code"
     );
   }
-  
+
   // Load apps
   await loadApps();
 });
@@ -287,7 +301,8 @@ const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
 
 const [referralCode, referralCodeAtt] = defineField("referralCode");
 const [assignedUser, assignedUserAtt] = defineField("assignedUser");
-const [assignedDepartment, assignedDepartmentAtt] = defineField("assignedDepartment");
+const [assignedDepartment, assignedDepartmentAtt] =
+  defineField("assignedDepartment");
 const [assignedApps, assignedAppsAtt] = defineField("assignedApps");
 
 const isSuccessOpen = ref(false);
@@ -300,7 +315,7 @@ const handleUserSelected = (selectedOption) => {
   selectedUserData.value = selectedOption;
   assignedUser.value = selectedOption.value;
   // Update the form field
-  setFieldValue('assignedUser', selectedOption.value);
+  setFieldValue("assignedUser", selectedOption.value);
 };
 
 // Get app name by id
@@ -325,7 +340,7 @@ const handleAppSearch = (event) => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-    
+
     // Build the payload according to the expected schema
     const payload = {
       referralCode: values.referralCode,
@@ -335,20 +350,23 @@ const onSubmit = handleSubmit(async (values) => {
       assignedDepartment: values.assignedDepartment,
       assignedApps: values.assignedApps.join(","), // Convert array to comma-separated string
     };
-    
+
     let response;
     if (referralData.value?.id) {
       // Update existing referral
-      response = await updateReferral({ id: referralData.value.id, ...payload });
+      response = await updateReferral({
+        id: referralData.value.id,
+        ...payload,
+      });
     } else {
       // Create new referral
       response = await createReferral(payload);
     }
-    
+
     if (response.status === 200) {
       toast.success(
-        referralData.value?.id 
-          ? "Referral updated successfully" 
+        referralData.value?.id
+          ? "Referral updated successfully"
           : "Referral created successfully"
       );
       isSuccessOpen.value = true;

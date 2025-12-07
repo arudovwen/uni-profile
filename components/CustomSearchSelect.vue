@@ -226,4 +226,8 @@ watch(selectedOption, (newVal) => {
     emit("option-selected", newVal);
   }
 });
+
+onMounted(()=>{
+   fetchSearchResults();
+})
 </script>

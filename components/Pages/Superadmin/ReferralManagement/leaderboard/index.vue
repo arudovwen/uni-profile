@@ -19,7 +19,7 @@
           </span>
         </div>
       </div>
-      <div class="flex gap-3 px-6 " :class="customClass ? 'pb-4' : ''">
+      <div class="flex gap-3 px-6 " :class="customClass ? 'pb-4 pt-4' : ''">
         <div
           class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
         >

@@ -151,7 +151,9 @@ export async function getReferralByCode(referralCode) {
 }
 export async function getReferralLeaderboard(queryParams) {
   return await ssoGet(
-    `${urls.GET_REFERRAL_LEADERBOARD}?${new URLSearchParams(cleanObject(queryParams))}`,
+    `${urls.GET_REFERRAL_LEADERBOARD}?${new URLSearchParams(
+      cleanObject(queryParams)
+    )}`,
     {}
   );
 }
@@ -165,4 +167,28 @@ export async function updateReferralStatus(referralCode, status) {
 
 export async function deleteReferral(id, version = "1") {
   return await ssoDelete(urls.DELETE_REFERRAL(id, version), {});
+}
+
+export async function getDepartments(queryParams) {
+  return await ssoGet(
+    `admin/v1/referalls/department/get-all?${new URLSearchParams(
+      cleanObject(queryParams)
+    )}`,
+    {}
+  );
+}
+
+export async function addDepartment(payload) {
+  return await ssoPost(`admin/v1/referalls/department/add`, payload);
+}
+export async function updateDepartment(payload) {
+  return await ssoPost(`admin/v1/referalls/department/edit`, payload);
+}
+
+export async function deleteDepartment(id) {
+  return await ssoDelete(`admin/v1/referalls/department/delete/${id}`, {});
+}
+
+export async function getRefferralByUser() {
+  return await ssoGet(`admin/v1/referalls/get-referral-by-user`, {});
 }
