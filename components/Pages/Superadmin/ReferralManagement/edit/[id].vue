@@ -26,7 +26,7 @@
           </div>
         </div>
         <div v-else class="w-full grid grid-cols-2 gap-x-[18px] gap-y-6">
-          <div class="flex flex-col">
+          <div class="flex flex-col col-span-2">
             <Textinput
               placeholder="Referral Code"
               type="text"
@@ -47,7 +47,6 @@
               "
             />
           </div>
-          <div></div>
           <div class="flex flex-col">
             <label class="text-[14px] font-medium text-[#344054] mb-0.5 block">
               Assigned User
