@@ -12,85 +12,94 @@
     </div>
     <div class="flex flex-row py-9 gap-x-20 px-[30px]">
       <div class="flex flex-col gap-1">
-        <span
-          class=" font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
-        >
+        <span class="font-semibold text-sm text-[#101828]">
           Campaign Details
         </span>
-        <span
-          class=" font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
-          >Update the campaign info
+        <span class="font-normal text-xs text-[#475467]"
+          >Provide the required campaign info
         </span>
       </div>
-      <div class="flex flex-col gap-y-20 w-full max-w-[644px]">
-        <div v-if="isLoading" class="flex justify-center items-center py-12">
+      <div class="flex flex-col w-full max-w-[644px]">
+        <div v-if="isLoading" class="flex items-center justify-center py-12">
           <div class="animate-spin">
-            <i class="uil uil-spinner text-4xl"></i>
+            <i class="text-4xl uil uil-spinner"></i>
           </div>
         </div>
         <div v-else class="w-full grid grid-cols-2 gap-x-[18px] gap-y-6">
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
-              Referral Code
-            </label>
+          <div class="flex flex-col">
             <Textinput
               placeholder="Referral Code"
               type="text"
               name="referralCode"
+              label="  Referral Code"
               iconType="code"
               v-bind="referralCodeAtt"
               :modelValue="referralCode"
               @update:modelValue="handleReferralCodeChange"
               :error="codeUniquenessError || errors.referralCode"
-              :validate="codeIsUnique && !isCheckingUniqueness && !errors.referralCode ? 'Code is unique and valid' : ''"
-              :description="isCheckingUniqueness ? 'Checking code availability...' : ''"
+              :validate="
+                codeIsUnique && !isCheckingUniqueness && !errors.referralCode
+                  ? 'Code is unique and valid'
+                  : ''
+              "
+              :description="
+                isCheckingUniqueness ? 'Checking code availability...' : ''
+              "
             />
           </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
+          <div></div>
+          <div class="flex flex-col">
+            <label class="text-[14px] font-medium text-[#344054] mb-0.5 block">
               Assigned User
             </label>
             <CustomSearchSelect
               :modelValue="selectedUserData"
-              @update:modelValue="(value) => {
-                selectedUserData = value;
-                assignedUser = value?.value;
-              }"
-              min-search-length="1"
+              @update:modelValue="
+                (value) => {
+                  selectedUserData = value;
+                  assignedUser = value?.value;
+                }
+              "
+              :min-search-length="1"
               placeholder="Search users..."
               apiEndpoint="admin/v1/user/get-users"
               @option-selected="handleUserSelected"
             />
-            <span v-if="errors.assignedUser" class="text-red-500 text-sm">
+            <span v-if="errors.assignedUser" class="text-sm text-red-500">
               {{ errors.assignedUser }}
             </span>
           </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]">
+          <div class="">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Department
             </label>
-            <Textinput
-              placeholder="Department"
-              type="text"
+
+            <FormsDepartmentDropdown
+              label=""
               name="assignedDepartment"
               v-bind="assignedDepartmentAtt"
               v-model="assignedDepartment"
               :error="errors.assignedDepartment"
             />
           </div>
-          <div class="flex flex-col gap-y-2">
-            <label class="text-[14px] font-medium text-[#344054]"> Apps </label>
+          <div class="flex flex-col col-span-2">
+            <label class="text-[14px] font-medium text-[#344054] mb-1.5 block">
+              Apps
+            </label>
+
             <div class="relative">
-              <Combobox
-                v-model="assignedApps"
-                multiple
-              >
-                <div class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm min-h-[42px] py-2 px-3">
-                  <div v-if="assignedApps.length > 0" class="flex flex-wrap gap-2 mb-1">
+              <Combobox v-model="assignedApps" multiple>
+                <div
+                  class="relative w-full px-3 py-2 overflow-hidden text-left bg-white rounded-lg cursor-default input-control sm:text-sm"
+                >
+                  <div
+                    v-if="assignedApps.length > 0"
+                    class="flex flex-wrap gap-2 mb-1"
+                  >
                     <span
                       v-for="app in assignedApps"
                       :key="app"
-                      class="inline-flex items-center gap-1 px-2 py-1 rounded bg-primary-100 text-primary-600 text-xs"
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded bg-primary-100 text-primary-600"
                     >
                       {{ getAppName(app) }}
                       <button
@@ -132,7 +141,7 @@
                   leaveTo="opacity-0"
                 >
                   <ComboboxOptions
-                    class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm z-50"
+                    class="absolute z-50 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
                   >
                     <div
                       v-if="appOptions.length === 0"
@@ -149,7 +158,9 @@
                       <li
                         :class="[
                           'relative cursor-default select-none py-2 pl-10 pr-4',
-                          active ? 'bg-primary-300 text-white' : 'text-secondary-500',
+                          active
+                            ? 'bg-primary-300 text-white'
+                            : 'text-secondary-500',
                         ]"
                       >
                         <span
@@ -188,20 +199,20 @@
                 </TransitionRoot>
               </Combobox>
             </div>
-            <span v-if="errors.assignedApps" class="text-red-500 text-sm">
+            <span v-if="errors.assignedApps" class="text-sm text-red-500">
               {{ errors.assignedApps }}
             </span>
           </div>
         </div>
-        <div class="flex flex-row justify-end gap-x-4">
+        <div class="flex justify-end mt-10 gap-x-4">
           <AppButton
-            btnClass="!px-[15px] border-[#D0D5DD] border-[1px] text-[#344054] py-2 h-[40px]"
+            btnClass="!px-9 !border-[#D0D5DD] border text-sm text-[#344054] !py-[9px] !leading-none !text-sm "
             @click="navigateTo('/referral-management')"
             type="button"
             text="Cancel"
           />
           <AppButton
-            btnClass="!px-[15px] btn-primary py-2 h-[40px]"
+            btnClass="!px-[15px] btn-primary !py-[9px] !text-sm !leading-none"
             @click="onSubmit"
             type="submit"
             :is-disabled="!meta.valid || isSubmitting"
@@ -221,7 +232,7 @@ import CustomSearchSelect from "~/components/CustomSearchSelect.vue";
 import {
   getSubApps,
   getReferrals,
-  checkReferralCodeUniqueness
+  checkReferralCodeUniqueness,
 } from "~/services/userservices";
 import { ssoPost } from "~/helpers/api_helpers";
 import debounce from "lodash/debounce";
@@ -249,7 +260,10 @@ const schema = yup.object({
     .required("Referral code is required")
     .min(3, "Referral code must be at least 3 characters")
     .max(12, "Referral code must not exceed 12 characters")
-    .matches(/^[a-zA-Z0-9]*$/, "Referral code must contain only alphanumeric characters (no special characters or spaces)"),
+    .matches(
+      /^[a-zA-Z0-9]*$/,
+      "Referral code must contain only alphanumeric characters (no special characters or spaces)"
+    ),
   assignedUser: yup.string().required("Assigned user is required"),
   assignedDepartment: yup.string(),
   assignedApps: yup.array(),
@@ -280,7 +294,8 @@ const validateCodeUniqueness = debounce(async (code, excludeId = null) => {
       codeUniquenessError.value = "";
       codeIsUnique.value = true;
     } else {
-      codeUniquenessError.value = "This referral code already exists. Please use a different code.";
+      codeUniquenessError.value =
+        "This referral code already exists. Please use a different code.";
       codeIsUnique.value = false;
     }
   } catch (error) {
@@ -292,14 +307,16 @@ const validateCodeUniqueness = debounce(async (code, excludeId = null) => {
   }
 }, 800);
 
-const { handleSubmit, defineField, errors, meta, setValues, setFieldValue } = useForm({
-  validationSchema: schema,
-  initialValues: formValues,
-});
+const { handleSubmit, defineField, errors, meta, setValues, setFieldValue } =
+  useForm({
+    validationSchema: schema,
+    initialValues: formValues,
+  });
 
 const [referralCode, referralCodeAtt] = defineField("referralCode");
 const [assignedUser, assignedUserAtt] = defineField("assignedUser");
-const [assignedDepartment, assignedDepartmentAtt] = defineField("assignedDepartment");
+const [assignedDepartment, assignedDepartmentAtt] =
+  defineField("assignedDepartment");
 const [assignedApps, assignedAppsAtt] = defineField("assignedApps");
 
 // Load available apps
@@ -320,7 +337,7 @@ const loadApps = async () => {
 
 const handleReferralCodeChange = (newCode) => {
   // Update form field value
-  setFieldValue('referralCode', newCode);
+  setFieldValue("referralCode", newCode);
   // Trigger uniqueness validation
   validateCodeUniqueness(newCode, referralData.value?.id);
 };
@@ -342,6 +359,7 @@ const loadReferralData = async () => {
         label: data.assignedUser,
         email: data.assignedUserEmail,
       };
+      console.log({ data });
 
       // Set form values
       await nextTick();
@@ -387,7 +405,7 @@ const handleUserSelected = (selectedOption) => {
   selectedUserData.value = selectedOption;
   assignedUser.value = selectedOption.value;
   // Update the form field
-  setFieldValue('assignedUser', selectedOption.value);
+  setFieldValue("assignedUser", selectedOption.value);
 };
 
 // Handle app search
@@ -403,9 +421,14 @@ const onSubmit = handleSubmit(async (values) => {
     // Check if code is unique before submitting
     if (!codeIsUnique.value && !codeUniquenessError.value) {
       // If we haven't validated yet, do a quick check
-      const isUnique = await checkReferralCodeUniqueness(values.referralCode, referralData.value?.id);
+      const isUnique = await checkReferralCodeUniqueness(
+        values.referralCode,
+        referralData.value?.id
+      );
       if (!isUnique) {
-        toast.error("Referral code already exists. Please use a different code.");
+        toast.error(
+          "Referral code already exists. Please use a different code."
+        );
         isSubmitting.value = false;
         return;
       }
