@@ -33,10 +33,12 @@
               type="text"
               name="referralCode"
               iconType="code"
-              disabled
               v-bind="referralCodeAtt"
-              v-model="referralCode"
-              :error="errors.referralCode"
+              :modelValue="referralCode"
+              @update:modelValue="handleReferralCodeChange"
+              :error="codeUniquenessError || errors.referralCode"
+              :validate="codeIsUnique && !isCheckingUniqueness && !errors.referralCode ? 'Code is unique and valid' : ''"
+              :description="isCheckingUniqueness ? 'Checking code availability...' : ''"
             />
           </div> <div class="">
             <label class="text-[14px] font-medium text-[#344054]  block mb-1.5">
@@ -213,12 +215,14 @@ import { toast } from "vue3-toastify";
 import * as yup from "yup";
 import ArrowLeft from "~/components/Svgs/ArrowLeft.vue";
 import CustomSearchSelect from "~/components/CustomSearchSelect.vue";
-import { 
-  generateReferralCode, 
-  getSubApps, 
+import {
+  generateReferralCode,
+  getSubApps,
   createReferral,
-  updateReferral 
+  updateReferral,
+  checkReferralCodeUniqueness
 } from "~/services/userservices";
+import debounce from "lodash/debounce";
 import {
   Combobox,
   ComboboxInput,
@@ -239,7 +243,9 @@ const schema = yup.object({
   referralCode: yup
     .string()
     .required("Referral code is required")
-    .min(3, "Referral code must be at least 3 characters"),
+    .min(3, "Referral code must be at least 3 characters")
+    .max(12, "Referral code must not exceed 12 characters")
+    .matches(/^[a-zA-Z0-9]*$/, "Referral code must contain only alphanumeric characters (no special characters or spaces)"),
   assignedUser: yup.string().required("Assigned user is required"),
   assignedDepartment: yup.string(),
   assignedApps: yup.array(),
@@ -247,6 +253,36 @@ const schema = yup.object({
 
 const appOptions = ref([]);
 const appSearchQuery = ref("");
+const isCheckingUniqueness = ref(false);
+const codeUniquenessError = ref("");
+const codeIsUnique = ref(false);
+
+// Debounced uniqueness check
+const validateCodeUniqueness = debounce(async (code, excludeId = null) => {
+  if (!code || code.length < 3) {
+    codeUniquenessError.value = "";
+    codeIsUnique.value = false;
+    return;
+  }
+
+  isCheckingUniqueness.value = true;
+  try {
+    const isUnique = await checkReferralCodeUniqueness(code, excludeId);
+    if (isUnique) {
+      codeUniquenessError.value = "";
+      codeIsUnique.value = true;
+    } else {
+      codeUniquenessError.value = "This referral code already exists. Please use a different code.";
+      codeIsUnique.value = false;
+    }
+  } catch (error) {
+    console.error("Error validating code uniqueness:", error);
+    codeUniquenessError.value = "Error validating code. Please try again.";
+    codeIsUnique.value = false;
+  } finally {
+    isCheckingUniqueness.value = false;
+  }
+}, 800);
 
 // Load available apps on mount
 const loadApps = async () => {
@@ -264,18 +300,26 @@ const loadApps = async () => {
   }
 };
 
+const handleReferralCodeChange = (newCode) => {
+  referralCode.value = newCode;
+  // Trigger uniqueness validation
+  validateCodeUniqueness(newCode, referralData.value?.id);
+};
+
 onMounted(async () => {
   // Load referral code
   try {
     const response = await generateReferralCode();
     referralCode.value = response.data.data;
+    // Check if this code is unique (in case of editing)
+    validateCodeUniqueness(response.data.data, referralData.value?.id);
   } catch (error) {
     console.log("🚀 ~ onMounted ~ error:", error);
     toast.error(
       error.response?.data?.message || "Failed to generate referral code"
     );
   }
-  
+
   // Load apps
   await loadApps();
 });
@@ -325,7 +369,22 @@ const handleAppSearch = (event) => {
 const onSubmit = handleSubmit(async (values) => {
   try {
     isLoading.value = true;
-    
+
+    // Check if code is unique before submitting
+    if (!codeIsUnique.value && !codeUniquenessError.value) {
+      // If we haven't validated yet, do a quick check
+      const isUnique = await checkReferralCodeUniqueness(values.referralCode, referralData.value?.id);
+      if (!isUnique) {
+        toast.error("Referral code already exists. Please use a different code.");
+        isLoading.value = false;
+        return;
+      }
+    } else if (codeUniquenessError.value) {
+      toast.error(codeUniquenessError.value);
+      isLoading.value = false;
+      return;
+    }
+
     // Build the payload according to the expected schema
     const payload = {
       referralCode: values.referralCode,
@@ -335,7 +394,7 @@ const onSubmit = handleSubmit(async (values) => {
       assignedDepartment: values.assignedDepartment,
       assignedApps: values.assignedApps.join(","), // Convert array to comma-separated string
     };
-    
+
     let response;
     if (referralData.value?.id) {
       // Update existing referral
@@ -344,11 +403,11 @@ const onSubmit = handleSubmit(async (values) => {
       // Create new referral
       response = await createReferral(payload);
     }
-    
+
     if (response.status === 200) {
       toast.success(
-        referralData.value?.id 
-          ? "Referral updated successfully" 
+        referralData.value?.id
+          ? "Referral updated successfully"
           : "Referral created successfully"
       );
       isSuccessOpen.value = true;

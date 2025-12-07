@@ -166,3 +166,21 @@ export async function updateReferralStatus(referralCode, status) {
 export async function deleteReferral(id, version = "1") {
   return await ssoDelete(urls.DELETE_REFERRAL(id, version), {});
 }
+
+export async function checkReferralCodeUniqueness(referralCode, excludeId = null) {
+  try {
+    const response = await getReferrals({});
+    const codes = response.data?.data || [];
+
+    // Check if code exists (case-insensitive)
+    const exists = codes.some(item =>
+      item.referralCode?.toLowerCase() === referralCode.toLowerCase() &&
+      (!excludeId || item.id !== excludeId)
+    );
+
+    return !exists; // Return true if unique, false if duplicate
+  } catch (error) {
+    console.error("Error checking referral code uniqueness:", error);
+    return false;
+  }
+}
