@@ -192,3 +192,24 @@ export async function deleteDepartment(id) {
 export async function getRefferralByUser() {
   return await ssoGet(`admin/v1/referalls/get-referral-by-user`, {});
 }
+export async function checkReferralCodeUniqueness(
+  referralCode,
+  excludeId = null
+) {
+  try {
+    const response = await getReferrals({});
+    const codes = response.data?.data || [];
+
+    // Check if code exists (case-insensitive)
+    const exists = codes.some(
+      (item) =>
+        item.referralCode?.toLowerCase() === referralCode.toLowerCase() &&
+        (!excludeId || item.id !== excludeId)
+    );
+
+    return !exists; // Return true if unique, false if duplicate
+  } catch (error) {
+    console.error("Error checking referral code uniqueness:", error);
+    return false;
+  }
+}
