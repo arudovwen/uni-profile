@@ -32,7 +32,7 @@
           </div>
         </div>
         <div
-          class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6"
+          class="grid grid-cols-1 xl:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6"
         >
           <Textinput
             placeholder=""
@@ -93,7 +93,7 @@
               />
             </FormGroup> -->
 
-          <div class="md:col-span-2">
+          <div class="xl:col-span-2">
             <Textinput
               placeholder=""
               label="Address"
