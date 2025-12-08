@@ -34,7 +34,8 @@ function copyToClipboard(app) {
   const path = window.location.origin;
   const appName = app.name;
   const appCode = app.code;
-  const appUrl = app.url;
+  const appUrl = app.defaultUrl;
+
   const refCode = props.refDetail.referralCode;
   const text = `${path}/auth/register/${appCode}?continue=${appUrl}&referral_code=${refCode}&name=${appName}`;
   console.log({ text });
