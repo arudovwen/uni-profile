@@ -69,7 +69,7 @@ const tabs = [
   },
 ];
 const filteredTabs = computed(() =>
-  [0, 3].includes(authStore.userInfo.userCategory)
+  [0, 3].includes(authStore?.userInfo?.userCategory)
     ? tabs.filter((i) => i.value !== 3)
     : tabs
 );

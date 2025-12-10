@@ -114,7 +114,7 @@ const docLoading = ref(false);
 const users = ref([]);
 function getAuditData() {
   docLoading.value = true;
-  GetAudit[authStore.userInfo.userCategory](queryParams).then((res) => {
+  GetAudit[authStore?.userInfo?.userCategory](queryParams).then((res) => {
     auditData.value = res.data.data.map((i) => ({
       ...i,
       lastActive: moment(i.created).format("lll"),

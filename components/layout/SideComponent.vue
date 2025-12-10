@@ -39,6 +39,10 @@
                     v-if="item.key === 'referral-management'"
                     :active="isActive(item)"
                   />
+                     <SvgsRankingSvg
+                    v-if="item.key === 'referral-leaderboard'"
+                    :active="isActive(item)"
+                  />
                   <SvgsAppSvg
                     v-if="item.key === 'my-applications'"
                     :active="isActive(item)"

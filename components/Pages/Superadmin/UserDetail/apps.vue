@@ -19,7 +19,7 @@
               <MenuItems
                 class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-2 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
               >
-                <MenuItem v-if="row.isDisabled || authStore.userInfo.userCategory !== 3">
+                <MenuItem v-if="row.isDisabled || authStore?.userInfo?.userCategory !== 3">
                   <button
                     type="button"
                     @click="
@@ -32,7 +32,7 @@
                     Revoke access
                   </button></MenuItem
                 >
-                <MenuItem v-if="!row.isDisabled || authStore.userInfo.userCategory !== 3">
+                <MenuItem v-if="!row.isDisabled || authStore?.userInfo?.userCategory !== 3">
                   <button
                     type="button"
                     @click="
