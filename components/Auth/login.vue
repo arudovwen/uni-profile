@@ -2,7 +2,7 @@
   <NuxtLayout v-if="step === 1" name="auth">
     <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
       <h1
-        class="text-[#021242] darks:text-white mb-4 text-3xl font-medium w-full"
+        class="text-[#021242] darks:text-white mb-2 text-2xl lg:text-3xl font-medium w-full"
       >
         Log In {{ authStore.appList.find((i) => i.code === app)?.name ?? "" }}
       </h1>
@@ -40,7 +40,7 @@
           />
         </div>
         <span
-          class="block text-sm darks:text-white/80 mb-10"
+          class="block mb-10 text-sm darks:text-white/80"
           :style="{ color: color }"
         >
           <NuxtLink
