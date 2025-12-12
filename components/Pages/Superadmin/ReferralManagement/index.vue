@@ -53,15 +53,21 @@
           className="!rounded-0 !border-0 !shadow-none"
           :query="queryParams"
           @onPageChange="(value) => (queryParams.PageNumber = value)"
-          @onRowClick="
-            (row) => {
-              refDetail = row;
-              openRef = true;
-            }
-          "
         >
           <template #table-row-status="{ row }">
             <AppStatusButton stattype="referral" :status="row.status" />
+          </template>
+          <template #table-row-referralCode="{ row }">
+            <span
+            class="cursor-pointer"
+              @click="
+                () => {
+                  refDetail = row;
+                  openRef = true;
+                }
+              "
+              >{{ row.referralCode }}</span
+            >
           </template>
           <template #table-row-assignedUser="{ row }">
             <span>{{ row.assignedUser }}</span>
