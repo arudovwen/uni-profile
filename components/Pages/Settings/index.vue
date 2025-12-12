@@ -1,15 +1,15 @@
 <template>
-  <div class="lg:px-6">
+  <div class="md:px-6">
     <!-- Top bar   -->
-    <div class="flex gap-x-10 py-10 flex-col lg:flex-row gap-y-6 md:gap-y-0">
+    <div class="flex flex-col xl:py-10 gap-x-10 md:flex-row gap-y-6 md:gap-y-0">
       <div class="">
         <ul
-          class="custom-shadow bg-white rounded-lg overflow-hidden w-[200px] grid gap-y-1"
+          class="custom-shadow bg-white rounded-lg overflow-hidden w-full md:w-[200px] max-w-[600px] mx-auto md:mx-0 grid grid-cols-3 md:grid-cols-1 gap-y-1"
         >
           <li v-for="tab in filteredTabs" :key="tab.name">
             <button
               type="button"
-              class="text-sm font-semibold py-2 px-3 border-l-2 w-full text-left"
+              class="w-full px-3 py-2 text-sm font-semibold text-center md:border-l-2 md:text-left"
               @click="
                 active = tab.value;
                 title = tab.name;
@@ -31,9 +31,9 @@
           <div class="">
             <div>
               <Profile v-if="active == 1" />
-              <Application  v-if="active == 3" />
-              <Security  v-if="active == 2" />
-              <Pin  v-if="active == 4" />
+              <Application v-if="active == 3" />
+              <Security v-if="active == 2" />
+              <Pin v-if="active == 4" />
             </div>
           </div>
         </div>
@@ -48,7 +48,7 @@ import Security from "./security.vue";
 import Pin from "./pin.vue";
 import Application from "./application.vue";
 
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const active = ref(1);
 const tabs = [
   {
@@ -68,7 +68,11 @@ const tabs = [
     value: 3,
   },
 ];
-const filteredTabs  = computed(()=>  [0,3].includes(authStore.userInfo.userCategory)? tabs.filter(i=>i.value !==3):tabs)
+const filteredTabs = computed(() =>
+  [0, 3].includes(authStore?.userInfo?.userCategory)
+    ? tabs.filter((i) => i.value !== 3)
+    : tabs
+);
 </script>
 <style>
 .custom-shadow {

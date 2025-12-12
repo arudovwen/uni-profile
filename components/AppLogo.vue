@@ -5,7 +5,10 @@
     :alt="appInfo.name"
     class="w-[150px] h-auto"
   />
-  <img v-else src="@/assets/apps/mat.png" alt="sso logo" class="w-auto h-10" />
+ <div  v-else>
+   <img v-if="!dark" src="@/assets/apps/mat.png" alt="sso logo" class="w-auto h-9" />
+    <img v-if="dark" src="@/assets/apps/mat-white.png" alt="sso logo" class="w-auto h-9" />
+ </div>
 </template>
 
 <script setup>

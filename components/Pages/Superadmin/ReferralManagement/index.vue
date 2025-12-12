@@ -57,6 +57,18 @@
           <template #table-row-status="{ row }">
             <AppStatusButton stattype="referral" :status="row.status" />
           </template>
+          <template #table-row-referralCode="{ row }">
+            <span
+            class="cursor-pointer"
+              @click="
+                () => {
+                  refDetail = row;
+                  openRef = true;
+                }
+              "
+              >{{ row.referralCode }}</span
+            >
+          </template>
           <template #table-row-assignedUser="{ row }">
             <span>{{ row.assignedUser }}</span>
           </template>
@@ -140,6 +152,12 @@
     btn-text="Delete"
     @deleteItem="confirmDelete"
   />
+
+  <IndexModal :is-open="openRef" @toggle-popup="openRef = false">
+    <template #content>
+      <PagesSettingsReferralLinks :refDetail="refDetail" />
+    </template>
+  </IndexModal>
 </template>
 <script setup>
 import AppButton from "~/components/AppButton.vue";
@@ -168,7 +186,8 @@ const queryParams = reactive({
   status: "",
   total: 0,
 });
-
+const openRef = ref(false);
+const refDetail = ref(null);
 const filterOptions = [
   {
     label: "All",

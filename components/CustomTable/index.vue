@@ -77,6 +77,7 @@
             v-for="(row, index) in rows"
             :key="index"
             class="border-b hover:bg-gray-100"
+            @click="emits('onRowClick', row)"
           >
             <td
               v-for="column in columns"
@@ -144,6 +145,7 @@ const emits = defineEmits([
   "onPageChange",
   "edit",
   "delete",
+  "onRowClick"
 ]);
 
 // Define Props

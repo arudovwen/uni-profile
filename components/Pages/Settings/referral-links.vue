@@ -12,7 +12,7 @@
           <button
             @click="copyToClipboard(app)"
             type="button"
-            class="flex items-center text-sm border gap-x-1 border-[] rounded-lg h-8 w-8 justify-center align-center p-2 cursor-copy"
+            class="flex items-center text-xs gap-x-2.5 bg-[#EAECF5] rounded-lg px-2.5 py-2 cursor-copy"
           >
             <AppIcon icon="lucide:copy" />
           </button>
@@ -22,26 +22,32 @@
   </div>
 </template>
 <script setup>
-import { toast } from 'vue3-toastify';
+import { toast } from "vue3-toastify";
 
 const props = defineProps(["refDetail"]);
 const authStore = useAuthStore();
 const appInfo = computed(() =>
-  authStore.appList.filter((app) => !app.isDisabled &&  props.refDetail?.assignedApps?.toLowerCase().includes(app.name?.toLowerCase()))
+  authStore.appList.filter(
+    (app) =>
+      !app.isDisabled &&
+      props.refDetail?.assignedApps
+        ?.toLowerCase()
+        .includes(app.name?.toLowerCase())
+  )
 );
 
 function copyToClipboard(app) {
   const path = window.location.origin;
   const appName = app.name;
   const appCode = app.code;
-  const appUrl = app.url;
+  const appUrl = app.defaultUrl;
+
   const refCode = props.refDetail.referralCode;
   const text = `${path}/auth/register/${appCode}?continue=${appUrl}&referral_code=${refCode}&name=${appName}`;
-  console.log({ text });
   navigator.clipboard.writeText(text).then(
     () => {
       // Success feedback can be added here
-      toast.success('Referral link copied to clipboard!');
+      toast.success("Referral link copied to clipboard!");
     },
     (err) => {
       console.error("Could not copy text: ", err);
