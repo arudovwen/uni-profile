@@ -33,18 +33,10 @@
               name="referralCode"
               label="  Referral Code"
               iconType="code"
+              disabled
               v-bind="referralCodeAtt"
-              :modelValue="referralCode"
-              @update:modelValue="handleReferralCodeChange"
-              :error="codeUniquenessError || errors.referralCode"
-              :validate="
-                codeIsUnique && !isCheckingUniqueness && !errors.referralCode
-                  ? 'Code is unique and valid'
-                  : ''
-              "
-              :description="
-                isCheckingUniqueness ? 'Checking code availability...' : ''
-              "
+              v-model="referralCode"
+              :error="errors.referralCode"
             />
           </div>
           <div class="flex flex-col">

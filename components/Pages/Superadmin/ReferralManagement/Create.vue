@@ -25,7 +25,7 @@
       </div>
       <div class="flex flex-col gap-y-20 w-full max-w-[644px]">
         <div class="w-full grid lg:grid-cols-2 gap-x-[18px] gap-y-6">
-          <div class="">
+          <div class="col-span-2">
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Referral Code
             </label>
@@ -34,16 +34,13 @@
               type="text"
               name="referralCode"
               iconType="code"
-              :disabled="referralData?.id"
+              disabled
               v-bind="referralCodeAtt"
-              :modelValue="referralCode"
-              @update:modelValue="handleReferralCodeChange"
-              :error="codeUniquenessError || errors.referralCode"
-              :validate="codeIsUnique && !isCheckingUniqueness && !errors.referralCode ? 'Code is unique and valid' : ''"
-              :description="isCheckingUniqueness ? 'Checking code availability...' : ''"
+              v-model="referralCode"
+              :error="errors.referralCode"
             />
           </div>
-          <div></div>
+
           <div class="">
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Department
@@ -55,9 +52,7 @@
               v-bind="assignedDepartmentAtt"
               v-model="assignedDepartment"
               :error="errors.assignedDepartment"
-           
             />
-           
           </div>
           <div class="">
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
@@ -223,7 +218,6 @@
       </div>
     </div>
   </div>
- 
 </template>
 <script setup>
 import { toast } from "vue3-toastify";
@@ -235,7 +229,7 @@ import {
   getSubApps,
   createReferral,
   updateReferral,
-  checkReferralCodeUniqueness
+  checkReferralCodeUniqueness,
 } from "~/services/userservices";
 import debounce from "lodash/debounce";
 import {
@@ -260,7 +254,10 @@ const schema = yup.object({
     .required("Referral code is required")
     .min(3, "Referral code must be at least 3 characters")
     .max(12, "Referral code must not exceed 12 characters")
-    .matches(/^[a-zA-Z0-9]*$/, "Referral code must contain only alphanumeric characters (no special characters or spaces)"),
+    .matches(
+      /^[a-zA-Z0-9]*$/,
+      "Referral code must contain only alphanumeric characters (no special characters or spaces)"
+    ),
   assignedUser: yup.string().required("Assigned user is required"),
   assignedDepartment: yup.string(),
   assignedApps: yup.array(),
@@ -287,7 +284,8 @@ const validateCodeUniqueness = debounce(async (code, excludeId = null) => {
       codeUniquenessError.value = "";
       codeIsUnique.value = true;
     } else {
-      codeUniquenessError.value = "This referral code already exists. Please use a different code.";
+      codeUniquenessError.value =
+        "This referral code already exists. Please use a different code.";
       codeIsUnique.value = false;
     }
   } catch (error) {
@@ -389,9 +387,14 @@ const onSubmit = handleSubmit(async (values) => {
     // Check if code is unique before submitting
     if (!codeIsUnique.value && !codeUniquenessError.value) {
       // If we haven't validated yet, do a quick check
-      const isUnique = await checkReferralCodeUniqueness(values.referralCode, referralData.value?.id);
+      const isUnique = await checkReferralCodeUniqueness(
+        values.referralCode,
+        referralData.value?.id
+      );
       if (!isUnique) {
-        toast.error("Referral code already exists. Please use a different code.");
+        toast.error(
+          "Referral code already exists. Please use a different code."
+        );
         isLoading.value = false;
         return;
       }
