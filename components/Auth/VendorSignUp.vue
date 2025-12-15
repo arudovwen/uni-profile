@@ -2,9 +2,7 @@
   <NuxtLayout name="auth" v-if="step == 1">
     <div class="w-full lg:w-[600px] mx-auto">
       <div>
-        <h1
-          class="text-[#021242] darks:text-white mb-[4px] text-[30px] font-medium"
-        >
+        <h1 class="text-[#021242] mb-1 text-2xl lg:text-3xl font-medium">
           Sign Up
         </h1>
         <p class="mb-8 text-base darks:text-white/80">Create an Account</p>
@@ -14,114 +12,115 @@
           <form
             v-if="step === 1"
             @submit.prevent="onSubmit"
-            class="grid w-full grid-cols-1 lg:grid-cols-2 gap-x-[18px] gap-y-5"
+            class="grid w-full grid-cols-1 gap-x-[18px] gap-y-5"
           >
-            <div>
-              <Textinput
-                placeholder="First Name"
-                label="First name"
-                type="text"
-                name="firstName"
-                v-bind="firstNameAtt"
-                v-model="firstName"
-                :error="errors.firstName"
-                isCumpulsory
-              />
+            <div class="grid grid-cols-2 gap-x-4 gap-y-5">
+              <div>
+                <Textinput
+                  placeholder="First Name"
+                  label="First name"
+                  type="text"
+                  name="firstName"
+                  v-bind="firstNameAtt"
+                  v-model="firstName"
+                  :error="errors.firstName"
+                  isCumpulsory
+                />
+              </div>
+              <div>
+                <Textinput
+                  placeholder="Last Name"
+                  label="Last name"
+                  type="text"
+                  name="lastName"
+                  v-bind="lastNameAtt"
+                  v-model="lastName"
+                  :error="errors.lastName"
+                  isCumpulsory
+                />
+              </div>
+              <div class="col-span-2 lg:col-span-1">
+                <Textinput
+                  placeholder="Email address"
+                  label="Email Address"
+                  type="email"
+                  name="email"
+                  iconType="email"
+                  icon-position="left"
+                  isCumpulsory
+                  v-bind="emailAtt"
+                  v-model="email"
+                  :error="errors.email"
+                />
+              </div>
+              <div class="col-span-2 lg:col-span-1">
+                <PhoneNumber
+                  label="Phone number"
+                  type="tel"
+                  name="phoneNumber"
+                  v-bind="phoneNumberAtt"
+                  v-model="phoneNumber"
+                  :error="errors.phoneNumber"
+                  @setError="
+                    (val) => {
+                      phoneError = val;
+                    }
+                  "
+                  isCumpulsory
+                />
+              </div>
+              <div class="">
+                <Textinput
+                  placeholder="Company Name"
+                  label="Company name"
+                  type="text"
+                  name="companyName"
+                  v-bind="companyNameAtt"
+                  v-model="companyName"
+                  :error="errors.companyName"
+                />
+              </div>
+              <FormGroup label="Country" :error="errors.country" name="sector">
+                <SelectVueSelect
+                  :options="allcountries"
+                  v-model="country"
+                  :reduce="(country) => country"
+                  :clearable="false"
+                  :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer ${
+                    errors.country ? 'border-red-500' : 'border-[#D0D5DD]'
+                  }`"
+                />
+              </FormGroup>
+              <div class="col-span-2 lg:col-span-1">
+                <Textinput
+                  placeholder="Create a password"
+                  label="Password"
+                  type="password"
+                  name="password"
+                  iconType="password"
+                  v-bind="passwordAtt"
+                  v-model="password"
+                  :error="errors.password"
+                  icon-position="left"
+                  isCumpulsory
+                  hasicon
+                  description="Must be at least 8 characters."
+                />
+              </div>
+              <div class="col-span-2 lg:col-span-1">
+                <Textinput
+                  placeholder=""
+                  label="Referral Code (Optional)"
+                  type="text"
+                  name="referral_code"
+                  v-bind="referral_codeAtt"
+                  v-model="referral_code"
+                  :error="errors.referral_code"
+                  :isCumpulsory="false"
+                  :disabled="!!route.query?.referral_code"
+                />
+              </div>
             </div>
-            <div>
-              <Textinput
-                placeholder="Last Name"
-                label="Last name"
-                type="text"
-                name="lastName"
-                v-bind="lastNameAtt"
-                v-model="lastName"
-                :error="errors.lastName"
-                isCumpulsory
-              />
-            </div>
-            <div>
-              <Textinput
-                placeholder="Email address"
-                label="Email Address"
-                type="email"
-                name="email"
-                iconType="email"
-                icon-position="left"
-                isCumpulsory
-                v-bind="emailAtt"
-                v-model="email"
-                :error="errors.email"
-              />
-            </div>
-            <div>
-              <PhoneNumber
-                label="Phone number"
-                type="tel"
-                name="phoneNumber"
-                v-bind="phoneNumberAtt"
-                v-model="phoneNumber"
-                :error="errors.phoneNumber"
-                @setError="
-                  (val) => {
-                    phoneError = val;
-                  }
-                "
-                isCumpulsory
-              />
-            </div>
-            <div class="">
-              <Textinput
-                placeholder="Company Name"
-                label="Company name"
-                type="text"
-                name="companyName"
-                v-bind="companyNameAtt"
-                v-model="companyName"
-                :error="errors.companyName"
-              />
-            </div>
-            <FormGroup label="Country" :error="errors.country" name="sector">
-              <SelectVueSelect
-                :options="allcountries"
-                v-model="country"
-                :reduce="(country) => country"
-                :clearable="false"
-                :classInput="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer ${
-                  errors.country ? 'border-red-500' : 'border-[#D0D5DD]'
-                }`"
-              />
-            </FormGroup>
-            <div class="">
-              <Textinput
-                placeholder="Create a password"
-                label="Password"
-                type="password"
-                name="password"
-                iconType="password"
-                v-bind="passwordAtt"
-                v-model="password"
-                :error="errors.password"
-                icon-position="left"
-                isCumpulsory
-                hasicon
-                description="Must be at least 8 characters."
-              />
-            </div>
-            <div class="">
-              <Textinput
-                placeholder=""
-                label="Referral Code (Optional)"
-                type="text"
-                name="referral_code"
-                v-bind="referral_codeAtt"
-                v-model="referral_code"
-                :error="errors.referral_code"
-                :isCumpulsory="false"
-                :disabled="!!route.query?.referral_code"
-              />
-            </div>
-
             <div
               v-if="app === 'MAT678'"
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
@@ -369,7 +368,7 @@ const onSubmit = handleSubmit(async (values) => {
     const res = await registerUser({
       ...values,
       confirmPassword: values.password,
-      AgentReferralCode: values.referral_code
+      AgentReferralCode: values.referral_code,
     });
 
     if (res.status === 200) {
