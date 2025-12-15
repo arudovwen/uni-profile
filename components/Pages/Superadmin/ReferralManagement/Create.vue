@@ -37,8 +37,20 @@
               :disabled="referralData?.id"
               v-bind="referralCodeAtt"
               v-model="referralCode"
-              :error="errors.referralCode"
+              :error="errors.referralCode || codeUniquenessError"
             />
+            <span
+              v-if="isCheckingUniqueness"
+              class="text-sm text-gray-500 mt-1"
+            >
+              Checking availability...
+            </span>
+            <span
+              v-else-if="codeIsUnique && referralCode && !errors.referralCode"
+              class="text-sm text-green-600 mt-1"
+            >
+              ✓ This referral code is available
+            </span>
           </div>
 
           <div class="">
@@ -313,11 +325,24 @@ const loadApps = async () => {
   }
 };
 
-const handleReferralCodeChange = (newCode) => {
-  referralCode.value = newCode;
-  // Trigger uniqueness validation
-  validateCodeUniqueness(newCode, referralData.value?.id);
-};
+const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
+  validationSchema: schema,
+  initialValues: formValues,
+});
+
+const [referralCode, referralCodeAtt] = defineField("referralCode");
+const [assignedUser, assignedUserAtt] = defineField("assignedUser");
+const [assignedDepartment, assignedDepartmentAtt] =
+  defineField("assignedDepartment");
+const [assignedApps, assignedAppsAtt] = defineField("assignedApps");
+
+// Watch for referral code changes and trigger uniqueness validation
+watch(referralCode, (newCode) => {
+  if (newCode && !referralData.value?.id) {
+    // Only validate for new referrals (not editing existing ones)
+    validateCodeUniqueness(newCode, referralData.value?.id);
+  }
+});
 
 onMounted(async () => {
   // Load referral code
@@ -336,17 +361,6 @@ onMounted(async () => {
   // Load apps
   await loadApps();
 });
-
-const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
-  validationSchema: schema,
-  initialValues: formValues,
-});
-
-const [referralCode, referralCodeAtt] = defineField("referralCode");
-const [assignedUser, assignedUserAtt] = defineField("assignedUser");
-const [assignedDepartment, assignedDepartmentAtt] =
-  defineField("assignedDepartment");
-const [assignedApps, assignedAppsAtt] = defineField("assignedApps");
 
 const isSuccessOpen = ref(false);
 const isLoading = ref(false);
