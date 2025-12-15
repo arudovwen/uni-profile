@@ -34,7 +34,7 @@
               type="text"
               name="referralCode"
               iconType="code"
-              disabled
+              :disabled="referralData?.id"
               v-bind="referralCodeAtt"
               v-model="referralCode"
               :error="errors.referralCode"
