@@ -9,10 +9,7 @@ export const useAuthStore = defineStore(
     const { encrypt } = useEncryption();
     const appList = ref([]);
     const mattaAuth = useEncryptedCookie("mattaAuth_Dev", defaultOptions);
-    const mattaProfiles = useEncryptedCookie(
-      "mattaProfiles_Dev",
-      defaultOptions
-    );
+    const mattaProfiles = useEncryptedCookie("mattaProfiles_Dev", defaultOptions);
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -95,6 +92,7 @@ export const useAuthStore = defineStore(
       });
     };
     const logOut = async () => {
+    
       try {
         isLoggingOut.value = true;
         const response = await logoutUser({
@@ -143,6 +141,8 @@ export const useAuthStore = defineStore(
     };
   },
   {
-    persist: true,
+    persist: {
+      storage: persistedState.localStorage,
+    },
   }
 );
