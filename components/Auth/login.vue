@@ -55,7 +55,7 @@
           >
         </span>
         <div class="grid gap-y-[22px]">
-            <AppButton
+          <AppButton
             type="submit"
             :isLoading="isLoading"
             :isDisabled="isLoading || !meta.valid"
@@ -63,7 +63,6 @@
             btnClass="btn-primary !py-3"
             :style="{
               background: isLoading || !meta.valid ? '' : color,
-            
             }"
           />
         </div>
@@ -119,6 +118,102 @@ const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 const { app, auth } = route.params;
+
+if (app === "MAT678") {
+  useHead({
+    script: [
+      {
+        id: "gtm-init", // this ID must match the key in __dangerouslyDisableSanitizersByTagID
+        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-M7KP6CJG');`,
+        type: "text/javascript",
+      },
+      {
+        id: "facebook-pixel",
+        innerHTML: `
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '979825461003897');
+        fbq('track', 'PageView');
+      `,
+        type: "text/javascript",
+      },
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      "gtm-init": ["innerHTML"],
+    },
+  });
+}
+
+if (app === "FLU120") {
+  useHead({
+    script: [
+      {
+        src: "https://www.googletagmanager.com/gtag/js?id=G-9YFZLVNCG5",
+        async: true,
+      },
+      {
+        id: "ga-init",
+        innerHTML: `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9YFZLVNCG5');
+      `,
+        type: "text/javascript",
+      },
+      {
+        id: "gtm-init",
+        innerHTML: `
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-WKXBWCB5');
+      `,
+        type: "text/javascript",
+      },
+      {
+        id: "facebook-pixel",
+        innerHTML: `
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '873140148927572');
+        fbq('track', 'PageView');
+      `,
+        type: "text/javascript",
+      },
+    ],
+    noscript: [
+      {
+        innerHTML: `<img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=873140148927572&ev=PageView&noscript=1"/>`,
+      },
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      "ga-init": ["innerHTML"],
+      "gtm-init": ["innerHTML"],
+      "facebook-pixel": ["innerHTML"],
+    },
+  });
+}
+
+const { encrypt, decrypt } = useEncryption();
 const color = appCodeColorMap[app] || "#1570EF";
 const step = ref(1);
 const isVerified = ref(false);
@@ -157,10 +252,14 @@ const handleFinalRedirect = (data) => {
   window.location.replace(intialRoute[data?.userCategory]);
 };
 const onSubmit = handleSubmit((values) => {
+  const encryptedValues = {
+    email: encrypt(values.email),
+    password: encrypt(values.password),
+  };
   formValues.email = values.email;
   formValues.password = values.password;
   isLoading.value = true;
-  loginUser({ ...values, appCode: app })
+  loginUser({ ...encryptedValues, appCode: app })
     .then((res) => {
       if (res.status === 200) {
         if (!res.data.data.is2FA && app) {
@@ -197,12 +296,16 @@ const onSubmit = handleSubmit((values) => {
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
 
-  loginUser2FA({ token, email: formValues.email, appCode: app })
+  loginUser2FA({ token, email: encrypt(formValues.email), appCode: app })
     .then(async (res) => {
       if (res.status === 200) {
-        authStore.setLoggedUser(res.data.data);
-        saveAuthProfile(res.data.data);
-        handleFinalRedirect(res.data.data);
+        const loginResponse = {
+          ...res.data.data,
+          email: decrypt(res?.data?.data?.email),
+        };
+        authStore.setLoggedUser(loginResponse);
+        saveAuthProfile(loginResponse);
+        handleFinalRedirect(loginResponse);
       }
     })
     .catch((err) => {

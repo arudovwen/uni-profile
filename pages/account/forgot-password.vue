@@ -2,7 +2,7 @@
   <NuxtLayout name="auth">
     <div class="pt-0 lg:pt-0 max-w-[450px] mx-auto items-center grid flex-1">
       <div class="w-full">
-        <div class="mb-6 justify-center items-center flex" v-if="isSent">
+        <div class="flex items-center justify-center mb-6" v-if="isSent">
           <AuthSmsNotificationIcon />
         </div>
         <h1
@@ -47,7 +47,7 @@
           </div>
           <NuxtLink
             :to="handleRouting(route, `/auth/login`)"
-            class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
+            class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           >
             <AppIcon icon="eva:arrow-back-fill" />
             <span class="font-normal" :style="{ color: color }">
@@ -82,6 +82,7 @@ import { toast } from "vue3-toastify";
 import { forgotPassword } from "~/services/authservices";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
+const { encrypt } = useEncryption();
 const { app } = useRoute().params;
 const color = appCodeColorMap[app] || "#1570EF";
 const title1 = "Forgot password";
@@ -116,7 +117,9 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  forgotPassword(values)
+  forgotPassword({
+    email: encrypt(values.email),
+  })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;

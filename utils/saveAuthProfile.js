@@ -1,6 +1,6 @@
 export function saveAuthProfile(obj) {
-  const mattaProfiles = useCookie("mattaProfiles_Dev",defaultOptions);
-  const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
+  const mattaProfiles = useEncryptedCookie("mattaProfiles_Dev",defaultOptions);
+  const mattaAuth = useEncryptedCookie("mattaAuth_Dev", defaultOptions);
   mattaAuth.value = obj;
   mattaProfiles.value = mattaProfiles.value || [];
   const exists = mattaProfiles.value?.some(

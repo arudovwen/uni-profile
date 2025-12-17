@@ -1,37 +1,58 @@
 // composables/useEncryption.js
 import CryptoJS from "crypto-js";
 
-// Encryption function
 export const useEncryption = () => {
   const encrypt = (data) => {
     const config = useRuntimeConfig();
     const secretKey = config.public.encryptionKey;
+
     if (!secretKey) {
       console.error("Encryption key is missing");
       return;
     }
 
-    // Encrypt the data using AES and the provided secret key
-    const encrypted = CryptoJS.AES.encrypt(data, secretKey).toString();
-    return encrypted;
+    try {
+      // Convert objects or arrays to JSON
+      const value =
+        typeof data === "object" ? JSON.stringify(data) : String(data);
+
+      const encrypted = CryptoJS.AES.encrypt(value, secretKey).toString();
+      return encrypted;
+    } catch (error) {
+      console.error("Encryption failed:", error);
+      return null;
+    }
   };
 
-  // Decryption function
   const decrypt = (encryptedData) => {
-    const config = useRuntimeConfig();
-    const secretKey = config.public.encryptionKey; // Get the secret key from environment variables
-    if (!secretKey) {
-      console.error("Encryption key is missing");
-      return;
-    }
+    try {
+      const config = useRuntimeConfig();
+      const secretKey = config.public.encryptionKey;
 
-    // Decrypt the data using AES and the provided secret key
-    const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
-    const decrypted = bytes.toString(CryptoJS.enc.Utf8); // Convert the decrypted bytes back to a string
-    return decrypted;
+      if (!secretKey) {
+        console.error("Encryption key is missing");
+        return;
+      }
+
+      const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+      // If it’s not valid UTF-8, return original encrypted value
+      if (!decrypted) return encryptedData;
+
+      // Try converting JSON back to object
+      try {
+        return JSON.parse(decrypted);
+      } catch {
+        // If not JSON, return as plain string
+        return decrypted;
+      }
+    } catch (error) {
+      // Return original encrypted string on failure
+      return encryptedData;
+    }
   };
 
-  // Return the encryption and decryption functions so that they can be used in other components
   return {
     encrypt,
     decrypt,
