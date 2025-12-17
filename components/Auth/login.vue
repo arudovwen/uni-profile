@@ -263,9 +263,13 @@ const onSubmit = handleSubmit((values) => {
     .then((res) => {
       if (res.status === 200) {
         if (!res.data.data.is2FA && app) {
-          authStore.setLoggedUser(res.data.data);
-          saveAuthProfile(res.data.data);
-          handleFinalRedirect(res.data.data);
+          const loginResponse = {
+            ...res.data.data,
+            email: decrypt(res?.data?.data?.email),
+          };
+          authStore.setLoggedUser(loginResponse);
+          saveAuthProfile(loginResponse);
+          handleFinalRedirect(loginResponse);
           return;
         }
         isVerifyPin.value = true;
