@@ -213,7 +213,7 @@ if (app === "FLU120") {
   });
 }
 
-const { encrypt, decrypt } = useEncryption();
+
 const color = appCodeColorMap[app] || "#1570EF";
 const step = ref(1);
 const isVerified = ref(false);
@@ -252,24 +252,24 @@ const handleFinalRedirect = (data) => {
   window.location.replace(intialRoute[data?.userCategory]);
 };
 const onSubmit = handleSubmit((values) => {
-  const encryptedValues = {
-    email: encrypt(values.email),
-    password: encrypt(values.password),
-  };
   formValues.email = values.email;
   formValues.password = values.password;
   isLoading.value = true;
-  loginUser({ ...encryptedValues, appCode: app })
+  loginUser({ ...values, appCode: app })
     .then((res) => {
       if (res.status === 200) {
+        if (typeof fbq === "function") {
+          fbq("track", "Login", {
+            method: "email",
+            device: window.innerWidth < 768 ? "mobile" : "desktop",
+            value: 0,
+            currency: "NGN",
+          });
+        }
         if (!res.data.data.is2FA && app) {
-          const loginResponse = {
-            ...res.data.data,
-            email: decrypt(res?.data?.data?.email),
-          };
-          authStore.setLoggedUser(loginResponse);
-          saveAuthProfile(loginResponse);
-          handleFinalRedirect(loginResponse);
+          authStore.setLoggedUser(res.data.data);
+          saveAuthProfile(res.data.data);
+          handleFinalRedirect(res.data.data);
           return;
         }
         isVerifyPin.value = true;
@@ -300,16 +300,12 @@ const onSubmit = handleSubmit((values) => {
 const handleFinalSubmit = async (token) => {
   isLoading.value = true;
 
-  loginUser2FA({ token, email: encrypt(formValues.email), appCode: app })
+  loginUser2FA({ token, email: formValues.email, appCode: app })
     .then(async (res) => {
       if (res.status === 200) {
-        const loginResponse = {
-          ...res.data.data,
-          email: decrypt(res?.data?.data?.email),
-        };
-        authStore.setLoggedUser(loginResponse);
-        saveAuthProfile(loginResponse);
-        handleFinalRedirect(loginResponse);
+        authStore.setLoggedUser(res.data.data);
+        saveAuthProfile(res.data.data);
+        handleFinalRedirect(res.data.data);
       }
     })
     .catch((err) => {

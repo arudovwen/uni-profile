@@ -5,7 +5,7 @@
       class="min-w-[300px] px-6 py-6 text-center flex flex-row justify-center items-center"
     >
       <div class="min-w-[320px] lg:w-[40vw] max-w-[424px]">
-        <div class="w-full flex justify-center items-center">
+        <div class="flex items-center justify-center w-full">
           <CircleTick v-if="isResetSuccess" />
           <SecuritySafeIcon v-else />
         </div>
@@ -50,13 +50,13 @@
               iconType="password"
             />
           </div>
-          <div class="text-sm mb-6 font-normal">
+          <div class="mb-6 text-sm font-normal">
             <span>
               Didn't receive an OTP,
               <button
               type="button"
                 v-if="!isResending"
-                class="font-semibold pl-1 text-primary-500"
+                class="pl-1 font-semibold text-primary-500"
                 @click.prevent="resendOtp"
                 :disabled="isResending || countdown > 0"
               >
@@ -88,7 +88,7 @@
         </div>
         <NuxtLink
           :to="`/auth/login${app ? `/${app}` : ''}`"
-          class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
+          class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           @click="emit('close')"
         >
           <AppIcon icon="eva:arrow-back-fill" />

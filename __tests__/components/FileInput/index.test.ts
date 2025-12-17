@@ -1,8 +1,6 @@
 import { render } from "@testing-library/vue";
 import { describe, expect, it, vi } from "vitest";
-import MainComponent from "~/components/Dashboard/layout/MainComponent.vue";
 import index from "~/components/Fileinput/index.vue";
-import MainContent from "~/components/favourites/MainContent.vue";
 
 describe("FileInput", () => {
   vi.mock("vue-router", () => {

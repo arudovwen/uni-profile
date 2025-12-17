@@ -3,7 +3,6 @@ import { universalRoutes } from "~/utils/constants";
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
   const mattaAuth = useEncryptedCookie("mattaAuth_Dev", defaultOptions);
-console.log({mattaAuth});
 
   // Check if the user is authenticated
   const isAuthenticated = !!mattaAuth.value;
@@ -43,7 +42,6 @@ console.log({mattaAuth});
       ...access[userCategory] ?? [],
       ...universalRoutes
     ];
-console.log({routeName, allowedRoutes});
 
     // Only block if route actually exists AND is not allowed
     if (routeName && !allowedRoutes.includes(routeName)) {

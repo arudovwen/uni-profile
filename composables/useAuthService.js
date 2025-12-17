@@ -27,15 +27,15 @@ export const useAuthService = () => {
   };
 
   const forgotPassword = async (user, config = {}) => {
-    return await post(urls.FORGOT_PASSWORD, user, config);
+    return await post(urls.FORGOT_PASSWORD, cleanObject(user), config);
   };
 
   const resendVerification = async (data, config = {}) => {
-    return await post(urls.RESEND_VERIFICATION, data, config);
+    return await post(urls.RESEND_VERIFICATION, cleanObject(data), config);
   };
 
   const resetPassword = async (user, config = {}) => {
-    return await post(urls.RESET_PASSWORD, user, config);
+    return await post(urls.RESET_PASSWORD, cleanObject(user), config);
   };
 
   const resend2FA = async (data, config = {}) => {

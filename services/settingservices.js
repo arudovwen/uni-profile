@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { post, get,ssoGet, ssoPost,ssoPut } from "../helpers/api_helpers";
+import { post, get,ssoGet, ssoPost,ssoPut } from "../services/api_services";
 import store from "../store";
 
 const config = {

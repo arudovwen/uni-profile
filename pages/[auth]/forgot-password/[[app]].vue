@@ -2,7 +2,7 @@
   <NuxtLayout name="auth">
     <div class="pt-0 lg:pt-0 max-w-[450px] mx-auto items-center grid flex-1">
       <div class="w-full">
-        <div class="mb-6 justify-center items-center flex" v-if="isSent">
+        <div class="flex items-center justify-center mb-6" v-if="isSent">
           <AuthSmsNotificationIcon />
         </div>
         <h1
@@ -43,8 +43,13 @@
             />
           </div>
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)"
-            class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
+            :to="
+              handleRouting(
+                route,
+                `/${auth || 'auth'}/login${app ? `/${app}` : ''}`
+              )
+            "
+            class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           >
             <AppIcon icon="eva:arrow-back-fill" />
             <span class="font-normal"> Back to Login </span>
@@ -52,7 +57,12 @@
         </form>
         <div class="pt-5" v-if="isSent">
           <NuxtLink
-            :to="handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)"
+            :to="
+              handleRouting(
+                route,
+                `/${auth || 'auth'}/login${app ? `/${app}` : ''}`
+              )
+            "
             class="w-full"
           >
             <AppButton

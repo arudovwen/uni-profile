@@ -23,17 +23,17 @@ export async function getTokenInfo(config = {}) {
   return await ssoPost(`${urls.GET_TOKEN_INFORMATION}`, {}, config);
 }
 export async function registerInvitedUser(user, config = {}) {
-  return await ssoPost(urls.REGISTER_INVITED_USER, user, config);
+  return await ssoPost(urls.REGISTER_INVITED_USER, cleanObject(user), config);
 }
 export async function forgotPassword(user, config = {}) {
-  return await ssoPost(urls.FORGOT_PASSWORD, user, config);
+  return await ssoPost(urls.FORGOT_PASSWORD, cleanObject(user), config);
 }
 export async function resendVerification(data, config = {}) {
   return await ssoPost(urls.RESEND_VERIFICATION, data, config);
 }
 
 export async function resetPassword(user, config = {}) {
-  return await ssoPost(urls.RESET_PASSWORD, user, config);
+  return await ssoPost(urls.RESET_PASSWORD, cleanObject(user), config);
 }
 export async function resend2FA(data, config = {}) {
   return await ssoPost(urls.RESEND_2FA_OTP, data, config);
