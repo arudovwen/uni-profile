@@ -1,25 +1,29 @@
 <template>
-  <div>
+  <div class="w-full font-Avenir flex flex-col items-center">
     <form
       @submit.prevent="handleSubmit"
-      class="min-w-[300px] max-w-[422px] mx-auto px-6 py-6 text-center"
+      class="w-full text-center max-w-[400px]"
     >
-      <div class="mb-8 h-[40px] flex justify-center items-center">
-        <AuthSMSStarIcon v-if="isVerified" />
-        <AuthSmsNotificationIcon v-else />
+      <!-- Icon -->
+      <div class="mb-8 flex justify-center items-center">
+        <AuthSMSStarIcon v-if="isVerified" class="w-20 h-20" />
+        <img v-else src="@/assets/images/email-verify.png" alt="Verification" class="w-[115px] h-[115px]" />
       </div>
-      <h2 class="text-center font-medium text-[#344054] mb-[6px] text-3xl">
+
+      <!-- Header -->
+      <h2 class="text-2xl font-semibold text-[#2F2F2F] mb-2">
         {{ title }}
       </h2>
-      <p class="block text-sm text-center mb-8 text-[#475467]">
+      <p class="text-base text-[#5E5E5E] font-[350] mb-8 max-w-[406px] mx-auto">
         {{ subtext }}
       </p>
 
+      <!-- OTP Input -->
       <div class="flex justify-center mb-8 gap-x-2" v-if="!isVerified">
         <v-otp-input
           ref="otpInput"
           v-model:value="form.otp"
-          :input-classes="`otp-input w-14 h-14 flex items-center border border-[#D0D5DD] font-normal focus:border-[#4A5578] outline-none mx-1 rounded-md text-center text-2xl placeholder:text-[#D0D5DD]`"
+          :input-classes="`otp-input w-14 h-14 flex items-center border border-[#D0D5DD] font-normal focus:border-[#1570EF] outline-none mx-1 rounded-md text-center text-2xl placeholder:text-[#D0D5DD]`"
           separator=" "
           :num-inputs="numInput"
           :should-auto-focus="true"
@@ -27,75 +31,66 @@
           :placeholder="['-', '-', '-', '-', '-', '-']"
         />
       </div>
-      <div class="flex mb-1 gap-x-4">
+
+      <!-- Resend Code -->
+      <div class="mb-6 text-sm text-[#475467] font-normal" v-if="!isVerified">
+        <span>Didn't receive code. </span>
+        <button
+          v-if="!isResending"
+          type="button"
+          class="font-semibold text-[#1570EF] hover:underline disabled:opacity-50"
+          @click.prevent="resendOTP"
+          :disabled="isResending || countdown > 0"
+        >
+          Resend code
+        </button>
+        <span v-if="countdown > 0" class="font-semibold text-[#1570EF]">
+          Resend available in {{ countdown }}s
+        </span>
+      </div>
+
+      <!-- Buttons -->
+      <div class="mb-4">
         <NuxtLink
           v-if="isVerified"
           :to="continueLink"
-          class="border text-[13px] mb-4 border-primary-500 font-medium text-white lg:min-w-[120px] w-full bg-primary-500 rounded-lg px-6 py-2 hover:bg-primary/80 h-11 disabled:opacity-60"
+          class="block"
         >
-          <span>
-            <span>Continue</span>
-          </span>
+          <AppButton
+            text="Continue"
+            btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+          />
         </NuxtLink>
-        <button
+        <AppButton
           v-else
           type="submit"
-          :disabled="isLoading || !form.otp"
-          class="border mb-4 border-primary-500 font-medium text-white lg:min-w-[120px] w-full bg-primary-500 rounded-lg px-6 py-3 hover:bg-primary/80 disabled:opacity-60 disabled:bg-[#F2F4F7] disabled:border-[#E4E7EC] disabled:text-[#98A2B3] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)]"
-        >
-          <span>
-            <span
-              class="flex items-center justify-center gap-x-4"
-              v-if="isLoading"
-              ><span> Processing...</span>
-              <i
-                v-if="isLoading"
-                class="text-white fa fa-spinner fa-spin"
-                aria-hidden="true"
-              ></i
-            ></span>
-            <span v-else>{{ buttonText }}</span>
-          </span>
-        </button>
+          :text="buttonText"
+          :isLoading="isLoading"
+          :isDisabled="isLoading || !form.otp"
+          btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+        />
       </div>
-      <div class="mb-8 text-sm font-normal" v-if="!isVerified">
-        <span>
-          Didn't receive the Email,
-          <button
-            v-if="!isResending"
-            class="pl-1 font-semibold text-primary-500"
-            @click.prevent="resendOTP"
-            :disabled="isResending || countdown > 0"
-          >
-            Click to resend
-          </button>
-          <span v-if="countdown > 0" class="ml-2"
-            >Resend available in {{ countdown }}s</span
-          >
-        </span>
-      </div>
-      <div>
-        <button
-          class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
-          @click="emit('close')"
-        >
-          <AppIcon icon="eva:arrow-back-fill" />
-          <span class="font-normal"> Back </span>
-        </button>
-      </div>
+
+      <!-- Back Link -->
+      <button
+        type="button"
+        class="text-base font-medium text-[#475467] hover:text-[#1570EF]"
+        @click="emit('close')"
+      >
+        Go Back
+      </button>
     </form>
   </div>
-  
 </template>
+
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resend2FA } from "~/services/authservices";
 import { toast } from "vue3-toastify";
 
-
 const props = defineProps({
   title: {
-    default: "Enter your transaction PIN",
+    default: "Account Verification",
   },
   numInput: {
     default: 6,
@@ -109,13 +104,13 @@ const props = defineProps({
   },
   subtext: {
     default:
-      "We have sent an OTP to your email address and your registered mobile number",
+      "Enter the 6-Digit verification code has been sent to your registered email address. Check your Inbox.",
   },
   isVerified: {
     default: false,
   },
   buttonText: {
-    default: "Verify Email",
+    default: "Verify Code",
   },
   continueLink: {
     default: "/",
@@ -133,6 +128,7 @@ const isResending = ref(false);
 async function handleSubmit() {
   emit("handleSubmit", form.otp);
 }
+
 function resendOTP() {
   if (countdown.value === 0) {
     resend2FA({ email: props.email })
@@ -152,10 +148,8 @@ function resendOTP() {
         }
       })
       .catch((err) => {
-        toast.error(err.response.data.Message);
+        toast.error(err?.response?.data?.Message || err?.response?.data?.message);
       });
-
-    // Logic to actually resend the OTP can go here
   }
 }
 </script>

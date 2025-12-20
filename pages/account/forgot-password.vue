@@ -87,7 +87,7 @@ const color = appCodeColorMap[app] || "#1570EF";
 const title1 = "Forgot password";
 const title2 = "Check your email";
 const text1 =
-  "Don’t worry, it happens to the best of us. Provide your registered email address and we’ll get you sorted out.";
+  "Don't worry, it happens to the best of us. Provide your registered email address and we'll get you sorted out.";
 const text2 =
   "We have sent an account activation link to your email address. Click on the link to activate your account.";
 const isSent = ref(false);

@@ -146,6 +146,7 @@ export default {
       },
 
       fontFamily: {
+        Avenir: ["Avenir", "Avenir Next", "sans-serif"],
         Rubik: ["Rubik", "sans-serif"],
         Onest: ["Onest", "sans-serif"],
       },
