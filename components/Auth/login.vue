@@ -91,7 +91,7 @@ const router = useRouter();
 const { app, auth } = route.params;
 
 // State
-const step = ref(2);
+const step = ref(1);
 const isLoading = ref(false);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
