@@ -9,7 +9,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 auth-grid-bg flex items-center justify-start flex-col pt-[121px] px-4 py-8">
-      <div class="w-full max-w-[440px]">
+      <div class="w-full max-w-[11200px]">
         <slot />
       </div>
     </main>
