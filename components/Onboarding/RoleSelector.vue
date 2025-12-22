@@ -10,10 +10,10 @@
           <span class="text-sm font-medium text-[#4B5563]">Step 2 of 3</span>
         </div>
         <h1 class="text-3xl font-semibold text-[#2F2F2F] mb-3">
-          Choose your roles
+          Select your function for {{ appName }}
         </h1>
-        <p class="text-base text-[#475467] font-normal">
-          Select a function for each application. This<br />determines your
+        <p class="text-base text-[#475467] font-[350]">
+          Choose your function for this application. This<br />determines your
           permissions and available features.
         </p>
       </div>

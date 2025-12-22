@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout name="auth">
-    <div v-if="isVerified" class="w-full font-Avenir">
+    <div v-if="isVerified" class="w-full max-w-[400px] mx-auto font-Avenir">
       <!-- Icon -->
       <div class="flex justify-center mb-8">
         <img

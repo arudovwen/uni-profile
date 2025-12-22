@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout name="auth">
-    <div class="w-full !font-Avenir">
+    <div class="w-full max-w-[400px] mx-auto !font-Avenir">
       <!-- Reset Password Form -->
       <div v-if="!isSent" class="w-full">
         <!-- Icon -->

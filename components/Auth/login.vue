@@ -1,7 +1,7 @@
 <template>
   <!-- Step 1: Login Form -->
   <NuxtLayout v-if="step === 1" name="auth">
-    <div class="w-full font-Avenir">
+    <div class="w-full max-w-[400px] mx-auto font-Avenir">
       <!-- Header -->
       <div class="text-center mb-[41px]">
         <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">

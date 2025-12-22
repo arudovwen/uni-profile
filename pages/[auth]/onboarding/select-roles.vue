@@ -198,8 +198,8 @@ const handleNext = () => {
 
   // Check if this is the last app
   if (currentAppIndex.value === selectedApps.value.length - 1) {
-    // Navigate to complete page
-    router.push(`/${auth}/onboarding/complete`);
+    // Navigate to dashboard
+    router.push("/dashboard");
   } else {
     // Move to next app
     currentAppIndex.value++;

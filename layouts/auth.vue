@@ -9,7 +9,7 @@
 
     <!-- Main Content -->
     <main class="flex-1 auth-grid-bg flex items-center justify-start flex-col pt-[121px] px-4 py-8">
-      <div class="w-full max-w-[11200px]">
+      <div class="w-full max-w-[1120px]">
         <slot />
       </div>
     </main>
@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+import AuthLogo from "~/components/AuthLogo.vue";
 </script>
 
 <style scoped>
