@@ -1,10 +1,10 @@
 <template>
-  <div class="max-w-[1200px] ">
+  <div class="max-w-[1200px]">
     <div class="mb-6">
       <GoBack text="Back to App Management" url="/application-management" />
     </div>
     <div
-      class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
+      class="flex flex-col mb-6 lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
     >
       <HeaderComponent title="Add New App" subtext="Create a new application" />
     </div>
@@ -117,6 +117,7 @@
 import { toast } from "vue3-toastify";
 import * as yup from "yup";
 import { addSubApp, editSubApp, getSubApp } from "~/services/userservices";
+import { errorResponse } from "~/utils/errorResponse";
 
 const { id } = useRoute().params;
 
@@ -179,8 +180,7 @@ const onSubmit = handleSubmit(async (values) => {
       emits("refresh");
     }
   } catch (error) {
-    console.log("🚀 ~ onSubmit ~ error:", error);
-    toast.error(error.response?.data?.message || "An error occurred");
+    errorResponse(error);
   } finally {
     isLoading.value = false;
   }

@@ -235,6 +235,7 @@ import {
   ComboboxOption,
   TransitionRoot,
 } from "@headlessui/vue";
+import { errorResponse } from "~/utils/errorResponse";
 
 const route = useRoute();
 
@@ -449,7 +450,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } catch (error) {
     console.error("Error updating referral:", error);
-    toast.error(error.response?.data?.message || "An error occurred");
+    errorResponse(error);
   } finally {
     isSubmitting.value = false;
   }

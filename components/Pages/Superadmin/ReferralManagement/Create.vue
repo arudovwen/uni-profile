@@ -41,13 +41,13 @@
             />
             <span
               v-if="isCheckingUniqueness"
-              class="text-sm text-gray-500 mt-1"
+              class="mt-1 text-sm text-gray-500"
             >
               Checking availability...
             </span>
             <span
               v-else-if="codeIsUnique && referralCode && !errors.referralCode"
-              class="text-sm text-green-600 mt-1"
+              class="mt-1 text-sm text-green-600"
             >
               ✓ This referral code is available
             </span>
@@ -252,6 +252,7 @@ import {
   ComboboxOption,
   TransitionRoot,
 } from "@headlessui/vue";
+import { errorResponse } from "~/utils/errorResponse";
 
 const formValues = {
   referralCode: "",
@@ -453,7 +454,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } catch (error) {
     console.log("🚀 ~ onSubmit ~ error:", error);
-    toast.error(error.response?.data?.message || "An error occurred");
+    errorResponse(error)
   } finally {
     isLoading.value = false;
   }
