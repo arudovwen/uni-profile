@@ -1,5 +1,5 @@
 <template>
-  <div class="px-6">
+  <div v-if=" [0, 3, 4].includes(authStore.userInfo?.userCategory)" class="px-6">
     <AppTab
       :tabs="tabs"
       :active="activeTab"
@@ -118,6 +118,7 @@ defineProps({
     default: false,
   },
 });
+const authStore = useAuthStore()
 const activeTab = ref("user");
 const tabs = [
   {
