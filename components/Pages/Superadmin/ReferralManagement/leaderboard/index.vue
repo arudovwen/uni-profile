@@ -125,10 +125,10 @@ const tabs = [
     title: "Users",
     key: "user",
   },
-  {
-    title: "Departments",
-    key: "department",
-  },
+  // {
+  //   title: "Departments",
+  //   key: "department",
+  // },
   {
     title: "Campaigns",
     key: "campaign",
