@@ -1,11 +1,10 @@
 <template>
   <NuxtLayout name="auth">
-    <div class="w-full font-Avenir">
-      <!-- Step Indicator at Top Right -->
-      <div class="absolute top-8 right-8">
-        <OnboardingStepIndicator :currentStep="2" />
-      </div>
+    <template #header-right>
+      <OnboardingStepIndicator :currentStep="2" />
+    </template>
 
+    <div class="w-full font-Avenir">
       <!-- Role Selector -->
       <div v-if="currentAppData" class="mb-8">
         <OnboardingRoleSelector
@@ -13,7 +12,9 @@
           :appIcon="currentAppData.iconUrl"
           :roles="getAvailableRoles(currentAppData.code)"
           :modelValue="currentRoleSelection"
-          :isLastApp="currentAppIndex === selectedApps.length - 1"
+          :isLastApp="currentAppIndex === appsWithRoles.length - 1"
+          :currentAppNumber="currentAppNumber"
+          :totalAppsWithRoles="totalAppsWithRoles"
           @update:modelValue="updateRole"
           @update:conditionalFields="updateConditionalFields"
           @next="handleNext"
@@ -72,12 +73,6 @@ const appRolesMap: AppRoles = {
       value: "clients",
       label: "Clients",
       description: "Need a logistic and fulfillment partner",
-      conditionalFields: [],
-    },
-    {
-      value: "truckers",
-      label: "Truckers",
-      description: "Become a fulfillment service provider",
       conditionalFields: [
         {
           name: "truckType",
@@ -94,6 +89,12 @@ const appRolesMap: AppRoles = {
           placeholder: "Select truck size",
         },
       ],
+    },
+    {
+      value: "truckers",
+      label: "Truckers",
+      description: "Become a fulfillment service provider",
+      conditionalFields: [],
     },
   ],
   OXI789: [
@@ -116,22 +117,8 @@ const appRolesMap: AppRoles = {
       conditionalFields: [],
     },
   ],
-  ORB456: [
-    {
-      value: "user",
-      label: "User",
-      description: "Access Orbital Pro features",
-      conditionalFields: [],
-    },
-  ],
-  POL321: [
-    {
-      value: "user",
-      label: "User",
-      description: "Access Polymer Pro features",
-      conditionalFields: [],
-    },
-  ],
+  ORB456: [],
+  POL321: [],
 };
 
 const getAvailableRoles = (appCode: string): Role[] => {
@@ -140,20 +127,39 @@ const getAvailableRoles = (appCode: string): Role[] => {
 
 const selectedApps = computed(() => state.value.selectedApps);
 
+// Filter apps that have roles defined
+const appsWithRoles = computed(() => {
+  return selectedApps.value.filter(
+    (app) => appRolesMap[app.code] && appRolesMap[app.code].length > 0
+  );
+});
+
+const totalAppsWithRoles = computed(() => appsWithRoles.value.length);
+
+// Current app number (1-based)
+const currentAppNumber = computed(() => currentAppIndex.value + 1);
+
+// Get current app from appsWithRoles (only apps that have roles)
 const currentAppData = computed(() => {
   if (
-    selectedApps.value.length === 0 ||
-    currentAppIndex.value >= selectedApps.value.length
+    appsWithRoles.value.length === 0 ||
+    currentAppIndex.value >= appsWithRoles.value.length
   ) {
     return null;
   }
-  return selectedApps.value[currentAppIndex.value];
+  return appsWithRoles.value[currentAppIndex.value];
 });
 
 onMounted(() => {
   if (selectedApps.value.length === 0) {
     // No apps selected, redirect back to select-apps
     router.push(`/${auth}/onboarding/select-apps`);
+    return;
+  }
+
+  if (appsWithRoles.value.length === 0) {
+    // No apps with roles, skip to dashboard
+    router.push("/dashboard");
     return;
   }
 
@@ -197,7 +203,7 @@ const handleNext = () => {
   }
 
   // Check if this is the last app
-  if (currentAppIndex.value === selectedApps.value.length - 1) {
+  if (currentAppIndex.value === appsWithRoles.value.length - 1) {
     // Navigate to dashboard
     router.push("/dashboard");
   } else {

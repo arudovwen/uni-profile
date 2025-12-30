@@ -2,20 +2,26 @@
   <div class="w-full font-Avenir">
     <div class="max-w-[406px] mx-auto">
       <!-- Header Section -->
-      <div class="text-center mb-12">
+      <div class="text-center mb-6">
         <div
-          class="inline-flex items-center gap-2 mb-4 bg-[#F3F4F6] rounded-full px-4 py-2"
+          class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2"
         >
           <UserTick class="w-4 h-4 text-[#6B7280]" />
           <span class="text-sm font-medium text-[#4B5563]">Step 2 of 3</span>
         </div>
-        <h1 class="text-3xl font-semibold text-[#2F2F2F] mb-3">
+        <h1 class="text-2xl font-semibold text-[#2F2F2F] !mt-8 mb-3">
           Select your function for {{ appName }}
         </h1>
         <p class="text-base text-[#475467] font-[350]">
           Choose your function for this application. This<br />determines your
           permissions and available features.
         </p>
+      </div>
+
+      <div
+        class="font-Avenir font-extrabold text-sm leading-5 text-center align-middle !mb-5 text-[#475467]"
+      >
+        Application {{ currentAppNumber }} of {{ totalAppsWithRoles }}
       </div>
 
       <!-- Role Selection -->
@@ -63,31 +69,15 @@
         class="mb-8 space-y-4"
       >
         <div v-for="field in selectedRoleConditionalFields" :key="field.name">
-          <label class="block mb-2 text-base text-[#344054] font-medium">
-            {{ field.label }}
-          </label>
-
-          <select
+          <OnboardingCustomDropdown
             v-if="field.type === 'select'"
-            :value="conditionalFieldValues[field.name] || ''"
-            :class="[
-              'w-full h-12 px-4 border rounded-lg shadow-sm shadow-[#1018280D] bg-white border-[#D0D5DD]',
-              'focus:outline-none focus:border-[#1570EF] text-base font-normal text-[#475467]',
-              'appearance-none cursor-pointer',
-            ]"
-            @change="updateConditionalField(field.name, $event.target.value)"
-          >
-            <option value="">
-              {{ field.placeholder || `Select ${field.label}` }}
-            </option>
-            <option
-              v-for="option in field.options"
-              :key="option"
-              :value="option"
-            >
-              {{ option }}
-            </option>
-          </select>
+            :label="field.label"
+            :modelValue="getDropdownValue(field.name)"
+            :options="transformOptions(field.options || [])"
+            :placeholder="field.placeholder || `Select ${field.label}`"
+            :showSearchFilter="(field.options?.length || 0) > 5"
+            @update:modelValue="(val) => updateConditionalField(field.name, val.name)"
+          />
         </div>
       </div>
 
@@ -139,11 +129,15 @@ interface Props {
   roles: Role[];
   modelValue?: string;
   isLastApp?: boolean;
+  currentAppNumber: number;
+  totalAppsWithRoles: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: "",
   isLastApp: false,
+  currentAppNumber: 1,
+  totalAppsWithRoles: 1,
 });
 
 const emit = defineEmits<{
@@ -162,6 +156,21 @@ const selectedRole = computed(() =>
 const selectedRoleConditionalFields = computed(
   () => selectedRole.value?.conditionalFields || []
 );
+
+// Transform string options to dropdown format { code, name }
+const transformOptions = (options: string[]) => {
+  return options.map((option) => ({
+    code: option,
+    name: option,
+  }));
+};
+
+// Get dropdown value object from stored string value
+const getDropdownValue = (fieldName: string) => {
+  const value = conditionalFieldValues.value[fieldName];
+  if (!value) return null;
+  return { code: value, name: value };
+};
 
 const selectRole = (roleValue: string) => {
   emit("update:modelValue", roleValue);

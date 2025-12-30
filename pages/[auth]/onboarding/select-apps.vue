@@ -1,20 +1,19 @@
 <template>
   <NuxtLayout name="auth">
-    <div class="w-full font-Avenir">
-      <!-- Step Indicator at Top Right -->
-      <div class="absolute top-8 right-8">
-        <OnboardingStepIndicator :currentStep="1" />
-      </div>
+    <template #header-right>
+      <OnboardingStepIndicator :currentStep="1" />
+    </template>
 
+    <div class="w-full font-Avenir">
       <!-- Header -->
       <div class="text-center mb-12 max-w-[615px] mx-auto">
         <div
-          class="inline-flex items-center gap-2 mb-4 bg-[#F3F4F6] rounded-full px-4 py-2"
+          class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2"
         >
           <SelectAppIcon class="w-4 h-4 text-[#6B7280]" />
           <span class="text-sm font-medium text-[#4B5563]">Step 1 of 3</span>
         </div>
-        <h1 class="text-3xl font-semibold text-[#2F2F2F] mb-3">
+        <h1 class="text-2xl font-semibold text-[#2F2F2F] !mt-8 mb-3">
           Choose your applications
         </h1>
         <p class="text-base text-[#475467] font-normal">
@@ -40,7 +39,7 @@
       <div class="mx-auto flex flex-col items-end max-w-[615px]">
         <button
           type="button"
-          class="w-full max-w-[218px] py-3 px-4 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="w-full md:max-w-[218px] py-3 px-4 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           :disabled="selectedAppsData.length === 0"
           @click="continueToRoles"
         >
@@ -61,7 +60,6 @@ import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 
 interface App {
-  
   id: string;
   code: string;
   name: string;

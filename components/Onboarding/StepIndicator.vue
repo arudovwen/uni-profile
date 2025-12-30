@@ -1,57 +1,35 @@
 <template>
-  <div class="flex items-center justify-center gap-4">
+  <div class="hidden md:flex items-center justify-center gap-4">
     <!-- Step 1: Select Apps -->
     <button
       type="button"
       :class="[
         'text-sm font-medium transition-colors whitespace-nowrap',
-        currentStep >= 1
-          ? 'text-[#1570EF]'
-          : 'text-[#A0A6AC]',
+        currentStep >= 1 ? 'text-[#1570EF]' : 'text-[#A0A6AC]',
       ]"
       @click="$emit('step-click', 1)"
     >
       <span class="mr-1">1.</span>Select Apps
     </button>
 
-    <!-- Line 1 -->
-    <div
-      :class="[
-        'w-6 h-0.5 transition-colors',
-        currentStep > 1 ? 'bg-[#1570EF]' : 'bg-[#D0D5DD]',
-      ]"
-    ></div>
-
     <!-- Step 2: Choose Roles -->
     <button
       type="button"
       :class="[
         'text-sm font-medium transition-colors whitespace-nowrap',
-        currentStep >= 2
-          ? 'text-[#1570EF]'
-          : 'text-[#A0A6AC]',
+        currentStep >= 2 ? 'text-[#1570EF]' : 'text-[#A0A6AC]',
       ]"
       @click="$emit('step-click', 2)"
     >
       <span class="mr-1">2.</span>Choose Roles
     </button>
 
-    <!-- Line 2 -->
-    <div
-      :class="[
-        'w-6 h-0.5 transition-colors',
-        currentStep > 2 ? 'bg-[#1570EF]' : 'bg-[#D0D5DD]',
-      ]"
-    ></div>
-
     <!-- Step 3: Complete -->
     <button
       type="button"
       :class="[
         'text-sm font-medium transition-colors whitespace-nowrap',
-        currentStep >= 3
-          ? 'text-[#1570EF]'
-          : 'text-[#A0A6AC]',
+        currentStep >= 3 ? 'text-[#1570EF]' : 'text-[#A0A6AC]',
       ]"
       @click="$emit('step-click', 3)"
     >
@@ -61,7 +39,6 @@
 </template>
 
 <script setup lang="ts">
-
 interface Props {
   currentStep: number;
 }

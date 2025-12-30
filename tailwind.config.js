@@ -147,7 +147,7 @@ export default {
 
       fontFamily: {
         Avenir: ["Avenir", "Avenir Next", "sans-serif"],
-        Rubik: ["Rubik", "sans-serif"],
+        Avenir: ["Avenir", "sans-serif"],
         Onest: ["Onest", "sans-serif"],
       },
       boxShadow: {
@@ -176,7 +176,19 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      addUtilities({
+        ".scrollbar-hide": {
+          "-ms-overflow-style": "none",
+          "scrollbar-width": "none",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        },
+      });
+    },
+  ],
   head: {
     link: [
       {
@@ -185,7 +197,7 @@ export default {
       },
       {
         rel: "stylesheet",
-        href: "'https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap'",
+        href: "'https://fonts.googleapis.com/css2?family=Avenir:ital,wght@0,300..900;1,300..900&display=swap'",
       },
     ],
   },

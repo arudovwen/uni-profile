@@ -2,12 +2,8 @@
   <div class="w-full font-Avenir">
     <!-- Header -->
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">
-        Sign Up
-      </h1>
-      <p class="text-base text-[#475467]">
-        Fill the form below to get started
-      </p>
+      <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">Sign Up</h1>
+      <p class="text-base text-[#475467]">Fill the form below to get started</p>
     </div>
 
     <!-- Form -->
@@ -51,7 +47,6 @@
           v-model="phoneNumber"
           name="phoneNumber"
           :error="errors.phoneNumber"
-          :isRequired="true"
         />
       </div>
 
@@ -77,7 +72,7 @@
       />
 
       <!-- Agreement Checkbox -->
-      <div class="flex items-start gap-3 pt-2">
+      <!-- <div class="flex items-start gap-3 pt-2">
         <input
           v-model="agreeToTerms"
           type="checkbox"
@@ -93,7 +88,7 @@
             Privacy Policy
           </a>
         </label>
-      </div>
+      </div> -->
 
       <!-- Submit Button -->
       <AppButton
@@ -101,11 +96,11 @@
         text="Create account"
         :isLoading="isLoading"
         :isDisabled="isLoading || !meta.valid || !agreeToTerms"
-        btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+        btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !mt-[29px] !text-white"
       />
 
       <!-- Sign In Link -->
-      <p class="text-center text-sm text-[#475467]">
+      <p class="text-center text-sm text-[#475467] !mt-8">
         Already have an account?
         <NuxtLink
           :to="loginLink"
@@ -135,9 +130,7 @@ const passwordType = ref("password");
 const agreeToTerms = ref(false);
 
 // Computed
-const loginLink = computed(() =>
-  handleRouting(route, `/${auth}/login`)
-);
+const loginLink = computed(() => handleRouting(route, `/${auth}/login`));
 
 // Form Fields
 const firstName = ref("");
@@ -219,7 +212,8 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } catch (err) {
     isLoading.value = false;
-    const message = err?.response?.data?.message || err?.response?.data?.Message;
+    const message =
+      err?.response?.data?.message || err?.response?.data?.Message;
     if (message) {
       toast.error(message);
     }

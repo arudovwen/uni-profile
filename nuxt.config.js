@@ -113,8 +113,8 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      Rubik: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntRubiker font
-      Onest: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntRubiker font
+      Avenir: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntAvenirer font
+      Onest: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntAvenirer font
     },
   },
 

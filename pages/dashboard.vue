@@ -1,29 +1,27 @@
 <template>
   <NuxtLayout name="dashboard">
-    <div class="font-Avenir">
+    <div class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[60px] pb-8">
       <!-- Welcome Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-semibold text-[#2F2F2F] mb-2">
+      <div class="mb-5 sm:mb-[26px]">
+        <h1 class="text-2xl sm:text-3xl font-semibold text-[#2F2F2F] mb-1 sm:mb-2">
           Welcome back, {{ userName }}!
         </h1>
-        <p class="text-base text-[#475467]">
+        <p class="text-sm sm:text-base text-[#475467]">
           Access your applications from your dashboard
         </p>
       </div>
 
       <!-- Apps Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div
           v-for="app in userApps"
           :key="app.code"
-          class="bg-white rounded-lg border border-[#E5E7EB] p-6 hover:shadow-md transition-shadow cursor-pointer"
+          class="bg-white rounded-lg border border-[#E5E7EB] p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer"
         >
           <!-- App Header with Icon and Status -->
-          <div class="flex items-start justify-between mb-4">
+          <div class="flex items-start justify-between mb-3 sm:mb-4">
             <!-- App Icon -->
-            <div
-              class="w-12 h-12 rounded-lg bg-[#EFF6FF] flex items-center justify-center"
-            >
+            <div>
               <img
                 v-if="app.iconUrl"
                 :src="app.iconUrl"
@@ -49,7 +47,7 @@
             <!-- Status Badge -->
             <span
               :class="[
-                'px-3 py-1 rounded-full text-xs font-medium border',
+                'px-2 sm:px-3 py-1 rounded-full text-xs font-medium border',
                 app.status === 'Active'
                   ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
                   : 'bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]',
@@ -60,18 +58,18 @@
           </div>
 
           <!-- App Name -->
-          <h3 class="text-lg font-semibold text-[#2F2F2F] mb-2">
+          <h3 class="text-base sm:text-lg font-semibold text-[#2F2F2F] mb-1.5 sm:mb-2">
             {{ app.name }}
           </h3>
 
           <!-- App Description -->
-          <p class="text-sm text-[#475467] mb-4 leading-relaxed">
+          <p class="text-sm text-[#475467] mb-3 sm:mb-4 leading-relaxed line-clamp-2">
             {{ app.description }}
           </p>
 
           <!-- Role Badge -->
           <span
-            class="inline-block px-3 py-1 rounded-full bg-[#F3F4F6] text-[#344054] text-xs font-medium border border-[#E5E7EB]"
+            class="inline-block px-2 sm:px-3 py-1 rounded-full bg-[#F3F4F6] text-[#344054] text-xs font-medium border border-[#E5E7EB]"
           >
             {{ app.role }}
           </span>
