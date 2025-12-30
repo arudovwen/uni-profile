@@ -65,7 +65,7 @@
       :subtext="otpSubtext"
       :imgSrc="otpImg"
       :isVerifyPin="isVerifyPin"
-      :isVerified="isVerified"
+      :isVerified="false"
       :isLoading="isLoading"
       :email="formValues.email"
       buttonText="Verify Email"

@@ -77,10 +77,16 @@ definePageMeta({
 });
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
-
 import { forgotPassword } from "~/services/authservices";
+import { useEncryption } from "~/composables/useEncryption";
+import { useToast } from "~/composables/useToast";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
+
+// Encryption
+const { encrypt } = useEncryption();
+
+// Toast
+const toast = useToast();
 
 const { app } = useRoute().params;
 const color = appCodeColorMap[app] || "#1570EF";
@@ -116,19 +122,21 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  forgotPassword(values)
+
+  // Encrypt email before sending
+  const encryptedEmail = encrypt(values.email);
+
+  forgotPassword({ email: encryptedEmail })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;
       }
     })
-
     .catch((err) => {
       isLoading.value = false;
-      if (err?.response?.data?.message || err?.response?.data?.Message) {
-        toast.error(
-          err?.response?.data?.message || err?.response?.data?.Message
-        );
+      const message = err?.response?.data?.message || err?.response?.data?.Message;
+      if (message) {
+        toast.error(message);
       }
     });
 });

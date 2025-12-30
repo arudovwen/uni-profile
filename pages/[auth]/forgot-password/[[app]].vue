@@ -5,7 +5,11 @@
       <div v-if="!isSent" class="w-full">
         <!-- Icon -->
         <div class="flex justify-center mb-6">
-          <img src="@/assets/images/reset-password.png" alt="Reset Password" class="w-[115px] h-[115px]" />
+          <img
+            src="@/assets/images/reset-password.png"
+            alt="Reset Password"
+            class="w-[115px] h-[115px]"
+          />
         </div>
 
         <!-- Header -->
@@ -39,7 +43,9 @@
 
           <div class="text-center">
             <NuxtLink
-              :to="handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)"
+              :to="
+                handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)
+              "
               class="`font-medium text-base !mt-8 block` text-[#475467]"
             >
               Go Back
@@ -52,7 +58,11 @@
       <div v-else class="w-full text-center">
         <!-- Icon -->
         <div class="flex justify-center mb-6">
-          <AuthSmsNotificationIcon />
+          <img
+            src="@/assets/images/reset-password.png"
+            alt="Reset Password"
+            class="w-[115px] h-[115px]"
+          />
         </div>
 
         <!-- Header -->
@@ -86,12 +96,18 @@ definePageMeta({
 });
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
-
 import { forgotPassword } from "~/services/authservices";
+import { useEncryption } from "~/composables/useEncryption";
+import { useToast } from "~/composables/useToast";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
-const { app } = useRoute().params;
+// Encryption
+const { encrypt } = useEncryption();
+
+// Toast
+const toast = useToast();
+
+const { app, auth } = useRoute().params;
 const title1 = "Reset Password";
 const title2 = "Check your email";
 const text1 =
@@ -124,19 +140,22 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  forgotPassword({ ...values, subApp: app })
+
+  // Encrypt email before sending
+  const encryptedEmail = encrypt(values.email);
+
+  forgotPassword({ email: encryptedEmail, subApp: app })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;
       }
     })
-
     .catch((err) => {
       isLoading.value = false;
-      if (err?.response?.data?.message || err?.response?.data?.Message) {
-        toast.error(
-          err?.response?.data?.message || err?.response?.data?.Message
-        );
+      const message =
+        err?.response?.data?.message || err?.response?.data?.Message;
+      if (message) {
+        toast.error(message);
       }
     });
 });

@@ -128,9 +128,13 @@ import {
   resend2FA,
   resetPassword,
 } from "~/services/authservices";
+import { useEncryption } from "~/composables/useEncryption";
 import TickCircle from "@/assets/images/svgs/tick-circle.svg";
 import SecuritySafeIcon from "~/components/Auth/SecuritySafeIcon.vue";
 import CircleTick from "~/components/Auth/CircleTick.vue";
+
+// Encryption
+const { encrypt } = useEncryption();
 
 definePageMeta({
   middleware: "auth",
@@ -192,7 +196,16 @@ const toggleConfirmPasswordVisibility = () => {
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  resetPassword(values)
+
+  // Encrypt email and password before sending
+  const encryptedValues = {
+    ...values,
+    email: encrypt(values.email),
+    password: encrypt(values.password),
+    confirmPassword: encrypt(values.confirmPassword),
+  };
+
+  resetPassword(encryptedValues)
     .then((res) => {
       if (res.status === 200) {
         isResetSuccess.value = true;
@@ -217,7 +230,10 @@ const onSubmit = handleSubmit((values) => {
 const verifyOtp = (token) => {
   isLoading.value = true;
 
-  loginUser2FA({ token, email: formValues.email })
+  // Encrypt email before sending
+  const encryptedEmail = encrypt(formValues.email);
+
+  loginUser2FA({ token, email: encryptedEmail })
     .then((res) => {
       isLoading.value = false;
       if (res.status === 200) {
@@ -238,7 +254,10 @@ const verifyOtp = (token) => {
 
 function resendOtp() {
   if (countdown.value === 0) {
-    resend2FA({ email: route.query.email })
+    // Encrypt email before sending
+    const encryptedEmail = encrypt(route.query.email);
+
+    resend2FA({ email: encryptedEmail })
       .then((res) => {
         if (res.status === 200) {
           // Start the countdown
