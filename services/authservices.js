@@ -53,12 +53,12 @@ export async function registerUser(user, config = {}) {
   return await ssoPost(urls.REGISTER, user, config);
 }
 
-// Matta Confirm Email endpoint (GET with query params)
-export async function confirmEmail(userId, code, config = {}) {
-  return await mattaGet(`${urls.MATTA_CONFIRM_EMAIL}?userId=${userId}&code=${encodeURIComponent(code)}`, config);
+// Confirm Email endpoint (POST with email and code)
+export async function confirmEmail(email, code, config = {}) {
+  return await ssoPost(urls.MATTA_CONFIRM_EMAIL, { code, email }, config);
 }
 
 // Matta Resend 2FA code endpoint
 export async function resendEmailVerification(email, config = {}) {
-  return await mattaPost(urls.MATTA_RESEND_2FA, { email }, config);
+  return await ssoPost(urls.MATTA_RESEND_2FA, { email }, config);
 }

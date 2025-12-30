@@ -7,7 +7,12 @@
       <!-- Icon -->
       <div class="mb-8 flex justify-center items-center">
         <AuthSMSStarIcon v-if="isVerified" class="w-20 h-20" />
-        <img v-else src="@/assets/images/email-verify.png" alt="Verification" class="w-[115px] h-[115px]" />
+        <img
+          v-else
+          :src="iconSrc"
+          alt="Verification"
+          class="w-[115px] h-[115px]"
+        />
       </div>
 
       <!-- Header -->
@@ -34,7 +39,10 @@
 
       <!-- Resend Code -->
       <div class="mb-6 text-sm text-[#475467] font-normal" v-if="!isVerified">
-        <span>Didn't receive code. </span>
+        <span
+          >Didn't receive code.
+          {{ `${isResending || countdown > 0 ? "Resend in " : ""}` }}</span
+        >
         <button
           v-if="!isResending"
           type="button"
@@ -45,17 +53,13 @@
           Resend code
         </button>
         <span v-if="countdown > 0" class="font-semibold text-[#1570EF]">
-          Resend available in {{ countdown }}s
+          {{ countdown }}s
         </span>
       </div>
 
       <!-- Buttons -->
       <div class="mb-4">
-        <NuxtLink
-          v-if="isVerified"
-          :to="continueLink"
-          class="block"
-        >
+        <NuxtLink v-if="isVerified" :to="continueLink" class="block">
           <AppButton
             text="Continue"
             btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
@@ -86,7 +90,15 @@
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resendEmailVerification } from "~/services/authservices";
-import { toast } from "vue3-toastify";
+import { useEncryption } from "~/composables/useEncryption";
+import { useToast } from "~/composables/useToast";
+import defaultEmailVerifyImg from "@/assets/images/email-verify.png";
+
+// Encryption
+const { encrypt } = useEncryption();
+
+// Toast
+const toast = useToast();
 
 const props = defineProps({
   title: {
@@ -95,7 +107,6 @@ const props = defineProps({
   numInput: {
     default: 6,
   },
-
   isLoading: {
     default: false,
   },
@@ -104,7 +115,7 @@ const props = defineProps({
   },
   subtext: {
     default:
-      "Enter the 6-Digit verification code has been sent to your registered email address. Check your Inbox.",
+      "Enter the 6-Digit verification code that has been sent to your registered email address. Check your Inbox.",
   },
   isVerified: {
     default: false,
@@ -115,7 +126,14 @@ const props = defineProps({
   continueLink: {
     default: "/",
   },
+  imgSrc: {
+    type: String,
+    default: "",
+  },
 });
+
+// Computed icon source - use custom image or default
+const iconSrc = computed(() => props.imgSrc || defaultEmailVerifyImg);
 const emit = defineEmits(["handleSubmit", "close"]);
 
 const form = reactive({
@@ -131,7 +149,8 @@ async function handleSubmit() {
 
 function resendOTP() {
   if (countdown.value === 0) {
-    resendEmailVerification(props.email)
+    const encryptedEmail = encrypt(props.email);
+    resendEmailVerification(encryptedEmail)
       .then((res) => {
         if (res.status === 200) {
           toast.success("Verification code sent successfully");
@@ -149,7 +168,9 @@ function resendOTP() {
         }
       })
       .catch((err) => {
-        toast.error(err?.response?.data?.Message || err?.response?.data?.message);
+        toast.error(
+          err?.response?.data?.Message || err?.response?.data?.message
+        );
       });
   }
 }

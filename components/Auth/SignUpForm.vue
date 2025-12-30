@@ -115,12 +115,15 @@
 <script setup lang="ts">
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
 import { registerUser } from "~/services/authservices";
 import { useEncryption } from "~/composables/useEncryption";
+import { useToast } from "~/composables/useToast";
 
 // Encryption
 const { encrypt } = useEncryption();
+
+// Toast
+const toast = useToast();
 
 // Route
 const route = useRoute();
@@ -209,7 +212,6 @@ const onSubmit = handleSubmit(async (values) => {
       emit("registered", {
         email: values.email,
         firstName: values.firstName,
-        userId: response.data?.data?.userId || response.data?.userId || "",
       });
     }
   } catch (err) {

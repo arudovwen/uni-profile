@@ -188,7 +188,7 @@
     </div>
   </NuxtLayout>
 
-  <NuxtLayout name="empty" v-else>
+  <NuxtLayout v-else-if="step === 2" name="auth">
     <AuthOtp
       title="Email Verification"
       :isVerifyPin="isVerifyPin"
@@ -369,7 +369,7 @@ const onSubmit = handleSubmit(async (values) => {
     const res = await registerUser({
       ...values,
       confirmPassword: values.password,
-      AgentReferralCode: values.referral_code
+      AgentReferralCode: values.referral_code,
     });
 
     if (res.status === 200) {

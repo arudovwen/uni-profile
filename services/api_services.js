@@ -8,7 +8,7 @@ let refreshAttemptCount = 0;
 
 // Base URL for API services
 const BASE_URL = "https://dev.proxy.oxidefinance.com";
-const SSO_URL = process.env.SSO_BASE_URL || "https://dev.gateway.matta.trade";
+const SSO_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
 
 // Create an Axios instance with custom configuration
 const createAxiosInstance = (service, baseUrl = BASE_URL) => {

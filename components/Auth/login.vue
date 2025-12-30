@@ -61,8 +61,9 @@
   <!-- Step 2: OTP Verification -->
   <NuxtLayout v-else-if="step === 2" name="auth">
     <AuthOtp
-      :title="isVerified ? 'Email Verified' : 'Email Verification'"
+      :title="isVerified ? 'OTP Verified' : 'OTP Verification'"
       :subtext="otpSubtext"
+      :imgSrc="otpImg"
       :isVerifyPin="isVerifyPin"
       :isVerified="isVerified"
       :isLoading="isLoading"
@@ -78,9 +79,17 @@
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { loginUser, loginUser2FA } from "~/services/authservices";
+import { useEncryption } from "~/composables/useEncryption";
+import { useToast } from "~/composables/useToast";
+import otpImg from "@/assets/images/otp.png";
+
+// Encryption
+const { encrypt } = useEncryption();
+
+// Toast
+const toast = useToast();
 
 // Stores & Router
 const authStore = useAuthStore();
@@ -114,7 +123,7 @@ const signUpLink = computed(() =>
 const otpSubtext = computed(() =>
   isVerified.value
     ? "Your email has been verified. You will be automatically redirected to the dashboard"
-    : "We have sent an OTP to your email address and your registered mobile number"
+    : "Enter the 6-digit code sent to your registered email address. Check your inbox."
 );
 
 // Validation
@@ -180,7 +189,15 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
 
   try {
-    const res = await loginUser({ ...values, appCode: app });
+    // Encrypt sensitive fields
+    const encryptedEmail = encrypt(values.email);
+    const encryptedPassword = encrypt(values.password);
+
+    const res = await loginUser({
+      email: encryptedEmail,
+      password: encryptedPassword,
+      appCode: app,
+    });
     if (res.status === 200) {
       const userData = res.data.data;
       if (!userData.is2FA && app) {
@@ -202,9 +219,11 @@ const handleOtpSubmit = async (token) => {
   isLoading.value = true;
 
   try {
+    const encryptedEmail = encrypt(formValues.email);
+
     const res = await loginUser2FA({
       token,
-      email: formValues.email,
+      email: encryptedEmail,
       appCode: app,
     });
     if (res.status === 200) {

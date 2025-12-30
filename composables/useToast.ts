@@ -1,5 +1,4 @@
-import Vue3Toastify, { toast } from "vue3-toastify";
-import "vue3-toastify/dist/index.css";
+import { toast } from "vue3-toastify";
 import { h } from "vue";
 
 // Custom success icon (rounded square with checkmark)
@@ -42,49 +41,33 @@ const ErrorIcon = () =>
     ]
   );
 
-// Custom toast wrapper with styling
-const customToast = {
-  success: (message, options = {}) => {
-    return toast(message, {
+export const useToast = () => {
+  const success = (message: string, options = {}) => {
+    return toast.success(message, {
       icon: SuccessIcon,
-      style: {
-        background: "#5CB85C",
-        color: "white",
-        fontWeight: "500",
-      },
       ...options,
     });
-  },
-  error: (message, options = {}) => {
-    return toast(message, {
-      icon: ErrorIcon,
-      style: {
-        background: "#E57373",
-        color: "white",
-        fontWeight: "500",
-      },
-      ...options,
-    });
-  },
-  info: (message, options = {}) => {
-    return toast.info(message, options);
-  },
-  warning: (message, options = {}) => {
-    return toast.warning(message, options);
-  },
-};
+  };
 
-export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.use(Vue3Toastify, {
-    autoClose: 3500,
-    clearOnUrlChange: false,
-    multiple: false,
-    hideProgressBar: true,
-    closeButton: false,
-    toastClassName: "custom-toast",
-  });
+  const error = (message: string, options = {}) => {
+    return toast.error(message, {
+      icon: ErrorIcon,
+      ...options,
+    });
+  };
+
+  const info = (message: string, options = {}) => {
+    return toast.info(message, options);
+  };
+
+  const warning = (message: string, options = {}) => {
+    return toast.warning(message, options);
+  };
 
   return {
-    provide: { toast: customToast },
+    success,
+    error,
+    info,
+    warning,
   };
-});
+};
