@@ -40,7 +40,7 @@
             :icon="`humbleicons:plus`"
             :btnClass="`!bg-[#165EF0] border-[#165EF0] !text-[14px] !py-2.5 !leading-5 text-white `"
             iconClass="text-sm md:text-base"
-            @click="navigateTo('/referral-management/create')"
+            @click="navigateTo('/referral-management/create?refType=1')"
           />
         </div>
         <CustomTable
@@ -341,7 +341,6 @@ function handleDelete(row) {
 }
 
 async function confirmDelete() {
-  console.log("Deleting");
 
   try {
     deleteLoading.value = true;

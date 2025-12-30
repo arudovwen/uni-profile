@@ -150,10 +150,9 @@ export async function getReferralByCode(referralCode) {
   });
 }
 export async function getReferralLeaderboard(queryParams) {
-  return await ssoGet(
-    `${urls.GET_REFERRAL_LEADERBOARD}?${new URLSearchParams(
-      cleanObject(queryParams)
-    )}`,
+  return await ssoPost(
+    `${urls.GET_REFERRAL_LEADERBOARD}`,
+    cleanObject(queryParams),
     {}
   );
 }

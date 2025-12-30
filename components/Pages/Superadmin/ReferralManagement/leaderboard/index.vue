@@ -1,4 +1,11 @@
 <template>
+  <div class="px-6">
+    <AppTab
+      :tabs="tabs"
+      :active="activeTab"
+      @set-active="(value) => (activeTab = value)"
+    />
+  </div>
   <div class="w-full" :class="customClass">
     <div
       class="flex flex-col bg-white w-full border-1px rounded-[10px] border-[#F4F7FE]"
@@ -19,7 +26,7 @@
           </span>
         </div>
       </div>
-      <div class="flex gap-3 px-6 " :class="customClass ? 'pb-4 pt-4' : ''">
+      <div class="flex gap-3 px-6" :class="customClass ? 'pb-4 pt-4' : ''">
         <div
           class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
         >
@@ -111,20 +118,37 @@ defineProps({
     default: false,
   },
 });
+const activeTab = ref("user");
+const tabs = [
+  {
+    title: "Users",
+    key: "user",
+  },
+  {
+    title: "Departments",
+    key: "department",
+  },
+  {
+    title: "Campaigns",
+    key: "campaign",
+  },
+];
 const date = ref(null);
 const queryParams = reactive({
   search: "",
-  SortOrder: "",
   PageNumber: 1,
   PageSize: 10,
-  userCatText: "",
-  userCategories: [2],
   status: "",
   total: 0,
   from: null,
   to: null,
+  referalTypes: [0],
 });
-
+const RefTypes = {
+  user: [0],
+  department: [1],
+  campaign: [2],
+};
 const rows = ref([]);
 const loading = ref(false);
 const isExporting = ref(false);
@@ -180,7 +204,10 @@ onMounted(() => {
 async function fetchReferrals() {
   loading.value = true;
   try {
-    const res = await getReferralLeaderboard(queryParams);
+    const res = await getReferralLeaderboard({
+      ...queryParams,
+      referalTypes: RefTypes[activeTab.value],
+    });
     rows.value = res.data?.data;
     queryParams.total = res.data.totalCount || 0;
   } catch (error) {
@@ -244,7 +271,7 @@ const exportToCSVHandler = async () => {
 
 // Watch for pagination changes
 watch(
-  () => [queryParams.PageNumber, queryParams.from, queryParams.to],
+  () => [queryParams.PageNumber, queryParams.from, queryParams.to, activeTab.value],
   () => {
     fetchReferrals();
   }

@@ -39,7 +39,24 @@
               :error="errors.referralCode"
             />
           </div>
-          <div class="flex flex-col">
+          <div class="col-span-2" v-if="referralData.referalType == 2">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
+              Campaign Name
+            </label>
+            <Textinput
+              placeholder="Campaign name "
+              type="text"
+              name="assignedUser"
+              iconType="code"
+              v-model="assignedUser"
+              :error="errors.assignedUser"
+            />
+          </div>
+
+          <div
+            class="flex flex-col"
+            v-if="!referralData.referalType || referralData.referalType == 0"
+          >
             <label class="text-[14px] font-medium text-[#344054] mb-0.5 block">
               Assigned User
             </label>
@@ -60,7 +77,12 @@
               {{ errors.assignedUser }}
             </span>
           </div>
-          <div class="">
+          <div
+            class=""
+            v-if="
+              referralData.referalType == 1 || referralData.referalType == 0
+            "
+          >
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Department
             </label>
@@ -327,13 +349,6 @@ const loadApps = async () => {
   }
 };
 
-const handleReferralCodeChange = (newCode) => {
-  // Update form field value
-  setFieldValue("referralCode", newCode);
-  // Trigger uniqueness validation
-  validateCodeUniqueness(newCode, referralData.value?.id);
-};
-
 // Load referral data
 const loadReferralData = async () => {
   try {
@@ -433,11 +448,15 @@ const onSubmit = handleSubmit(async (values) => {
     const payload = {
       id: referralData.value?.id,
       referralCode: values.referralCode,
-      assignedUser: selectedUserData.value?.label || values.assignedUser,
+      assignedUser:
+        referralData.value.referalType == 2
+          ? values.assignedUser
+          : selectedUserData.value?.label || values.assignedUser,
       assignedUserId: values.assignedUser,
       assignedUserEmail: selectedUserData.value?.email || "",
       assignedDepartment: values.assignedDepartment,
       assignedApps: values.assignedApps.join(","),
+      referalType: referralData.value.referalType,
     };
 
     const response = await ssoPost(`admin/v1/referalls/edit`, payload);
@@ -446,7 +465,7 @@ const onSubmit = handleSubmit(async (values) => {
       toast.success("Referral updated successfully");
       setTimeout(() => {
         navigateTo("/referral-management");
-      }, 1500);
+      }, 800);
     }
   } catch (error) {
     console.error("Error updating referral:", error);

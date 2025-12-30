@@ -13,13 +13,22 @@
             >Manage all referral codes and leaderboard
           </span>
         </div>
-        <AppButton
-          text="New Referral Code"
-          :icon="`humbleicons:plus`"
-          :btnClass="`!bg-[#165EF0] h-10 border-[#165EF0] !text-[14px] !py-2.5 !leading-5 text-white `"
-          iconClass="text-sm md:text-base"
-          @click="navigateTo('/referral-management/create')"
-        />
+        <div class="flex gap-x-4">
+          <AppButton
+            text="New Campaign Code"
+            :icon="`humbleicons:plus`"
+            :btnClass="`!bg-white h-10 border border-gray-200 !text-[14px] !py-2.5 !leading-5 text-primary `"
+            iconClass="text-sm md:text-base"
+            @click="navigateTo('/referral-management/create?refType=2')"
+          />
+          <AppButton
+            text="New Referral Code"
+            :icon="`humbleicons:plus`"
+            :btnClass="`!bg-[#165EF0] h-10 border-[#165EF0] !text-[14px] !py-2.5 !leading-5 text-white `"
+            iconClass="text-sm md:text-base"
+            @click="navigateTo('/referral-management/create?refType=0')"
+          />
+        </div>
       </div>
       <div class="px-6">
         <AppTab

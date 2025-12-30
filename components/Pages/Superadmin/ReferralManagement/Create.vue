@@ -52,8 +52,21 @@
               ✓ This referral code is available
             </span>
           </div>
+          <div class="col-span-2" v-if="refType == 2">
+            <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
+              Campaign Name
+            </label>
+            <Textinput
+              placeholder="Campaign name "
+              type="text"
+              name="assignedUser"
+              iconType="code"
+              v-model="assignedUser"
+              :error="errors.assignedUser"
+            />
+          </div>
 
-          <div class="">
+          <div v-if="refType == 1 || refType == 0" class="">
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Department
             </label>
@@ -66,7 +79,7 @@
               :error="errors.assignedDepartment"
             />
           </div>
-          <div class="">
+          <div class="" v-if="!refType || refType == 0">
             <label class="text-[14px] font-medium text-[#344054] block mb-1.5">
               Assigned User
             </label>
@@ -271,11 +284,12 @@ const schema = yup.object({
       /^[a-zA-Z0-9]*$/,
       "Referral code must contain only alphanumeric characters (no special characters or spaces)"
     ),
-  assignedUser: yup.string().required("Assigned user is required"),
+  assignedUser: yup.string().required("Value is required"),
   assignedDepartment: yup.string(),
   assignedApps: yup.array(),
 });
-
+const route = useRoute();
+const { refType } = route.query;
 const appOptions = ref([]);
 const appSearchQuery = ref("");
 const isCheckingUniqueness = ref(false);
@@ -426,6 +440,7 @@ const onSubmit = handleSubmit(async (values) => {
       assignedUserId: values.assignedUser,
       assignedUserEmail: selectedUserData.value?.email || "",
       assignedDepartment: values.assignedDepartment,
+      referalType: parseInt(refType) || 0,
       assignedApps: values.assignedApps.join(","), // Convert array to comma-separated string
     };
 
@@ -454,7 +469,7 @@ const onSubmit = handleSubmit(async (values) => {
     }
   } catch (error) {
     console.log("🚀 ~ onSubmit ~ error:", error);
-    errorResponse(error)
+    errorResponse(error);
   } finally {
     isLoading.value = false;
   }
