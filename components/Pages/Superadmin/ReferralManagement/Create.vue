@@ -233,7 +233,7 @@
             btnClass="!px-[15px] btn-primary !py-[9px] !text-sm !leading-none"
             @click="onSubmit"
             type="submit"
-            :is-disabled="!meta.valid"
+            :is-disabled="!meta.valid || !assignedApps.length"
             :isLoading="isLoading"
             :text="
               referralData?.id ? 'Update Referral' : 'Create Referral Code'
@@ -286,7 +286,12 @@ const schema = yup.object({
     ),
   assignedUser: yup.string().required("Value is required"),
   assignedDepartment: yup.string(),
-  assignedApps: yup.array(),
+  assignedApps: yup
+    .array()
+    .of(
+      yup.string().required() // Each element in the array must be a required string
+    )
+    .required(),
 });
 const route = useRoute();
 const { refType } = route.query;

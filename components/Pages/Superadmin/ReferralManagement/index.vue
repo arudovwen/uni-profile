@@ -70,17 +70,17 @@
             >
           </template>
           <template #table-row-assignedUser="{ row }">
-            <span>{{ row.assignedUser }}</span>
+            <span>{{ row.assignedUser  || '-'  }}</span>
           </template>
           <template #table-row-assignedUserEmail="{ row }">
-            <span>{{ row.assignedUserEmail }}</span>
+            <span>{{ row.assignedUserEmail  || '-'  }}</span>
           </template>
           <template #table-row-assignedDepartment="{ row }">
-            <span>{{ row.assignedDepartment }}</span>
+            <span>{{ row.assignedDepartment || '-' }}</span>
           </template>
           <template #table-row-assignedApps="{ row }">
             <div class="flex flex-wrap gap-1">
-              {{ row.assignedApps }}
+              {{ row.assignedApps  || '-'  }}
             </div>
           </template>
           <template #table-row-created_On="{ row }">
