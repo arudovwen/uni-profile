@@ -65,6 +65,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       API_BASE_URL: process.env.API_BASE_URL,
+      SSO_BASE_URL: process.env.SSO_BASE_URL,
       APP_BASE_URL: process.env.APP_BASE_URL,
       APP_MONNIFYAPIKEY: process.env.APP_MONNIFYAPIKEY,
       APP_MONNIFYCONTRACTCODE: process.env.APP_MONNIFYCONTRACTCODE,

@@ -8,12 +8,12 @@ let refreshAttemptCount = 0;
 
 // Base URL for API services
 const BASE_URL = "https://dev.proxy.oxidefinance.com";
+const SSO_URL = process.env.SSO_BASE_URL || "https://dev.gateway.matta.trade";
 
-console.log("🚀 ~ getBaseUrl():", process.env)
 // Create an Axios instance with custom configuration
-const createAxiosInstance = (service) => {
+const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   const instance = Axios.create({
-    baseURL: `${BASE_URL}/${service}/`,
+    baseURL: `${baseUrl}/${service}/`,
   });
 
   instance.interceptors.request.use((config) => {
@@ -54,7 +54,7 @@ const createAxiosInstance = (service) => {
 };
 
 const axiosApi = createAxiosInstance("market");
-const axiosSSO = createAxiosInstance("sso");
+const axiosSSO = createAxiosInstance("sso", SSO_URL);
 const mattaApi = createAxiosInstance("matta");
 const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux");

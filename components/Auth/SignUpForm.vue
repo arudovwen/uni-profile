@@ -95,7 +95,6 @@
         type="submit"
         text="Create account"
         :isLoading="isLoading"
-        :isDisabled="isLoading || !meta.valid || !agreeToTerms"
         btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !mt-[29px] !text-white"
       />
 
@@ -118,6 +117,10 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { registerUser } from "~/services/authservices";
+import { useEncryption } from "~/composables/useEncryption";
+
+// Encryption
+const { encrypt } = useEncryption();
 
 // Route
 const route = useRoute();
@@ -127,18 +130,10 @@ const { auth } = route.params;
 // State
 const isLoading = ref(false);
 const passwordType = ref("password");
-const agreeToTerms = ref(false);
+const agreeToTerms = ref(true);
 
 // Computed
 const loginLink = computed(() => handleRouting(route, `/${auth}/login`));
-
-// Form Fields
-const firstName = ref("");
-const lastName = ref("");
-const email = ref("");
-const phoneNumber = ref("");
-const businessName = ref("");
-const password = ref("");
 
 // Validation Schema
 const schema = yup.object({
@@ -172,13 +167,13 @@ const { handleSubmit, defineField, errors, meta } = useForm({
   },
 });
 
-// Define fields for vee-validate
-defineField("firstName");
-defineField("lastName");
-defineField("email");
-defineField("phoneNumber");
-defineField("businessName");
-defineField("password");
+// Define fields for vee-validate - these return reactive refs connected to the form
+const [firstName] = defineField("firstName");
+const [lastName] = defineField("lastName");
+const [email] = defineField("email");
+const [phoneNumber] = defineField("phoneNumber");
+const [businessName] = defineField("businessName");
+const [password] = defineField("password");
 
 // Methods
 const togglePasswordVisibility = () => {
@@ -186,21 +181,27 @@ const togglePasswordVisibility = () => {
 };
 
 const onSubmit = handleSubmit(async (values) => {
-  if (!agreeToTerms.value) {
-    toast.error("Please agree to terms and conditions");
-    return;
-  }
-
   isLoading.value = true;
 
   try {
+    // Encrypt sensitive fields
+    const encryptedEmail = encrypt(values.email);
+    const encryptedPassword = encrypt(values.password);
+
     const response = await registerUser({
+      email: encryptedEmail,
       firstName: values.firstName,
       lastName: values.lastName,
-      email: values.email,
       phoneNumber: values.phoneNumber,
-      businessName: values.businessName || null,
-      password: values.password,
+      password: encryptedPassword,
+      confirmPassword: encryptedPassword,
+      companyName: values.businessName || "",
+      referral_code: "",
+      appCode: "MAT460",
+      country: "Nigeria",
+      agree: false,
+      subscribe: false,
+      AgentReferralCode: "",
     });
 
     if (response.status === 200) {
@@ -208,6 +209,7 @@ const onSubmit = handleSubmit(async (values) => {
       emit("registered", {
         email: values.email,
         firstName: values.firstName,
+        userId: response.data?.data?.userId || response.data?.userId || "",
       });
     }
   } catch (err) {

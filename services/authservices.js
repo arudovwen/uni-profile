@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { ssoPost } from "../services/api_services";
+import { ssoPost, mattaPost, mattaGet } from "../services/api_services";
 
 //Authentication
 export async function loginUser(user, config = {}) {
@@ -46,6 +46,19 @@ export async function fluxConfirmemail(data, config = {}) {
 export async function confirmRegister(data, config = {}) {
   return await ssoPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
 }
+
+// Matta Register endpoint
 export async function registerUser(user, config = {}) {
+  // return await mattaPost(urls.REGISTER, user, config);
   return await ssoPost(urls.REGISTER, user, config);
+}
+
+// Matta Confirm Email endpoint (GET with query params)
+export async function confirmEmail(userId, code, config = {}) {
+  return await mattaGet(`${urls.MATTA_CONFIRM_EMAIL}?userId=${userId}&code=${encodeURIComponent(code)}`, config);
+}
+
+// Matta Resend 2FA code endpoint
+export async function resendEmailVerification(email, config = {}) {
+  return await mattaPost(urls.MATTA_RESEND_2FA, { email }, config);
 }

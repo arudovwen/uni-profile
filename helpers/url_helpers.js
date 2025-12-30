@@ -27,7 +27,10 @@ const urls = {
 
   FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
 
-  REGISTER: "/v1/register",
+  SSO_REGISTER: "sso/v1/Register",
+  REGISTER: "v1/Register",
+  MATTA_CONFIRM_EMAIL: "v1/Account/confirm-email",
+  MATTA_RESEND_2FA: "v1/Account/resend-2fa-code",
   ORBITAL_CONFIRM_EMAIL: "v1/account/confirm-email",
 
   //Customers

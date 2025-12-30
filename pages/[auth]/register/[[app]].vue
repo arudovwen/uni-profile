@@ -25,7 +25,7 @@
 
 <script setup lang="ts">
 import { toast } from "vue3-toastify";
-import { confirmRegister } from "~/services/authservices";
+import { confirmEmail } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 
 definePageMeta({
@@ -37,18 +37,23 @@ const router = useRouter();
 const { auth, app } = route.params;
 const authStore = useAuthStore();
 const newEmail = useCookie("email", defaultOptions);
+const newUserId = useCookie("userId", defaultOptions);
 
 const step = ref(1);
 const isLoading = ref(false);
 const isVerified = ref(false);
 const registeredEmail = ref("");
+const registeredUserId = ref("");
 
 const handleSignUpSuccess = async (data: {
   email: string;
   firstName: string;
+  userId: string;
 }) => {
   registeredEmail.value = data.email;
+  registeredUserId.value = data.userId;
   newEmail.value = data.email;
+  newUserId.value = data.userId;
   step.value = 2;
 };
 
@@ -56,21 +61,22 @@ const handleOtpSubmit = async (code: string) => {
   isLoading.value = true;
 
   try {
-    const res = await confirmRegister({
-      code,
-      otpCode: code,
-      email: registeredEmail.value,
-    });
+    const res = await confirmEmail(registeredUserId.value, code);
 
     if (res.status === 200) {
-      const userData = res.data.data;
+      const userData = res.data?.data || res.data;
       isVerified.value = true;
 
-      // Save user data to store
-      authStore.setLoggedUser(userData);
-      authStore.setHasPin(userData.hasTransactionPIN);
-      saveAuthProfile(userData);
+      // Save user data to store if available
+      if (userData) {
+        authStore.setLoggedUser(userData);
+        authStore.setHasPin(userData.hasTransactionPIN);
+        saveAuthProfile(userData);
+      }
+
+      // Clear cookies
       newEmail.value = null;
+      newUserId.value = null;
 
       // Navigate to onboarding
       setTimeout(() => {
@@ -90,6 +96,7 @@ const handleOtpSubmit = async (code: string) => {
 const goBackToSignUp = () => {
   step.value = 1;
   registeredEmail.value = "";
+  registeredUserId.value = "";
 };
 
 onMounted(() => {
@@ -97,9 +104,10 @@ onMounted(() => {
     step.value = Number(route.query.step);
   }
 
-  // If returning with email cookie, show OTP screen
-  if (newEmail.value) {
+  // If returning with email/userId cookies, show OTP screen
+  if (newEmail.value && newUserId.value) {
     registeredEmail.value = newEmail.value;
+    registeredUserId.value = newUserId.value;
     step.value = 2;
   }
 });

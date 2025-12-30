@@ -2,7 +2,7 @@
   <div class="min-h-screen flex flex-col auth-grid-bg">
     <!-- Header -->
     <header
-      class="h-16 px-6 flex items-center justify-between border-b border-[#E4E7EC] bg-white"
+      class="h-16 px-0 md:px-6 flex items-center justify-between border-b border-[#E4E7EC] bg-white"
     >
       <div
         class="h-16 px-6 flex flex-row items-center justify-between w-full max-w-[1120px] mx-auto"

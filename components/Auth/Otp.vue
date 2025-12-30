@@ -85,7 +85,7 @@
 
 <script setup>
 import VOtpInput from "vue3-otp-input";
-import { resend2FA } from "~/services/authservices";
+import { resendEmailVerification } from "~/services/authservices";
 import { toast } from "vue3-toastify";
 
 const props = defineProps({
@@ -131,9 +131,10 @@ async function handleSubmit() {
 
 function resendOTP() {
   if (countdown.value === 0) {
-    resend2FA({ email: props.email })
+    resendEmailVerification(props.email)
       .then((res) => {
         if (res.status === 200) {
+          toast.success("Verification code sent successfully");
           // Start the countdown
           countdown.value = 60;
           isResending.value = true;
