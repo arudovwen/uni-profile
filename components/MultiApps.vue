@@ -117,7 +117,7 @@
 </template>
 <script setup>
 const authStore = useAuthStore();
-const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
+const mattaProfiles = useCookie(PROFILE_COOKIE_NAME, defaultOptions);
 defineEmits([
   "close",
   "click",

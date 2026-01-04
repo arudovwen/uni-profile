@@ -7,6 +7,7 @@
 <script setup>
 import { getSubApps } from "~/services/userservices";
 const { encrypt } = useEncryption();
+ const mattaProfiles = useCookie(PROFILE_COOKIE_NAME, defaultOptions);
 useHead(
   {
     script: [
@@ -32,6 +33,8 @@ useHead(
     mode: "client", // Load the script 'strict-dynamically' on client-side only
   }
 );
+console.log({mattaProfiles:mattaProfiles.value});
+
 const authStore = useAuthStore();
 function getData() {
   getSubApps().then((res) => {

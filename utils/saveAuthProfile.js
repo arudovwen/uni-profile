@@ -1,14 +1,11 @@
 export function saveAuthProfile(obj) {
-  const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
-  const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
+  const mattaProfiles = useCookie("mattaProfiles_Dev",defaultOptions);
+  const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
   mattaAuth.value = obj;
   mattaProfiles.value = mattaProfiles.value || [];
   const exists = mattaProfiles.value?.some(
-    (existingObj) =>
-      existingObj?.jwToken === obj?.jwToken || existingObj?.email === obj?.email
+    (existingObj) => existingObj?.jwToken === obj?.jwToken || existingObj?.email === obj?.email 
   );
-  console.log({mattaProfiles, obj});
-  
   if (exists) {
     return;
   }

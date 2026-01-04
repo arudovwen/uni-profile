@@ -226,7 +226,7 @@ const route = useRoute();
 const router = useRouter();
 const { app, auth } = route.params;
 const authStore = useAuthStore();
-const newEmail = useEncryptedCookie("email", defaultOptions);
+const newEmail = useCookie("email", defaultOptions);
 
 const color = appCodeColorMap[app] || "#1570EF";
 const step = ref(1);
