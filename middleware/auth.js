@@ -2,7 +2,7 @@ import { universalRoutes } from "~/utils/constants";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
-  const mattaAuth = useEncryptedCookie("mattaAuth_Dev", defaultOptions);
+  const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
 
   // Check if the user is authenticated
   const isAuthenticated = !!mattaAuth.value;

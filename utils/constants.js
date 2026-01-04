@@ -9,6 +9,8 @@ export const defaultOptions = {
   maxAge: 60 * 60 * 24 * 7, // 7 days default
   httpOnly: false, // false by default to allow JS access
 };
+export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
+export const PROFILE_COOKIE_NAME = "mattaProfiles_Dev";
 
 export const appCodeColorMap = {
   OXI742: "#1570EF",

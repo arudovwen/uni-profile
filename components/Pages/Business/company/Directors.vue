@@ -158,7 +158,7 @@ function onDelete() {
 }
 
 async function handleSubmit() {
-  const mattaAuth = useEncryptedCookie("mattaAuth_Dev", defaultOptions);
+  const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
   if (!form.directors.length) return;
   isLoading.value = true;
   const data = {
