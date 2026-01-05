@@ -1,3 +1,10 @@
+import { useEncryption } from "~/composables/useEncryption";
+import {
+  signUpWithMatta,
+  signUpWithMattaFlux,
+  signUpWithMattaOrbital,
+} from "~/services/authservices";
+
 export interface RoleSelection {
   appCode: string;
   role: string;
@@ -15,6 +22,19 @@ export interface OnboardingState {
   currentStep: number;
 }
 
+// Role to userType mapping for Flux
+const fluxRoleToUserType: Record<string, number> = {
+  clients: 0,
+  truckers: 1,
+};
+
+// Role to userType mapping for Oxide
+const oxideRoleToUserType: Record<string, number> = {
+  funder: 0,
+  merchant: 1,
+  vendor: 2,
+};
+
 const defaultState: OnboardingState = {
   selectedApps: [],
   roleSelections: [],
@@ -22,7 +42,11 @@ const defaultState: OnboardingState = {
 };
 
 export const useOnboarding = () => {
-  const state = useState<OnboardingState>("onboarding", () => ({ ...defaultState }));
+  const state = useState<OnboardingState>("onboarding", () => ({
+    ...defaultState,
+  }));
+  const { encrypt } = useEncryption();
+  const authStore = useAuthStore();
 
   const setSelectedApps = (apps: OnboardingState["selectedApps"]) => {
     state.value.selectedApps = apps;
@@ -56,17 +80,109 @@ export const useOnboarding = () => {
     };
   };
 
-  const submitOnboarding = async () => {
-    try {
-      const data = getOnboardingData();
-      // TODO: Call API endpoint when backend is ready
-      // const response = await submitUserOnboarding(data);
-      console.log("Submitting onboarding data:", data);
-      return data;
-    } catch (error) {
-      console.error("Error submitting onboarding:", error);
-      throw error;
+  // Build payload for each app based on its requirements
+  const buildAppPayload = (appCode: string, encryptedEmail: string) => {
+    const roleSelection = getRoleSelection(appCode);
+    const basePayload = {
+      email: encryptedEmail,
+      appCode,
+      ssoUserCategory: 1,
+    };
+
+    switch (appCode) {
+      case "FLU722": {
+        // Flux requires userType, preferredSize, preferredTruckType for clients
+        const userType = roleSelection
+          ? fluxRoleToUserType[roleSelection.role] ?? 0
+          : 0;
+        const payload: Record<string, any> = {
+          ...basePayload,
+          userType,
+          allowNewsLetter: true,
+        };
+
+        // Add conditional fields for clients role
+        if (roleSelection?.role === "clients" && roleSelection.metadata) {
+          if (roleSelection.metadata.preferredTruckType !== undefined) {
+            payload.preferredTruckType =
+              roleSelection.metadata.preferredTruckType;
+          }
+          if (roleSelection.metadata.preferredSize !== undefined) {
+            payload.preferredSize = roleSelection.metadata.preferredSize;
+          }
+        }
+        return payload;
+      }
+
+      case "OXI975": {
+        // Oxide has roles: funder, merchant, vendor
+        const userType = roleSelection
+          ? oxideRoleToUserType[roleSelection.role] ?? 0
+          : 0;
+        return {
+          ...basePayload,
+          userType,
+        };
+      }
+
+      case "ORB789":
+      case "POL766":
+      default:
+        // Orbital and Polymer don't have roles, just basic payload
+        return basePayload;
     }
+  };
+
+  // Get the appropriate signup function for each app
+  const getSignupFunction = (appCode: string) => {
+    switch (appCode) {
+      case "FLU722":
+        return signUpWithMattaFlux;
+      case "ORB789":
+        return signUpWithMattaOrbital;
+      default:
+        return signUpWithMatta;
+    }
+  };
+
+  const submitOnboarding = async () => {
+    const userEmail = authStore.loggedUser?.email || authStore.userInfo?.email;
+    if (!userEmail) {
+      throw new Error("User email not found");
+    }
+
+    const encryptedEmail = userEmail;
+    if (!encryptedEmail) {
+      throw new Error("Failed to encrypt email");
+    }
+
+    const results: Array<{ appCode: string; success: boolean; error?: any }> =
+      [];
+
+    // Call the appropriate signup function for each selected app
+    for (const app of state.value.selectedApps) {
+      try {
+        const payload = buildAppPayload(app.code, encryptedEmail);
+        const signupFn = getSignupFunction(app.code);
+        console.log(`Submitting signup for ${app.code}:`, payload);
+        await signupFn(payload);
+        results.push({ appCode: app.code, success: true });
+      } catch (error) {
+        console.error(`Error signing up for ${app.code}:`, error);
+        results.push({ appCode: app.code, success: false, error });
+      }
+    }
+
+    // Check if all signups were successful
+    const allSuccessful = results.every((r) => r.success);
+    if (!allSuccessful) {
+      const failedApps = results
+        .filter((r) => !r.success)
+        .map((r) => r.appCode);
+      throw new Error(`Failed to sign up for: ${failedApps.join(", ")}`);
+    }
+
+    return results;
   };
 
   return {

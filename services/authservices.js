@@ -1,6 +1,6 @@
+import { marketPost } from "~/helpers/api_helpers";
 import urls from "../helpers/url_helpers";
-import { ssoPost, mattaPost, mattaGet } from "../services/api_services";
-
+import { ssoPost, mattaGet, mattaPost, deltaPost, orbitalPost } from "../services/api_services";
 //Authentication
 export async function loginUser(user, config = {}) {
   return await ssoPost(urls.LOGIN_USER, cleanObject(user), config);
@@ -61,4 +61,16 @@ export async function confirmEmail(email, code, config = {}) {
 // Matta Resend 2FA code endpoint
 export async function resendEmailVerification(email, config = {}) {
   return await ssoPost(urls.MATTA_RESEND_2FA, { email }, config);
+}
+
+export async function signUpWithMatta(data, config = {}) {
+  return await ssoPost(`${urls.SIGN_UP_WITH_MATTA}`, data, config);
+}
+
+export async function signUpWithMattaOrbital(data, config = {}) {
+  return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+}
+
+export async function signUpWithMattaFlux(data, config = {}) {
+  return await deltaPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
 }

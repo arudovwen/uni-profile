@@ -48,15 +48,18 @@ interface ConditionalField {
   label: string;
   type: "select" | "text" | "radio";
   options?: string[];
+  optionValues?: Array<{ label: string; value: number }>;
   placeholder?: string;
 }
 
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { state, addRoleSelection, getRoleSelection } = useOnboarding();
+const { state, addRoleSelection, getRoleSelection, submitOnboarding } =
+  useOnboarding();
 
 const isLoading = ref(false);
+const isSubmitting = ref(false);
 const error = ref("");
 const currentAppIndex = ref(0);
 const currentRoleSelection = ref("");
@@ -67,25 +70,47 @@ interface AppRoles {
   [appCode: string]: Role[];
 }
 
+// Vehicle type options for Flux (values match API)
+const vehicleOptions = [
+  { label: "Delivery Truck", value: 0 },
+  { label: "Sided Body", value: 1 },
+  { label: "Flat Bed Truck", value: 2 },
+  { label: "Tanker Truck", value: 3 },
+  { label: "Dump Truck", value: 4 },
+  { label: "Others", value: 5 },
+];
+
+// Truck size options for Flux (values in tons)
+const truckSizeOptions = [
+  { label: "3 Tons", value: 3 },
+  { label: "5 Tons", value: 5 },
+  { label: "7 Tons", value: 7 },
+  { label: "10 Tons", value: 10 },
+  { label: "15 Tons", value: 15 },
+  { label: "20 Tons", value: 20 },
+];
+
 const appRolesMap: AppRoles = {
-  FLU120: [
+  FLU722: [
     {
       value: "clients",
       label: "Clients",
       description: "Need a logistic and fulfillment partner",
       conditionalFields: [
         {
-          name: "truckType",
+          name: "preferredTruckType",
           label: "What kind of truck do you use the most?",
           type: "select",
-          options: ["Pickup", "Van", "Box Truck", "Semi Truck"],
+          options: vehicleOptions.map((opt) => opt.label),
+          optionValues: vehicleOptions,
           placeholder: "Select truck type",
         },
         {
-          name: "truckSize",
+          name: "preferredSize",
           label: "What size of truck do you use most?",
           type: "select",
-          options: ["Small", "Medium", "Large", "Extra Large"],
+          options: truckSizeOptions.map((opt) => opt.label),
+          optionValues: truckSizeOptions,
           placeholder: "Select truck size",
         },
       ],
@@ -97,7 +122,7 @@ const appRolesMap: AppRoles = {
       conditionalFields: [],
     },
   ],
-  OXI789: [
+  OXI975: [
     {
       value: "funder",
       label: "Funder",
@@ -117,8 +142,8 @@ const appRolesMap: AppRoles = {
       conditionalFields: [],
     },
   ],
-  ORB456: [],
-  POL321: [],
+  ORB789: [],
+  POL766: [],
 };
 
 const getAvailableRoles = (appCode: string): Role[] => {
@@ -150,7 +175,24 @@ const currentAppData = computed(() => {
   return appsWithRoles.value[currentAppIndex.value];
 });
 
-onMounted(() => {
+// Submit all apps and navigate to dashboard
+const completeOnboarding = async () => {
+  if (isSubmitting.value) return;
+
+  isSubmitting.value = true;
+  try {
+    await submitOnboarding();
+    toast.success("Successfully registered for selected applications");
+    router.push("/dashboard");
+  } catch (err: any) {
+    console.error("Onboarding submission error:", err);
+    toast.error(err.message || "Failed to complete registration");
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+onMounted(async () => {
   if (selectedApps.value.length === 0) {
     // No apps selected, redirect back to select-apps
     router.push(`/${auth}/onboarding/select-apps`);
@@ -158,8 +200,8 @@ onMounted(() => {
   }
 
   if (appsWithRoles.value.length === 0) {
-    // No apps with roles, skip to dashboard
-    router.push("/dashboard");
+    // No apps with roles, submit directly and go to dashboard
+    await completeOnboarding();
     return;
   }
 
@@ -183,7 +225,7 @@ const updateConditionalFields = (fields: Record<string, any>) => {
   currentConditionalFields.value = fields;
 };
 
-const handleNext = () => {
+const handleNext = async () => {
   if (!currentRoleSelection.value) {
     toast.error("Please select a role");
     return;
@@ -204,8 +246,8 @@ const handleNext = () => {
 
   // Check if this is the last app
   if (currentAppIndex.value === appsWithRoles.value.length - 1) {
-    // Navigate to dashboard
-    router.push("/dashboard");
+    // Submit all apps and navigate to dashboard
+    await completeOnboarding();
   } else {
     // Move to next app
     currentAppIndex.value++;

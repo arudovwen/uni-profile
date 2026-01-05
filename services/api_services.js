@@ -5,11 +5,10 @@ import { toast } from "vue3-toastify";
 const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
 
-
 // Base URL for API services
 const BASE_URL = "https://dev.proxy.oxidefinance.com";
 const SSO_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
-
+const MATTA_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
 // Create an Axios instance with custom configuration
 const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   const instance = Axios.create({
@@ -57,7 +56,8 @@ const axiosApi = createAxiosInstance("market");
 const axiosSSO = createAxiosInstance("sso", SSO_URL);
 const mattaApi = createAxiosInstance("matta");
 const walletApi = createAxiosInstance("wallet");
-const deltaApi = createAxiosInstance("flux");
+const deltaApi = createAxiosInstance("flux", SSO_URL);
+const orbitalApi = createAxiosInstance("market", SSO_URL);
 
 // Handle token refresh logic
 const handleTokenRefresh = async () => {
@@ -105,6 +105,7 @@ const mattaMethods = createApiMethods(mattaApi);
 const ssoMethods = createApiMethods(axiosSSO);
 const walletMethods = createApiMethods(walletApi);
 const deltaMethods = createApiMethods(deltaApi);
+const orbitalMethods = createApiMethods(orbitalApi);
 
 // Export the API methods
 export const { get, post, put, delete: del } = apiMethods;
@@ -127,3 +128,8 @@ export const deltaGet = deltaMethods.get;
 export const deltaPost = deltaMethods.post;
 export const deltaPut = deltaMethods.put;
 export const deltaDelete = deltaMethods.delete;
+
+export const orbitalGet = orbitalMethods.get;
+export const orbitalPost = orbitalMethods.post;
+export const orbitalPut = orbitalMethods.put;
+export const orbitalDelete = orbitalMethods.delete;

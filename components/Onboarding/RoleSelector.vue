@@ -73,10 +73,16 @@
             v-if="field.type === 'select'"
             :label="field.label"
             :modelValue="getDropdownValue(field.name)"
-            :options="transformOptions(field.options || [])"
+            :options="transformOptions(field.options || [], field.optionValues)"
             :placeholder="field.placeholder || `Select ${field.label}`"
             :showSearchFilter="(field.options?.length || 0) > 5"
-            @update:modelValue="(val) => updateConditionalField(field.name, val.name)"
+            @update:modelValue="
+              (val) =>
+                updateConditionalField(
+                  field.name,
+                  field.optionValues ? val.value : val.name
+                )
+            "
           />
         </div>
       </div>
@@ -113,6 +119,7 @@ interface ConditionalField {
   label: string;
   type: "select" | "text" | "radio";
   options?: string[];
+  optionValues?: Array<{ label: string; value: number }>;
   placeholder?: string;
 }
 
@@ -157,19 +164,46 @@ const selectedRoleConditionalFields = computed(
   () => selectedRole.value?.conditionalFields || []
 );
 
-// Transform string options to dropdown format { code, name }
-const transformOptions = (options: string[]) => {
+// Transform options to dropdown format { code, name, value }
+const transformOptions = (
+  options: string[],
+  optionValues?: Array<{ label: string; value: number }>
+) => {
+  if (optionValues && optionValues.length > 0) {
+    return optionValues.map((opt) => ({
+      code: opt.value,
+      name: opt.label,
+      value: opt.value,
+    }));
+  }
   return options.map((option) => ({
     code: option,
     name: option,
+    value: option,
   }));
 };
 
-// Get dropdown value object from stored string value
+// Get the optionValues for a given field
+const getFieldOptionValues = (fieldName: string) => {
+  const field = selectedRoleConditionalFields.value.find(
+    (f) => f.name === fieldName
+  );
+  return field?.optionValues;
+};
+
+// Get dropdown value object from stored value
 const getDropdownValue = (fieldName: string) => {
-  const value = conditionalFieldValues.value[fieldName];
-  if (!value) return null;
-  return { code: value, name: value };
+  const storedValue = conditionalFieldValues.value[fieldName];
+  if (storedValue === undefined || storedValue === null) return null;
+
+  const optionValues = getFieldOptionValues(fieldName);
+  if (optionValues) {
+    const found = optionValues.find((opt) => opt.value === storedValue);
+    if (found) {
+      return { code: found.value, name: found.label, value: found.value };
+    }
+  }
+  return { code: storedValue, name: storedValue, value: storedValue };
 };
 
 const selectRole = (roleValue: string) => {

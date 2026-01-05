@@ -73,11 +73,11 @@ const route = useRoute();
 const { auth } = route.params;
 const { setSelectedApps } = useOnboarding();
 
-// Mock apps data - matches the design screenshot
+// Apps data with updated codes
 const apps = ref<App[]>([
   {
     id: "1",
-    code: "FLU120",
+    code: "FLU722",
     name: "Flux Pro",
     description:
       "Real-time data flow management and monitoring system for enterprise workflows.",
@@ -85,7 +85,7 @@ const apps = ref<App[]>([
   },
   {
     id: "2",
-    code: "ORB456",
+    code: "ORB789",
     name: "Orbital Pro",
     description:
       "Real-time data flow management and monitoring system for enterprise workflows.",
@@ -93,7 +93,7 @@ const apps = ref<App[]>([
   },
   {
     id: "3",
-    code: "OXI789",
+    code: "OXI975",
     name: "Oxide Pro",
     description:
       "Payment requests and early invoice financing for merchants and vendors",
@@ -102,7 +102,7 @@ const apps = ref<App[]>([
   },
   {
     id: "4",
-    code: "POL321",
+    code: "POL766",
     name: "Polymer Pro",
     description:
       "Real-time data flow management and monitoring system for enterprise workflows.",
