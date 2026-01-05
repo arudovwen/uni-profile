@@ -1,9 +1,13 @@
 <template>
   <NuxtLayout name="dashboard">
-    <div class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[60px] pb-8">
+    <div
+      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[60px] pb-8"
+    >
       <!-- Welcome Header -->
       <div class="mb-5 sm:mb-[26px]">
-        <h1 class="text-2xl sm:text-3xl font-semibold text-[#2F2F2F] mb-1 sm:mb-2">
+        <h1
+          class="text-2xl sm:text-3xl font-semibold text-[#2F2F2F] mb-1 sm:mb-2"
+        >
           Welcome back, {{ userName }}!
         </h1>
         <p class="text-sm sm:text-base text-[#475467]">
@@ -12,7 +16,9 @@
       </div>
 
       <!-- Apps Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+      >
         <div
           v-for="app in userApps"
           :key="app.code"
@@ -58,12 +64,16 @@
           </div>
 
           <!-- App Name -->
-          <h3 class="text-base sm:text-lg font-semibold text-[#2F2F2F] mb-1.5 sm:mb-2">
+          <h3
+            class="text-base sm:text-lg font-semibold text-[#2F2F2F] mb-1.5 sm:mb-2"
+          >
             {{ app.name }}
           </h3>
 
           <!-- App Description -->
-          <p class="text-sm text-[#475467] mb-3 sm:mb-4 leading-relaxed line-clamp-2">
+          <p
+            class="text-sm text-[#475467] mb-3 sm:mb-4 leading-relaxed line-clamp-2"
+          >
             {{ app.description }}
           </p>
 
@@ -114,6 +124,8 @@ const roleDisplayNames: Record<string, string> = {
   funder: "Funder",
   merchant: "Merchant",
   vendor: "Vendor",
+  supplier: "Supplier",
+  buyer: "Buyer",
   user: "User",
   admin: "Administrator",
 };

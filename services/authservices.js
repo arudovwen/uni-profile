@@ -1,6 +1,13 @@
 import { marketPost } from "~/helpers/api_helpers";
 import urls from "../helpers/url_helpers";
-import { ssoPost, mattaGet, mattaPost, deltaPost, orbitalPost } from "../services/api_services";
+import {
+  ssoPost,
+  mattaGet,
+  mattaPost,
+  deltaPost,
+  orbitalPost,
+  oxideProPost,
+} from "../services/api_services";
 //Authentication
 export async function loginUser(user, config = {}) {
   return await ssoPost(urls.LOGIN_USER, cleanObject(user), config);
@@ -73,4 +80,11 @@ export async function signUpWithMattaOrbital(data, config = {}) {
 
 export async function signUpWithMattaFlux(data, config = {}) {
   return await deltaPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
+}
+export async function signUpWithMattaOxidePro(data, config = {}) {
+  return await oxideProPost(
+    `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}`,
+    data,
+    config
+  );
 }

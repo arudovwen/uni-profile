@@ -124,21 +124,15 @@ const appRolesMap: AppRoles = {
   ],
   OXI975: [
     {
-      value: "funder",
-      label: "Funder",
-      description: "Provide early invoice financing",
+      value: "Supplier",
+      label: "Supplier",
+      description: "Fund early invoice payments",
       conditionalFields: [],
     },
     {
-      value: "merchant",
-      label: "Merchant",
-      description: "Merchant selling goods and services",
-      conditionalFields: [],
-    },
-    {
-      value: "vendor",
-      label: "Vendor",
-      description: "Vendor providing services",
+      value: "Buyer",
+      label: "Buyer",
+      description: "Request invoice financing",
       conditionalFields: [],
     },
   ],

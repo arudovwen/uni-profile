@@ -9,10 +9,12 @@ let refreshAttemptCount = 0;
 const BASE_URL = "https://dev.proxy.oxidefinance.com";
 const SSO_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
 const MATTA_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
+const OXIDE_PRO_URL =
+  process.env.OXIDE_PRO_URL || "https://dev.oxidepro.api.oxidefinance.com/api";
 // Create an Axios instance with custom configuration
 const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   const instance = Axios.create({
-    baseURL: `${baseUrl}/${service}/`,
+    baseURL: `${baseUrl}${service ? `/${service}` : ""}`,
   });
 
   instance.interceptors.request.use((config) => {
@@ -58,6 +60,7 @@ const mattaApi = createAxiosInstance("matta");
 const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux", SSO_URL);
 const orbitalApi = createAxiosInstance("market", SSO_URL);
+const oxideProApi = createAxiosInstance("", OXIDE_PRO_URL);
 
 // Handle token refresh logic
 const handleTokenRefresh = async () => {
@@ -106,6 +109,7 @@ const ssoMethods = createApiMethods(axiosSSO);
 const walletMethods = createApiMethods(walletApi);
 const deltaMethods = createApiMethods(deltaApi);
 const orbitalMethods = createApiMethods(orbitalApi);
+const oxideProMethods = createApiMethods(oxideProApi);
 
 // Export the API methods
 export const { get, post, put, delete: del } = apiMethods;
@@ -133,3 +137,8 @@ export const orbitalGet = orbitalMethods.get;
 export const orbitalPost = orbitalMethods.post;
 export const orbitalPut = orbitalMethods.put;
 export const orbitalDelete = orbitalMethods.delete;
+
+export const oxideProGet = oxideProMethods.get;
+export const oxideProPost = oxideProMethods.post;
+export const oxideProPut = oxideProMethods.put;
+export const oxideProDelete = oxideProMethods.delete;

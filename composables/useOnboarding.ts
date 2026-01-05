@@ -3,6 +3,7 @@ import {
   signUpWithMatta,
   signUpWithMattaFlux,
   signUpWithMattaOrbital,
+  signUpWithMattaOxidePro,
 } from "~/services/authservices";
 
 export interface RoleSelection {
@@ -28,11 +29,10 @@ const fluxRoleToUserType: Record<string, number> = {
   truckers: 1,
 };
 
-// Role to userType mapping for Oxide
-const oxideRoleToUserType: Record<string, number> = {
-  funder: 0,
-  merchant: 1,
-  vendor: 2,
+// Role to accountType mapping for Oxide Pro (string values)
+const oxideRoleToAccountType: Record<string, string> = {
+  Supplier: "Supplier",
+  Buyer: "Buyer",
 };
 
 const defaultState: OnboardingState = {
@@ -115,13 +115,23 @@ export const useOnboarding = () => {
       }
 
       case "OXI975": {
-        // Oxide has roles: funder, merchant, vendor
-        const userType = roleSelection
-          ? oxideRoleToUserType[roleSelection.role] ?? 0
-          : 0;
+        // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
+        const accountType = roleSelection
+          ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
+          : "Buyer";
+        const username =
+          authStore.loggedUser?.fullName ||
+          authStore.userInfo?.fullName ||
+          "";
         return {
-          ...basePayload,
-          userType,
+          email: encryptedEmail,
+          username,
+          accountType,
+          country: "Nigeria",
+          appCode,
+          accessToken: authStore.jwToken || "",
+          ssoUserCategory: "Admin",
+          tenant: 1,
         };
       }
 
@@ -140,6 +150,8 @@ export const useOnboarding = () => {
         return signUpWithMattaFlux;
       case "ORB789":
         return signUpWithMattaOrbital;
+      case "OXI975":
+        return signUpWithMattaOxidePro;
       default:
         return signUpWithMatta;
     }

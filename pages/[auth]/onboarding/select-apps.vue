@@ -40,10 +40,16 @@
         <button
           type="button"
           class="w-full md:max-w-[218px] py-3 px-4 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="selectedAppsData.length === 0"
+          :disabled="selectedAppsData.length === 0 || isSubmitting"
           @click="continueToRoles"
         >
-          Continue to Roles
+          {{
+            isSubmitting
+              ? "Processing..."
+              : hasAppsWithRoles
+                ? "Continue to Roles"
+                : "Complete Setup"
+          }}
         </button>
       </div>
     </div>
@@ -71,7 +77,12 @@ interface App {
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { setSelectedApps } = useOnboarding();
+const { setSelectedApps, submitOnboarding } = useOnboarding();
+
+// Apps that have roles to select
+const appsWithRoles = ["FLU722", "OXI975"];
+
+const isSubmitting = ref(false);
 
 // Apps data with updated codes
 const apps = ref<App[]>([
@@ -130,7 +141,12 @@ const toggleApp = (app: App) => {
   }
 };
 
-const continueToRoles = () => {
+// Check if any selected apps require role selection
+const hasAppsWithRoles = computed(() => {
+  return selectedAppsData.value.some((app) => appsWithRoles.includes(app.code));
+});
+
+const continueToRoles = async () => {
   if (selectedAppsData.value.length === 0) {
     toast.error("Please select at least one application");
     return;
@@ -145,6 +161,22 @@ const continueToRoles = () => {
       iconUrl: app.iconUrl,
     }))
   );
+
+  // If no selected apps have roles, submit directly and go to dashboard
+  if (!hasAppsWithRoles.value) {
+    isSubmitting.value = true;
+    try {
+      await submitOnboarding();
+      toast.success("Successfully registered for selected applications");
+      router.push("/dashboard");
+    } catch (err: any) {
+      console.error("Onboarding submission error:", err);
+      toast.error(err.message || "Failed to complete registration");
+    } finally {
+      isSubmitting.value = false;
+    }
+    return;
+  }
 
   // Navigate to select-roles page
   router.push(`/${auth}/onboarding/select-roles`);
