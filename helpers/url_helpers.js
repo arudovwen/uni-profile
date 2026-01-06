@@ -25,7 +25,7 @@ const urls = {
   OXIDE_CONFIRM_EMAIL: "v1/onboarding/confirm-email",
   OXIDE_ONBOARDING_SIGNUP: "v1/onboarding/sign-up-with-matta-account",
   SIGN_UP_WITH_MATTA_ORBITAL: "v1/Register/sign-up-with-matta-account",
-  SIGN_UP_WITH_MATTA_FLUX: "v1/Register/sign-up-with-matta-account",
+  SIGN_UP_WITH_MATTA_FLUX: "v1/onboarding/sign-up-with-matta-account",
   SIGN_UP_WITH_MATTA_OXIDE_PRO: "v1/Account/sign-up-with-matta",
 
   FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
