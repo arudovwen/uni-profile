@@ -122,7 +122,13 @@ const appRolesMap: AppRoles = {
       conditionalFields: [],
     },
   ],
-  OXI975: [
+  OXP975: [
+    {
+      value: "Funder",
+      label: "Funder",
+      description: "",
+      conditionalFields: [],
+    },
     {
       value: "Supplier",
       label: "Supplier",

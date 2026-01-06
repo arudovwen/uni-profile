@@ -31,6 +31,7 @@ const fluxRoleToUserType: Record<string, number> = {
 
 // Role to accountType mapping for Oxide Pro (string values)
 const oxideRoleToAccountType: Record<string, string> = {
+  Funder: "Funder",
   Supplier: "Supplier",
   Buyer: "Buyer",
 };
@@ -45,7 +46,7 @@ export const useOnboarding = () => {
   const state = useState<OnboardingState>("onboarding", () => ({
     ...defaultState,
   }));
-  const { encrypt } = useEncryption();
+  const { encrypt, decrypt } = useEncryption();
   const authStore = useAuthStore();
 
   const setSelectedApps = (apps: OnboardingState["selectedApps"]) => {
@@ -114,24 +115,23 @@ export const useOnboarding = () => {
         return payload;
       }
 
-      case "OXI975": {
+      case "OXP975": {
         // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
         const accountType = roleSelection
           ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
           : "Buyer";
         const username =
-          authStore.loggedUser?.fullName ||
-          authStore.userInfo?.fullName ||
-          "";
+          authStore.loggedUser?.fullName || authStore.userInfo?.fullName || "";
         return {
-          email: encryptedEmail,
-          username,
+          email: decrypt(encryptedEmail),
+          username: username.replace(/\s+/g, ""),
           accountType,
           country: "Nigeria",
           appCode,
-          accessToken: authStore.jwToken || "",
+          accessToken: null,
           ssoUserCategory: "Admin",
           tenant: 1,
+          slug: accountType !== "Funder" ? "tolufundone" : null,
         };
       }
 
@@ -150,7 +150,7 @@ export const useOnboarding = () => {
         return signUpWithMattaFlux;
       case "ORB789":
         return signUpWithMattaOrbital;
-      case "OXI975":
+      case "OXP975":
         return signUpWithMattaOxidePro;
       default:
         return signUpWithMatta;
@@ -175,6 +175,7 @@ export const useOnboarding = () => {
     for (const app of state.value.selectedApps) {
       try {
         const payload = buildAppPayload(app.code, encryptedEmail);
+        console.log("Email = ", userEmail, decrypt(userEmail));
         const signupFn = getSignupFunction(app.code);
         console.log(`Submitting signup for ${app.code}:`, payload);
         await signupFn(payload);

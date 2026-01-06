@@ -80,7 +80,7 @@ const { auth } = route.params;
 const { setSelectedApps, submitOnboarding } = useOnboarding();
 
 // Apps that have roles to select
-const appsWithRoles = ["FLU722", "OXI975"];
+const appsWithRoles = ["FLU722", "OXP975"];
 
 const isSubmitting = ref(false);
 
@@ -104,7 +104,7 @@ const apps = ref<App[]>([
   },
   {
     id: "3",
-    code: "OXI975",
+    code: "OXP975",
     name: "Oxide Pro",
     description:
       "Payment requests and early invoice financing for merchants and vendors",

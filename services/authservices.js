@@ -83,7 +83,7 @@ export async function signUpWithMattaFlux(data, config = {}) {
 }
 export async function signUpWithMattaOxidePro(data, config = {}) {
   return await oxideProPost(
-    `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}`,
+    `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,
     data,
     config
   );
