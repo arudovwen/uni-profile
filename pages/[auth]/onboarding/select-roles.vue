@@ -13,6 +13,7 @@
           :roles="getAvailableRoles(currentAppData.code)"
           :modelValue="currentRoleSelection"
           :isLastApp="currentAppIndex === appsWithRoles.length - 1"
+          :isSubmitting="isSubmitting"
           :currentAppNumber="currentAppNumber"
           :totalAppsWithRoles="totalAppsWithRoles"
           @update:modelValue="updateRole"
@@ -55,7 +56,7 @@ interface ConditionalField {
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { state, addRoleSelection, getRoleSelection, submitOnboarding } =
+const { state, addRoleSelection, getRoleSelection, submitOnboarding, setSlug } =
   useOnboarding();
 
 const isLoading = ref(false);
@@ -183,7 +184,7 @@ const completeOnboarding = async () => {
   try {
     await submitOnboarding();
     toast.success("Successfully registered for selected applications");
-    router.push("/dashboard");
+    router.push("/");
   } catch (err: any) {
     console.error("Onboarding submission error:", err);
     toast.error(err.message || "Failed to complete registration");
@@ -193,6 +194,11 @@ const completeOnboarding = async () => {
 };
 
 onMounted(async () => {
+  // Capture slug from URL if present
+  if (route.query.slug) {
+    setSlug(route.query.slug as string);
+  }
+
   if (selectedApps.value.length === 0) {
     // No apps selected, redirect back to select-apps
     router.push(`/${auth}/onboarding/select-apps`);

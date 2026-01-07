@@ -34,7 +34,7 @@
           class="flex items-center gap-1 sm:gap-[10px] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0"
         >
           <NuxtLink
-            to="/dashboard"
+            to="/"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('apps')
@@ -47,7 +47,7 @@
           </NuxtLink>
 
           <NuxtLink
-            to="/dashboard?tab=users"
+            to="/?tab=users"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('users')
@@ -60,7 +60,7 @@
           </NuxtLink>
 
           <NuxtLink
-            to="/dashboard?tab=logs"
+            to="/?tab=logs"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('logs')
@@ -73,7 +73,7 @@
           </NuxtLink>
 
           <NuxtLink
-            to="/dashboard?tab=settings"
+            to="/?tab=settings"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('settings')

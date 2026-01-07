@@ -35,7 +35,14 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "@nuxt/test-utils/module",
     "nuxt-svgo",
+    "@primevue/nuxt-module",
   ],
+
+  primevue: {
+    options: {
+      unstyled: true,
+    },
+  },
 
   security: {
     hidePoweredBy: false,

@@ -28,6 +28,7 @@ import { confirmEmail } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
+import { useOnboarding } from "~/composables/useOnboarding";
 
 definePageMeta({
   middleware: "auth",
@@ -44,6 +45,10 @@ const router = useRouter();
 const { auth, app } = route.params;
 const authStore = useAuthStore();
 const newEmail = useCookie("email", defaultOptions);
+const { setSlug } = useOnboarding();
+
+// Get slug from URL params
+const slug = computed(() => (route.query.slug as string) || null);
 
 const step = ref(1);
 const isLoading = ref(false);
@@ -81,9 +86,13 @@ const handleOtpSubmit = async (code: string) => {
       // Clear cookies
       newEmail.value = null;
 
-      // Navigate to onboarding
+      // Store slug in onboarding state
+      setSlug(slug.value);
+
+      // Navigate to onboarding with slug param
       setTimeout(() => {
-        router.push(`/${auth}/onboarding/select-apps`);
+        const query = slug.value ? { slug: slug.value } : {};
+        router.push({ path: `/${auth}/onboarding/select-apps`, query });
       }, 1000);
     }
   } catch (err) {

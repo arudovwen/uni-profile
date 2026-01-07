@@ -100,10 +100,16 @@
         <button
           type="button"
           class="px-8 py-3 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="!modelValue"
+          :disabled="!modelValue || isSubmitting"
           @click="handleNext"
         >
-          {{ isLastApp ? "Continue" : "Next Application" }}
+          {{
+            isSubmitting
+              ? "Processing..."
+              : isLastApp
+                ? "Continue"
+                : "Next Application"
+          }}
         </button>
       </div>
     </div>
@@ -136,6 +142,7 @@ interface Props {
   roles: Role[];
   modelValue?: string;
   isLastApp?: boolean;
+  isSubmitting?: boolean;
   currentAppNumber: number;
   totalAppsWithRoles: number;
 }
@@ -143,6 +150,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   modelValue: "",
   isLastApp: false,
+  isSubmitting: false,
   currentAppNumber: 1,
   totalAppsWithRoles: 1,
 });

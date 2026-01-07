@@ -21,6 +21,7 @@ export interface OnboardingState {
   }>;
   roleSelections: RoleSelection[];
   currentStep: number;
+  slug: string | null;
 }
 
 // Role to userType mapping for Flux
@@ -40,6 +41,7 @@ const defaultState: OnboardingState = {
   selectedApps: [],
   roleSelections: [],
   currentStep: 1,
+  slug: null,
 };
 
 export const useOnboarding = () => {
@@ -51,6 +53,10 @@ export const useOnboarding = () => {
 
   const setSelectedApps = (apps: OnboardingState["selectedApps"]) => {
     state.value.selectedApps = apps;
+  };
+
+  const setSlug = (slug: string | null) => {
+    state.value.slug = slug;
   };
 
   const addRoleSelection = (selection: RoleSelection) => {
@@ -131,7 +137,7 @@ export const useOnboarding = () => {
           accessToken: null,
           ssoUserCategory: "Admin",
           tenant: 1,
-          slug: accountType !== "Funder" ? "tolufundone" : null,
+          slug: accountType !== "Funder" ? state.value.slug : null,
         };
       }
 
@@ -201,6 +207,7 @@ export const useOnboarding = () => {
   return {
     state,
     setSelectedApps,
+    setSlug,
     addRoleSelection,
     getRoleSelection,
     setCurrentStep,

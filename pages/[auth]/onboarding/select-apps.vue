@@ -77,7 +77,17 @@ interface App {
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { setSelectedApps, submitOnboarding } = useOnboarding();
+const { setSelectedApps, setSlug, submitOnboarding, state } = useOnboarding();
+
+// Get slug from URL query or state
+const slug = computed(() => (route.query.slug as string) || state.value.slug);
+
+// Store slug from URL on mount
+onMounted(() => {
+  if (route.query.slug) {
+    setSlug(route.query.slug as string);
+  }
+});
 
 // Apps that have roles to select
 const appsWithRoles = ["FLU722", "OXP975"];
@@ -168,7 +178,7 @@ const continueToRoles = async () => {
     try {
       await submitOnboarding();
       toast.success("Successfully registered for selected applications");
-      router.push("/dashboard");
+      router.push("/");
     } catch (err: any) {
       console.error("Onboarding submission error:", err);
       toast.error(err.message || "Failed to complete registration");
@@ -178,7 +188,8 @@ const continueToRoles = async () => {
     return;
   }
 
-  // Navigate to select-roles page
-  router.push(`/${auth}/onboarding/select-roles`);
+  // Navigate to select-roles page with slug
+  const query = slug.value ? { slug: slug.value } : {};
+  router.push({ path: `/${auth}/onboarding/select-roles`, query });
 };
 </script>
