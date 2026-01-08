@@ -1,17 +1,12 @@
 <template>
-  <div :class="[inputWrapperStyle, 'w-full flex flex-col font-onest']">
-    <div v-if="label" class="flex items-start">
-      <span
-        class="mb-2 text-base text-[#344054] font-medium leading-[1.25rem]"
-      >
+  <div :class="[inputWrapperStyle, 'w-full flex flex-col gap-1 font-Avenir']">
+    <div v-if="label" class="flex items-center">
+      <span class="text-sm font-medium text-[#2F2F2F] leading-5">
         {{ label }}
       </span>
       <span
         v-if="showAsterisk"
-        :class="[
-          asteriskClassName,
-          'text-[#7F56D9] text-base font-[500] mx-1',
-        ]"
+        :class="[asteriskClassName, 'text-[#7F56D9] text-sm font-medium ml-0.5']"
       >
         *
       </span>
@@ -19,26 +14,27 @@
     <div
       :class="[
         containerStyle,
-        'flex h-12 items-center px-4 border rounded-lg shadow-sm shadow-[#1018280D]',
+        'flex h-[41px] items-center px-[17px] py-[11px] border rounded-[5px]',
         disabled
           ? 'bg-[#FAFAFA] border-[#D5D7DA]'
-          : 'bg-white border-[#D0D5DD]',
+          : 'bg-white border-[#E2E2E2]',
+        error ? 'border-[#F04438]' : '',
       ]"
     >
       <div
         v-if="hasLeftSection"
         :class="[
           sectionStyle,
-          'border-r border-[#D5D7DA] px-3.5 h-full flex items-center justify-center gap-1',
+          'border-r border-[#E2E2E2] pr-3 mr-3 h-full flex items-center justify-center gap-1',
         ]"
         @click="$emit('sectionClick')"
       >
         <img v-if="leftSectionIcon" :src="leftSectionIcon" alt="" />
-        <p class="text-base text-[#475467] font-normal">
+        <p class="text-sm text-[#475467] font-normal">
           {{ leftSectionText }}
         </p>
       </div>
-      <div v-if="hasLeftIcon" class="">
+      <div v-if="hasLeftIcon" class="mr-2">
         <slot name="leftIcon" />
       </div>
       <input
@@ -46,8 +42,8 @@
         :placeholder="placeholder"
         :class="[
           className,
-          'w-full bg-transparent border-0 focus:outline-none py-2 px-2 text-base font-normal placeholder:text-[#667085]',
-          disabled ? 'text-[#717680]' : 'text-[#101828]',
+          'w-full bg-transparent border-0 focus:outline-none text-sm font-normal placeholder:text-[#667085]',
+          disabled ? 'text-[#717680]' : 'text-[#475467]',
         ]"
         :type="type"
         :value="modelValue"
@@ -56,42 +52,46 @@
         @input="handleInput"
         @keydown="$emit('keydown', $event)"
       />
-      <div v-if="hasRightIcon" class="">
+      <div v-if="hasRightIcon" class="ml-2">
         <slot name="rightIcon" />
       </div>
       <div
         v-if="hasRightSection"
         :class="[
           sectionStyle,
-          'bg-white cursor-pointer border-l border-[#D5D7DA] px-4.5 h-full flex items-center justify-center gap-1.5',
+          'bg-white cursor-pointer border-l border-[#E2E2E2] pl-3 ml-3 h-full flex items-center justify-center gap-1.5',
         ]"
         @click="$emit('sectionClick')"
       >
         <img v-if="rightSectionIcon" :src="rightSectionIcon" alt="" />
-        <p class="text-base text-[#344054] font-medium">
+        <p class="text-sm text-[#344054] font-medium">
           {{ rightSectionText }}
         </p>
       </div>
       <div
         v-if="isPasswordField"
-        class="cursor-pointer z-20"
+        class="cursor-pointer z-20 ml-2"
         @click="$emit('togglePassword')"
       >
         <AppIcon
           v-if="type === 'password'"
           icon="la:eye-slash"
-          iconClass="text-[#2F2F2F] text-[22px] font-bold"
+          iconClass="text-[#667085] text-[20px]"
         />
-        <AppIcon v-else icon="la:eye" iconClass="text-[#2F2F2F] text-[22px] font-bold" />
+        <AppIcon
+          v-else
+          icon="la:eye"
+          iconClass="text-[#667085] text-[20px]"
+        />
       </div>
     </div>
     <span
       v-if="hintText"
-      class="mt-2 text-base text-[#475467] font-[400] leading-[1.25rem]"
+      class="text-sm text-[#475467] font-normal leading-5"
     >
       {{ hintText }}
     </span>
-    <span v-if="error" class="mt-2 text-sm text-[#F04438] font-[400]">
+    <span v-if="error" class="text-xs text-[#F04438] font-normal">
       {{ error }}
     </span>
   </div>

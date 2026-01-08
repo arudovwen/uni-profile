@@ -162,7 +162,7 @@ const handleFinalRedirect = (data) => {
   }
   toast.success("Login successful");
   isLoading.value = false;
-  window.location.replace(intialRoute[data?.userCategory]);
+  window.location.replace("/");
 };
 
 const handleLoginError = (err, email) => {

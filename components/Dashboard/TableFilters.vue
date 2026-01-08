@@ -23,7 +23,7 @@
         type="text"
         :value="modelValue"
         :placeholder="searchPlaceholder"
-        class="w-full pl-10 pr-4 py-2.5 text-sm border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1570EF] focus:border-transparent placeholder:text-[#9CA3AF]"
+        class="w-full pl-10 pr-4 py-[7px] text-sm border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1570EF] focus:border-transparent placeholder:text-[#9CA3AF]"
         @input="
           $emit('update:modelValue', ($event.target as HTMLInputElement).value)
         "
@@ -40,20 +40,35 @@
     <button
       v-if="showDownload"
       type="button"
-      class="p-2.5 border border-[#E5E7EB] rounded-lg hover:bg-[#F9FAFB] transition-colors"
+      class="w-9 h-9 flex items-center justify-center border border-[#E4E7EC] rounded-md bg-white hover:bg-[#F9FAFB] transition-colors"
       @click="$emit('download')"
     >
       <svg
-        class="w-5 h-5 text-[#475467]"
+        class="w-4 h-4"
+        viewBox="0 0 16 16"
         fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
       >
         <path
+          d="M8 10.5V2.5"
+          stroke="#98A2B3"
+          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+        />
+        <path
+          d="M5.5 8L8 10.5L10.5 8"
+          stroke="#98A2B3"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+        <path
+          d="M2.5 13.5H13.5"
+          stroke="#98A2B3"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
         />
       </svg>
     </button>

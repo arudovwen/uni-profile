@@ -107,15 +107,22 @@
               >
                 <div
                   v-if="activeActionMenu === index"
-                  class="absolute right-0 top-full mt-1 w-40 bg-white border border-[#E4E7EC] rounded-lg shadow-lg z-50 py-1"
+                  class="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E4E7EC] rounded-lg shadow-lg z-50 py-1"
                 >
                   <button
                     v-for="action in actions"
                     :key="action.key"
                     type="button"
-                    class="w-full px-4 py-2 text-sm text-left text-[#344054] hover:bg-[#F9FAFB] transition-colors"
+                    class="w-full px-4 py-2 text-sm text-left hover:bg-[#F9FAFB] transition-colors flex items-center gap-2"
+                    :class="action.textColor || 'text-[#344054]'"
                     @click="handleAction(action.key, data, index)"
                   >
+                    <component
+                      v-if="action.icon"
+                      :is="action.icon"
+                      class="w-4 h-4"
+                      :class="action.iconColor || 'text-[#667085]'"
+                    />
                     {{ action.label }}
                   </button>
                 </div>
@@ -142,6 +149,9 @@ export interface TableColumn {
 export interface TableAction {
   key: string;
   label: string;
+  icon?: string;
+  iconColor?: string;
+  textColor?: string;
 }
 
 interface Props {

@@ -1,6 +1,10 @@
 <template>
   <NuxtLayout name="dashboard">
+    <!-- Settings Tab (full width, no wrapper) -->
+    <DashboardSettingsContent v-if="currentTab === 'settings'" />
+
     <div
+      v-else
       class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8"
     >
       <!-- Users Tab -->

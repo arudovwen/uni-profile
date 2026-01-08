@@ -2,7 +2,7 @@
   <div class="relative" ref="pickerRef">
     <button
       type="button"
-      class="flex items-center gap-2 px-3 py-2.5 text-sm border border-[#E5E7EB] rounded-lg hover:bg-[#F9FAFB] transition-colors min-w-[140px]"
+      class="flex items-center gap-2 px-3 py-[7px] text-sm border bg-[#FFFFFF] border-[#E5E7EB] rounded-lg hover:bg-[#F9FAFB] transition-colors min-w-[140px]"
       @click="isOpen = !isOpen"
     >
       <!-- Calendar Icon -->

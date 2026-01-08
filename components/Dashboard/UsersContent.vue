@@ -15,15 +15,15 @@
     >
       <template #filters>
         <DashboardFilterDropdown
-          v-model="filters.app"
-          :options="appOptions"
-          placeholder="App"
-          @change="handleFilterChange"
-        />
-        <DashboardFilterDropdown
           v-model="filters.role"
           :options="roleOptions"
           placeholder="Role"
+          @change="handleFilterChange"
+        />
+        <DashboardFilterDropdown
+          v-model="filters.status"
+          :options="statusOptions"
+          placeholder="Status"
           @change="handleFilterChange"
         />
       </template>
@@ -43,100 +43,126 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, markRaw } from "vue";
+import SuspendIcon from "~/assets/images/icon/SuspendIcon.vue";
+import ReactivateIcon from "~/assets/images/icon/ReactivateIcon.vue";
+import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";
 
 const searchQuery = ref("");
 const isLoading = ref(false);
 
 const filters = ref({
-  app: null as string | null,
   role: null as string | null,
+  status: null as string | null,
 });
-
-const appOptions = [
-  { label: "Flux Pro", value: "FLU722" },
-  { label: "Orbital Pro", value: "ORB789" },
-  { label: "Oxide Pro", value: "OXP975" },
-  { label: "Polymer Pro", value: "POL766" },
-];
 
 const roleOptions = [
   { label: "Admin", value: "Admin" },
-  { label: "Owner", value: "Owner" },
-  { label: "Super Admin", value: "Super Admin" },
-  { label: "User", value: "User" },
+  { label: "Platform User", value: "Platform User" },
+  { label: "Member", value: "Member" },
+];
+
+const statusOptions = [
+  { label: "All", value: "all" },
+  { label: "Active", value: "Active" },
+  { label: "Inactive", value: "Inactive" },
+  { label: "Pending Invite", value: "Pending Invite" },
 ];
 
 // Table columns
 const columns = [
-  { field: "name", header: "User" },
+  { field: "user", header: "User" },
   { field: "role", header: "Role" },
-  { field: "app", header: "App" },
+  { field: "joined", header: "Joined" },
   { field: "lastSeen", header: "Last Seen" },
   { field: "status", header: "Status" },
 ];
 
 const actions = [
-  { key: "view", label: "View Details" },
-  { key: "edit", label: "Edit User" },
-  { key: "remove", label: "Remove User" },
+  {
+    key: "suspend",
+    label: "Suspend User",
+    icon: markRaw(SuspendIcon),
+    iconColor: "text-[#667085]",
+    textColor: "text-[#344054]",
+  },
+  {
+    key: "reactivate",
+    label: "Reactivate User",
+    icon: markRaw(ReactivateIcon),
+    iconColor: "text-[#667085]",
+    textColor: "text-[#344054]",
+  },
+  {
+    key: "delete",
+    label: "Delete User",
+    icon: markRaw(DeleteIcon),
+    iconColor: "text-[#D92D20]",
+    textColor: "text-[#D92D20]",
+  },
 ];
 
 // Sample data
 const users = ref([
   {
     id: 1,
-    name: "Adeleke Laketu",
+    user: "Adeleke Laketu",
     email: "sodlak007@gmail.com",
+    avatar: "",
     role: "Admin",
-    app: "Oxide Pro",
+    joined: "Dec 1, 2025",
     lastSeen: "Dec 6, 2025 11:52 PM",
     status: "Active",
   },
   {
     id: 2,
-    name: "Wade Warren",
+    user: "Wade Warren",
     email: "deanna.curtis@example.com",
-    role: "Owner",
-    app: "Orbital Pro",
+    avatar: "",
+    role: "Platform User",
+    joined: "Nov 15, 2025",
     lastSeen: "Dec 6, 2025 11:52 PM",
-    status: "Pending",
+    status: "Pending Invite",
   },
   {
     id: 3,
-    name: "Cameron Williamson",
+    user: "Cameron Williamson",
     email: "willie.jennings@example.com",
-    role: "Super Admin",
-    app: "Flux Pro",
+    avatar: "",
+    role: "Admin",
+    joined: "Oct 20, 2025",
     lastSeen: "Dec 6, 2025 11:52 PM",
     status: "Active",
   },
   {
     id: 4,
-    name: "Ralph Edwards",
+    user: "Ralph Edwards",
     email: "sara.cruz@example.com",
-    role: "Admin",
-    app: "Polymer Pro",
-    lastSeen: "Dec 6, 2025 11:52 PM",
-    status: "Pending",
-  },
-  {
-    id: 5,
-    name: "Jacob Jones",
-    email: "georgia.young@example.com",
-    role: "Admin",
-    app: "Orbital Pro",
+    avatar: "",
+    role: "Member",
+    joined: "Sep 10, 2025",
     lastSeen: "Dec 6, 2025 11:52 PM",
     status: "Inactive",
   },
   {
-    id: 6,
-    name: "Annette Black",
-    email: "felicia.reid@example.com",
-    role: "Admin",
-    app: "Orbital Pro",
+    id: 5,
+    user: "Jacob Jones",
+    email: "georgia.young@example.com",
+    avatar: "",
+    role: "Platform User",
+    joined: "Aug 5, 2025",
     lastSeen: "Dec 6, 2025 11:52 PM",
-    status: "Pending",
+    status: "Active",
+  },
+  {
+    id: 6,
+    user: "Annette Black",
+    email: "felicia.reid@example.com",
+    avatar: "",
+    role: "Member",
+    joined: "Jul 22, 2025",
+    lastSeen: "Dec 6, 2025 11:52 PM",
+    status: "Pending Invite",
   },
 ]);
 
@@ -148,19 +174,17 @@ const filteredUsers = computed(() => {
     const query = searchQuery.value.toLowerCase();
     result = result.filter(
       (user) =>
-        user.name.toLowerCase().includes(query) ||
+        user.user.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query)
     );
   }
 
-  if (filters.value.app) {
-    const appName =
-      appOptions.find((a) => a.value === filters.value.app)?.label || "";
-    result = result.filter((user) => user.app === appName);
-  }
-
   if (filters.value.role) {
     result = result.filter((user) => user.role === filters.value.role);
+  }
+
+  if (filters.value.status && filters.value.status !== "all") {
+    result = result.filter((user) => user.status === filters.value.status);
   }
 
   return result;

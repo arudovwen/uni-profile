@@ -2,24 +2,25 @@
   <div class="relative" ref="dropdownRef">
     <button
       type="button"
-      class="flex items-center gap-2 px-3 py-2.5 text-sm border border-[#E5E7EB] rounded-lg hover:bg-[#F9FAFB] transition-colors min-w-[100px]"
+      class="flex items-center justify-between px-3 py-[9px] h-9 text-sm font-medium border border-[#E4E7EC] rounded-md bg-white hover:bg-[#F9FAFB] transition-colors min-w-[91px] gap-2.5"
       @click="isOpen = !isOpen"
     >
-      <span :class="modelValue ? 'text-[#2F2F2F]' : 'text-[#9CA3AF]'">
+      <span :class="modelValue ? 'text-[#344054]' : 'text-[#9CA3AF]'">
         {{ displayText }}
       </span>
       <svg
-        class="w-4 h-4 text-[#9CA3AF] ml-auto transition-transform"
+        class="w-[13px] h-2 transition-transform"
         :class="{ 'rotate-180': isOpen }"
+        viewBox="0 0 13 8"
         fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
       >
         <path
+          d="M1 1.5L6.5 7L12 1.5"
+          stroke="#D0D5DD"
+          stroke-width="1.5"
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
         />
       </svg>
     </button>
@@ -35,33 +36,34 @@
     >
       <div
         v-if="isOpen"
-        class="absolute top-full left-0 mt-1 w-full min-w-[150px] bg-white border border-[#E5E7EB] rounded-lg shadow-lg z-50 py-1"
+        class="absolute top-full left-0 mt-1 min-w-[132px] bg-white border border-black/[0.08] rounded-lg z-50 py-1 shadow-[0px_12px_16px_-4px_rgba(10,13,18,0.08),0px_4px_6px_-2px_rgba(10,13,18,0.03),0px_2px_2px_-1px_rgba(10,13,18,0.04)]"
       >
         <!-- Clear option -->
-        <button
-          v-if="modelValue && clearable"
-          type="button"
-          class="w-full px-3 py-2 text-sm text-left text-[#9CA3AF] hover:bg-[#F9FAFB] transition-colors"
-          @click="selectOption(null)"
-        >
-          Clear
-        </button>
+        <div v-if="modelValue && clearable" class="px-1.5 py-[1px]">
+          <button
+            type="button"
+            class="w-full px-2 py-2.5 text-sm font-medium text-left text-[#9CA3AF] hover:bg-[#E4E7EC] rounded-md transition-colors"
+            @click="selectOption(null)"
+          >
+            Clear
+          </button>
+        </div>
 
         <!-- Options -->
-        <button
+        <div
           v-for="option in normalizedOptions"
           :key="option.value"
-          type="button"
-          class="w-full px-3 py-2 text-sm text-left hover:bg-[#F9FAFB] transition-colors"
-          :class="
-            modelValue === option.value
-              ? 'text-[#1570EF] bg-[#EFF6FF]'
-              : 'text-[#2F2F2F]'
-          "
-          @click="selectOption(option.value)"
+          class="px-1.5 py-[1px]"
         >
-          {{ option.label }}
-        </button>
+          <button
+            type="button"
+            class="w-full px-2 py-2.5 text-sm font-medium text-left text-[#535862] rounded-md transition-colors"
+            :class="modelValue === option.value ? 'bg-[#E4E7EC]' : 'hover:bg-[#F9FAFB]'"
+            @click="selectOption(option.value)"
+          >
+            {{ option.label }}
+          </button>
+        </div>
       </div>
     </Transition>
   </div>

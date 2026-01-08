@@ -10,9 +10,9 @@ let hasLoggedOut = false; // Track if logout has already been called
 const BASE_URL = "https://dev.proxy.oxidefinance.com";
 
 // Create an Axios instance with custom configuration
-const createAxiosInstance = (service) => {
+const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   const instance = Axios.create({
-    baseURL: `${BASE_URL}/${service}/`,
+    baseURL: `${baseUrl}/${service}/`,
   });
 
   instance.interceptors.request.use((config) => {
@@ -50,7 +50,10 @@ const createAxiosInstance = (service) => {
 
 // Create axios instances for each service
 const axiosApi = createAxiosInstance("matta");
-const axiosSSO = createAxiosInstance("sso");
+const axiosSSO = createAxiosInstance(
+  "sso",
+  process.env.API_BASE_URL || "https://dev.gateway.matta.trade"
+);
 const marketApi = createAxiosInstance("market");
 const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux");
@@ -113,7 +116,6 @@ export const currencyMethods = createApiMethods(currencyApi);
 export const oxideMethods = createApiMethods(oxideApi);
 export const notificationMethods = createApiMethods(notificationApi);
 
-
 // Export the API methods
 export const { get, post, put, delete: del } = apiMethods;
 export const marketGet = marketMethods.get;
@@ -145,7 +147,6 @@ export const oxideGet = oxideMethods.get;
 export const oxidePost = oxideMethods.post;
 export const oxidePut = oxideMethods.put;
 export const oxideDelete = oxideMethods.delete;
-
 
 export const notificationGet = notificationMethods.get;
 export const notificationPost = notificationMethods.post;
