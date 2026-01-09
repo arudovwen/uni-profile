@@ -12,7 +12,7 @@
       v-if="label"
       :class="`${classLabel} ${
         horizontal ? 'flex-0 mr-6 md:w-[100px] w-[60px] break-words' : ''
-      } flex items-center gap-x-1 text-sm font-medium text-[#2F2F2F] leading-5 mb-1`"
+      } flex items-center gap-x-1 text-sm font-medium text-[#2F2F2F] leading-6 mb-1.5`"
       :for="name"
       :data-testid="label"
     >
@@ -34,7 +34,7 @@
         <Float placement="bottom-start" :offset="4" :flip="true">
           <div class="relative">
             <div
-              class="flex items-center h-[41px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
+              class="flex items-center h-[44px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
               :class="{ 'border-[#F04438]': phoneError }"
             >
               <ComboboxInput
@@ -83,7 +83,7 @@
           v-model="phoneData.number"
           type="tel"
           inputmode="numeric"
-          class="w-full h-[41px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
+          class="w-full h-[44px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
           :class="{ 'border-[#F04438]': phoneError }"
           :placeholder="placeholder || '0816*******'"
           :readonly="isReadonly"
