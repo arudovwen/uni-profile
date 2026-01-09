@@ -126,20 +126,20 @@ const appRolesMap: AppRoles = {
   OXI972: [
     {
       value: "Funder",
-      label: "Funder",
-      description: "",
+      label: "Funding Partner",
+      description: "Full platform access. Onboard and manage your own customers",
       conditionalFields: [],
     },
     {
       value: "Supplier",
       label: "Supplier",
-      description: "Fund early invoice payments",
+      description: "Review vendor invoices and early invoice repayments",
       conditionalFields: [],
     },
     {
       value: "Buyer",
       label: "Buyer",
-      description: "Request invoice financing",
+      description: "Send invoices and request early invoice financing",
       conditionalFields: [],
     },
   ],
