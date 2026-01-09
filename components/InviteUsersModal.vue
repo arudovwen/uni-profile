@@ -168,7 +168,6 @@ defineProps<Props>();
 const emit = defineEmits<Emits>();
 const toast = useToast();
 const authStore = useAuthStore();
-const { encrypt } = useEncryption();
 const isLoading = ref(false);
 
 const roleOptions: RoleOption[] = [
@@ -244,8 +243,8 @@ const sendInvites = async () => {
       try {
         // Build payload based on role
         const payload = item.role === 1
-          ? { email: encrypt(item.email), role: item.role, appCodes: appList }
-          : { email: encrypt(item.email), role: item.role, appCodes: appList };
+          ? { email: item.email, role: item.role, appCodes: appList }
+          : { email: item.email, role: item.role, appCodes: appList };
 
         const response = await sendAdminInvite(payload);
 

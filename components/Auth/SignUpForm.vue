@@ -116,11 +116,7 @@
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { registerUser } from "~/services/authservices";
-import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
-
-// Encryption
-const { encrypt } = useEncryption();
 
 // Toast
 const toast = useToast();
@@ -187,20 +183,15 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
 
   try {
-    // Encrypt sensitive fields
-    const encryptedEmail = encrypt(values.email);
-    const encryptedPassword = encrypt(values.password);
-
     const response = await registerUser({
-      email: encryptedEmail,
+      email: values.email,
       firstName: values.firstName,
       lastName: values.lastName,
       phoneNumber: values.phoneNumber,
-      password: encryptedPassword,
-      confirmPassword: encryptedPassword,
+      password: values.password,
+      confirmPassword: values.password,
       companyName: values.businessName || "",
       referral_code: "",
-      appCode: "MAT460",
       country: "Nigeria",
       agree: false,
       subscribe: false,

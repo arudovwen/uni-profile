@@ -215,4 +215,109 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Paginator Styling */
+:deep(.p-paginator) {
+  background: white;
+  border-top: 1px solid #F2F4F7;
+  padding: 1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:deep(.p-paginator-left) {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+:deep(.p-paginator-right) {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Page Buttons */
+:deep(.p-paginator-page) {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #D0D5DD;
+  background: white;
+  color: #475467;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+:deep(.p-paginator-page:hover) {
+  background-color: #F9FAFB;
+}
+
+:deep(.p-paginator-page.p-highlight) {
+  background-color: #1570EF;
+  color: white;
+  border-color: #1570EF;
+}
+
+/* Navigation Buttons */
+:deep(.p-paginator-first),
+:deep(.p-paginator-prev),
+:deep(.p-paginator-next),
+:deep(.p-paginator-last) {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #D0D5DD;
+  background: white;
+  color: #667085;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+:deep(.p-paginator-first:hover),
+:deep(.p-paginator-prev:hover),
+:deep(.p-paginator-next:hover),
+:deep(.p-paginator-last:hover) {
+  background-color: #F9FAFB;
+}
+
+:deep(.p-paginator-first:disabled),
+:deep(.p-paginator-prev:disabled),
+:deep(.p-paginator-next:disabled),
+:deep(.p-paginator-last:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Rows Per Page Dropdown */
+:deep(.p-paginator-rpp-options) {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #D0D5DD;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #475467;
+  background: white;
+  cursor: pointer;
+}
+
+:deep(.p-paginator-rpp-options:focus) {
+  outline: none;
+  ring: 2px;
+  ring-color: #1570EF;
+}
+
+/* Paginator Text */
+:deep(.p-paginator-current) {
+  color: #667085;
+  font-size: 14px;
+}
 </style>

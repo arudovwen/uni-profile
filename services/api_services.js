@@ -55,10 +55,10 @@ const createAxiosInstance = (service, baseUrl = BASE_URL) => {
 };
 
 const axiosApi = createAxiosInstance("market");
-const axiosSSO = createAxiosInstance("sso", SSO_URL);
+const axiosSSO = createAxiosInstance("sso");
 const mattaApi = createAxiosInstance("matta");
 const walletApi = createAxiosInstance("wallet");
-const deltaApi = createAxiosInstance("flux", SSO_URL);
+const deltaApi = createAxiosInstance("flux");
 const orbitalApi = createAxiosInstance("market", SSO_URL);
 const oxideProApi = createAxiosInstance("", OXIDE_PRO_URL);
 

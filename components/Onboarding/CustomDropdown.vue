@@ -5,7 +5,10 @@
       <span class="text-base text-[#344054] font-medium leading-5">
         {{ label }}
       </span>
-      <span v-if="showAsterisk" class="text-[#F97066] text-base font-medium mx-1">
+      <span
+        v-if="showAsterisk"
+        class="text-[#F97066] text-base font-medium mx-1"
+      >
         *
       </span>
       <span v-if="helperText" class="text-xs text-[#667085] ml-1">
@@ -29,7 +32,9 @@
           getSizeClasses,
           'flex w-fit items-center justify-between border transition-all duration-200',
           borderClasses,
-          disabled || isLoading ? 'bg-[#F2F4F7] cursor-not-allowed' : 'bg-white hover:border-[#B5BAC1]',
+          disabled || isLoading
+            ? 'bg-[#F2F4F7] cursor-not-allowed'
+            : 'bg-white hover:border-[#B5BAC1]',
           isOpen ? 'ring-2 ring-primary-600 ring-offset-0' : '',
         ]"
         @click="toggleDropdown"
@@ -92,7 +97,10 @@
           viewBox="0 0 20 20"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          :class="['transition-transform flex-shrink-0 ml-2', isOpen ? 'rotate-180' : '']"
+          :class="[
+            'transition-transform flex-shrink-0 ml-2',
+            isOpen ? 'rotate-180' : '',
+          ]"
         >
           <path
             d="M5 7.5L10 12.5L15 7.5"
@@ -175,10 +183,7 @@
               </template>
 
               <!-- No Results State -->
-              <div
-                v-else
-                class="px-4 py-6 text-[#667085] text-center text-sm"
-              >
+              <div v-else class="px-4 py-6 text-[#667085] text-center text-sm">
                 {{ noResultsText }}
               </div>
             </div>
@@ -308,7 +313,7 @@ const emit = defineEmits<{
   (e: "search", value: string): void;
 }>();
 
-const isOpen = ref(false);
+const isOpen = ref(true);
 const searchTerm = ref("");
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const dropdownRef = ref<HTMLDivElement | null>(null);
@@ -457,6 +462,13 @@ watch(isOpen, (newValue) => {
 
 watch(searchTerm, (newValue) => {
   emit("search", newValue);
+});
+
+onMounted(() => {
+  updatePosition();
+  document.addEventListener("mousedown", handleClickOutside);
+  window.addEventListener("scroll", updatePosition, true);
+  window.addEventListener("resize", updatePosition);
 });
 
 onUnmounted(() => {

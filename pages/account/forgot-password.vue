@@ -78,12 +78,8 @@ definePageMeta({
 import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { forgotPassword } from "~/services/authservices";
-import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
-
-// Encryption
-const { encrypt } = useEncryption();
 
 // Toast
 const toast = useToast();
@@ -123,10 +119,7 @@ const router = useRouter();
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
 
-  // Encrypt email before sending
-  const encryptedEmail = encrypt(values.email);
-
-  forgotPassword({ email: encryptedEmail })
+  forgotPassword({ email: values.email })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;

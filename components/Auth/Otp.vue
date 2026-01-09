@@ -90,12 +90,8 @@
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resendEmailVerification } from "~/services/authservices";
-import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
 import defaultEmailVerifyImg from "@/assets/images/email-verify.png";
-
-// Encryption
-const { encrypt } = useEncryption();
 
 // Toast
 const toast = useToast();
@@ -149,8 +145,7 @@ async function handleSubmit() {
 
 function resendOTP() {
   if (countdown.value === 0) {
-    const encryptedEmail = encrypt(props.email);
-    resendEmailVerification(encryptedEmail)
+    resendEmailVerification(props.email)
       .then((res) => {
         if (res.status === 200) {
           toast.success("Verification code sent successfully");

@@ -50,10 +50,7 @@ const createAxiosInstance = (service, baseUrl = BASE_URL) => {
 
 // Create axios instances for each service
 const axiosApi = createAxiosInstance("matta");
-const axiosSSO = createAxiosInstance(
-  "sso",
-  process.env.API_BASE_URL || "https://dev.gateway.matta.trade"
-);
+const axiosSSO = createAxiosInstance("sso");
 const marketApi = createAxiosInstance("market");
 const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux");

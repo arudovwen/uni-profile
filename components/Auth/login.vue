@@ -81,13 +81,9 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { loginUser, loginUser2FA } from "~/services/authservices";
-import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
 import { intialRoute } from "~/utils/constants";
 import otpImg from "@/assets/images/otp.png";
-
-// Encryption
-const { encrypt } = useEncryption();
 
 // Toast
 const toast = useToast();
@@ -194,13 +190,9 @@ const onSubmit = handleSubmit(async (values) => {
   isLoading.value = true;
 
   try {
-    // Encrypt sensitive fields
-    const encryptedEmail = encrypt(values.email);
-    const encryptedPassword = encrypt(values.password);
-
     const res = await loginUser({
-      email: encryptedEmail,
-      password: encryptedPassword,
+      email: values.email,
+      password: values.password,
       appCode: app,
     });
     if (res.status === 200) {
@@ -224,11 +216,9 @@ const handleOtpSubmit = async (token) => {
   isLoading.value = true;
 
   try {
-    const encryptedEmail = encrypt(formValues.email);
-
     const res = await loginUser2FA({
       token,
-      email: encryptedEmail,
+      email: formValues.email,
       appCode: app,
     });
     if (res.status === 200) {

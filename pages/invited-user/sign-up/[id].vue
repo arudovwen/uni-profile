@@ -218,7 +218,7 @@ const handleFinalSubmit = (code) => {
   isLoading.value = true;
   confirmRegister({
     code,
-    email: useEncryption().encrypt(email.value),
+    email: email.value,
   })
     .then((res) => {
       if (res.status === 200) {

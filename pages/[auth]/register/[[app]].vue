@@ -2,9 +2,7 @@
   <!-- Step 1: Sign Up Form -->
   <NuxtLayout name="auth" v-if="step === 1">
     <div class="w-full max-w-[440px] mx-auto">
-      <AuthSignUpForm
-        @registered="handleSignUpSuccess"
-      />
+      <AuthSignUpForm @registered="handleSignUpSuccess" />
     </div>
   </NuxtLayout>
 
@@ -26,16 +24,12 @@
 <script setup lang="ts">
 import { confirmEmail } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
-import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
 import { useOnboarding } from "~/composables/useOnboarding";
 
 definePageMeta({
   middleware: "auth",
 });
-
-// Encryption
-const { encrypt } = useEncryption();
 
 // Toast
 const toast = useToast();
@@ -68,9 +62,7 @@ const handleOtpSubmit = async (code: string) => {
   isLoading.value = true;
 
   try {
-    // Encrypt email before sending
-    const encryptedEmail = encrypt(registeredEmail.value);
-    const res = await confirmEmail(encryptedEmail, code);
+    const res = await confirmEmail(registeredEmail.value, code);
 
     if (res.status === 200) {
       const userData = res.data?.data || res.data;

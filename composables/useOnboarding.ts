@@ -121,7 +121,7 @@ export const useOnboarding = () => {
         return payload;
       }
 
-      case "OXP975": {
+      case "OXI972": {
         // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
         const accountType = roleSelection
           ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
@@ -129,7 +129,8 @@ export const useOnboarding = () => {
         const username =
           authStore.loggedUser?.fullName || authStore.userInfo?.fullName || "";
         return {
-          email: decrypt(encryptedEmail),
+          // email: decrypt(encryptedEmail),
+          email: basePayload.email,
           username: username.replace(/\s+/g, ""),
           accountType,
           country: "Nigeria",
@@ -156,7 +157,7 @@ export const useOnboarding = () => {
         return signUpWithMattaFlux;
       case "ORB789":
         return signUpWithMattaOrbital;
-      case "OXP975":
+      case "OXI972":
         return signUpWithMattaOxidePro;
       default:
         return signUpWithMatta;

@@ -72,10 +72,12 @@
           <OnboardingCustomDropdown
             v-if="field.type === 'select'"
             :label="field.label"
+            containerStyles="w-full"
+            buttonClass="!w-full !rounded-[5px]"
+            :showSearchFilter="false"
             :modelValue="getDropdownValue(field.name)"
             :options="transformOptions(field.options || [], field.optionValues)"
             :placeholder="field.placeholder || `Select ${field.label}`"
-            :showSearchFilter="(field.options?.length || 0) > 5"
             @update:modelValue="
               (val) =>
                 updateConditionalField(
@@ -107,8 +109,8 @@
             isSubmitting
               ? "Processing..."
               : isLastApp
-                ? "Continue"
-                : "Next Application"
+              ? "Continue"
+              : "Next Application"
           }}
         </button>
       </div>
