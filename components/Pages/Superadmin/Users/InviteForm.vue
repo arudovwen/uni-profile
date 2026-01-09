@@ -28,7 +28,7 @@
           <span
             class="font-Onest font-normal text-[14px] leading-[20px] text-[#475467]"
           >
-            Invite team members to join your organization
+            Invite team members to join your organizatio
           </span>
         </div>
       </div>

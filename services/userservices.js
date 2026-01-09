@@ -40,6 +40,10 @@ export async function editSubApp(data) {
   return await ssoPut(`${urls.UPDATE_SUBAPP}`, data);
 }
 
+export async function deleteSubApp(id) {
+  return await ssoDelete(`${urls.DELETE_SUBAPP(id)}`, {});
+}
+
 export async function adminToggleAccess(data) {
   return await ssoPost(`${urls.REGISTER_APP_REVOKE}`, data);
 }

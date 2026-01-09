@@ -70,6 +70,7 @@ const urls = {
   GET_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
   ADD_SUBAPP: "admin/v1/subapplication",
   UPDATE_SUBAPP: "admin/v1/subapplication",
+  DELETE_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
 
   // Invitation
   INVITATION: "admin/v1/Invitation",

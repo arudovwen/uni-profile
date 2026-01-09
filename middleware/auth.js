@@ -1,3 +1,5 @@
+import { intialRoute } from "~/utils/constants";
+
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
   const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
@@ -16,27 +18,28 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     // Redirect non-superadmin users trying to access superadmin routes
 
-    if (
-      mattaAuth.value.userCategory !== 3 &&
-      superadminRoutes.includes(to.name)
-    ) {
-      abortNavigation();
-      return navigateTo("/");
-    }
+    // if (
+    //   mattaAuth.value.userCategory !== 3 &&
+    //   superadminRoutes.includes(to.name)
+    // ) {
+    //   abortNavigation();
+    //   return navigateTo("/");
+    // }
 
-    // Redirect superadmin users trying to access non-superadmin routes
-    if (
-      mattaAuth.value.userCategory === 3 &&
-      !superadminRoutes.includes(to.name) &&
-      !univeralRoutes.includes(to.name)
-    ) {
-      abortNavigation();
-      return navigateTo("/user-management");
-    }
+    // // Redirect superadmin users trying to access non-superadmin routes
+    // if (
+    //   mattaAuth.value.userCategory === 3 &&
+    //   !superadminRoutes.includes(to.name) &&
+    //   !univeralRoutes.includes(to.name)
+    // ) {
+    //   abortNavigation();
+    //   return navigateTo("/user-management");
+    // }
 
     // Redirect authenticated users away from auth-related routes
     if (to?.name?.includes("auth")) {
-      return navigateTo("/");
+      const redirectPath = intialRoute[mattaAuth.value.userCategory] || "/";
+      return navigateTo(redirectPath);
     }
   }
 

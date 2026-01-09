@@ -150,6 +150,10 @@ export default {
         Avenir: ["Avenir", "sans-serif"],
         Onest: ["Onest", "sans-serif"],
       },
+      fontWeight: {
+        '350': '350',
+        '800': '800',
+      },
       boxShadow: {
         base: "0px 0px 1px rgba(40, 41, 61, 0.08), 0px 0.5px 2px rgba(96, 97, 112, 0.16)",
         base2:
@@ -163,6 +167,7 @@ export default {
         "custom-light": "0px 1px 3px 0px rgba(50, 50, 71, 0.1)",
         "custom-dark": "0px 0px 1px 0px rgba(12, 26, 75, 0.2)",
         "custom-table": "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        "logo": "0px 3px 4px -1px rgba(42, 42, 42, 0.14), 0px 1px 1px rgba(42, 42, 42, 0.08), inset 0px 0px 0px 1px rgba(0, 0, 0, 0.2), inset 0px 3px 3px rgba(255, 255, 255, 0.1), inset 0px -3px 3px rgba(0, 0, 0, 0.1)",
       },
       keyframes: {
         zoom: {

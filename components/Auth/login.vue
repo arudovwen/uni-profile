@@ -83,6 +83,7 @@ import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { loginUser, loginUser2FA } from "~/services/authservices";
 import { useEncryption } from "~/composables/useEncryption";
 import { useToast } from "~/composables/useToast";
+import { intialRoute } from "~/utils/constants";
 import otpImg from "@/assets/images/otp.png";
 
 // Encryption
@@ -160,9 +161,13 @@ const handleFinalRedirect = (data) => {
     handleRedirect(route, data, app);
     return;
   }
+
+  // Use intialRoute mapping for category-based redirects
+  const redirectPath = intialRoute[data.userCategory] || "/";
+
   toast.success("Login successful");
   isLoading.value = false;
-  window.location.replace("/");
+  window.location.replace(redirectPath);
 };
 
 const handleLoginError = (err, email) => {

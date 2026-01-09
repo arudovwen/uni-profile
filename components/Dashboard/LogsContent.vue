@@ -29,26 +29,43 @@
     </DashboardTableFilters>
 
     <!-- Data Table -->
-    <DashboardDataTable
-      :columns="columns"
-      :data="filteredLogs"
-      :loading="isLoading"
-      :show-actions="true"
-      :actions="actions"
-      empty-message="No logs found"
-      @action="handleAction"
-    />
+    <div v-if="filteredLogs.length > 0 || isLoading">
+      <DashboardDataTable
+        :columns="columns"
+        :data="filteredLogs"
+        :loading="isLoading"
+        :show-actions="true"
+        :actions="actions"
+        empty-message="No logs found"
+        @action="handleAction"
+      />
+    </div>
+
+    <!-- Empty State -->
+    <div
+      v-else
+      class="flex flex-col items-center justify-center py-16 bg-white rounded-lg border border-[#E9EAEB]"
+    >
+      <p class="text-gray-600 text-lg font-medium">No audit logs found</p>
+      <p class="text-gray-400 text-sm mt-2">
+        There are no logs to display at the moment.
+      </p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, reactive, onMounted, watch } from "vue";
+import debounce from "lodash/debounce";
+import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
+import moment from "moment";
 
 interface DateRange {
   start: Date | null;
   end: Date | null;
 }
 
+const authStore = useAuthStore();
 const searchQuery = ref("");
 const isLoading = ref(false);
 
@@ -57,110 +74,127 @@ const filters = ref({
   dateRange: null as DateRange | null,
 });
 
-const appOptions = [
-  { label: "Flux Pro", value: "FLU722" },
-  { label: "Orbital Pro", value: "ORB789" },
-  { label: "Oxide Pro", value: "OXP975" },
-  { label: "Polymer Pro", value: "POL766" },
-];
+const appOptions = computed(() => {
+  return (
+    authStore?.appList?.map((app: any) => ({
+      label: app.name,
+      value: app.appCode,
+    })) || []
+  );
+});
 
 // Table columns
 const columns = [
-  { field: "user", header: "User" },
+  { field: "userName", header: "User" },
   { field: "role", header: "Role" },
   { field: "app", header: "App" },
-  { field: "action", header: "Action" },
-  { field: "timestamp", header: "Last Seen" },
+  { field: "activity", header: "Action" },
+  { field: "lastActive", header: "Last Seen" },
 ];
 
 const actions = [{ key: "view", label: "View Details" }];
 
-// Sample data
-const logs = ref([
-  {
-    id: 1,
-    user: "Adeleke Laketu",
-    email: "sodlak007@gmail.com",
-    role: "Admin",
-    app: "Oxide Pro",
-    action: "Invited New User",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-  {
-    id: 2,
-    user: "Wade Warren",
-    email: "deanna.curtis@example.com",
-    role: "Owner",
-    app: "Orbital Pro",
-    action: "Reset Password",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-  {
-    id: 3,
-    user: "Cameron Williamson",
-    email: "willie.jennings@example.com",
-    role: "Super Admin",
-    app: "Flux Pro",
-    action: "Approved Transaction",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-  {
-    id: 4,
-    user: "Ralph Edwards",
-    email: "sara.cruz@example.com",
-    role: "Admin",
-    app: "Polymer Pro",
-    action: "Logged In",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-  {
-    id: 5,
-    user: "Jacob Jones",
-    email: "georgia.young@example.com",
-    role: "Admin",
-    app: "Orbital Pro",
-    action: "Invited New User",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-  {
-    id: 6,
-    user: "Annette Black",
-    email: "felicia.reid@example.com",
-    role: "Admin",
-    app: "Orbital Pro",
-    action: "Approved Transaction",
-    timestamp: "Dec 6, 2025 11:52 PM",
-  },
-]);
+// API query parameters
+const queryParams = reactive({
+  Search: "",
+  SortOrder: "",
+  PageNumber: 1,
+  PageSize: 10,
+  BusinessId: "",
+  userId: "",
+  total: 0,
+});
+
+// Audit data
+const logs = ref([]);
+
+// Audit service mapper based on user category
+const GetAudit = {
+  0: getAdminAudit,
+  1: getOwnerAudit,
+  3: getAdminAudit,
+  4: getAdminAudit,
+};
+
+// Fetch audit data from API
+function getAuditData() {
+  isLoading.value = true;
+  GetAudit[authStore.userInfo.userCategory](queryParams)
+    .then((res: any) => {
+      logs.value = res.data.data.map((item: any) => ({
+        ...item,
+        lastActive: moment(item.created).format("lll"),
+        app: authStore.appList.find((j: any) => j.appCode === item.appCode)
+          ?.name,
+      }));
+      queryParams.total = res.data.totalCount;
+      isLoading.value = false;
+    })
+    .catch(() => {
+      isLoading.value = false;
+    });
+}
 
 // Filtered logs based on search and filters
 const filteredLogs = computed(() => {
   let result = logs.value;
 
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    result = result.filter(
-      (log) =>
-        log.user.toLowerCase().includes(query) ||
-        log.action.toLowerCase().includes(query)
-    );
-  }
-
   if (filters.value.app) {
-    const appName =
-      appOptions.find((a) => a.value === filters.value.app)?.label || "";
-    result = result.filter((log) => log.app === appName);
+    result = result.filter((log: any) => log.appCode === filters.value.app);
   }
 
   if (filters.value.dateRange?.start && filters.value.dateRange?.end) {
-    // Date filtering would go here
+    result = result.filter((log: any) => {
+      const logDate = new Date(log.created);
+      return (
+        logDate >= filters.value.dateRange!.start! &&
+        logDate <= filters.value.dateRange!.end!
+      );
+    });
   }
 
   return result;
 });
 
+// Load initial data
+onMounted(() => {
+  getAuditData();
+});
+
+// Debounced search
+const debounceSearch = debounce(() => {
+  queryParams.PageNumber = 1;
+  getAuditData();
+}, 800);
+
+// Watch for search query changes
+watch(
+  () => searchQuery.value,
+  (newQuery) => {
+    queryParams.Search = newQuery;
+    debounceSearch();
+  }
+);
+
+// Watch for pagination changes
+watch(
+  () => queryParams.PageNumber,
+  () => {
+    getAuditData();
+  }
+);
+
+// Watch for filter changes
+watch(
+  () => [filters.value.app, filters.value.dateRange],
+  () => {
+    queryParams.PageNumber = 1;
+  },
+  { deep: true }
+);
+
 const handleSearch = (query: string) => {
-  console.log("Search:", query);
+  searchQuery.value = query;
 };
 
 const handleDownload = () => {
@@ -172,7 +206,7 @@ const handleFilterChange = () => {
 };
 
 const handleDateChange = (range: DateRange | null) => {
-  console.log("Date range changed:", range);
+  filters.value.dateRange = range;
 };
 
 const handleAction = (action: string, data: any, index: number) => {

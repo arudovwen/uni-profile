@@ -15,7 +15,7 @@
 
       <!-- Apps Tab (default) -->
       <template v-else-if="currentTab === 'apps'">
-        <!-- Welcome Header -->
+        <!-- Dashboard Header -->
         <div class="mb-5 sm:mb-[26px]">
           <h1
             class="text-2xl sm:text-3xl font-[800] text-[#2F2F2F] mb-1 sm:mb-2"
@@ -23,112 +23,57 @@
             Welcome back, {{ userName }}!
           </h1>
           <p class="text-sm sm:text-base text-[#475467]">
-            Access your applications from your dashboard
+            {{ isAdmin ? 'Manage all your applications in one place.' : 'Access your applications from your dashboard' }}
           </p>
         </div>
 
-        <!-- Loading State -->
-        <div v-if="isLoading" class="flex justify-center items-center py-12">
-          <div
-            class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1570EF]"
-          ></div>
-        </div>
+        <!-- Admin Apps Management -->
+        <AdminAppsManagement v-if="hasCategory([0, 3])" />
 
-        <!-- Error State -->
-        <div
-          v-else-if="error"
-          class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
-        >
-          <p class="text-[#EF4444] mb-4">{{ error }}</p>
-          <button
-            @click="fetchUserApps"
-            class="px-4 py-2 bg-[#1570EF] text-white rounded-lg hover:bg-[#0F5BD3] transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-
-        <!-- Empty State -->
-        <div
-          v-else-if="userApps.length === 0"
-          class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
-        >
-          <p class="text-[#475467] mb-4">No applications registered yet.</p>
-        </div>
-
-        <!-- Apps Grid -->
-        <div
-          v-else
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
-        >
-          <div
-            v-for="app in userApps"
-            :key="app.code"
-            class="bg-white rounded-lg border border-[#E5E7EB] p-4 sm:p-6 hover:shadow-md transition-shadow cursor-pointer"
-            @click="navigateToApp(app)"
-          >
-            <!-- App Header with Icon and Status -->
-            <div class="flex items-start justify-between mb-3 sm:mb-4">
-              <!-- App Icon -->
-              <div>
-                <img
-                  v-if="app.iconUrl"
-                  :src="app.iconUrl"
-                  :alt="app.name"
-                  class="w-8 h-8"
-                />
-                <svg
-                  v-else
-                  class="w-6 h-6 text-[#1570EF]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"
-                  />
-                </svg>
-              </div>
-
-              <!-- Status Badge -->
-              <span
-                :class="[
-                  'px-2 sm:px-3 py-1 rounded-full text-xs font-medium border',
-                  app.isActive
-                    ? 'bg-[#ECFDF5] text-[#059669] border-[#A7F3D0]'
-                    : 'bg-[#F3F4F6] text-[#6B7280] border-[#E5E7EB]',
-                ]"
-              >
-                {{ app.isActive ? "Active" : "Inactive" }}
-              </span>
-            </div>
-
-            <!-- App Name -->
-            <h3
-              class="text-base sm:text-lg font-semibold text-[#2F2F2F] mb-1.5 sm:mb-2"
-            >
-              {{ app.name }}
-            </h3>
-
-            <!-- App Description -->
-            <p
-              class="text-sm text-[#475467] mb-3 sm:mb-4 leading-relaxed line-clamp-2"
-            >
-              {{ app.description }}
-            </p>
-
-            <!-- Role Badge -->
-            <span
-              v-if="app.role"
-              class="inline-block px-2 sm:px-3 py-1 rounded-full bg-[#F3F4F6] text-[#344054] text-xs font-medium border border-[#E5E7EB]"
-            >
-              {{ app.role }}
-            </span>
+        <!-- User Apps View -->
+        <template v-else>
+          <!-- Loading State -->
+          <div v-if="isLoading" class="flex justify-center items-center py-12">
+            <div
+              class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1570EF]"
+            ></div>
           </div>
-        </div>
+
+          <!-- Error State -->
+          <div
+            v-else-if="error"
+            class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
+          >
+            <p class="text-[#EF4444] mb-4">{{ error }}</p>
+            <button
+              @click="fetchUserApps"
+              class="px-4 py-2 bg-[#1570EF] text-white rounded-lg hover:bg-[#0F5BD3] transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+
+          <!-- Empty State -->
+          <div
+            v-else-if="userApps.length === 0"
+            class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
+          >
+            <p class="text-[#475467] mb-4">No applications registered yet.</p>
+          </div>
+
+          <!-- Apps Grid -->
+          <div
+            v-else
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[15px]"
+          >
+            <DashboardAppCard
+              v-for="app in userApps"
+              :key="app.code"
+              :app="app"
+              @click="navigateToApp"
+            />
+          </div>
+        </template>
       </template>
     </div>
   </NuxtLayout>
@@ -138,9 +83,11 @@
 import { ref, computed, onMounted } from "vue";
 import { getSubApps } from "~/services/userservices";
 import { useEncryption } from "~/composables/useEncryption";
+import { usePermissions } from "~/composables/usePermissions";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+const { hasCategory } = usePermissions();
 
 definePageMeta({
   middleware: "auth",
@@ -181,6 +128,13 @@ const userName = computed(() => {
   return authStore.loggedUser?.firstName || "User";
 });
 
+// Check if user is admin
+const isAdmin = computed(() => {
+  const userCategory = authStore.userInfo?.userCategory;
+  // Admin roles: superadmin (0), platform admin (3), and others (1, 4)
+  return [0, 1, 3, 4].includes(userCategory);
+});
+
 interface UserApp {
   code: string;
   name: string;
@@ -203,7 +157,9 @@ const buildAuthUrl = (baseUrl: string) => {
   const encryptedToken = encrypt(token);
   const encryptedRefreshToken = encrypt(refreshToken);
 
-  return `${baseUrl}/auth/validate?token=${encodeURIComponent(encryptedToken)}&code=${encodeURIComponent(encryptedRefreshToken)}`;
+  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
+    encryptedToken
+  )}&code=${encodeURIComponent(encryptedRefreshToken)}`;
 };
 
 // Fetch user's registered apps from API
@@ -241,9 +197,10 @@ const fetchUserApps = async () => {
 };
 
 // Navigate to app URL
-const navigateToApp = (app: UserApp) => {
-  if (app.url) {
-    window.open(app.url, "_blank");
+const navigateToApp = (app: UserApp | any) => {
+  const appToOpen = app.app || app;
+  if (appToOpen.url) {
+    window.open(appToOpen.url, "_blank");
   }
 };
 

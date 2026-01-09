@@ -327,11 +327,15 @@ export const PlatformAdminNavigation = [
 ];
 export const SuperNavigation = [
   {
+    name: "Dashboard",
+    url: "/",
+    key: "dashboard",
+  },
+  {
     name: "User Management",
     url: "/user-management",
     key: "user-management",
   },
-
   {
     name: "App Management",
     url: "/application-management",
@@ -368,6 +372,7 @@ export const userRoutes = [
   "notifications",
 ];
 export const univeralRoutes = [
+  "",
   "audit-logs",
   "user-management-user-detail-id",
   "account-login-app",
@@ -452,9 +457,9 @@ export const nigeriaTypes = [0, 1, 2, 3, 4];
 export const nonNigeriaTypes = [0, 4];
 
 export const intialRoute = {
-  0: "/my-applications",
-  1: "/business-information",
-  2: "/business-information",
-  3: "/user-management",
+  0: "/",
+  1: "/",
+  2: "/",
+  3: "/",
   4: "/",
 };

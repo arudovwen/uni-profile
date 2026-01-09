@@ -46,7 +46,9 @@
               >
                 <!-- User Info -->
                 <div class="px-4 py-[15px]">
-                  <p class="text-sm font-medium text-[#475467] leading-5 truncate">
+                  <p
+                    class="text-sm font-medium text-[#475467] leading-5 truncate"
+                  >
                     {{ userName }}
                   </p>
                   <p
@@ -149,32 +151,35 @@
             <DashboardNavIcon name="apps" :active="isActiveTab('apps')" />
             <span>Apps</span>
           </NuxtLink>
+          <PermissionGuard :categories="[0, 3]">
+            <NuxtLink
+              to="/?tab=users"
+              :class="[
+                'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+                isActiveTab('users')
+                  ? 'border-[#1570EF] text-[#1570EF]'
+                  : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+              ]"
+            >
+              <DashboardNavIcon name="users" :active="isActiveTab('users')" />
+              <span>Users</span>
+            </NuxtLink>
+          </PermissionGuard>
 
-          <NuxtLink
-            to="/?tab=users"
-            :class="[
-              'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
-              isActiveTab('users')
-                ? 'border-[#1570EF] text-[#1570EF]'
-                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
-            ]"
-          >
-            <DashboardNavIcon name="users" :active="isActiveTab('users')" />
-            <span>Users</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/?tab=logs"
-            :class="[
-              'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
-              isActiveTab('logs')
-                ? 'border-[#1570EF] text-[#1570EF]'
-                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
-            ]"
-          >
-            <DashboardNavIcon name="logs" :active="isActiveTab('logs')" />
-            <span>Logs</span>
-          </NuxtLink>
+          <PermissionGuard :categories="[0, 3]">
+            <NuxtLink
+              to="/?tab=logs"
+              :class="[
+                'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+                isActiveTab('logs')
+                  ? 'border-[#1570EF] text-[#1570EF]'
+                  : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+              ]"
+            >
+              <DashboardNavIcon name="logs" :active="isActiveTab('logs')" />
+              <span>Logs</span>
+            </NuxtLink>
+          </PermissionGuard>
 
           <NuxtLink
             to="/?tab=settings"
@@ -213,7 +218,9 @@ const { decrypt } = useEncryption();
 const userMenuRef = ref(null);
 const isUserMenuOpen = ref(false);
 
-const userAvatar = computed(() => authStore.loggedUser?.photo || authStore.loggedUser?.avatar || "");
+const userAvatar = computed(
+  () => authStore.loggedUser?.photo || authStore.loggedUser?.avatar || ""
+);
 const userInitial = computed(() => {
   const firstName = authStore.loggedUser?.firstName || "";
   const lastName = authStore.loggedUser?.lastName || "";
