@@ -35,6 +35,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
+import { useAppRoles } from "~/composables/useAppRoles";
 import { toast } from "vue3-toastify";
 
 interface Role {
@@ -66,106 +67,8 @@ const currentAppIndex = ref(0);
 const currentRoleSelection = ref("");
 const currentConditionalFields = ref<Record<string, any>>({});
 
-// Define roles per app - dynamic and easy to modify
-interface AppRoles {
-  [appCode: string]: Role[];
-}
-
-// Vehicle type options for Flux (values match API)
-const vehicleOptions = [
-  { label: "Delivery Truck", value: 0 },
-  { label: "Sided Body", value: 1 },
-  { label: "Flat Bed Truck", value: 2 },
-  { label: "Tanker Truck", value: 3 },
-  { label: "Dump Truck", value: 4 },
-  { label: "Others", value: 5 },
-];
-
-// Truck size options for Flux (values in tons)
-const truckSizeOptions = [
-  { label: "3 Tons", value: 3 },
-  { label: "5 Tons", value: 5 },
-  { label: "7 Tons", value: 7 },
-  { label: "10 Tons", value: 10 },
-  { label: "15 Tons", value: 15 },
-  { label: "20 Tons", value: 20 },
-];
-
-const appRolesMap: AppRoles = {
-  FLU722: [
-    {
-      value: "clients",
-      label: "Clients",
-      description: "Need a logistic and fulfillment partner",
-      conditionalFields: [
-        {
-          name: "preferredTruckType",
-          label: "What kind of truck do you use the most?",
-          type: "select",
-          options: vehicleOptions.map((opt) => opt.label),
-          optionValues: vehicleOptions,
-          placeholder: "Select truck type",
-        },
-        {
-          name: "preferredSize",
-          label: "What size of truck do you use most?",
-          type: "select",
-          options: truckSizeOptions.map((opt) => opt.label),
-          optionValues: truckSizeOptions,
-          placeholder: "Select truck size",
-        },
-      ],
-    },
-    {
-      value: "truckers",
-      label: "Truckers",
-      description: "Become a fulfillment service provider",
-      conditionalFields: [],
-    },
-  ],
-  OXI972: [
-    {
-      value: "Funder",
-      label: "Funding Partner",
-      description: "Full platform access. Onboard and manage your own customers",
-      conditionalFields: [],
-    },
-    {
-      value: "Supplier",
-      label: "Supplier",
-      description: "Review vendor invoices and early invoice repayments",
-      conditionalFields: [],
-    },
-    {
-      value: "Buyer",
-      label: "Buyer",
-      description: "Send invoices and request early invoice financing",
-      conditionalFields: [],
-    },
-  ],
-  ORB789: [],
-  POL766: [],
-};
-
-// Get slug from URL query or state
-const slug = computed(() => (route.query.slug as string) || state.value.slug);
-
-const getAvailableRoles = (appCode: string): Role[] => {
-  const roles = appRolesMap[appCode] || [];
-
-  // For Oxide Pro, filter roles based on slug presence
-  if (appCode === "OXI972") {
-    if (slug.value) {
-      // With slug: only show Buyer or Supplier
-      return roles.filter((role) => role.value === "Buyer" || role.value === "Supplier");
-    } else {
-      // Without slug: only show Funder
-      return roles.filter((role) => role.value === "Funder");
-    }
-  }
-
-  return roles;
-};
+// Use app roles composable for centralized role definitions
+const { getAvailableRoles, vehicleOptions, truckSizeOptions } = useAppRoles();
 
 const selectedApps = computed(() => state.value.selectedApps);
 

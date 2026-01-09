@@ -90,6 +90,7 @@
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
+import { useAppRoles } from "~/composables/useAppRoles";
 import { getSubApps } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import SelectAppIcon from "@/assets/images/icon/SelectAppIcon.vue";
@@ -110,7 +111,8 @@ interface App {
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { setSelectedApps, setSlug, submitOnboarding, state } = useOnboarding();
+const { setSelectedApps, setSlug, submitOnboarding, addRoleSelection, state } = useOnboarding();
+const { requiresUserRoleSelection, getDefaultRole } = useAppRoles();
 
 // Get slug from URL query or state
 const slug = computed(() => (route.query.slug as string) || state.value.slug);
@@ -207,9 +209,9 @@ const toggleApp = (app: App) => {
   }
 };
 
-// Check if any selected apps require role selection
-const hasAppsWithRoles = computed(() => {
-  return selectedAppsData.value.some((app) => app.hasRoles);
+// Check if any selected apps require role selection (have more than auto-selectable roles)
+const hasAppsRequiringUserInput = computed(() => {
+  return selectedAppsData.value.some((app) => requiresUserRoleSelection(app.code));
 });
 
 const continueToRoles = async () => {
@@ -229,8 +231,19 @@ const continueToRoles = async () => {
     }))
   );
 
-  // If no selected apps have roles, submit directly and go to dashboard
-  if (!hasAppsWithRoles.value) {
+  // Check if any app requires user input for role selection
+  if (!hasAppsRequiringUserInput.value) {
+    // Auto-select default roles for all apps and submit directly
+    selectedAppsData.value.forEach((app) => {
+      const defaultRole = getDefaultRole(app.code);
+      if (defaultRole) {
+        addRoleSelection({
+          appCode: app.code,
+          role: defaultRole,
+        });
+      }
+    });
+
     isSubmitting.value = true;
     try {
       await submitOnboarding();
