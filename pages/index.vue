@@ -186,7 +186,8 @@ const fetchUserApps = async () => {
       });
       // Build map of user apps from response
       if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
-        const appsData = userAppsResponse.data.data.data || userAppsResponse.data.data;
+        const appsData =
+          userAppsResponse.data.data.data || userAppsResponse.data.data;
         // console.log("User apps data:", appsData);
         if (Array.isArray(appsData)) {
           appsData.forEach((app: any) => {
@@ -200,9 +201,6 @@ const fetchUserApps = async () => {
         }
       }
     }
-
-    // console.log("userAppsMap:", userAppsMap);
-
     const response = await getSubApps({});
 
     if (response.status === 200) {
@@ -210,10 +208,7 @@ const fetchUserApps = async () => {
       userApps.value = apps.map((app: any) => {
         const appCode = app.appCode || app.code;
         const baseUrl = app.url;
-        const userAppData = userAppsMap[appCode];
-
-        // console.log(app, userAppData, appCode, userAppsMap);
-
+        const userAppData = userAppsMap[appCode]
         // Determine status: Active if enabled and onboarded, Inactive if disabled, Not Onboarded if not in user apps
         let status: "Active" | "Inactive" | "Not Onboarded" = "Not Onboarded";
         if (userAppData) {
@@ -233,9 +228,11 @@ const fetchUserApps = async () => {
             app.iconUrl ||
             app.logo,
           url: baseUrl ? buildAuthUrl(baseUrl) : null,
-          isActive: !userAppData?.isDisabled,
-          role: app.userType || app.accountType || app.role,
+          isActive:
+            !userAppData?.isDisabled !== undefined && userAppData?.isDisabled === false,
+          // role: app.userType || app.accountType || app.role,
           customerType: userAppData?.customerType,
+          role: userAppData?.customerType,
           status: status,
         };
       });

@@ -2,7 +2,7 @@
   <div class="w-full font-Avenir">
     <!-- Header -->
     <div class="text-center mb-8">
-      <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">Sign Up</h1>
+      <h1 class="text-2xl font-[800] text-[#2F2F2F] mb-2">Sign Up</h1>
       <p class="text-base text-[#475467]">Fill the form below to get started</p>
     </div>
 

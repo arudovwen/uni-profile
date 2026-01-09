@@ -1,23 +1,20 @@
 <template>
   <div
-    class="
-      w-full h-[237px] p-6
-      bg-white border border-[#EAECF5] rounded-xl
-      flex flex-col gap-[15px]
-      hover:shadow-md transition-shadow cursor-pointer
-      font-Avenir
-    "
+    class="w-full h-[237px] p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[15px] hover:shadow-md transition-shadow cursor-pointer font-Avenir"
     @click="handleClick"
   >
     <!-- Header: Logo + Status Badge -->
     <div class="flex items-start justify-between">
       <!-- Logo with gradient overlay -->
-      <div class="w-[50px] h-[50px] rounded-xl shadow-logo relative overflow-hidden flex-shrink-0">
+      <div
+        class="w-[50px] h-[50px] rounded-xl shadow-logo relative overflow-hidden flex-shrink-0"
+      >
         <!-- Gradient overlay -->
         <div
           class="absolute inset-0 rounded-xl"
           :style="{
-            background: 'linear-gradient(177.61deg, rgba(255, 255, 255, 0) 2%, rgba(255, 255, 255, 0.12) 98.17%)',
+            background:
+              'linear-gradient(177.61deg, rgba(255, 255, 255, 0) 2%, rgba(255, 255, 255, 0.12) 98.17%)',
           }"
         />
 
@@ -42,10 +39,10 @@
           'px-2.5 py-1 rounded-lg text-sm font-medium border whitespace-nowrap flex-shrink-0',
           app.isActive
             ? 'bg-[#ECFDF3] border-[#ABEFC6] text-[#067647]'
-            : 'bg-[#F3F4F6] border-[#E5E7EB] text-[#6B7280]',
+            : 'bg-[#FEF3F2] border-[#FECDCA] text-[#B42318]',
         ]"
       >
-        {{ app.isActive ? 'Active' : 'Inactive' }}
+        {{ app.isActive ? "Active" : "Inactive" }}
       </span>
     </div>
 
@@ -61,10 +58,9 @@
 
     <!-- Role Badge -->
     <span
-      v-if="app.role"
-      class="inline-block px-3.5 py-1 text-sm font-medium rounded-[19px] bg-[#EAECF5] text-[#475467] whitespace-nowrap"
+      class="w-fit px-3.5 py-1 text-sm font-medium rounded-[19px] bg-[#EAECF5] text-[#475467] whitespace-nowrap capitalize"
     >
-      {{ app.role }}
+      {{ getRole(app.role, app) }}
     </span>
   </div>
 </template>
@@ -85,10 +81,31 @@ interface AppCardProps {
 const props = defineProps<AppCardProps>();
 
 const emit = defineEmits<{
-  (e: 'click', app: AppCardProps['app']): void;
+  (e: "click", app: AppCardProps["app"]): void;
 }>();
 
+onMounted(() => {
+  console.log("AppCard mounted with app:", props.app?.customerType);
+});
+
 const handleClick = () => {
-  emit('click', props.app);
+  emit("click", props.app);
+};
+
+const appRoles: Record<string, { default: string }> = {
+  OXP975: { default: "Funder" },
+  ORB789: { default: "vendor" },
+  OXR123: { default: "Member" },
+  // Add other app codes and their default roles as needed
+};
+
+const getRole = (role: string | undefined, app: any) => {
+  if (!role) {
+    if (!app?.isActive) {
+      return "Not Onboarded";
+    }
+    return appRoles[app.code]?.default;
+  }
+  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
 };
 </script>

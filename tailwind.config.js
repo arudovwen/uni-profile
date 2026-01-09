@@ -146,7 +146,6 @@ export default {
       },
 
       fontFamily: {
-        Avenir: ["Avenir", "Avenir Next", "sans-serif"],
         Avenir: ["Avenir", "sans-serif"],
         Onest: ["Onest", "sans-serif"],
       },
@@ -194,16 +193,4 @@ export default {
       });
     },
   ],
-  head: {
-    link: [
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap",
-      },
-      {
-        rel: "stylesheet",
-        href: "'https://fonts.googleapis.com/css2?family=Avenir:ital,wght@0,300..900;1,300..900&display=swap'",
-      },
-    ],
-  },
 };

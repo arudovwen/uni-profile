@@ -101,7 +101,7 @@ const apps = ref<App[]>([
     code: "FLU722",
     name: "Flux Pro",
     description:
-      "Real-time data flow management and monitoring system for enterprise workflows.",
+      "Logistics engine that manages shipment tracking, route optimization, and end-to-end delivery coordination.",
     iconUrl: FluxLogo,
   },
   {
@@ -109,7 +109,7 @@ const apps = ref<App[]>([
     code: "ORB789",
     name: "Orbital Pro",
     description:
-      "Real-time data flow management and monitoring system for enterprise workflows.",
+      "Central control for suppliers to manage their digital storefronts, inventory levels, and real-time pricing updates.",
     iconUrl: OrbitalLogo,
   },
   {
@@ -117,19 +117,19 @@ const apps = ref<App[]>([
     code: "OXI972",
     name: "Oxide Pro",
     description:
-      "Payment requests and early invoice financing for merchants and vendors",
+      "Platform for connecting suppliers, buyers, and funders to manage invoice financing and repayments securely.",
     iconUrl:
       "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='3' y='3' width='18' height='18' rx='4'/%3E%3C/svg%3E",
   },
-  {
-    id: "4",
-    code: "POL766",
-    name: "Polymer Pro",
-    description:
-      "Real-time data flow management and monitoring system for enterprise workflows.",
-    iconUrl:
-      "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
-  },
+  // {
+  //   id: "4",
+  //   code: "POL766",
+  //   name: "Polymer Pro",
+  //   description:
+  //     "Real-time data flow management and monitoring system for enterprise workflows.",
+  //   iconUrl:
+  //     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
+  // },
 ]);
 
 const selectedAppsIds = ref<string[]>([]);
