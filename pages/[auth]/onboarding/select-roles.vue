@@ -192,6 +192,14 @@ const currentAppData = computed(() => {
   return appsWithRoles.value[currentAppIndex.value];
 });
 
+// Auto-select role if only one option is available
+const autoSelectRoleIfSingle = (appCode: string) => {
+  const availableRoles = getAvailableRoles(appCode);
+  if (availableRoles.length === 1) {
+    currentRoleSelection.value = availableRoles[0].value;
+  }
+};
+
 // Submit all apps and navigate to dashboard
 const completeOnboarding = async () => {
   if (isSubmitting.value) return;
@@ -210,9 +218,12 @@ const completeOnboarding = async () => {
 };
 
 onMounted(async () => {
-  // Capture slug from URL if present
+  // Capture slug from URL if present, otherwise clear it from persisted state
   if (route.query.slug) {
     setSlug(route.query.slug as string);
+  } else {
+    // Clear slug from persisted state if not in URL
+    setSlug(null);
   }
 
   if (selectedApps.value.length === 0) {
@@ -234,6 +245,9 @@ onMounted(async () => {
     if (existingSelection) {
       currentRoleSelection.value = existingSelection.role;
       currentConditionalFields.value = existingSelection.metadata || {};
+    } else {
+      // Auto-select role if only one option is available
+      autoSelectRoleIfSingle(currentApp.code);
     }
   }
 });
@@ -276,13 +290,16 @@ const handleNext = async () => {
     currentRoleSelection.value = "";
     currentConditionalFields.value = {};
 
-    // Load role if it was previously selected
+    // Load role if it was previously selected or auto-select if only one option
     const nextApp = currentAppData.value;
     if (nextApp) {
       const existingSelection = getRoleSelection(nextApp.code);
       if (existingSelection) {
         currentRoleSelection.value = existingSelection.role;
         currentConditionalFields.value = existingSelection.metadata || {};
+      } else {
+        // Auto-select role if only one option is available
+        autoSelectRoleIfSingle(nextApp.code);
       }
     }
 
@@ -297,13 +314,16 @@ const handleBack = () => {
     currentRoleSelection.value = "";
     currentConditionalFields.value = {};
 
-    // Load role if it was previously selected
+    // Load role if it was previously selected or auto-select if only one option
     const previousApp = currentAppData.value;
     if (previousApp) {
       const existingSelection = getRoleSelection(previousApp.code);
       if (existingSelection) {
         currentRoleSelection.value = existingSelection.role;
         currentConditionalFields.value = existingSelection.metadata || {};
+      } else {
+        // Auto-select role if only one option is available
+        autoSelectRoleIfSingle(previousApp.code);
       }
     }
 

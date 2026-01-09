@@ -172,6 +172,9 @@ const fetchApps = async () => {
 onMounted(async () => {
   if (route.query.slug) {
     setSlug(route.query.slug as string);
+  } else {
+    // Clear slug from persisted state if not in URL
+    setSlug(null);
   }
   await fetchApps();
 
