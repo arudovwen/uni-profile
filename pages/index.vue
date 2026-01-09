@@ -23,7 +23,11 @@
             Welcome back, {{ userName }}!
           </h1>
           <p class="text-sm sm:text-base text-[#475467]">
-            {{ isAdmin ? 'Manage all your applications in one place.' : 'Access your applications from your dashboard' }}
+            {{
+              isAdmin
+                ? "Manage all your applications in one place."
+                : "Access your applications from your dashboard"
+            }}
           </p>
         </div>
 
@@ -82,6 +86,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { getSubApps } from "~/services/userservices";
+import { getUserApps } from "~/services/authservices";
 import { useEncryption } from "~/composables/useEncryption";
 import { usePermissions } from "~/composables/usePermissions";
 import FluxLogo from "@/assets/images/flux-logo.png";
@@ -106,7 +111,7 @@ const currentTab = computed(() => {
 const appIcons: Record<string, string> = {
   FLU722: FluxLogo,
   ORB789: OrbitalLogo,
-  OXP975: OxideProLogo,
+  OXI972: OxideProLogo,
   POL766:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 };
@@ -115,7 +120,7 @@ const appIcons: Record<string, string> = {
 const appBaseUrls: Record<string, string> = {
   ORB789: "https://dev.orbital.matta.trade",
   FLU722: "https://dev.deltalog.co",
-  OXP975: "https://dev.oxidepro.oxidefinance.com",
+  OXI972: "https://dev.oxidepro.oxidefinance.com",
 };
 
 // State
@@ -132,7 +137,7 @@ const userName = computed(() => {
 const isAdmin = computed(() => {
   const userCategory = authStore.userInfo?.userCategory;
   // Admin roles: superadmin (0), platform admin (3), and others (1, 4)
-  return [0, 1, 3, 4].includes(userCategory);
+  return [0, 3].includes(userCategory);
 });
 
 interface UserApp {
@@ -143,6 +148,8 @@ interface UserApp {
   url?: string;
   isActive: boolean;
   role?: string;
+  customerType?: string;
+  status?: "Active" | "Inactive" | "Not Onboarded";
 }
 
 // Build authenticated URL with encrypted tokens
@@ -168,23 +175,68 @@ const fetchUserApps = async () => {
   error.value = "";
 
   try {
+    // Map to store user apps data for non-admin users
+    let userAppsMap: Record<string, any> = {};
+
+    // For non-admin users, call getUserApps endpoint
+    if (!isAdmin.value) {
+      const userAppsResponse = await getUserApps("1", {
+        PageNumber: 1,
+        PageSize: 50,
+      });
+      // Build map of user apps from response
+      if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
+        const appsData = userAppsResponse.data.data.data || userAppsResponse.data.data;
+        console.log("User apps data:", appsData);
+        if (Array.isArray(appsData)) {
+          appsData.forEach((app: any) => {
+            userAppsMap[app.code] = {
+              isDisabled: app.isDisabled,
+              customerType: app.customerType,
+              iconUrl: app.iconUrl || app.logoUrl,
+              description: app.description,
+            };
+          });
+        }
+      }
+    }
+
+    console.log("userAppsMap:", userAppsMap);
+
     const response = await getSubApps({});
 
     if (response.status === 200) {
       const apps = response.data?.data || response.data || [];
       userApps.value = apps.map((app: any) => {
         const appCode = app.appCode || app.code;
-        const baseUrl = appBaseUrls[appCode] || app.url;
+        const baseUrl = app.url;
+        const userAppData = userAppsMap[appCode];
+
+        console.log(app, userAppData, appCode, userAppsMap);
+
+        // Determine status: Active if enabled and onboarded, Inactive if disabled, Not Onboarded if not in user apps
+        let status: "Active" | "Inactive" | "Not Onboarded" = "Not Onboarded";
+        if (userAppData) {
+          status = userAppData.isDisabled ? "Inactive" : "Active";
+        }
+
         return {
           code: appCode,
           name: app.appName || app.name,
           description:
+            userAppData?.description ||
             app.description ||
             "Access your application dashboard and manage your account.",
-          iconUrl: appIcons[appCode] || app.iconUrl || app.logo,
+          iconUrl:
+            appIcons[appCode] ||
+            userAppData?.iconUrl ||
+            app.iconUrl ||
+            app.logo,
           url: baseUrl ? buildAuthUrl(baseUrl) : null,
-          isActive: app.isActive ?? true,
+          isActive: !userAppData?.isDisabled,
           role: app.userType || app.accountType || app.role,
+          customerType: userAppData?.customerType,
+          status: status,
         };
       });
     }
@@ -203,6 +255,10 @@ const navigateToApp = (app: UserApp | any) => {
     window.open(appToOpen.url, "_blank");
   }
 };
+
+watch(userApps, (newApps) => {
+  console.log("User Apps:", newApps);
+});
 
 onMounted(() => {
   fetchUserApps();

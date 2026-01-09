@@ -123,7 +123,7 @@ const appRolesMap: AppRoles = {
       conditionalFields: [],
     },
   ],
-  OXP975: [
+  OXI972: [
     {
       value: "Funder",
       label: "Funder",

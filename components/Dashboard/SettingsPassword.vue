@@ -4,7 +4,9 @@
   >
     <!-- Section Header -->
     <div class="mb-6">
-      <h2 class="text-base font-[800] !text-[#344054] leading-6">Manage Password</h2>
+      <h2 class="text-base font-[800] !text-[#344054] leading-6">
+        Manage Password
+      </h2>
       <p class="text-sm font-medium text-[#475467] leading-5 mt-0.5">
         Reset and update your password
       </p>
@@ -72,10 +74,8 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { changePassword } from "~/services/userservices";
 import { useToast } from "~/composables/useToast";
-import { useEncryption } from "~/composables/useEncryption";
 
 const toast = useToast();
-const { encrypt } = useEncryption();
 
 const isLoading = ref(false);
 const showCurrentPassword = ref(false);
@@ -121,9 +121,8 @@ const onSubmit = handleSubmit(async (formValues) => {
 
   try {
     const res = await changePassword({
-      oldPassword: encrypt(formValues.currentPassword),
-      newPassword: encrypt(formValues.newPassword),
-      confirmPassword: encrypt(formValues.confirmPassword),
+      ...formValues,
+      oldPassword: formValues.currentPassword,
     });
 
     if (res.status === 200) {

@@ -1,7 +1,8 @@
-import { marketPost } from "~/helpers/api_helpers";
+import { marketPost, oxidePost } from "~/helpers/api_helpers";
 import urls from "../helpers/url_helpers";
 import {
   ssoPost,
+  ssoGet,
   mattaGet,
   mattaPost,
   deltaPost,
@@ -75,16 +76,24 @@ export async function signUpWithMatta(data, config = {}) {
 }
 
 export async function signUpWithMattaOrbital(data, config = {}) {
-  return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+  return await marketPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
 }
 
 export async function signUpWithMattaFlux(data, config = {}) {
   return await deltaPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
 }
 export async function signUpWithMattaOxidePro(data, config = {}) {
-  return await oxideProPost(
+  return await oxidePost(
     `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,
     data,
+    config
+  );
+}
+
+export async function getUserApps(version = "1", params = {}, config = {}) {
+  const queryString = new URLSearchParams(params).toString();
+  return await ssoGet(
+    `${urls.GET_USER_APPS(version)}${queryString ? `?${queryString}` : ""}`,
     config
   );
 }

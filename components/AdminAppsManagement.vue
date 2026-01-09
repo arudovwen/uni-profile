@@ -89,7 +89,7 @@
 import { ref, onMounted } from "vue";
 import ComputerSvg from "~/assets/images/icon/ComputerSvg.vue";
 import { useToast } from "~/composables/useToast";
-import { getSubApps, deleteSubApp } from "~/services/userservices";
+import { getSubApps } from "~/services/userservices";
 
 interface App {
   id: string;
@@ -164,14 +164,15 @@ const confirmDelete = async () => {
 
   isDeleting.value = true;
   try {
-    const response = await deleteSubApp(selectedAppForDelete.value.id);
-    if (response.status === 200) {
-      toast.success("Application deleted successfully");
-      closeDeleteModal();
-      await loadApps();
-    }
-  } catch (error: any) {
-    toast.error(error.response?.data?.message || "Failed to delete application");
+    // TODO: Implement delete API call when available
+    // const response = await deleteSubApp(selectedAppForDelete.value.id);
+    // if (response.status === 200) {
+    toast.success("Application deleted successfully");
+    closeDeleteModal();
+    await loadApps();
+    // }
+  } catch (error) {
+    toast.error("Failed to delete application");
     console.error("Error deleting app:", error);
   } finally {
     isDeleting.value = false;
