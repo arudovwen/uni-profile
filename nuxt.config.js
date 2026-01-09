@@ -121,8 +121,7 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      Avenir: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntAvenirer font
-      Onest: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntAvenirer font
+      // Avenir is loaded locally from /public/fonts/
     },
   },
 

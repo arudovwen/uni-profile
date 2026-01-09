@@ -67,7 +67,7 @@
 
         <!-- Header -->
         <div class="mb-8">
-          <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">
+          <h1 class="text-2xl font-[800] text-[#2F2F2F] mb-2">
             {{ title2 }}
           </h1>
           <p class="text-base text-[#475467]">
