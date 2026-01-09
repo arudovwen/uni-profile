@@ -222,13 +222,9 @@ const handleFinalSubmit = (code) => {
   })
     .then((res) => {
       if (res.status === 200) {
-        isVerified.value = true;
         authStore.setLoggedUser(res.data.data);
-
         saveAuthProfile(res.data.data);
-
         toast.success("Sign up successful");
-
         isLoading.value = false;
         window.location.replace("/");
       }

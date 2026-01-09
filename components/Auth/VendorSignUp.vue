@@ -403,7 +403,6 @@ const handleFinalSubmit = async (code) => {
 
     if (res.status === 200) {
       const data = res.data.data;
-      isVerified.value = true;
 
       authStore.setLoggedUser(data);
       authStore.setHasPin(data.hasTransactionPIN);

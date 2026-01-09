@@ -7,7 +7,7 @@
     <div class="flex items-start justify-between">
       <!-- Logo with gradient overlay -->
       <div
-        class="w-[50px] h-[50px] rounded-xl shadow-logo relative overflow-hidden flex-shrink-0"
+        class="w-[50px] h-[50px] rounded-xl relative overflow-hidden flex-shrink-0"
       >
         <!-- Gradient overlay -->
         <div

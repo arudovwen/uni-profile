@@ -66,7 +66,6 @@ const handleOtpSubmit = async (code: string) => {
 
     if (res.status === 200) {
       const userData = res.data?.data || res.data;
-      isVerified.value = true;
 
       // Save user data to store if available
       if (userData) {
@@ -81,11 +80,9 @@ const handleOtpSubmit = async (code: string) => {
       // Store slug in onboarding state
       setSlug(slug.value);
 
-      // Navigate to onboarding with slug param
-      setTimeout(() => {
-        const query = slug.value ? { slug: slug.value } : {};
-        router.push({ path: `/${auth}/onboarding/select-apps`, query });
-      }, 1000);
+      // Navigate to onboarding with slug param immediately
+      const query = slug.value ? { slug: slug.value } : {};
+      router.push({ path: `/${auth}/onboarding/select-apps`, query });
     }
   } catch (err) {
     isLoading.value = false;
