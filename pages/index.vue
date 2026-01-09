@@ -187,7 +187,7 @@ const fetchUserApps = async () => {
       // Build map of user apps from response
       if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
         const appsData = userAppsResponse.data.data.data || userAppsResponse.data.data;
-        console.log("User apps data:", appsData);
+        // console.log("User apps data:", appsData);
         if (Array.isArray(appsData)) {
           appsData.forEach((app: any) => {
             userAppsMap[app.code] = {
@@ -201,7 +201,7 @@ const fetchUserApps = async () => {
       }
     }
 
-    console.log("userAppsMap:", userAppsMap);
+    // console.log("userAppsMap:", userAppsMap);
 
     const response = await getSubApps({});
 
@@ -212,7 +212,7 @@ const fetchUserApps = async () => {
         const baseUrl = app.url;
         const userAppData = userAppsMap[appCode];
 
-        console.log(app, userAppData, appCode, userAppsMap);
+        // console.log(app, userAppData, appCode, userAppsMap);
 
         // Determine status: Active if enabled and onboarded, Inactive if disabled, Not Onboarded if not in user apps
         let status: "Active" | "Inactive" | "Not Onboarded" = "Not Onboarded";
@@ -256,9 +256,9 @@ const navigateToApp = (app: UserApp | any) => {
   }
 };
 
-watch(userApps, (newApps) => {
-  console.log("User Apps:", newApps);
-});
+// watch(userApps, (newApps) => {
+//   console.log("User Apps:", newApps);
+// });
 
 onMounted(() => {
   fetchUserApps();
