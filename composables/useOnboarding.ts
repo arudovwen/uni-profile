@@ -18,6 +18,7 @@ export interface OnboardingState {
     code: string;
     name: string;
     iconUrl?: string;
+    hasRoles?: boolean;
   }>;
   roleSelections: RoleSelection[];
   currentStep: number;

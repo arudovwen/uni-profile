@@ -153,10 +153,10 @@ const getAvailableRoles = (appCode: string): Role[] => {
 
 const selectedApps = computed(() => state.value.selectedApps);
 
-// Filter apps that have roles defined
+// Filter apps that have roles defined (using hasRoles from API or fallback to appRolesMap)
 const appsWithRoles = computed(() => {
   return selectedApps.value.filter(
-    (app) => appRolesMap[app.code] && appRolesMap[app.code].length > 0
+    (app) => app.hasRoles || (appRolesMap[app.code] && appRolesMap[app.code].length > 0)
   );
 });
 
