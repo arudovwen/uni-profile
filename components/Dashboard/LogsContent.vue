@@ -59,6 +59,7 @@ import { ref, computed, reactive, onMounted, watch } from "vue";
 import debounce from "lodash/debounce";
 import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
 import moment from "moment";
+import { exportToCSV } from "~/utils/exportCsv";
 
 interface DateRange {
   start: Date | null;
@@ -198,7 +199,15 @@ const handleSearch = (query: string) => {
 };
 
 const handleDownload = () => {
-  console.log("Download clicked");
+  const dataToExport = filteredLogs.value.map(log => ({
+    userName: log.userName,
+    role: log.role,
+    app: log.app,
+    activity: log.activity,
+    lastActive: log.lastActive,
+  }));
+
+  exportToCSV(dataToExport, columns, `audit-logs-${moment().format('YYYY-MM-DD')}`);
 };
 
 const handleFilterChange = () => {

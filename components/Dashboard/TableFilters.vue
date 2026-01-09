@@ -43,39 +43,14 @@
       class="w-9 h-9 flex items-center justify-center border border-[#E4E7EC] rounded-md bg-white hover:bg-[#F9FAFB] transition-colors"
       @click="$emit('download')"
     >
-      <svg
-        class="w-4 h-4"
-        viewBox="0 0 16 16"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M8 10.5V2.5"
-          stroke="#98A2B3"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M5.5 8L8 10.5L10.5 8"
-          stroke="#98A2B3"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-        <path
-          d="M2.5 13.5H13.5"
-          stroke="#98A2B3"
-          stroke-width="1.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
+      <download-svg />
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import DownloadSvg from "~/assets/images/icon/DownloadSvg.vue";
+
 interface Props {
   modelValue?: string;
   searchPlaceholder?: string;

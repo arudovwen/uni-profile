@@ -84,6 +84,10 @@
             </div>
           </div>
         </template>
+
+        <template #cell-status="slotProps">
+          <UserStatusBadge :status="slotProps.data.status" />
+        </template>
       </DashboardDataTable>
     </div>
 
@@ -133,10 +137,12 @@ import debounce from "lodash/debounce";
 import moment from "moment";
 import { getAllUsers, toggleUserStatus } from "~/services/userservices";
 import { useToast } from "~/composables/useToast";
+import { exportToCSV } from "~/utils/exportCsv";
 import SuspendIcon from "~/assets/images/icon/SuspendIcon.vue";
 import ReactivateIcon from "~/assets/images/icon/ReactivateIcon.vue";
 import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";
 import InviteUsersModal from "~/components/InviteUsersModal.vue";
+import UserStatusBadge from "~/components/UserStatusBadge.vue";
 
 const searchQuery = ref("");
 const isLoading = ref(false);
@@ -186,6 +192,7 @@ const statusOptions = [
 // Table columns
 const columns = [
   { field: "user", header: "User" },
+  // { field: "email", header: "Email" },
   { field: "role", header: "Role" },
   { field: "joined", header: "Joined" },
   { field: "lastSeen", header: "Last Seen" },
@@ -328,7 +335,16 @@ const handleSearch = (query: string) => {
 };
 
 const handleDownload = () => {
-  toast.info("Download functionality coming soon");
+  const dataToExport = filteredUsers.value.map(user => ({
+    user: user.user,
+    email: user.email,
+    role: getRoleName(user.role),
+    joined: user.joined,
+    lastSeen: user.lastSeen,
+    status: user.status,
+  }));
+
+  exportToCSV(dataToExport, columns, `users-${moment().format('YYYY-MM-DD')}`);
 };
 
 const handleFilterChange = () => {
