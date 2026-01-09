@@ -147,16 +147,32 @@ const appRolesMap: AppRoles = {
   POL766: [],
 };
 
+// Get slug from URL query or state
+const slug = computed(() => (route.query.slug as string) || state.value.slug);
+
 const getAvailableRoles = (appCode: string): Role[] => {
-  return appRolesMap[appCode] || [];
+  const roles = appRolesMap[appCode] || [];
+
+  // For Oxide Pro, filter roles based on slug presence
+  if (appCode === "OXI972") {
+    if (slug.value) {
+      // With slug: only show Buyer or Supplier
+      return roles.filter((role) => role.value === "Buyer" || role.value === "Supplier");
+    } else {
+      // Without slug: only show Funder
+      return roles.filter((role) => role.value === "Funder");
+    }
+  }
+
+  return roles;
 };
 
 const selectedApps = computed(() => state.value.selectedApps);
 
-// Filter apps that have roles defined (using hasRoles from API or fallback to appRolesMap)
+// Filter apps that have roles defined (using hasRoles from API or getAvailableRoles)
 const appsWithRoles = computed(() => {
   return selectedApps.value.filter(
-    (app) => app.hasRoles || (appRolesMap[app.code] && appRolesMap[app.code].length > 0)
+    (app) => app.hasRoles || getAvailableRoles(app.code).length > 0
   );
 });
 

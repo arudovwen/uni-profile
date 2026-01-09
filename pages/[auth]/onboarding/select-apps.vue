@@ -174,6 +174,15 @@ onMounted(async () => {
     setSlug(route.query.slug as string);
   }
   await fetchApps();
+
+  // Restore previously selected apps from persisted state
+  // Match by app code since IDs might change across sessions
+  if (state.value.selectedApps.length > 0) {
+    const previouslySelectedCodes = state.value.selectedApps.map((app) => app.code);
+    selectedAppsIds.value = apps.value
+      .filter((app) => previouslySelectedCodes.includes(app.code))
+      .map((app) => app.id);
+  }
 });
 
 const selectedAppsIds = ref<string[]>([]);

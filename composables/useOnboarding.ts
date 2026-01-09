@@ -45,12 +45,66 @@ const defaultState: OnboardingState = {
   slug: null,
 };
 
+const STORAGE_KEY = "matta_onboarding_state";
+
+// Helper to safely access localStorage (SSR-safe)
+const getStoredState = (): OnboardingState | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      return JSON.parse(stored);
+    }
+  } catch (e) {
+    console.error("Error reading onboarding state from localStorage:", e);
+  }
+  return null;
+};
+
+const saveState = (state: OnboardingState): void => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {
+    console.error("Error saving onboarding state to localStorage:", e);
+  }
+};
+
+const clearStoredState = (): void => {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (e) {
+    console.error("Error clearing onboarding state from localStorage:", e);
+  }
+};
+
 export const useOnboarding = () => {
-  const state = useState<OnboardingState>("onboarding", () => ({
-    ...defaultState,
-  }));
+  // Initialize state with persisted data if available
+  const state = useState<OnboardingState>("onboarding", () => {
+    const storedState = getStoredState();
+    return storedState || { ...defaultState };
+  });
+
   const { encrypt, decrypt } = useEncryption();
   const authStore = useAuthStore();
+
+  // Watch for state changes and persist to localStorage
+  watch(
+    state,
+    (newState) => {
+      saveState(newState);
+    },
+    { deep: true }
+  );
+
+  // Restore state from localStorage on client-side mount
+  const restoreState = () => {
+    const storedState = getStoredState();
+    if (storedState) {
+      state.value = storedState;
+    }
+  };
 
   const setSelectedApps = (apps: OnboardingState["selectedApps"]) => {
     state.value.selectedApps = apps;
@@ -79,6 +133,7 @@ export const useOnboarding = () => {
 
   const clearOnboarding = () => {
     state.value = { ...defaultState };
+    clearStoredState();
   };
 
   const getOnboardingData = () => {
@@ -203,6 +258,9 @@ export const useOnboarding = () => {
       throw new Error(`Failed to sign up for: ${failedApps.join(", ")}`);
     }
 
+    // Clear persisted state after successful submission
+    clearStoredState();
+
     return results;
   };
 
@@ -216,5 +274,6 @@ export const useOnboarding = () => {
     clearOnboarding,
     getOnboardingData,
     submitOnboarding,
+    restoreState,
   };
 };
