@@ -1,13 +1,22 @@
 <template>
   <div
     :class="[
-      'p-6 rounded-xl border-[1px] transition-all duration-200 cursor-pointer font-Avenir',
-      modelValue
-        ? 'border-[#1570EF] bg-[#F0F6FF]'
-        : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md',
+      'p-6 rounded-xl border-[1px] transition-all duration-200 font-Avenir relative',
+      isRegistered
+        ? 'border-[#D0D5DD] bg-[#F9FAFB] cursor-not-allowed opacity-60'
+        : modelValue
+          ? 'border-[#1570EF] bg-[#F0F6FF] cursor-pointer'
+          : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md cursor-pointer',
     ]"
     @click="updateSelection"
   >
+    <!-- Registered Badge -->
+    <div v-if="isRegistered" class="absolute top-4 right-4">
+      <span class="inline-block px-3 py-1 bg-[#D0D5DD] text-[#475467] text-xs font-semibold rounded-full">
+        Registered
+      </span>
+    </div>
+
     <!-- App Icon and Checkbox -->
     <div class="flex items-start justify-between mb-4">
       <!-- App Icon -->
@@ -64,15 +73,18 @@ interface App {
   code: string;
   logoUrl?: string;
   url?: string;
+  isRegistered?: boolean;
 }
 
 interface Props {
   app: App;
   modelValue: boolean;
+  isRegistered?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
+  isRegistered: false,
 });
 
 const emit = defineEmits<{
@@ -80,6 +92,10 @@ const emit = defineEmits<{
 }>();
 
 const updateSelection = () => {
+  // Prevent selection if app is already registered
+  if (props.isRegistered) {
+    return;
+  }
   emit("update:modelValue", !props.modelValue);
 };
 </script>

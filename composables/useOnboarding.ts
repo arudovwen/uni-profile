@@ -23,6 +23,7 @@ export interface OnboardingState {
   roleSelections: RoleSelection[];
   currentStep: number;
   slug: string | null;
+  successfulRegistrations: string[]; // Track app codes that were successfully registered
 }
 
 // Role to userType mapping for Flux

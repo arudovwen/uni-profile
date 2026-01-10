@@ -60,6 +60,7 @@
             :key="app.id"
             :app="app"
             :modelValue="isAppSelected(app.id)"
+            :isRegistered="registeredAppCodes.includes(app.code)"
             @update:modelValue="toggleApp(app)"
           />
         </div>
@@ -87,11 +88,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
 import { useAppRoles } from "~/composables/useAppRoles";
 import { getSubApps } from "~/services/userservices";
+import { getUserApps } from "~/services/authservices";
 import { toast } from "vue3-toastify";
 import SelectAppIcon from "@/assets/images/icon/SelectAppIcon.vue";
 import FluxLogo from "@/assets/images/flux-logo.png";
@@ -133,6 +136,7 @@ const isSubmitting = ref(false);
 const isLoading = ref(true);
 const loadError = ref("");
 const apps = ref<App[]>([]);
+const registeredAppCodes = ref<string[]>([]);
 
 // Fetch apps from subapplications API
 const fetchApps = async () => {
@@ -140,6 +144,25 @@ const fetchApps = async () => {
   loadError.value = "";
 
   try {
+    // Fetch registered apps first
+    try {
+      const userAppsResponse = await getUserApps("1", {
+        PageNumber: 1,
+        PageSize: 50,
+      });
+
+      if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
+        const appsData =
+          userAppsResponse.data.data.data || userAppsResponse.data.data;
+        if (Array.isArray(appsData)) {
+          registeredAppCodes.value = appsData.map((app: any) => app.code);
+        }
+      }
+    } catch (err: any) {
+      console.warn("Failed to fetch registered apps, continuing without status:", err);
+      // Continue without registered apps data
+    }
+
     const response = await getSubApps({});
 
     if (response.status === 200) {
@@ -182,10 +205,14 @@ onMounted(async () => {
 
   // Restore previously selected apps from persisted state
   // Match by app code since IDs might change across sessions
+  // Exclude registered apps from restoration
   if (state.value.selectedApps.length > 0) {
     const previouslySelectedCodes = state.value.selectedApps.map((app) => app.code);
     selectedAppsIds.value = apps.value
-      .filter((app) => previouslySelectedCodes.includes(app.code))
+      .filter((app) =>
+        previouslySelectedCodes.includes(app.code) &&
+        !registeredAppCodes.value.includes(app.code)
+      )
       .map((app) => app.id);
   }
 });
@@ -201,6 +228,11 @@ const isAppSelected = (appId: string) => {
 };
 
 const toggleApp = (app: App) => {
+  // Prevent toggling if app is already registered
+  if (registeredAppCodes.value.includes(app.code)) {
+    return;
+  }
+
   const index = selectedAppsIds.value.indexOf(app.id);
   if (index > -1) {
     selectedAppsIds.value.splice(index, 1);
@@ -251,7 +283,13 @@ const continueToRoles = async () => {
       router.push("/");
     } catch (err: any) {
       console.error("Onboarding submission error:", err);
-      toast.error(err.message || "Failed to complete registration");
+      // Check if this is a partial failure (some apps failed)
+      if (err.message?.startsWith("Failed to sign up for:")) {
+        toast.error(err.message);
+        // Stay on current page, user can deselect failed apps and retry
+      } else {
+        toast.error(err.message || "Failed to complete registration");
+      }
     } finally {
       isSubmitting.value = false;
     }
