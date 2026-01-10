@@ -103,6 +103,37 @@ const autoSelectRoleIfSingle = (appCode: string) => {
   }
 };
 
+// Check if an app should be auto-handled (1 role with no conditional fields)
+const shouldAutoHandleApp = (appCode: string): boolean => {
+  const availableRoles = getAvailableRoles(appCode);
+  if (availableRoles.length !== 1) return false;
+
+  const role = availableRoles[0];
+  const hasConditionalFields = role.conditionalFields && role.conditionalFields.length > 0;
+  return !hasConditionalFields;
+};
+
+// Auto-handle app with single role and no conditional fields
+const autoHandleAppIfPossible = async (appCode: string): Promise<boolean> => {
+  if (!shouldAutoHandleApp(appCode)) {
+    return false;
+  }
+
+  // Auto-select the single role
+  const availableRoles = getAvailableRoles(appCode);
+  const role = availableRoles[0].value;
+
+  console.log(`Auto-handling ${appCode} with role: ${role}`);
+
+  // Store the role selection
+  addRoleSelection({
+    appCode: appCode,
+    role: role,
+  });
+
+  return true;
+};
+
 // Submit all apps and navigate to dashboard
 const completeOnboarding = async () => {
   if (isSubmitting.value) return;
@@ -114,7 +145,14 @@ const completeOnboarding = async () => {
     router.push("/");
   } catch (err: any) {
     console.error("Onboarding submission error:", err);
-    toast.error(err.message || "Failed to complete registration");
+    // Check if this is a partial failure (some apps failed)
+    if (err.message?.startsWith("Failed to sign up for:")) {
+      toast.error(err.message);
+      // Navigate back to app selection to allow deselecting failed apps
+    } else {
+      toast.error(err.message || "Failed to complete registration");
+    }
+    router.push(`/${auth}/onboarding/select-apps`);
   } finally {
     isSubmitting.value = false;
   }

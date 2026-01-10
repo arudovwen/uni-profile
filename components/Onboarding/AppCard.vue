@@ -1,15 +1,22 @@
 <template>
   <div
     :class="[
-      'p-6 rounded-xl border-[1px] transition-all duration-200 font-Avenir',
+      'p-6 rounded-xl border-[1px] transition-all duration-200 font-Avenir relative',
       isRegistered
-        ? 'border-[#10B981] bg-[#ECFDF5] cursor-not-allowed opacity-75'
+        ? 'border-[#D0D5DD] bg-[#F9FAFB] cursor-not-allowed opacity-60'
         : modelValue
-        ? 'border-[#1570EF] bg-[#F0F6FF] cursor-pointer'
-        : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md cursor-pointer',
+          ? 'border-[#1570EF] bg-[#F0F6FF] cursor-pointer'
+          : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md cursor-pointer',
     ]"
     @click="updateSelection"
   >
+    <!-- Registered Badge -->
+    <div v-if="isRegistered" class="absolute top-4 right-4">
+      <span class="inline-block px-3 py-1 bg-[#D0D5DD] text-[#475467] text-xs font-semibold rounded-full">
+        Registered
+      </span>
+    </div>
+
     <!-- App Icon and Checkbox -->
     <div class="flex items-start justify-between mb-4">
       <!-- App Icon -->
@@ -30,13 +37,19 @@
         </div>
       </div>
 
-      <!-- Registered Badge with Checkmark -->
-      <div v-if="isRegistered" class="flex items-center gap-2 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-semibold">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Checkbox -->
+      <!-- <div
+        :class="[
+          'w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0',
+          modelValue
+            ? 'bg-[#1570EF] border-[#1570EF]'
+            : 'border-[#D0D5DD] bg-white',
+        ]"
+      >
+        <svg v-if="modelValue" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
         </svg>
-        <span>Registered</span>
-      </div>
+      </div> -->
     </div>
 
     <!-- App Name -->
@@ -79,8 +92,10 @@ const emit = defineEmits<{
 }>();
 
 const updateSelection = () => {
-  // Prevent selection/deselection of registered apps
-  if (props.isRegistered) return;
+  // Prevent selection if app is already registered
+  if (props.isRegistered) {
+    return;
+  }
   emit("update:modelValue", !props.modelValue);
 };
 </script>
