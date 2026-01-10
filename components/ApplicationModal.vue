@@ -132,16 +132,16 @@
 
           <!-- Status Dropdown -->
           <div class="space-y-1">
-            <label class="block text-[14px] font-[500] text-[#2F2F2F] leading-5">
-              Status
-            </label>
-            <select
-              v-model="formData.isDisabled"
-              class="w-full px-[17px] py-[11px] border border-[#E2E2E2] rounded-[5px] text-[14px] focus:outline-none focus:ring-2 focus:ring-primary-600 bg-white"
-            >
-              <option :value="false">Active</option>
-              <option :value="true">Inactive</option>
-            </select>
+            <CustomDropdown
+              v-model="selectedStatus"
+              :options="statusOptions"
+              label="Status"
+              placeholder="Select status"
+              :showSearchFilter="false"
+              size="md"
+              containerStyles="w-full"
+              buttonClass="w-full rounded-[5px] border-[#E2E2E2]"
+            />
             <p class="text-[12px] font-[350] text-[#98A2B3] leading-5 mt-1">
               This determines the visibility of the applications for the users
             </p>
@@ -168,6 +168,7 @@
 import { ref, computed, watch } from 'vue';
 import { useToast } from '~/composables/useToast';
 import { addSubApp, editSubApp } from '~/services/userservices';
+import CustomDropdown from '~/components/Onboarding/CustomDropdown.vue';
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -199,12 +200,20 @@ const emit = defineEmits<{
 
 const toast = useToast();
 
+// Status options for CustomDropdown
+const statusOptions = [
+  { code: 'active', name: 'Active' },
+  { code: 'inactive', name: 'Inactive' },
+];
+
 const formData = ref<FormData>({
   name: '',
   url: '',
   description: '',
   isDisabled: false,
 });
+
+const selectedStatus = ref(statusOptions[0]);
 
 const logoFile = ref<File | null>(null);
 const logoPreview = ref<string>('');
@@ -225,6 +234,7 @@ watch(
         description: newApp.description,
         isDisabled: newApp.isDisabled,
       };
+      selectedStatus.value = newApp.isDisabled ? statusOptions[1] : statusOptions[0];
       if (newApp.iconUrl) {
         logoPreview.value = newApp.iconUrl;
       }
@@ -235,6 +245,14 @@ watch(
   { deep: true }
 );
 
+// Sync selectedStatus with formData.isDisabled
+watch(
+  selectedStatus,
+  (newStatus) => {
+    formData.value.isDisabled = newStatus.code === 'inactive';
+  }
+);
+
 const resetForm = () => {
   formData.value = {
     name: '',
@@ -242,6 +260,7 @@ const resetForm = () => {
     description: '',
     isDisabled: false,
   };
+  selectedStatus.value = statusOptions[0];
   logoFile.value = null;
   logoPreview.value = '';
   logoError.value = '';

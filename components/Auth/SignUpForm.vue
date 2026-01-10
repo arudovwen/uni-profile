@@ -113,10 +113,10 @@
 </template>
 
 <script setup lang="ts">
-import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { registerUser } from "~/services/authservices";
 import { useToast } from "~/composables/useToast";
+import { useValidatedForm } from "~/composables/useValidatedForm";
 
 // Toast
 const toast = useToast();
@@ -154,7 +154,7 @@ const schema = yup.object({
     ),
 });
 
-const { handleSubmit, defineField, errors, meta } = useForm({
+const { handleSubmit, defineField, errors, meta } = useValidatedForm({
   validationSchema: schema,
   initialValues: {
     firstName: "",
@@ -164,6 +164,7 @@ const { handleSubmit, defineField, errors, meta } = useForm({
     businessName: "",
     password: "",
   },
+  useValidatedForm: true,
 });
 
 // Define fields for vee-validate - these return reactive refs connected to the form

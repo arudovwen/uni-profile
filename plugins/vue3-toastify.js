@@ -42,11 +42,15 @@ const ErrorIcon = () =>
     ]
   );
 
+// Default autoClose duration in ms
+const AUTO_CLOSE_DURATION = 3500;
+
 // Custom toast wrapper with styling
 const customToast = {
   success: (message, options = {}) => {
-    return toast(message, {
+    return toast.success(message, {
       icon: SuccessIcon,
+      autoClose: AUTO_CLOSE_DURATION,
       style: {
         background: "#5CB85C",
         color: "white",
@@ -56,8 +60,9 @@ const customToast = {
     });
   },
   error: (message, options = {}) => {
-    return toast(message, {
+    return toast.error(message, {
       icon: ErrorIcon,
+      autoClose: AUTO_CLOSE_DURATION,
       style: {
         background: "#E57373",
         color: "white",
@@ -67,10 +72,10 @@ const customToast = {
     });
   },
   info: (message, options = {}) => {
-    return toast.info(message, options);
+    return toast.info(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
   },
   warning: (message, options = {}) => {
-    return toast.warning(message, options);
+    return toast.warning(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
   },
 };
 

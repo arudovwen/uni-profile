@@ -38,6 +38,16 @@ export default defineNuxtConfig({
     "@primevue/nuxt-module",
   ],
 
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: "VeeForm",
+      Field: "VeeField",
+      FieldArray: "VeeFieldArray",
+      ErrorMessage: "VeeErrorMessage",
+    },
+  },
+
   primevue: {
     options: {
       unstyled: true,

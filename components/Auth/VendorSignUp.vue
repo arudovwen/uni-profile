@@ -213,11 +213,11 @@
   </noscript>
 </template>
 <script setup>
-import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { registerUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
+import { useValidatedForm } from "~/composables/useValidatedForm";
 import countries from "~/utils/countries.json";
 
 // ----------------------------
@@ -321,7 +321,7 @@ const schema = yup.object({
   referral_code: yup.string().optional(),
 });
 
-const { handleSubmit, defineField, errors, meta, setFieldValue } = useForm({
+const { handleSubmit, defineField, errors, meta, setFieldValue } = useValidatedForm({
   validationSchema: schema,
   initialValues: formValues,
 });
@@ -403,7 +403,6 @@ const handleFinalSubmit = async (code) => {
 
     if (res.status === 200) {
       const data = res.data.data;
-      isVerified.value = true;
 
       authStore.setLoggedUser(data);
       authStore.setHasPin(data.hasTransactionPIN);

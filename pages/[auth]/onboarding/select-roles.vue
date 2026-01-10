@@ -35,6 +35,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
+import { useAppRoles } from "~/composables/useAppRoles";
 import { toast } from "vue3-toastify";
 
 interface Role {
@@ -66,97 +67,15 @@ const currentAppIndex = ref(0);
 const currentRoleSelection = ref("");
 const currentConditionalFields = ref<Record<string, any>>({});
 
-// Define roles per app - dynamic and easy to modify
-interface AppRoles {
-  [appCode: string]: Role[];
-}
-
-// Vehicle type options for Flux (values match API)
-const vehicleOptions = [
-  { label: "Delivery Truck", value: 0 },
-  { label: "Sided Body", value: 1 },
-  { label: "Flat Bed Truck", value: 2 },
-  { label: "Tanker Truck", value: 3 },
-  { label: "Dump Truck", value: 4 },
-  { label: "Others", value: 5 },
-];
-
-// Truck size options for Flux (values in tons)
-const truckSizeOptions = [
-  { label: "3 Tons", value: 3 },
-  { label: "5 Tons", value: 5 },
-  { label: "7 Tons", value: 7 },
-  { label: "10 Tons", value: 10 },
-  { label: "15 Tons", value: 15 },
-  { label: "20 Tons", value: 20 },
-];
-
-const appRolesMap: AppRoles = {
-  FLU722: [
-    {
-      value: "clients",
-      label: "Clients",
-      description: "Need a logistic and fulfillment partner",
-      conditionalFields: [
-        {
-          name: "preferredTruckType",
-          label: "What kind of truck do you use the most?",
-          type: "select",
-          options: vehicleOptions.map((opt) => opt.label),
-          optionValues: vehicleOptions,
-          placeholder: "Select truck type",
-        },
-        {
-          name: "preferredSize",
-          label: "What size of truck do you use most?",
-          type: "select",
-          options: truckSizeOptions.map((opt) => opt.label),
-          optionValues: truckSizeOptions,
-          placeholder: "Select truck size",
-        },
-      ],
-    },
-    {
-      value: "truckers",
-      label: "Truckers",
-      description: "Become a fulfillment service provider",
-      conditionalFields: [],
-    },
-  ],
-  OXI972: [
-    {
-      value: "Funder",
-      label: "Funding Partner",
-      description: "Full platform access. Onboard and manage your own customers",
-      conditionalFields: [],
-    },
-    {
-      value: "Supplier",
-      label: "Supplier",
-      description: "Review vendor invoices and early invoice repayments",
-      conditionalFields: [],
-    },
-    {
-      value: "Buyer",
-      label: "Buyer",
-      description: "Send invoices and request early invoice financing",
-      conditionalFields: [],
-    },
-  ],
-  ORB789: [],
-  POL766: [],
-};
-
-const getAvailableRoles = (appCode: string): Role[] => {
-  return appRolesMap[appCode] || [];
-};
+// Use app roles composable for centralized role definitions
+const { getAvailableRoles, vehicleOptions, truckSizeOptions } = useAppRoles();
 
 const selectedApps = computed(() => state.value.selectedApps);
 
-// Filter apps that have roles defined
+// Filter apps that have roles defined (using hasRoles from API or getAvailableRoles)
 const appsWithRoles = computed(() => {
   return selectedApps.value.filter(
-    (app) => appRolesMap[app.code] && appRolesMap[app.code].length > 0
+    (app) => app.hasRoles || getAvailableRoles(app.code).length > 0
   );
 });
 
@@ -176,6 +95,14 @@ const currentAppData = computed(() => {
   return appsWithRoles.value[currentAppIndex.value];
 });
 
+// Auto-select role if only one option is available
+const autoSelectRoleIfSingle = (appCode: string) => {
+  const availableRoles = getAvailableRoles(appCode);
+  if (availableRoles.length === 1) {
+    currentRoleSelection.value = availableRoles[0].value;
+  }
+};
+
 // Submit all apps and navigate to dashboard
 const completeOnboarding = async () => {
   if (isSubmitting.value) return;
@@ -194,9 +121,12 @@ const completeOnboarding = async () => {
 };
 
 onMounted(async () => {
-  // Capture slug from URL if present
+  // Capture slug from URL if present, otherwise clear it from persisted state
   if (route.query.slug) {
     setSlug(route.query.slug as string);
+  } else {
+    // Clear slug from persisted state if not in URL
+    setSlug(null);
   }
 
   if (selectedApps.value.length === 0) {
@@ -218,6 +148,9 @@ onMounted(async () => {
     if (existingSelection) {
       currentRoleSelection.value = existingSelection.role;
       currentConditionalFields.value = existingSelection.metadata || {};
+    } else {
+      // Auto-select role if only one option is available
+      autoSelectRoleIfSingle(currentApp.code);
     }
   }
 });
@@ -260,13 +193,16 @@ const handleNext = async () => {
     currentRoleSelection.value = "";
     currentConditionalFields.value = {};
 
-    // Load role if it was previously selected
+    // Load role if it was previously selected or auto-select if only one option
     const nextApp = currentAppData.value;
     if (nextApp) {
       const existingSelection = getRoleSelection(nextApp.code);
       if (existingSelection) {
         currentRoleSelection.value = existingSelection.role;
         currentConditionalFields.value = existingSelection.metadata || {};
+      } else {
+        // Auto-select role if only one option is available
+        autoSelectRoleIfSingle(nextApp.code);
       }
     }
 
@@ -281,13 +217,16 @@ const handleBack = () => {
     currentRoleSelection.value = "";
     currentConditionalFields.value = {};
 
-    // Load role if it was previously selected
+    // Load role if it was previously selected or auto-select if only one option
     const previousApp = currentAppData.value;
     if (previousApp) {
       const existingSelection = getRoleSelection(previousApp.code);
       if (existingSelection) {
         currentRoleSelection.value = existingSelection.role;
         currentConditionalFields.value = existingSelection.metadata || {};
+      } else {
+        // Auto-select role if only one option is available
+        autoSelectRoleIfSingle(previousApp.code);
       }
     }
 

@@ -77,11 +77,11 @@
 </template>
 
 <script setup>
-import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { loginUser, loginUser2FA } from "~/services/authservices";
 import { useToast } from "~/composables/useToast";
+import { useValidatedForm } from "~/composables/useValidatedForm";
 import { intialRoute } from "~/utils/constants";
 import otpImg from "@/assets/images/otp.png";
 
@@ -132,10 +132,9 @@ const schema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
+const { handleSubmit, defineField, errors, meta, resetForm } = useValidatedForm({
   validationSchema: schema,
   initialValues: formValues,
-  mode: "onBlur",
 });
 
 const [email] = defineField("email");

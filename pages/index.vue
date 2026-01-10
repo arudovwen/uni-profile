@@ -166,7 +166,9 @@ const buildAuthUrl = (baseUrl: string) => {
 
   return `${baseUrl}/auth/validate?token=${encodeURIComponent(
     encryptedToken
-  )}&code=${encodeURIComponent(encryptedRefreshToken)}`;
+  )}&code=${encodeURIComponent(
+    encryptedRefreshToken
+  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
 };
 
 // Fetch user's registered apps from API
@@ -208,7 +210,7 @@ const fetchUserApps = async () => {
       userApps.value = apps.map((app: any) => {
         const appCode = app.appCode || app.code;
         const baseUrl = app.url;
-        const userAppData = userAppsMap[appCode]
+        const userAppData = userAppsMap[appCode];
         // Determine status: Active if enabled and onboarded, Inactive if disabled, Not Onboarded if not in user apps
         let status: "Active" | "Inactive" | "Not Onboarded" = "Not Onboarded";
         if (userAppData) {
@@ -229,7 +231,8 @@ const fetchUserApps = async () => {
             app.logo,
           url: baseUrl ? buildAuthUrl(baseUrl) : null,
           isActive:
-            !userAppData?.isDisabled !== undefined && userAppData?.isDisabled === false,
+            !userAppData?.isDisabled !== undefined &&
+            userAppData?.isDisabled === false,
           // role: app.userType || app.accountType || app.role,
           customerType: userAppData?.customerType,
           role: userAppData?.customerType,

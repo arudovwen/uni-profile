@@ -41,10 +41,14 @@ const ErrorIcon = () =>
     ]
   );
 
+// Default autoClose duration in ms
+const AUTO_CLOSE_DURATION = 3500;
+
 export const useToast = () => {
   const success = (message: string, options = {}) => {
     return toast.success(message, {
       icon: SuccessIcon,
+      autoClose: AUTO_CLOSE_DURATION,
       ...options,
     });
   };
@@ -52,16 +56,17 @@ export const useToast = () => {
   const error = (message: string, options = {}) => {
     return toast.error(message, {
       icon: ErrorIcon,
+      autoClose: AUTO_CLOSE_DURATION,
       ...options,
     });
   };
 
   const info = (message: string, options = {}) => {
-    return toast.info(message, options);
+    return toast.info(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
   };
 
   const warning = (message: string, options = {}) => {
-    return toast.warning(message, options);
+    return toast.warning(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
   };
 
   return {
