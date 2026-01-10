@@ -34,7 +34,7 @@
         <Float placement="bottom-start" :offset="4" :flip="true">
           <div class="relative">
             <div
-              class="flex items-center h-[44px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
+              class="flex items-center h-[41px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
               :class="[{ 'border-[#F04438]': phoneError }, dropdownClass]"
             >
               <ComboboxInput
@@ -83,7 +83,7 @@
           v-model="phoneData.number"
           type="tel"
           inputmode="numeric"
-          class="w-full h-[44px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
+          class="w-full h-[41px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
           :class="[{ 'border-[#F04438]': phoneError }, textInputClass]"
           :placeholder="placeholder || '0816*******'"
           :readonly="isReadonly"
@@ -197,7 +197,7 @@ const filteredCountryList = computed(() => {
 
 // Min / Max lengths
 const min = computed(() => selectedCountry.value?.min || 10);
-const max = computed(() => selectedCountry.value?.max || 11);
+const max = computed(() => selectedCountry.value?.max || 10);
 
 // Format phone output
 const formatPhoneOutput = () => {

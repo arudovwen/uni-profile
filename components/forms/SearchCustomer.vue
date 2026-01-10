@@ -48,7 +48,6 @@
               v-model="query"
               placeholder="Search customer name"
               type="text"
-              autofocus
             />
           </div>
           <div v-if="filteredOptions.length" class="max-h-60 overflow-auto">

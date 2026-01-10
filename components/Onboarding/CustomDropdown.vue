@@ -313,7 +313,7 @@ const emit = defineEmits<{
   (e: "search", value: string): void;
 }>();
 
-const isOpen = ref(true);
+const isOpen = ref(false);
 const searchTerm = ref("");
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const dropdownRef = ref<HTMLDivElement | null>(null);
@@ -385,11 +385,6 @@ const toggleDropdown = () => {
   if (isOpen.value) {
     updatePosition();
     emit("open");
-    nextTick(() => {
-      if (props.showSearchFilter) {
-        searchInputRef.value?.focus();
-      }
-    });
   } else {
     emit("close");
   }

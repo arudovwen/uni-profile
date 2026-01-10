@@ -7,7 +7,7 @@
           Invite new users
         </h2>
         <p class="text-sm text-[#667085] mb-6">
-          Invite users to join and manage users on this account. You can invites
+          Invite users to join and manage users on this account. You can invite
           users via a generated link or send invites via email
         </p>
 

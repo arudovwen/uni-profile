@@ -31,7 +31,6 @@
           :input-classes="`otp-input w-14 h-14 flex items-center border border-[#D0D5DD] font-normal focus:border-[#1570EF] outline-none mx-1 rounded-md text-center text-2xl placeholder:text-[#D0D5DD]`"
           separator=" "
           :num-inputs="numInput"
-          :should-auto-focus="true"
           input-type="letter-numeric"
           :placeholder="['-', '-', '-', '-', '-', '-']"
         />
