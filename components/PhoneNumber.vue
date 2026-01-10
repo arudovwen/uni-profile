@@ -35,7 +35,7 @@
           <div class="relative">
             <div
               class="flex items-center h-[44px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
-              :class="{ 'border-[#F04438]': phoneError }"
+              :class="[{ 'border-[#F04438]': phoneError }, dropdownClass]"
             >
               <ComboboxInput
                 class="w-full bg-transparent outline-none text-sm font-normal text-[#475467]"
@@ -84,7 +84,7 @@
           type="tel"
           inputmode="numeric"
           class="w-full h-[44px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
-          :class="{ 'border-[#F04438]': phoneError }"
+          :class="[{ 'border-[#F04438]': phoneError }, textInputClass]"
           :placeholder="placeholder || '0816*******'"
           :readonly="isReadonly"
           :disabled="disabled"
@@ -154,6 +154,8 @@ const props = defineProps({
   type: { type: String, default: "text" },
   isRequired: Boolean,
   isOptional: Boolean,
+  dropdownClass: String,
+  textInputClass: String,
   name: String,
   modelValue: { type: String, default: "" },
   error: String,

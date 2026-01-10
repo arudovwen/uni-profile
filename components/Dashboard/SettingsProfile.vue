@@ -41,7 +41,9 @@
           accept="image/jpeg,image/jpg,image/png"
           @change="handlePhotoUpload"
         />
-        <span class="text-sm font-normal text-[#667085] leading-6 hover:text-[#1570EF] transition-colors">
+        <span
+          class="text-sm font-normal text-[#667085] leading-6 hover:text-[#1570EF] transition-colors"
+        >
           Upload Profile Picture
         </span>
       </label>
@@ -90,6 +92,9 @@
             name="phone"
             label="Phone Number"
             :error="errors.phone"
+            class-label="!leading-5 !mb-1"
+            text-input-class="!h-[41px]"
+            dropdown-class="!h-[41px]"
           />
         </div>
 
@@ -151,7 +156,10 @@ const formSchema = yup.object({
     .string()
     .required("Last name is required")
     .min(2, "Last name must be at least 2 characters"),
-  email: yup.string().required("Email is required").email("Invalid email format"),
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Invalid email format"),
   phone: yup.string(),
   businessName: yup.string(),
 });
@@ -193,7 +201,10 @@ onMounted(async () => {
       }
 
       setFieldValue("phone", data.phone || "");
-      setFieldValue("businessName", data.businessName || data.companyName || "");
+      setFieldValue(
+        "businessName",
+        data.businessName || data.companyName || ""
+      );
       photo.value = data.photo || data.avatar || "";
     }
   } catch (err) {
