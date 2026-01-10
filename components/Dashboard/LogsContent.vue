@@ -28,17 +28,37 @@
       </template>
     </DashboardTableFilters>
 
-    <!-- Data Table -->
-    <div v-if="filteredLogs.length > 0 || isLoading">
+    <!-- Data Table with Pagination -->
+    <div v-if="filteredLogs.length > 0 || isLoading" class="bg-white rounded-lg border border-[#E4E7EC]">
       <DashboardDataTable
         :columns="columns"
         :data="filteredLogs"
         :loading="isLoading"
         :show-actions="true"
         :actions="actions"
+        :paginator="false"
         empty-message="No logs found"
         @action="handleAction"
       />
+
+      <!-- Pagination Footer -->
+      <div class="flex relative justify-center items-center py-4 px-6 border-t border-[#F2F4F7]">
+        <div class="text-sm text-[#344054] absolute left-6 font-medium mr-auto">
+          {{ 1 }} - {{ logs.length }}
+        </div>
+        <button
+          @click="handleLoadMore"
+          :disabled="logs.length >= queryParams.total || isLoadingMore"
+          :class="[
+            'px-4 py-2 font-semibold text-sm rounded-lg border transition-colors',
+            logs.length >= queryParams.total || isLoadingMore
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer'
+          ]"
+        >
+          {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+        </button>
+      </div>
     </div>
 
     <!-- Empty State -->
@@ -69,6 +89,7 @@ interface DateRange {
 const authStore = useAuthStore();
 const searchQuery = ref("");
 const isLoading = ref(false);
+const isLoadingMore = ref(false);
 
 const filters = ref({
   app: null as string | null,
@@ -118,21 +139,43 @@ const GetAudit = {
 };
 
 // Fetch audit data from API
-function getAuditData() {
-  isLoading.value = true;
+function getAuditData(isLoadMore: boolean = false) {
+  if (isLoadMore) {
+    isLoadingMore.value = true;
+  } else {
+    isLoading.value = true;
+  }
+
   GetAudit[authStore.userInfo.userCategory](queryParams)
     .then((res: any) => {
-      logs.value = res.data.data.map((item: any) => ({
+      const newLogs = res.data.data.map((item: any) => ({
         ...item,
         lastActive: moment(item.created).format("lll"),
         app: authStore.appList.find((j: any) => j.appCode === item.appCode)
           ?.name,
       }));
+
+      // If loading more, append to existing logs; otherwise, replace
+      if (isLoadMore) {
+        logs.value = [...logs.value, ...newLogs];
+      } else {
+        logs.value = newLogs;
+      }
+
       queryParams.total = res.data.totalCount;
-      isLoading.value = false;
+
+      if (isLoadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isLoading.value = false;
+      }
     })
     .catch(() => {
-      isLoading.value = false;
+      if (isLoadMore) {
+        isLoadingMore.value = false;
+      } else {
+        isLoading.value = false;
+      }
     });
 }
 
@@ -177,14 +220,6 @@ watch(
   }
 );
 
-// Watch for pagination changes
-watch(
-  () => queryParams.PageNumber,
-  () => {
-    getAuditData();
-  }
-);
-
 // Watch for filter changes
 watch(
   () => [filters.value.app, filters.value.dateRange],
@@ -220,5 +255,11 @@ const handleDateChange = (range: DateRange | null) => {
 
 const handleAction = (action: string, data: any, index: number) => {
   console.log("Action:", action, "Data:", data, "Index:", index);
+};
+
+const handleLoadMore = () => {
+  // Increment page number and fetch next page, appending to existing results
+  queryParams.PageNumber++;
+  getAuditData(true);
 };
 </script>

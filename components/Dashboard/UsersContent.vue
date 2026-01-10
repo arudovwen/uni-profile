@@ -38,21 +38,17 @@
       </template>
     </DashboardTableFilters>
 
-    <!-- Data Table -->
-    <div v-if="filteredUsers.length > 0 || isLoading">
+    <!-- Data Table with Pagination -->
+    <div v-if="filteredUsers.length > 0 || isLoading" class="bg-white rounded-lg border border-[#E4E7EC]">
       <DashboardDataTable
         :columns="columns"
         :data="filteredUsers"
         :loading="isLoading"
         :show-actions="true"
         :actions="actions"
-        :paginator="true"
-        :rows="queryParams.PageSize"
-        :totalRecords="queryParams.total"
-        :lazy="true"
+        :paginator="false"
         empty-message="No users found"
         @action="handleAction"
-        @page="handlePageChange"
       >
         <template #cell-user="slotProps">
           <div class="flex flex-row gap-3">
@@ -89,6 +85,25 @@
           <UserStatusBadge :status="slotProps.data.status" />
         </template>
       </DashboardDataTable>
+
+      <!-- Pagination Footer -->
+      <div class="flex relative justify-center items-center py-4 px-6 border-t border-[#F2F4F7]">
+        <div class="text-sm text-[#344054] absolute left-6 font-medium mr-auto">
+          {{ 1 }} - {{ users.length }}
+        </div>
+        <button
+          @click="handleLoadMore"
+          :disabled="users.length >= queryParams.total || isLoadingMore"
+          :class="[
+            'px-4 py-2 font-semibold text-sm rounded-lg border transition-colors',
+            users.length >= queryParams.total || isLoadingMore
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer'
+          ]"
+        >
+          {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+        </button>
+      </div>
     </div>
 
     <!-- Empty State -->
@@ -146,6 +161,7 @@ import UserStatusBadge from "~/components/UserStatusBadge.vue";
 
 const searchQuery = ref("");
 const isLoading = ref(false);
+const isLoadingMore = ref(false);
 const toast = useToast();
 
 const filters = ref({
@@ -246,11 +262,16 @@ const getUserInitials = (fullName: string): string => {
 };
 
 // Fetch users from API
-const fetchUsers = async () => {
-  isLoading.value = true;
+const fetchUsers = async (isLoadMore = false) => {
+  if (isLoadMore) {
+    isLoadingMore.value = true;
+  } else {
+    isLoading.value = true;
+  }
+
   try {
     const res = await getAllUsers(queryParams);
-    users.value = res.data.data.map((user: any) => ({
+    const newUsers = res.data.data.map((user: any) => ({
       id: user.id,
       user: `${user.firstName} ${user.lastName}`,
       email: user.contactEmail,
@@ -264,12 +285,24 @@ const fetchUsers = async () => {
       userCategory: user.userCategory,
       photoUrl: user.photo || user.profileImage || null,
     }));
+
+    // If loading more, append to existing users; otherwise, replace
+    if (isLoadMore) {
+      users.value = [...users.value, ...newUsers];
+    } else {
+      users.value = newUsers;
+    }
+
     queryParams.total = res.data.totalCount;
   } catch (err) {
     console.error("Error fetching users:", err);
     toast.error("Failed to load users");
   } finally {
-    isLoading.value = false;
+    if (isLoadMore) {
+      isLoadingMore.value = false;
+    } else {
+      isLoading.value = false;
+    }
   }
 };
 
@@ -363,9 +396,10 @@ const handleInviteSubmit = (data: any) => {
   }
 };
 
-const handlePageChange = (event: any) => {
-  queryParams.PageNumber = event.page + 1;
-  fetchUsers();
+const handleLoadMore = () => {
+  // Increment page number and fetch next page, appending to existing results
+  queryParams.PageNumber++;
+  fetchUsers(true);
 };
 
 const handleAction = (action: string, data: any, index: number) => {
