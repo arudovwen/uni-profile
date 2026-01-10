@@ -76,9 +76,9 @@
           {{
             isSubmitting
               ? "Processing..."
-              : hasAppsWithRoles
+              : hasAppsRequiringUserInput
                 ? "Continue to Roles"
-                : "Complete Setup"
+                : "Continue to Dashboard"
           }}
         </button>
       </div>
