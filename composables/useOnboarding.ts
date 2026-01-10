@@ -23,6 +23,7 @@ export interface OnboardingState {
   roleSelections: RoleSelection[];
   currentStep: number;
   slug: string | null;
+  successfulRegistrations: string[]; // Track app codes that were successfully registered
 }
 
 // Role to userType mapping for Flux
@@ -43,6 +44,7 @@ const defaultState: OnboardingState = {
   roleSelections: [],
   currentStep: 1,
   slug: null,
+  successfulRegistrations: [],
 };
 
 const STORAGE_KEY = "matta_onboarding_state";
@@ -53,7 +55,12 @@ const getStoredState = (): OnboardingState | null => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      // Ensure backward compatibility: add successfulRegistrations if missing
+      if (!parsed.successfulRegistrations) {
+        parsed.successfulRegistrations = [];
+      }
+      return parsed;
     }
   } catch (e) {
     console.error("Error reading onboarding state from localStorage:", e);
@@ -134,6 +141,10 @@ export const useOnboarding = () => {
   const clearOnboarding = () => {
     state.value = { ...defaultState };
     clearStoredState();
+  };
+
+  const clearSuccessfulRegistrations = () => {
+    state.value.successfulRegistrations = [];
   };
 
   const getOnboardingData = () => {
@@ -231,17 +242,30 @@ export const useOnboarding = () => {
       throw new Error("Failed to encrypt email");
     }
 
-    const results: Array<{ appCode: string; success: boolean; error?: any }> =
+    const results: Array<{ appCode: string; success: boolean; error?: any, skipped?: boolean }> =
       [];
 
     // Call the appropriate signup function for each selected app
     for (const app of state.value.selectedApps) {
+      // Skip apps that have already been successfully registered
+      if (state.value.successfulRegistrations?.includes(app.code)) {
+        console.log(`Skipping ${app.code} - already successfully registered`);
+        results.push({ appCode: app.code, success: true, skipped: true });
+        continue;
+      }
+
       try {
         const payload = buildAppPayload(app.code, encryptedEmail);
         console.log("Email = ", userEmail, decrypt(userEmail));
         const signupFn = getSignupFunction(app.code);
         console.log(`Submitting signup for ${app.code}:`, payload);
         await signupFn(payload);
+
+        // Track successful registration
+        if (!state.value.successfulRegistrations?.includes(app.code)) {
+          state.value.successfulRegistrations.push(app.code);
+        }
+
         results.push({ appCode: app.code, success: true });
       } catch (error) {
         console.error(`Error signing up for ${app.code}:`, error);
@@ -272,6 +296,7 @@ export const useOnboarding = () => {
     getRoleSelection,
     setCurrentStep,
     clearOnboarding,
+    clearSuccessfulRegistrations,
     getOnboardingData,
     submitOnboarding,
     restoreState,

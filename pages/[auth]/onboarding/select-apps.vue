@@ -38,7 +38,7 @@
         >
           <p class="text-[#EF4444] mb-4">{{ loadError }}</p>
           <button
-            @click="fetchApps"
+            @click="retryFetchApps"
             class="px-4 py-2 bg-[#1570EF] text-white rounded-lg hover:bg-[#0F5BD3] transition-colors"
           >
             Try Again
@@ -60,6 +60,7 @@
             :key="app.id"
             :app="app"
             :modelValue="isAppSelected(app.id)"
+            :isRegistered="app.isRegistered"
             @update:modelValue="toggleApp(app)"
           />
         </div>
@@ -92,6 +93,7 @@ import { useRouter } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
 import { useAppRoles } from "~/composables/useAppRoles";
 import { getSubApps } from "~/services/userservices";
+import { getUserApps } from "~/services/authservices";
 import { toast } from "vue3-toastify";
 import SelectAppIcon from "@/assets/images/icon/SelectAppIcon.vue";
 import FluxLogo from "@/assets/images/flux-logo.png";
@@ -106,6 +108,7 @@ interface App {
   iconUrl?: string;
   logoUrl?: string;
   hasRoles?: boolean;
+  isRegistered?: boolean;
 }
 
 const router = useRouter();
@@ -133,40 +136,151 @@ const isSubmitting = ref(false);
 const isLoading = ref(true);
 const loadError = ref("");
 const apps = ref<App[]>([]);
+const registeredAppCodes = ref<string[]>([]);
+
+// Cache for API requests to prevent redundant calls
+// Tracks both the promise and success state for each request
+const apiCache = {
+  registeredApps: {
+    promise: null as Promise<any> | null,
+    succeeded: false,
+  },
+  subApps: {
+    promise: null as Promise<any> | null,
+    succeeded: false,
+  },
+};
+
+// Fetch user's registered apps
+const fetchRegisteredApps = async () => {
+  // Return cached promise if request already succeeded
+  if (apiCache.registeredApps.succeeded && apiCache.registeredApps.promise) {
+    console.log("Using cached registered apps (already succeeded)");
+    return apiCache.registeredApps.promise;
+  }
+
+  // Return existing promise if one is in flight
+  if (apiCache.registeredApps.promise) {
+    console.log("Registered apps request already in flight, waiting...");
+    return apiCache.registeredApps.promise;
+  }
+
+  // Create and cache the promise
+  apiCache.registeredApps.promise = (async () => {
+    try {
+      console.log("Fetching registered apps from API...");
+      const response = await getUserApps("1", {
+        PageNumber: 1,
+        PageSize: 50,
+      });
+
+      if (response.status === 200 && response.data?.data) {
+        const appsData = response.data.data.data || response.data.data;
+        console.log("Registered apps response:", appsData);
+
+        if (Array.isArray(appsData)) {
+          registeredAppCodes.value = appsData.map((app: any) => app.code || app.appCode);
+          console.log("Registered app codes:", registeredAppCodes.value);
+
+          // Mark as succeeded
+          apiCache.registeredApps.succeeded = true;
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching registered apps:", err);
+      // Mark as failed by clearing promise but not setting succeeded
+      apiCache.registeredApps.promise = null;
+      // Don't show error to user - this is not critical
+    }
+  })();
+
+  return apiCache.registeredApps.promise;
+};
 
 // Fetch apps from subapplications API
 const fetchApps = async () => {
+  // Return cached promise if request already succeeded
+  if (apiCache.subApps.succeeded && apiCache.subApps.promise) {
+    console.log("Using cached subapps (already succeeded)");
+    return apiCache.subApps.promise;
+  }
+
+  // Return existing promise if one is in flight
+  if (apiCache.subApps.promise) {
+    console.log("SubApps request already in flight, waiting...");
+    return apiCache.subApps.promise;
+  }
+
   isLoading.value = true;
   loadError.value = "";
 
-  try {
-    const response = await getSubApps({});
+  // Create and cache the promise
+  apiCache.subApps.promise = (async () => {
+    try {
+      console.log("Fetching subapps from API...");
+      const response = await getSubApps({});
 
-    if (response.status === 200) {
-      const subApps = response.data?.data || response.data || [];
+      if (response.status === 200) {
+        const subApps = response.data?.data || response.data || [];
 
-      // Filter out disabled apps and map to our format
-      apps.value = subApps
-        .filter((app: any) => !app.isDisabled && app.isActive !== false)
-        .map((app: any, index: number) => {
-          const appCode = app.appCode || app.code;
-          return {
-            id: app.id?.toString() || (index + 1).toString(),
-            code: appCode,
-            name: app.appName || app.name,
-            description: app.description || "Access your application dashboard and manage your account.",
-            iconUrl: app.iconUrl || app.logo || app.logoUrl || appIcons[appCode],
-            hasRoles: app.hasRoles ?? appsWithRolesFallback.includes(appCode),
-          };
-        });
-    } else {
-      throw new Error("Failed to fetch applications");
+        // Filter out disabled apps and map to our format
+        apps.value = subApps
+          .filter((app: any) => !app.isDisabled && app.isActive !== false)
+          .map((app: any, index: number) => {
+            const appCode = app.appCode || app.code;
+            const isRegistered = registeredAppCodes.value.includes(appCode);
+            console.log(`App ${appCode} registered status:`, isRegistered);
+            return {
+              id: app.id?.toString() || (index + 1).toString(),
+              code: appCode,
+              name: app.appName || app.name,
+              description: app.description || "Access your application dashboard and manage your account.",
+              iconUrl: app.iconUrl || app.logo || app.logoUrl || appIcons[appCode],
+              hasRoles: app.hasRoles ?? appsWithRolesFallback.includes(appCode),
+              isRegistered,
+            };
+          });
+
+        // Mark as succeeded
+        apiCache.subApps.succeeded = true;
+      } else {
+        throw new Error("Failed to fetch applications");
+      }
+    } catch (err: any) {
+      console.error("Error fetching apps:", err);
+      loadError.value = err?.response?.data?.message || "Failed to load applications";
+      // Mark as failed by clearing promise but not setting succeeded
+      apiCache.subApps.promise = null;
+    } finally {
+      isLoading.value = false;
     }
-  } catch (err: any) {
-    console.error("Error fetching apps:", err);
-    loadError.value = err?.response?.data?.message || "Failed to load applications";
-  } finally {
-    isLoading.value = false;
+  })();
+
+  return apiCache.subApps.promise;
+};
+
+// Retry fetching apps - only retries failed requests
+const retryFetchApps = async () => {
+  console.log("Retrying failed requests...");
+  console.log("Registered apps succeeded:", apiCache.registeredApps.succeeded);
+  console.log("SubApps succeeded:", apiCache.subApps.succeeded);
+
+  // Only clear and retry failed requests
+  if (!apiCache.registeredApps.succeeded) {
+    console.log("Retrying registered apps...");
+    apiCache.registeredApps.promise = null;
+    registeredAppCodes.value = [];
+    await fetchRegisteredApps();
+  } else {
+    console.log("Skipping registered apps (already succeeded)");
+  }
+
+  if (!apiCache.subApps.succeeded) {
+    console.log("Retrying subapps...");
+    apiCache.subApps.promise = null;
+    await fetchApps();
+  } else {
+    console.log("Skipping subapps (already succeeded)");
   }
 };
 
@@ -178,6 +292,9 @@ onMounted(async () => {
     // Clear slug from persisted state if not in URL
     setSlug(null);
   }
+
+  // Fetch registered apps first, then fetch all apps
+  await fetchRegisteredApps();
   await fetchApps();
 
   // Restore previously selected apps from persisted state

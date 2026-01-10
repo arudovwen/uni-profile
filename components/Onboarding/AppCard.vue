@@ -1,10 +1,12 @@
 <template>
   <div
     :class="[
-      'p-6 rounded-xl border-[1px] transition-all duration-200 cursor-pointer font-Avenir',
-      modelValue
-        ? 'border-[#1570EF] bg-[#F0F6FF]'
-        : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md',
+      'p-6 rounded-xl border-[1px] transition-all duration-200 font-Avenir',
+      isRegistered
+        ? 'border-[#10B981] bg-[#ECFDF5] cursor-not-allowed opacity-75'
+        : modelValue
+        ? 'border-[#1570EF] bg-[#F0F6FF] cursor-pointer'
+        : 'border-[#EAECF5] bg-[#F9FAFB] hover:border-[#1570EF] hover:shadow-md cursor-pointer',
     ]"
     @click="updateSelection"
   >
@@ -28,19 +30,13 @@
         </div>
       </div>
 
-      <!-- Checkbox -->
-      <!-- <div
-        :class="[
-          'w-6 h-6 rounded-md border-2 flex items-center justify-center transition-colors flex-shrink-0',
-          modelValue
-            ? 'bg-[#1570EF] border-[#1570EF]'
-            : 'border-[#D0D5DD] bg-white',
-        ]"
-      >
-        <svg v-if="modelValue" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Registered Badge with Checkmark -->
+      <div v-if="isRegistered" class="flex items-center gap-2 bg-[#10B981] text-white px-3 py-1 rounded-full text-xs font-semibold">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
         </svg>
-      </div> -->
+        <span>Registered</span>
+      </div>
     </div>
 
     <!-- App Name -->
@@ -64,15 +60,18 @@ interface App {
   code: string;
   logoUrl?: string;
   url?: string;
+  isRegistered?: boolean;
 }
 
 interface Props {
   app: App;
   modelValue: boolean;
+  isRegistered?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: false,
+  isRegistered: false,
 });
 
 const emit = defineEmits<{
@@ -80,6 +79,8 @@ const emit = defineEmits<{
 }>();
 
 const updateSelection = () => {
+  // Prevent selection/deselection of registered apps
+  if (props.isRegistered) return;
   emit("update:modelValue", !props.modelValue);
 };
 </script>
