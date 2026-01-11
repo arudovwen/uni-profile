@@ -1,6 +1,7 @@
 <template>
   <div
-    class="w-full h-auto p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[15px] hover:shadow-md transition-shadow font-Avenir"
+    @click="handleCardClick"
+    class="w-full h-auto p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[15px] hover:shadow-md transition-shadow font-Avenir cursor-pointer"
   >
     <!-- Header: Logo + Status Badge -->
     <div class="flex items-start justify-between gap-3">
@@ -100,6 +101,8 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from "vue";
+
 interface AdminAppCardProps {
   app: {
     id: string;
@@ -117,13 +120,29 @@ const props = defineProps<AdminAppCardProps>();
 const emit = defineEmits<{
   (e: "edit", app: AdminAppCardProps["app"]): void;
   (e: "delete", app: AdminAppCardProps["app"]): void;
+  (e: "click", app: AdminAppCardProps["app"]): void;
 }>();
 
-const handleEdit = () => {
+const handleEdit = (e: Event) => {
+  e.stopPropagation();
   emit("edit", props.app);
 };
 
-const handleDelete = () => {
+const handleDelete = (e: Event) => {
+  e.stopPropagation();
   emit("delete", props.app);
 };
+
+const handleCardClick = () => {
+  emit("click", props.app);
+};
+
+onMounted(() => {
+  // Component mounted
+  console.log("AdminAppCard mounted", props.app);
+});
+
+onUnmounted(() => {
+  // Component unmounted
+});
 </script>

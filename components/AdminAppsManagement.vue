@@ -25,6 +25,7 @@
         v-for="app in apps"
         :key="app.id"
         :app="app"
+        @click="navigateToApp"
         @edit="handleEditApp"
         @delete="handleDeleteApp"
       />
@@ -89,6 +90,7 @@
 import { ref, onMounted } from "vue";
 import ComputerSvg from "~/assets/images/icon/ComputerSvg.vue";
 import { useToast } from "~/composables/useToast";
+import { useEncryption } from "~/composables/useEncryption";
 import { getSubApps } from "~/services/userservices";
 
 interface App {
@@ -102,6 +104,15 @@ interface App {
 }
 
 const toast = useToast();
+const authStore = useAuthStore();
+const { encrypt } = useEncryption();
+
+// Custom app URLs mapping - override API response URLs
+const customAppUrls: Record<string, string> = {
+  ORB789: "https://dev.orbital.matta.trade",
+  FLU722: "https://admin.dev.flux.oxidefinance.com",
+  OXI972: "https://dev.oxidepro.oxidefinance.com",
+};
 
 const apps = ref<App[]>([]);
 const isLoading = ref(false);
@@ -110,6 +121,34 @@ const selectedAppForDelete = ref<App | null>(null);
 const isApplicationModalOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isDeleting = ref(false);
+
+// Build authenticated URL with encrypted tokens
+const buildAuthUrl = (baseUrl: string) => {
+  const token = authStore.jwToken;
+  const refreshToken = authStore.refreshToken;
+
+  if (!token || !refreshToken) {
+    return baseUrl;
+  }
+
+  const encryptedToken = encrypt(token);
+  const encryptedRefreshToken = encrypt(refreshToken);
+
+  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
+    encryptedToken
+  )}&code=${encodeURIComponent(
+    encryptedRefreshToken
+  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
+};
+
+// Navigate to app URL
+const navigateToApp = (app: App | any) => {
+  const appToOpen = app.app || app;
+  if (appToOpen.url) {
+    const authUrl = buildAuthUrl(appToOpen.url);
+    window.open(authUrl, "_blank");
+  }
+};
 
 onMounted(() => {
   loadApps();
@@ -120,7 +159,12 @@ const loadApps = async () => {
   try {
     const response = await getSubApps();
     if (response.status === 200) {
-      apps.value = response.data.data || [];
+      const loadedApps = response.data.data || [];
+      // Apply custom URLs if available for matching app codes
+      apps.value = loadedApps.map((app: App) => {
+        const customUrl = customAppUrls[app.code];
+        return customUrl ? { ...app, url: customUrl } : app;
+      });
     }
   } catch (error) {
     toast.error("Failed to load applications");
