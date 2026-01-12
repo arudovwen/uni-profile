@@ -97,6 +97,7 @@ const handleOtpSubmit = async (code: string) => {
 const goBackToSignUp = () => {
   step.value = 1;
   registeredEmail.value = "";
+  newEmail.value = null;
 };
 
 onMounted(() => {

@@ -61,14 +61,14 @@
   <!-- Step 2: OTP Verification -->
   <NuxtLayout v-else-if="step === 2" name="auth">
     <AuthOtp
-      :title="isVerified ? 'OTP Verified' : 'OTP Verification'"
+      :title="otpTitle"
       :subtext="otpSubtext"
       :imgSrc="otpImg"
       :isVerifyPin="isVerifyPin"
       :isVerified="false"
       :isLoading="isLoading"
       :email="formValues.email"
-      buttonText="Verify Email"
+      :buttonText="otpButtonText"
       continue-link="/vendor/dashboard"
       @close="resetToStep1"
       @handleSubmit="handleOtpSubmit"
@@ -79,7 +79,7 @@
 <script setup>
 import * as yup from "yup";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
-import { loginUser, loginUser2FA } from "~/services/authservices";
+import { loginUser, loginUser2FA, confirmEmail } from "~/services/authservices";
 import { useToast } from "~/composables/useToast";
 import { useValidatedForm } from "~/composables/useValidatedForm";
 import { intialRoute } from "~/utils/constants";
@@ -101,6 +101,7 @@ const step = ref(1);
 const isLoading = ref(false);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
+const isEmailVerification = ref(false);
 const passwordType = ref("password");
 const formValues = reactive({
   email: "",
@@ -117,11 +118,25 @@ const signUpLink = computed(() =>
   handleRouting(route, `/${auth}/register${app ? `/${app}` : ""}`)
 );
 
-const otpSubtext = computed(() =>
-  isVerified.value
-    ? "Your email has been verified. You will be automatically redirected to the dashboard"
-    : "Enter the 6-digit code sent to your registered email address. Check your inbox."
-);
+const otpSubtext = computed(() => {
+  if (isVerified.value) {
+    return "Your email has been verified. You will be automatically redirected to the dashboard";
+  }
+  if (isEmailVerification.value) {
+    return "Your email is not verified. Enter the 6-digit verification code sent to your email address.";
+  }
+  return "Enter the 6-digit code sent to your registered email address. Check your inbox.";
+});
+
+const otpTitle = computed(() => {
+  if (isVerified.value) return "OTP Verified";
+  if (isEmailVerification.value) return "Email Verification";
+  return "OTP Verification";
+});
+
+const otpButtonText = computed(() => {
+  return isEmailVerification.value ? "Verify Email" : "Verify OTP";
+});
 
 // Validation
 const schema = yup.object({
@@ -132,10 +147,12 @@ const schema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const { handleSubmit, defineField, errors, meta, resetForm } = useValidatedForm({
-  validationSchema: schema,
-  initialValues: formValues,
-});
+const { handleSubmit, defineField, errors, meta, resetForm, } = useValidatedForm(
+  {
+    validationSchema: schema,
+    initialValues: formValues,
+  }
+)
 
 const [email] = defineField("email");
 const [password] = defineField("password");
@@ -148,6 +165,7 @@ const togglePassword = () => {
 const resetToStep1 = () => {
   step.value = 1;
   isLoading.value = false;
+  isEmailVerification.value = false;
   resetForm();
 };
 
@@ -174,11 +192,10 @@ const handleLoginError = (err, email) => {
   if (message) {
     toast.error(message);
     if (message.includes("Email has not verified yet")) {
-      router.push(
-        `/auth/${app ? `/${app}` : ""}?email=${encodeURIComponent(
-          email
-        )}&step=2`
-      );
+      formValues.email = email;
+      isEmailVerification.value = true;
+      isVerifyPin.value = false;
+      step.value = 2;
     }
   }
 };
@@ -211,9 +228,50 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
+watch(step, (newStep) => {
+  if (newStep === 2 && route.query.email) {
+    formValues.email = String(route.query.email);
+  }
+  if (newStep === 1) {
+    resetForm({
+      values: {
+        email: formValues.email,
+        password: formValues.password,
+      }
+    });
+  }
+});
+
 const handleOtpSubmit = async (token) => {
   isLoading.value = true;
 
+  // Handle email verification flow
+  if (isEmailVerification.value) {
+    try {
+      const res = await confirmEmail(formValues.email, token);
+      if (res.status === 200) {
+        const userData = res.data?.data || res.data;
+        if (userData) {
+          authStore.setLoggedUser(userData);
+          authStore.setHasPin(userData.hasTransactionPIN);
+          saveAuthProfile(userData);
+        }
+        toast.success("Email verified successfully");
+        isEmailVerification.value = false;
+        handleFinalRedirect(userData);
+      }
+    } catch (err) {
+      isLoading.value = false;
+      const data = err?.response?.data;
+      const message = data?.message || data?.Message;
+      if (message) {
+        toast.error(message);
+      }
+    }
+    return;
+  }
+
+  // Handle 2FA flow
   try {
     const res = await loginUser2FA({
       token,
@@ -232,11 +290,6 @@ const handleOtpSubmit = async (token) => {
     const message = data?.message || data?.Message;
     if (message) {
       toast.error(message);
-      if (message.includes("Email has not verified yet")) {
-        router.push(
-          `/auth/register?email=${encodeURIComponent(formValues.email)}`
-        );
-      }
     }
   }
 };
