@@ -110,7 +110,7 @@ const { encrypt } = useEncryption();
 // Custom app URLs mapping - override API response URLs
 const customAppUrls: Record<string, string> = {
   ORB789: "https://dev.orbital.matta.trade",
-  FLU722: "https://admin.dev.flux.oxidefinance.com",
+  FLU722: "https://dev.admin.flux.oxidefinance.com",
   OXI972: "https://dev.oxidepro.oxidefinance.com",
 };
 
