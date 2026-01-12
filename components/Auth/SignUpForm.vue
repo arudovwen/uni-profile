@@ -55,7 +55,7 @@
         v-model="businessName"
         name="businessName"
         type="text"
-        label="Business Name (Optional)"
+        label="Business Name"
         placeholder="Business Name"
         :error="errors.businessName"
       />
@@ -143,7 +143,7 @@ const schema = yup.object({
     .required("Email is required")
     .email("Please enter a valid email address"),
   phoneNumber: yup.string().required("Phone number is required"),
-  businessName: yup.string(),
+  businessName: yup.string().required("Business name is required"),
   password: yup
     .string()
     .required("Password is required")

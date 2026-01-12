@@ -161,7 +161,7 @@ const formSchema = yup.object({
     .required("Email is required")
     .email("Invalid email format"),
   phone: yup.string(),
-  businessName: yup.string(),
+  businessName: yup.string().required("Business name is required"),
 });
 
 const { handleSubmit, defineField, errors, setFieldValue } = useForm({
