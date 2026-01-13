@@ -4,7 +4,7 @@
     <div class="bg-white border-b border-[#E5E7EB]">
       <header class="bg-white max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-0">
         <!-- Top Bar with Logo and Avatar -->
-        <div class="flex items-center justify-between py-4">
+        <div class="flex items-center justify-between py-4 !pb-6">
           <!-- Logo -->
           <NuxtLink to="/" class="flex items-center gap-2">
             <AuthLogo />

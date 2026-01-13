@@ -54,7 +54,7 @@
           <div class="flex flex-row gap-3">
             <div
               :class="`h-8 w-8 rounded-[50%] ${
-                slotProps.data.photoUrl ? 'bg-[#ababab]' : 'bg-primary-600'
+                slotProps.data.photoUrl ? 'bg-[#ababab]' : 'bg-[#1570EF]'
               } flex items-center justify-center flex-shrink-0 overflow-hidden`"
             >
               <img
@@ -65,13 +65,13 @@
               />
               <span
                 v-else
-                class="text-white text-xs flex justify-center items-center font-semibold"
+                class="text-white text-sm leading-5 flex justify-center items-center font-500"
               >
                 {{ getUserInitials(slotProps.data.user) }}
               </span>
             </div>
             <div class="flex flex-col">
-              <span class="font-semibold text-[#2F2F2F]">{{
+              <span class="font-[500] text-[#344054]">{{
                 slotProps.data.user
               }}</span>
               <span class="text-sm text-[#667085]">{{
@@ -159,6 +159,9 @@ import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";
 import InviteUsersModal from "~/components/InviteUsersModal.vue";
 import UserStatusBadge from "~/components/UserStatusBadge.vue";
 
+const capitalize = (str: string) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
+
 const searchQuery = ref("");
 const isLoading = ref(false);
 const isLoadingMore = ref(false);
@@ -222,6 +225,7 @@ const actions = [
     icon: markRaw(SuspendIcon),
     iconColor: "text-[#667085]",
     textColor: "text-[#344054]",
+    condition: (data: any) => data.status === "Active",
   },
   {
     key: "reactivate",
@@ -229,6 +233,7 @@ const actions = [
     icon: markRaw(ReactivateIcon),
     iconColor: "text-[#667085]",
     textColor: "text-[#344054]",
+    condition: (data: any) => data.status === "Inactive",
   },
   {
     key: "delete",
@@ -273,7 +278,7 @@ const fetchUsers = async (isLoadMore = false) => {
     const res = await getAllUsers(queryParams);
     const newUsers = res.data.data.map((user: any) => ({
       id: user.id,
-      user: `${user.firstName} ${user.lastName}`,
+      user: `${capitalize(user.firstName)} ${capitalize(user.lastName)}`,
       email: user.contactEmail,
       role: user.category,
       joined: user.created ? moment(user.created).format("MMM D, YYYY") : "-",

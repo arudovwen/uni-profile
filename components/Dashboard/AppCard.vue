@@ -47,7 +47,7 @@
     </div>
 
     <!-- Title -->
-    <h3 class="font-800 text-lg leading-7 text-[#475467] line-clamp-1">
+    <h3 class="font-700 text-lg leading-7 text-[#475467] line-clamp-1">
       {{ app.name }}
     </h3>
 

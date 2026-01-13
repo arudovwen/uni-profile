@@ -116,6 +116,9 @@ import { getOwnerMembers, ownerDisableUser } from "~/services/userservices";
 import { toast } from "vue3-toastify";
 import moment from "moment";
 
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
+
 const id = ref(null);
 const open = ref(false);
 const isOpen = ref(false);
@@ -215,7 +218,7 @@ function getInvites() {
       rows.value = res.data.data.map((i) => ({
         ...i,
         // roleName: RoleMap[i.role],
-        name: `${i.firstName} ${i.lastName}`,
+        name: `${capitalize(i.firstName)} ${capitalize(i.lastName)}`,
         lastLoginTime: i.lastLoginTime
           ? moment(i.lastLoginTime).format("lll")
           : null,

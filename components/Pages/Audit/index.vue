@@ -38,6 +38,9 @@ import { getAllUsers, getCentralAdminUsers } from "~/services/userservices";
 import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
 import moment from "moment";
 
+const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
+
 const authStore = useAuthStore();
 const loading = ref(false);
 const columns = [
@@ -117,6 +120,7 @@ function getAuditData() {
   GetAudit[authStore.userInfo.userCategory](queryParams).then((res) => {
     auditData.value = res.data.data.map((i) => ({
       ...i,
+      userName: i.userName?.split(" ").map(capitalize).join(" "),
       lastActive: moment(i.created).format("lll"),
       app: authStore.appList.find((j) => j.appCode === i.appCode)?.name,
     }));
@@ -129,7 +133,7 @@ function getUsers() {
   GetUsersMapper[authStore?.userInfo?.userCategory](userParams)
     .then((res) => {
       users.value = res.data.data.map((i) => ({
-        label: `${i.firstName} ${i.lastName}`,
+        label: `${capitalize(i.firstName)} ${capitalize(i.lastName)}`,
         value: i.id,
       }));
     })

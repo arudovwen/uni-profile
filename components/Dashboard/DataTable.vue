@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <!-- Table Container -->
-    <div class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden">
+    <div class="bg-white rounded-lg overflow-hidden">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
         <div
@@ -53,7 +53,7 @@
                 'px-6 py-3 h-11 text-left text-xs font-medium text-[#667085] uppercase bg-white border-b border-[#F2F4F7]',
             },
             bodyCell: {
-              class: 'px-6 py-2 text-sm font-medium text-[#475467]',
+              class: bodyCellClass,
             },
           }"
         >
@@ -85,15 +85,7 @@
                 class="p-2 hover:bg-[#F2F4F7] rounded-lg transition-colors"
                 @click.stop="toggleActionMenu(index)"
               >
-                <svg
-                  class="w-5 h-5 text-[#98A2B3]"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <circle cx="10" cy="4" r="2" />
-                  <circle cx="10" cy="10" r="2" />
-                  <circle cx="10" cy="16" r="2" />
-                </svg>
+                <DotsVertical />
               </button>
 
               <!-- Action Menu Dropdown -->
@@ -109,22 +101,23 @@
                   v-if="activeActionMenu === index"
                   class="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E4E7EC] rounded-lg shadow-lg z-50 py-1"
                 >
-                  <button
-                    v-for="action in actions"
-                    :key="action.key"
-                    type="button"
-                    class="w-full px-4 py-2 text-sm text-left hover:bg-[#F9FAFB] transition-colors flex items-center gap-2"
-                    :class="action.textColor || 'text-[#344054]'"
-                    @click="handleAction(action.key, data, index)"
-                  >
-                    <component
-                      v-if="action.icon"
-                      :is="action.icon"
-                      class="w-4 h-4"
-                      :class="action.iconColor || 'text-[#667085]'"
-                    />
-                    {{ action.label }}
-                  </button>
+                  <template v-for="action in actions" :key="action.key">
+                    <button
+                      v-if="!action.condition || action.condition(data)"
+                      type="button"
+                      class="w-full px-4 py-2 text-sm text-left hover:bg-[#F9FAFB] transition-colors flex items-center gap-2"
+                      :class="action.textColor || 'text-[#344054]'"
+                      @click="handleAction(action.key, data, index)"
+                    >
+                      <component
+                        v-if="action.icon"
+                        :is="action.icon"
+                        class="w-4 h-4"
+                        :class="action.iconColor || 'text-[#667085]'"
+                      />
+                      {{ action.label }}
+                    </button>
+                  </template>
                 </div>
               </Transition>
             </div>
@@ -139,6 +132,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import DotsVertical from "~/assets/images/icon/DotsVertical.vue";
 
 export interface TableColumn {
   field: string;
@@ -152,6 +146,7 @@ export interface TableAction {
   icon?: string;
   iconColor?: string;
   textColor?: string;
+  condition?: (data: any) => boolean;
 }
 
 interface Props {
@@ -166,6 +161,7 @@ interface Props {
   showActions?: boolean;
   actions?: TableAction[];
   emptyMessage?: string;
+  bodyCellClass?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -178,6 +174,7 @@ const props = withDefaults(defineProps<Props>(), {
   showActions: false,
   actions: () => [],
   emptyMessage: "No data found",
+  bodyCellClass: "px-6 py-2 text-sm font-medium text-[#475467]",
 });
 
 const emit = defineEmits<{
@@ -218,7 +215,7 @@ onUnmounted(() => {
 /* Paginator Styling */
 :deep(.p-paginator) {
   background: white;
-  border-top: 1px solid #F2F4F7;
+  border-top: 1px solid #f2f4f7;
   padding: 1rem 1.5rem;
   display: flex;
   align-items: center;
@@ -245,7 +242,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   background: white;
   color: #475467;
   font-weight: 500;
@@ -255,13 +252,13 @@ onUnmounted(() => {
 }
 
 :deep(.p-paginator-page:hover) {
-  background-color: #F9FAFB;
+  background-color: #f9fafb;
 }
 
 :deep(.p-paginator-page.p-highlight) {
-  background-color: #1570EF;
+  background-color: #1570ef;
   color: white;
-  border-color: #1570EF;
+  border-color: #1570ef;
 }
 
 /* Navigation Buttons */
@@ -275,7 +272,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   background: white;
   color: #667085;
   cursor: pointer;
@@ -286,7 +283,7 @@ onUnmounted(() => {
 :deep(.p-paginator-prev:hover),
 :deep(.p-paginator-next:hover),
 :deep(.p-paginator-last:hover) {
-  background-color: #F9FAFB;
+  background-color: #f9fafb;
 }
 
 :deep(.p-paginator-first:disabled),
@@ -301,7 +298,7 @@ onUnmounted(() => {
 :deep(.p-paginator-rpp-options) {
   height: 36px;
   padding: 0 12px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   border-radius: 8px;
   font-size: 14px;
   color: #475467;
@@ -312,7 +309,7 @@ onUnmounted(() => {
 :deep(.p-paginator-rpp-options:focus) {
   outline: none;
   ring: 2px;
-  ring-color: #1570EF;
+  ring-color: #1570ef;
 }
 
 /* Paginator Text */

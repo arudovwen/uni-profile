@@ -33,7 +33,7 @@
       <!-- Add Application Card -->
       <div
         @click="handleAddApp"
-        class="w-full h-auto p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col items-center justify-center gap-4 hover:shadow-md transition-all cursor-pointer font-Avenir"
+        class="w-full h-[237px] p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col items-center justify-center gap-4 hover:shadow-md transition-all cursor-pointer font-Avenir"
       >
         <div class="w-12 h-12 rounded-lg flex items-center justify-center">
           <ComputerSvg />

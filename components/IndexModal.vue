@@ -1,9 +1,7 @@
 <template>
   <TransitionRoot as="template" :show="isOpen">
     <div class="fixed z-[999] inset-0 overflow-y-auto">
-      <div
-        class="flex items-center md:items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
-      >
+      <div class="flex justify-center pt-[108px] px-4 pb-20">
         <TransitionChild
           as="div"
           enter="ease-out duration-300"
@@ -18,12 +16,6 @@
           />
         </TransitionChild>
 
-        <!-- This element is to trick the browser into centering the modal contents. -->
-        <span
-          class="hidden sm:inline-block sm:align-middle sm:h-screen"
-          aria-hidden="true"
-          >&#8203;</span
-        >
         <TransitionChild
           as="template"
           enter="ease-out duration-300"
@@ -34,7 +26,7 @@
           leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
         >
           <div
-            class="inline-block relative align-bottom bg-white rounded-lg text-left invisible-scrollbar shadow-xl transform transition-all sm:my-8 sm:align-middle"
+            class="relative bg-white rounded-lg text-left invisible-scrollbar shadow-xl transform transition-all"
           >
             <slot name="content"> </slot>
             <span
@@ -51,26 +43,14 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
 import { XMarkIcon } from "@heroicons/vue/24/solid";
-import {
-  TransitionRoot,
-  TransitionChild,
-  Dialog,
-  DialogOverlay,
-} from "@headlessui/vue";
+import { TransitionRoot, TransitionChild } from "@headlessui/vue";
 
 defineProps({
-  canClose: {
-    default: true,
-  },
-  isOpen: {
-    default: false,
-  },
+  canClose: { default: true },
+  isOpen: { default: false },
 });
 
 const emit = defineEmits(["togglePopup"]);
-function togglePopup() {
-  emit("togglePopup");
-}
+const togglePopup = () => emit("togglePopup");
 </script>

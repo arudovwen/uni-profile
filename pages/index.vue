@@ -14,11 +14,11 @@
       <DashboardLogsContent v-else-if="currentTab === 'logs'" />
 
       <!-- Apps Tab (default) -->
-      <template v-else-if="currentTab === 'apps'">
+      <template v-else-if="currentTab === 'apps'" class="mt-[16px]">
         <!-- Dashboard Header -->
-        <div class="mb-5 sm:mb-[26px]">
+        <div class="mb-5 sm:mb-[26px] mt-[60px]">
           <h1
-            class="text-2xl sm:text-3xl font-[800] text-[#2F2F2F] mb-1 sm:mb-2"
+            class="text-2xl sm:text-3xl font-[700] text-[#182230] mb-1 sm:mb-2"
           >
             Welcome back, {{ userName }}!
           </h1>

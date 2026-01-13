@@ -2,12 +2,12 @@
   <!-- Modal Backdrop -->
   <div
     v-if="isOpen"
-    class="fixed inset-0 bg-black/70 backdrop-blur z-40 flex items-center justify-center p-4 bg-[#000000a3]"
+    class="fixed inset-0 bg-black/70 backdrop-blur z-40 flex justify-center overflow-y-auto pt-[100px] p-4 bg-[#000000a3]"
     @click.self="closeModal"
   >
     <!-- Modal Content -->
     <div
-      class="bg-white rounded-[12px] w-[480px] max-h-[90vh] overflow-y-auto"
+      class="bg-white rounded-[12px] w-[480px] max-h-[90vh] h-fit overflow-y-auto no-scrollbar"
       style="box-shadow: 0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03)"
     >
       <!-- Header -->
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Form -->
-      <div class="px-[25px] pt-[30px] pb-7 space-y-6">
+      <div class="px-[25px] pb-7 space-y-6">
         <form @submit.prevent="handleSubmit" class="space-y-6">
           <!-- Logo Upload Section -->
           <div class="w-[427px] h-12 flex items-center gap-3">

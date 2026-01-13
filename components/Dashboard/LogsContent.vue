@@ -29,20 +29,25 @@
     </DashboardTableFilters>
 
     <!-- Data Table with Pagination -->
-    <div v-if="filteredLogs.length > 0 || isLoading" class="bg-white rounded-lg border border-[#E4E7EC]">
+    <div
+      v-if="filteredLogs.length > 0 || isLoading"
+      class="bg-white rounded-lg border border-[#E4E7EC]"
+    >
       <DashboardDataTable
         :columns="columns"
         :data="filteredLogs"
         :loading="isLoading"
-        :show-actions="true"
         :actions="actions"
         :paginator="false"
+        body-cell-class="px-6 py-4 text-sm font-medium text-[#475467]"
         empty-message="No logs found"
         @action="handleAction"
       />
 
       <!-- Pagination Footer -->
-      <div class="flex relative justify-center items-center py-4 px-6 border-t border-[#F2F4F7]">
+      <div
+        class="flex relative justify-center items-center py-4 px-6 border-t border-[#F2F4F7]"
+      >
         <div class="text-sm text-[#344054] absolute left-6 font-medium mr-auto">
           {{ 1 }} - {{ logs.length }}
         </div>
@@ -53,10 +58,10 @@
             'px-4 py-2 font-semibold text-sm rounded-lg border transition-colors',
             logs.length >= queryParams.total || isLoadingMore
               ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer',
           ]"
         >
-          {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+          {{ isLoadingMore ? "Loading..." : "Load More" }}
         </button>
       </div>
     </div>
@@ -80,6 +85,9 @@ import debounce from "lodash/debounce";
 import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
 import moment from "moment";
 import { exportToCSV } from "~/utils/exportCsv";
+
+const capitalize = (str: string) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";
 
 interface DateRange {
   start: Date | null;
@@ -114,7 +122,7 @@ const columns = [
   { field: "lastActive", header: "Last Seen" },
 ];
 
-const actions = [{ key: "view", label: "View Details" }];
+const actions = [];
 
 // API query parameters
 const queryParams = reactive({
@@ -150,6 +158,7 @@ function getAuditData(isLoadMore: boolean = false) {
     .then((res: any) => {
       const newLogs = res.data.data.map((item: any) => ({
         ...item,
+        userName: item.userName?.split(" ").map(capitalize).join(" "),
         lastActive: moment(item.created).format("lll"),
         app: authStore.appList.find((j: any) => j.appCode === item.appCode)
           ?.name,
@@ -234,7 +243,7 @@ const handleSearch = (query: string) => {
 };
 
 const handleDownload = () => {
-  const dataToExport = filteredLogs.value.map(log => ({
+  const dataToExport = filteredLogs.value.map((log) => ({
     userName: log.userName,
     role: log.role,
     app: log.app,
@@ -242,7 +251,11 @@ const handleDownload = () => {
     lastActive: log.lastActive,
   }));
 
-  exportToCSV(dataToExport, columns, `audit-logs-${moment().format('YYYY-MM-DD')}`);
+  exportToCSV(
+    dataToExport,
+    columns,
+    `audit-logs-${moment().format("YYYY-MM-DD")}`
+  );
 };
 
 const handleFilterChange = () => {
