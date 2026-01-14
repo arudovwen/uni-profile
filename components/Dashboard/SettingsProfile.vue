@@ -1,21 +1,21 @@
 <template>
   <div
-    class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-8 px-[51px] max-w-[723px]"
+    class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-6 sm:py-8 px-4 sm:px-6 lg:px-[51px] max-w-[723px]"
   >
     <!-- Section Header -->
-    <div class="mb-6">
-      <h2 class="text-base font-[800] text-[#344054] leading-6">
+    <div class="mb-4 sm:mb-6">
+      <h2 class="text-sm sm:text-base font-[800] text-[#344054] leading-6">
         Personal Information
       </h2>
-      <p class="text-sm font-medium text-[#475467] leading-5 mt-0.5">
+      <p class="text-xs sm:text-sm font-medium text-[#475467] leading-5 mt-0.5">
         Update your profile and personal details.
       </p>
     </div>
 
     <!-- Profile Picture -->
-    <div class="flex items-center gap-[19px] mb-[23px]">
+    <div class="flex flex-col sm:flex-row items-center sm:items-center gap-3 sm:gap-[19px] mb-5 sm:mb-[23px]">
       <div
-        class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 relative"
+        class="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden bg-gray-100 flex-shrink-0 relative"
       >
         <img
           v-if="photo"
@@ -25,7 +25,7 @@
         />
         <div
           v-else
-          class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1570EF] to-[#0F5BD3] text-white text-xl font-semibold"
+          class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1570EF] to-[#0F5BD3] text-white text-lg sm:text-xl font-semibold"
         >
           {{ userInitial }}
         </div>
@@ -42,7 +42,7 @@
           @change="handlePhotoUpload"
         />
         <span
-          class="text-sm font-normal text-[#667085] leading-6 hover:text-[#1570EF] transition-colors"
+          class="text-xs sm:text-sm font-normal text-[#667085] leading-6 hover:text-[#1570EF] transition-colors"
         >
           Upload Profile Picture
         </span>
@@ -51,9 +51,9 @@
 
     <form @submit.prevent="onSubmit">
       <!-- Form Fields -->
-      <div class="flex flex-col gap-[23px]">
+      <div class="flex flex-col gap-4 sm:gap-[23px]">
         <!-- Row 1: First Name & Last Name -->
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-3">
           <TextinputInputField
             v-model="firstName"
             name="firstName"
@@ -73,7 +73,7 @@
         </div>
 
         <!-- Row 2: Email Address & Phone Number -->
-        <div class="flex gap-3">
+        <div class="flex flex-col sm:flex-row gap-4 sm:gap-3">
           <!-- Email Address -->
           <TextinputInputField
             v-model="email"
@@ -109,11 +109,11 @@
       </div>
 
       <!-- Submit Button -->
-      <div class="flex justify-end mt-[34px]">
+      <div class="flex justify-center sm:justify-end mt-6 sm:mt-[34px]">
         <button
           type="submit"
           :disabled="isLoading"
-          class="w-[235px] h-[45px] bg-[#1570EF] text-white text-base font-[800] rounded-[5px] hover:bg-[#0F5BD3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          class="w-full sm:w-[235px] h-[45px] bg-[#1570EF] text-white text-sm sm:text-base font-[800] rounded-[5px] hover:bg-[#0F5BD3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <span
             v-if="isLoading"

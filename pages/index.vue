@@ -5,7 +5,7 @@
 
     <div
       v-else
-      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8"
+      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 px-4 sm:px-6 lg:px-8"
     >
       <!-- Users Tab -->
       <DashboardUsersContent v-if="currentTab === 'users'" />
@@ -16,13 +16,13 @@
       <!-- Apps Tab (default) -->
       <template v-else-if="currentTab === 'apps'" class="mt-[16px]">
         <!-- Dashboard Header -->
-        <div class="mb-5 sm:mb-[26px] mt-[60px]">
+        <div class="mb-5 sm:mb-[26px] mt-6 sm:mt-10 lg:mt-[60px]">
           <h1
-            class="text-2xl sm:text-3xl font-[700] text-[#182230] mb-1 sm:mb-2"
+            class="text-xl sm:text-2xl lg:text-3xl font-[700] text-[#182230] mb-1 sm:mb-2"
           >
             Welcome back, {{ userName }}!
           </h1>
-          <p class="text-sm sm:text-base text-[#475467]">
+          <p class="text-xs sm:text-sm lg:text-base text-[#475467]">
             {{
               isAdmin
                 ? "Manage all your applications in one place."
@@ -37,7 +37,7 @@
         <!-- User Apps View -->
         <template v-else>
           <!-- Loading State -->
-          <div v-if="isLoading" class="flex justify-center items-center py-12">
+          <div v-if="isLoading" class="flex justify-center items-center py-8 sm:py-12">
             <div
               class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1570EF]"
             ></div>
@@ -46,12 +46,12 @@
           <!-- Error State -->
           <div
             v-else-if="error"
-            class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
+            class="text-center py-8 sm:py-12 px-4 bg-white rounded-lg border border-[#E5E7EB]"
           >
-            <p class="text-[#EF4444] mb-4">{{ error }}</p>
+            <p class="text-[#EF4444] mb-4 text-sm sm:text-base">{{ error }}</p>
             <button
               @click="fetchUserApps"
-              class="px-4 py-2 bg-[#1570EF] text-white rounded-lg hover:bg-[#0F5BD3] transition-colors"
+              class="px-4 py-2 bg-[#1570EF] text-white text-sm sm:text-base rounded-lg hover:bg-[#0F5BD3] transition-colors"
             >
               Try Again
             </button>
@@ -60,15 +60,15 @@
           <!-- Empty State -->
           <div
             v-else-if="userApps.length === 0"
-            class="text-center py-12 bg-white rounded-lg border border-[#E5E7EB]"
+            class="text-center py-8 sm:py-12 px-4 bg-white rounded-lg border border-[#E5E7EB]"
           >
-            <p class="text-[#475467] mb-4">No applications registered yet.</p>
+            <p class="text-[#475467] mb-4 text-sm sm:text-base">No applications registered yet.</p>
           </div>
 
           <!-- Apps Grid -->
           <div
             v-else
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[15px]"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-[15px]"
           >
             <DashboardAppCard
               v-for="app in userApps"

@@ -1,5 +1,5 @@
 <template>
-  <div class="font-Avenir">
+  <div class="font-Avenir overflow-hidden">
     <!-- Page Header -->
     <DashboardPageHeader
       title="Audit Logs"
@@ -31,9 +31,10 @@
     <!-- Data Table with Pagination -->
     <div
       v-if="filteredLogs.length > 0 || isLoading"
-      class="bg-white rounded-lg border border-[#E4E7EC]"
+      class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden"
     >
-      <DashboardDataTable
+      <div class="overflow-x-auto">
+        <DashboardDataTable
         :columns="columns"
         :data="filteredLogs"
         :loading="isLoading"
@@ -43,19 +44,20 @@
         empty-message="No logs found"
         @action="handleAction"
       />
+      </div>
 
       <!-- Pagination Footer -->
       <div
-        class="flex relative justify-center items-center py-4 px-6 border-t border-[#F2F4F7]"
+        class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]"
       >
-        <div class="text-sm text-[#344054] absolute left-6 font-medium mr-auto">
+        <div class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium">
           {{ 1 }} - {{ logs.length }}
         </div>
         <button
           @click="handleLoadMore"
           :disabled="logs.length >= queryParams.total || isLoadingMore"
           :class="[
-            'px-4 py-2 font-semibold text-sm rounded-lg border transition-colors',
+            'px-4 py-2 font-semibold text-xs sm:text-sm rounded-lg border transition-colors w-full sm:w-auto',
             logs.length >= queryParams.total || isLoadingMore
               ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
               : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer',
@@ -69,10 +71,10 @@
     <!-- Empty State -->
     <div
       v-else
-      class="flex flex-col items-center justify-center py-16 bg-white rounded-lg border border-[#E9EAEB]"
+      class="flex flex-col items-center justify-center py-10 sm:py-16 px-4 bg-white rounded-lg border border-[#E9EAEB]"
     >
-      <p class="text-gray-600 text-lg font-medium">No audit logs found</p>
-      <p class="text-gray-400 text-sm mt-2">
+      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">No audit logs found</p>
+      <p class="text-gray-400 text-xs sm:text-sm mt-2 text-center">
         There are no logs to display at the moment.
       </p>
     </div>

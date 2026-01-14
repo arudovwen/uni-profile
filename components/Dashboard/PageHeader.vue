@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-5 flex flex-row justify-between items-start">
+  <div class="mb-5 flex flex-row justify-between items-start flex-wrap gap-4">
     <!-- Title and Subtitle -->
     <div>
       <h1 class="text-xl font-semibold text-[#181D27] leading-[28px]">

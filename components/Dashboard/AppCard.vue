@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-full h-[237px] p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[15px] hover:shadow-md transition-shadow cursor-pointer font-Avenir"
+    class="w-full p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col !gap-[17px] hover:shadow-md transition-shadow cursor-pointer font-Avenir"
     @click="handleClick"
   >
     <!-- Header: Logo + Status Badge -->
@@ -46,15 +46,19 @@
       </span>
     </div>
 
-    <!-- Title -->
-    <h3 class="font-700 text-lg leading-7 text-[#475467] line-clamp-1">
-      {{ app.name }}
-    </h3>
+    <div class="flex flex-col gap-0.5">
+      <!-- Title -->
+      <h3 class="font-700 text-lg leading-7 text-[#475467] line-clamp-1">
+        {{ app.name }}
+      </h3>
 
-    <!-- Description -->
-    <p class="font-350 text-sm leading-5 text-[#475467] line-clamp-3 flex-grow">
-      {{ app.description }}
-    </p>
+      <!-- Description -->
+      <p
+        class="font-350 text-sm leading-5 text-[#475467] line-clamp-3 flex-grow"
+      >
+        {{ app.description }}
+      </p>
+    </div>
 
     <!-- Role Badge -->
     <span

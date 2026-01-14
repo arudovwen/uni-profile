@@ -1,20 +1,20 @@
 <template>
   <div
-    class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-8 px-[51px] max-w-[723px]"
+    class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-6 sm:py-8 px-4 sm:px-6 lg:px-[51px] max-w-[723px]"
   >
     <!-- Section Header -->
-    <div class="mb-6">
-      <h2 class="text-base font-[800] !text-[#344054] leading-6">
+    <div class="mb-4 sm:mb-6">
+      <h2 class="text-sm sm:text-base font-[800] !text-[#344054] leading-6">
         Manage Password
       </h2>
-      <p class="text-sm font-medium text-[#475467] leading-5 mt-0.5">
+      <p class="text-xs sm:text-sm font-medium text-[#475467] leading-5 mt-0.5">
         Reset and update your password
       </p>
     </div>
 
     <form @submit.prevent="onSubmit">
       <!-- Form Fields -->
-      <div class="flex flex-col gap-[23px]">
+      <div class="flex flex-col gap-4 sm:gap-[23px]">
         <!-- Current Password -->
         <TextinputInputField
           v-model="currentPassword"
@@ -27,7 +27,6 @@
         />
 
         <!-- New Password -->
-
         <TextinputInputField
           v-model="newPassword"
           name="newPassword"
@@ -51,11 +50,11 @@
       </div>
 
       <!-- Submit Button -->
-      <div class="flex justify-end mt-[34px]">
+      <div class="flex justify-center sm:justify-end mt-6 sm:mt-[34px]">
         <button
           type="submit"
           :disabled="isLoading || !meta.valid"
-          class="w-[235px] h-[45px] bg-[#1570EF] text-white text-base font-[800] rounded-[5px] hover:bg-[#0F5BD3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          class="w-full sm:w-[235px] h-[45px] bg-[#1570EF] text-white text-sm sm:text-base font-[800] rounded-[5px] hover:bg-[#0F5BD3] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <span
             v-if="isLoading"

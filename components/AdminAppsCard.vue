@@ -1,7 +1,7 @@
 <template>
   <div
     @click="handleCardClick"
-    class="w-full h-auto p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[15px] hover:shadow-md transition-shadow font-Avenir cursor-pointer"
+    class="w-full h-auto p-6 bg-white border border-[#EAECF5] rounded-xl flex flex-col gap-[17px] hover:shadow-md transition-shadow font-Avenir cursor-pointer"
   >
     <!-- Header: Logo + Status Badge -->
     <div class="flex items-start justify-between gap-3">
@@ -46,15 +46,15 @@
       </span>
     </div>
 
-    <!-- Title -->
-    <h3 class="font-700 text-lg leading-7 text-[#475467] line-clamp-1">
-      {{ app.name }}
-    </h3>
-
-    <!-- Description -->
-    <p class="font-350 text-sm leading-5 text-[#475467] line-clamp-3 flex-grow">
-      {{ app.description || "No description available" }}
-    </p>
+    <!-- Title & Description -->
+    <div class="flex flex-col gap-[2px] flex-grow">
+      <h3 class="font-[700] text-lg leading-7 text-[#475467] line-clamp-1">
+        {{ app.name }}
+      </h3>
+      <p class="font-350 text-sm leading-5 text-[#475467] line-clamp-3">
+        {{ app.description || "No description available" }}
+      </p>
+    </div>
 
     <!-- Action Icons -->
     <div class="flex items-center gap-3 pt-2">
