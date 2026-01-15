@@ -61,8 +61,8 @@ const columns = [
     isStatus: false,
   },
   {
-    header: "Apps",
-    key: "apps",
+    header: "App",
+    key: "app",
     isHtml: false,
     isStatus: false,
   },
