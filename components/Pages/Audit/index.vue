@@ -118,8 +118,9 @@ function getAuditData() {
     auditData.value = res.data.data.map((i) => ({
       ...i,
       lastActive: moment(i.created).format("lll"),
-      app: authStore.appList.find((j) => j.appCode === i.appCode)?.name,
+      app: authStore.appList.find((j) => j.code === i.appCode)?.name,
     }));
+  
     queryParams.total = res.data.totalCount;
     docLoading.value = false;
   });
