@@ -13,7 +13,7 @@ const options = [
     title: "Buyer account",
     icon: "ri:user-3-line",
     type: "register",
-    url: "/auth/register",
+    url: "/register/buyer",
     sub: "Search, buy and place orders for products",
   },
   {

@@ -115,7 +115,7 @@ const forgotPasswordLink = computed(() =>
 );
 
 const signUpLink = computed(() =>
-  handleRouting(route, `/${auth}/register${app ? `/${app}` : ""}`)
+  handleRouting(route, `/register/funder`)
 );
 
 const otpSubtext = computed(() => {

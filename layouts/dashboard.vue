@@ -4,7 +4,7 @@
     <div class="bg-white border-b border-[#E5E7EB]">
       <header class="bg-white max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-0">
         <!-- Top Bar with Logo and Avatar -->
-        <div class="flex items-center justify-between py-4 !pb-6">
+        <div class="flex items-center justify-between py-4 !pb-6 lg:px-4">
           <!-- Logo -->
           <NuxtLink to="/" class="flex items-center gap-2">
             <AuthLogo />
@@ -137,7 +137,7 @@
 
         <!-- Navigation Tabs -->
         <nav
-          class="flex items-center gap-1 sm:gap-[10px] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0"
+          class="flex items-center gap-1 sm:gap-[10px] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 lg:px-4"
         >
           <NuxtLink
             to="/"

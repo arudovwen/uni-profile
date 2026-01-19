@@ -36,13 +36,15 @@ const toast = useToast();
 
 const route = useRoute();
 const router = useRouter();
-const { auth, app } = route.params;
 const authStore = useAuthStore();
 const newEmail = useCookie("email", defaultOptions);
 const { setSlug } = useOnboarding();
 
-// Get slug from URL params
-const slug = computed(() => (route.query.slug as string) || null);
+// Get partner slug from URL params (new approach)
+const partner = computed(() => (route.params.partner as string) || null);
+
+// Get type from URL params (for future use)
+const type = computed(() => (route.params.type as string) || null);
 
 const step = ref(1);
 const isLoading = ref(false);
@@ -77,12 +79,12 @@ const handleOtpSubmit = async (code: string) => {
       // Clear cookies
       newEmail.value = null;
 
-      // Store slug in onboarding state
-      setSlug(slug.value);
+      // Store partner slug in onboarding state
+      setSlug(partner.value);
 
-      // Navigate to onboarding with slug param immediately
-      const query = slug.value ? { slug: slug.value } : {};
-      router.push({ path: `/${auth}/onboarding/select-apps`, query });
+      // Navigate to onboarding with slug param
+      const query = partner.value ? { slug: partner.value } : {};
+      router.push({ path: `/auth/onboarding/select-apps`, query });
     }
   } catch (err) {
     isLoading.value = false;
@@ -101,6 +103,11 @@ const goBackToSignUp = () => {
 };
 
 onMounted(() => {
+  // Store partner slug on mount
+  if (partner.value) {
+    setSlug(partner.value);
+  }
+
   if (route.query.step) {
     step.value = Number(route.query.step);
   }

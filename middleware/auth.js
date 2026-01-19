@@ -37,7 +37,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     // }
 
     // Redirect authenticated users away from auth-related routes
-    if (to?.name?.includes("auth")) {
+    if (to?.name?.includes("auth") || to.path?.includes("register")) {
       const redirectPath = intialRoute[mattaAuth.value.userCategory] || "/";
       return navigateTo(redirectPath);
     }
@@ -46,7 +46,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   // Handle unauthenticated user logic
   if (!isAuthenticated) {
     // Redirect unauthenticated users to the login page if they're not already there
-    if (!to.path?.includes("auth") && !to.path?.includes("invited-user")) {
+    if (!to.path?.includes("auth") && !to.path?.includes("invited-user") && !to.path?.includes("register")) {
       abortNavigation();
 
       // Create the base URL for redirection

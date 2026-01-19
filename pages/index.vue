@@ -5,7 +5,7 @@
 
     <div
       v-else
-      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 px-4 sm:px-6 lg:px-8"
+      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4"
     >
       <!-- Users Tab -->
       <DashboardUsersContent v-if="currentTab === 'users'" />
