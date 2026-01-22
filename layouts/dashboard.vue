@@ -151,6 +151,18 @@
             <DashboardNavIcon name="apps" :active="isActiveTab('apps')" />
             <span>Apps</span>
           </NuxtLink>
+          <NuxtLink
+            to="/?tab=kyc"
+            :class="[
+              'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+              isActiveTab('kyc')
+                ? 'border-[#1570EF] text-[#1570EF]'
+                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+            ]"
+          >
+            <DashboardNavIcon name="users" :active="isActiveTab('users')" />
+            <span>KYC</span>
+          </NuxtLink>
           <PermissionGuard :categories="[0, 3]">
             <NuxtLink
               to="/?tab=users"
@@ -219,7 +231,7 @@ const userMenuRef = ref(null);
 const isUserMenuOpen = ref(false);
 
 const userAvatar = computed(
-  () => authStore.loggedUser?.photo || authStore.loggedUser?.avatar || ""
+  () => authStore.loggedUser?.photo || authStore.loggedUser?.avatar || "",
 );
 const userInitial = computed(() => {
   const firstName = authStore.loggedUser?.firstName || "";

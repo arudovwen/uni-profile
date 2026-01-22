@@ -2,6 +2,7 @@
   <NuxtLayout name="dashboard">
     <!-- Settings Tab (full width, no wrapper) -->
     <DashboardSettingsContent v-if="currentTab === 'settings'" />
+    <DashboardKYCContent v-else-if="currentTab === 'kyc'" />
 
     <div
       v-else
@@ -12,6 +13,10 @@
 
       <!-- Logs Tab -->
       <DashboardLogsContent v-else-if="currentTab === 'logs'" />
+
+      <!-- KYC Tab -->
+
+      <!-- Settings Tab
 
       <!-- Apps Tab (default) -->
       <template v-else-if="currentTab === 'apps'" class="mt-[16px]">
@@ -37,7 +42,10 @@
         <!-- User Apps View -->
         <template v-else>
           <!-- Loading State -->
-          <div v-if="isLoading" class="flex justify-center items-center py-8 sm:py-12">
+          <div
+            v-if="isLoading"
+            class="flex justify-center items-center py-8 sm:py-12"
+          >
             <div
               class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1570EF]"
             ></div>
@@ -62,7 +70,9 @@
             v-else-if="userApps.length === 0"
             class="text-center py-8 sm:py-12 px-4 bg-white rounded-lg border border-[#E5E7EB]"
           >
-            <p class="text-[#475467] mb-4 text-sm sm:text-base">No applications registered yet.</p>
+            <p class="text-[#475467] mb-4 text-sm sm:text-base">
+              No applications registered yet.
+            </p>
           </div>
 
           <!-- Apps Grid -->
@@ -165,9 +175,9 @@ const buildAuthUrl = (baseUrl: string) => {
   const encryptedRefreshToken = encrypt(refreshToken);
 
   return `${baseUrl}/auth/validate?token=${encodeURIComponent(
-    encryptedToken
+    encryptedToken,
   )}&code=${encodeURIComponent(
-    encryptedRefreshToken
+    encryptedRefreshToken,
   )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
 };
 
