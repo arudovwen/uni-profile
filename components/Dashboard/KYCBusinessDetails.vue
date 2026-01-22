@@ -12,7 +12,7 @@
     </div>
 
     <!-- Logo Upload Section -->
-    <div class="mb-6 pb-6 border-b border-[#E4E7EC] flex gap-x-4 items-center">
+    <div class="mb-6 flex gap-x-4 items-center">
       <span
         class="h-16 w-16 bg-gray-100 rounded-full flex-shrink-0 border border-[#E4E7EC] overflow-hidden"
       >
@@ -204,7 +204,7 @@
 
       <!-- Form Actions -->
       <div
-        class="flex gap-x-4 items-center justify-end border-t border-[#E9EAEB] pt-6"
+        class="flex gap-x-4 items-center justify-end pt-6"
       >
         <AppButton
           :disabled="isLoading"

@@ -52,9 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { toast } from "vue3-toastify";
-import { updateDocuments } from "~/services/settingservices";
+import { updateCompanyProfile, getBusinessProfile } from "~/services/settingservices";
 
 interface FileData {
   filename?: string;
@@ -67,17 +67,71 @@ interface FileData {
   status?: "pending" | "approved" | "rejected";
 }
 
+interface CompanyDocument {
+  url: string;
+  urls: string[];
+  documentType: number;
+}
+
+// Document type mapping
+const DOCUMENT_TYPES = {
+  INCORPORATION: 0,
+  TAX: 1,
+  LICENSE: 2,
+};
+
 const incorporationFile = ref<FileData | null>(null);
 const taxFile = ref<FileData | null>(null);
 const licenseFile = ref<FileData | null>(null);
 const isLoading = ref(false);
+const businessProfileData = ref<any>(null);
 
 // Form is valid if required documents are uploaded
 const isFormValid = computed(() => {
   return incorporationFile.value !== null && taxFile.value !== null;
 });
 
-const onSubmit = async () => {
+// Load existing documents on mount
+onMounted(() => {
+  getBusinessProfile()
+    .then((res) => {
+      if (res?.status === 200 && res.data?.data) {
+        businessProfileData.value = res.data.data;
+        const companyDocuments = res.data.data.companyDocuments as CompanyDocument[];
+
+        // Map documents to form fields based on documentType
+        companyDocuments?.forEach((doc) => {
+          const fileUrl = doc.urls?.[0] || doc.url;
+          if (!fileUrl) return;
+
+          const fileData: FileData = {
+            filename: fileUrl.split("/").pop() || "",
+            name: fileUrl.split("/").pop() || "",
+            filePath: fileUrl,
+            url: fileUrl,
+            fileType: fileUrl.split(".").pop() || "",
+          };
+
+          switch (doc.documentType) {
+            case DOCUMENT_TYPES.INCORPORATION:
+              incorporationFile.value = fileData;
+              break;
+            case DOCUMENT_TYPES.TAX:
+              taxFile.value = fileData;
+              break;
+            case DOCUMENT_TYPES.LICENSE:
+              licenseFile.value = fileData;
+              break;
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      console.error("Error loading business profile:", err);
+    });
+});
+
+const onSubmit = () => {
   if (!isFormValid.value) {
     toast.error("Please upload all required documents");
     return;
@@ -85,48 +139,47 @@ const onSubmit = async () => {
 
   isLoading.value = true;
 
-  try {
-    // Prepare document payload with URLs only
-    const companyDocuments = [
-      {
-        documentType: "incorporation",
-        urls: incorporationFile.value?.url || incorporationFile.value?.filePath || "",
-      },
-      {
-        documentType: "tax",
-        urls: taxFile.value?.url || taxFile.value?.filePath || "",
-      },
-      ...(licenseFile.value
-        ? [
-            {
-              documentType: "license",
-              urls: licenseFile.value?.url || licenseFile.value?.filePath || "",
-            },
-          ]
-        : []),
-    ];
+  // Prepare updated company documents
+  const updatedCompanyDocuments: CompanyDocument[] = [
+    {
+      url: "",
+      urls: [incorporationFile.value?.url || incorporationFile.value?.filePath || ""],
+      documentType: DOCUMENT_TYPES.INCORPORATION,
+    },
+    {
+      url: "",
+      urls: [taxFile.value?.url || taxFile.value?.filePath || ""],
+      documentType: DOCUMENT_TYPES.TAX,
+    },
+    ...(licenseFile.value
+      ? [
+          {
+            url: "",
+            urls: [licenseFile.value?.url || licenseFile.value?.filePath || ""],
+            documentType: DOCUMENT_TYPES.LICENSE,
+          },
+        ]
+      : []),
+  ];
 
-    // Submit documents to API
-    const response = await updateDocuments({
-      companyDocuments,
+  // Send entire profile with updated documents
+  updateCompanyProfile({
+    ...businessProfileData.value,
+    companyDocuments: updatedCompanyDocuments,
+  })
+    .then((res) => {
+      if (res?.status === 200) {
+        toast.success("Documents submitted successfully");
+      }
+      isLoading.value = false;
+    })
+    .catch((err) => {
+      isLoading.value = false;
+      toast.error(
+        err?.response?.data?.message ||
+          err?.response?.data?.Message ||
+          "Failed to submit documents. Please try again."
+      );
     });
-
-    if (response?.status === 200) {
-      toast.success("Documents submitted successfully");
-      // Reset form
-      incorporationFile.value = null;
-      taxFile.value = null;
-      licenseFile.value = null;
-    }
-    isLoading.value = false;
-  } catch (error) {
-    console.error("Error submitting documents:", error);
-    toast.error(
-      (error as any)?.response?.data?.message ||
-        (error as any)?.response?.data?.Message ||
-        "Failed to submit documents. Please try again."
-    );
-    isLoading.value = false;
-  }
 };
 </script>
