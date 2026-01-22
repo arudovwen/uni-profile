@@ -16,8 +16,8 @@
         v-model="incorporationFile"
         label="Certificate of Incorporation"
         :is-required="true"
+        accepted-types="pdf,jpg,jpeg,png"
         helper-text="Upload your business registration certificate (PDF, JPG, PNG)"
-        @change="handleDocumentChange"
       />
 
       <!-- Tax Certificate -->
@@ -25,16 +25,16 @@
         v-model="taxFile"
         label="Tax Certificate"
         :is-required="true"
+        accepted-types="pdf,jpg,jpeg,png"
         helper-text="Upload your business tax certificate (PDF, JPG, PNG)"
-        @change="handleDocumentChange"
       />
 
       <!-- Business License -->
       <DashboardDocumentUpload
         v-model="licenseFile"
         label="Business License"
+        accepted-types="pdf,jpg,jpeg,png"
         helper-text="Upload your business license (optional)"
-        @change="handleDocumentChange"
       />
 
       <!-- Form Actions -->
@@ -64,22 +64,18 @@ interface FileData {
   fileType?: string;
   size?: number;
   fileSize?: number;
+  status?: "pending" | "approved" | "rejected";
 }
 
-const incorporationFile = ref<FileData[]>([]);
-const taxFile = ref<FileData[]>([]);
-const licenseFile = ref<FileData[]>([]);
+const incorporationFile = ref<FileData | null>(null);
+const taxFile = ref<FileData | null>(null);
+const licenseFile = ref<FileData | null>(null);
 const isLoading = ref(false);
 
 // Form is valid if required documents are uploaded
 const isFormValid = computed(() => {
-  return incorporationFile.value.length > 0 && taxFile.value.length > 0;
+  return incorporationFile.value !== null && taxFile.value !== null;
 });
-
-const handleDocumentChange = () => {
-  // Handle document changes if needed
-  // This can be used for auto-saving or validation
-};
 
 const onSubmit = async () => {
   if (!isFormValid.value) {
@@ -94,17 +90,17 @@ const onSubmit = async () => {
     const companyDocuments = [
       {
         documentType: "incorporation",
-        urls: incorporationFile.value.map((file) => file.url || file.filePath || ""),
+        urls: incorporationFile.value?.url || incorporationFile.value?.filePath || "",
       },
       {
         documentType: "tax",
-        urls: taxFile.value.map((file) => file.url || file.filePath || ""),
+        urls: taxFile.value?.url || taxFile.value?.filePath || "",
       },
-      ...(licenseFile.value.length > 0
+      ...(licenseFile.value
         ? [
             {
               documentType: "license",
-              urls: licenseFile.value.map((file) => file.url || file.filePath || ""),
+              urls: licenseFile.value?.url || licenseFile.value?.filePath || "",
             },
           ]
         : []),
@@ -118,9 +114,9 @@ const onSubmit = async () => {
     if (response?.status === 200) {
       toast.success("Documents submitted successfully");
       // Reset form
-      incorporationFile.value = [];
-      taxFile.value = [];
-      licenseFile.value = [];
+      incorporationFile.value = null;
+      taxFile.value = null;
+      licenseFile.value = null;
     }
     isLoading.value = false;
   } catch (error) {

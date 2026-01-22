@@ -1,8 +1,8 @@
 <template>
   <div class="flex flex-col w-full" :class="containerStyle">
     <!-- Label -->
-    <div v-if="label" class="flex items-start mb-2">
-      <span class="text-base text-[#344054] font-medium leading-5">
+    <div v-if="label" class="flex items-start">
+      <span class="mb-2 text-base text-[#344054] font-medium leading-[1.25rem]">
         {{ label }}
       </span>
       <span v-if="isRequired" class="text-[#F97066] ml-1">*</span>
@@ -10,31 +10,28 @@
 
     <!-- Upload Area -->
     <div
-      class="w-full border-2 border-dashed border-[#D0D5DD] cursor-pointer flex flex-col items-center justify-center text-center rounded-lg py-8 px-4 mb-4 transition-colors hover:border-[#1570EF] hover:bg-[#F0F9FF]"
-      :class="{ 'opacity-50 cursor-not-allowed': disabled || isUploading }"
-      @click="handleUploadClick"
+      v-if="!hideUploadField"
+      class="w-full border border-dashed border-[#003B7733] cursor-pointer flex flex-col items-center justify-center text-center rounded-lg py-[19px] mb-2"
+      :class="{ 'opacity-50 cursor-not-allowed': disabled || uploadProgress.isUploading }"
+      @click="handleUploadContainerClick"
       @dragover.prevent
       @drop.prevent="handleFileDrop"
     >
-      <div v-if="isUploading" class="flex flex-col items-center gap-2">
-        <div class="animate-spin">
-          <svg class="w-8 h-8 text-[#1570EF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-1">
+        <div v-if="uploadProgress.isUploading" class="flex items-center gap-2">
+          <svg class="w-6 h-6 text-[#344054] animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2a10 10 0 0110 10v1H2v-1a10 10 0 0110-10z" />
           </svg>
         </div>
-        <span class="text-sm text-[#475467]">Uploading files...</span>
-      </div>
-
-      <div v-else class="flex flex-col items-center gap-3">
-        <svg class="w-10 h-10 text-[#667085]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3v-7" />
-        </svg>
-        <div>
-          <p class="text-sm text-[#344054]">
-            <span class="text-[#1570EF] font-medium">Click to upload</span> or drag and drop
-          </p>
-          <p class="text-xs text-[#667085]">PDF, JPG, PNG (Max 5MB)</p>
+        <div v-else>
+          <svg class="w-6 h-6 text-[#7D8299] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3v-7" />
+          </svg>
         </div>
+        <span v-if="!uploadProgress.isUploading" class="font-normal flex-1 text-[#7D8299] text-sm">
+          Drag and drop document here for upload.<br />
+          Supported documents are {{ acceptedTypes.split(",").map((t) => t.trim()).join(", ") }}
+        </span>
       </div>
 
       <input
@@ -42,57 +39,91 @@
         type="file"
         class="hidden"
         :accept="acceptedTypes"
-        :multiple="multiple"
-        :disabled="disabled || isUploading"
+        :disabled="disabled || uploadProgress.isUploading"
         @change="handleFileChange"
       />
     </div>
 
-    <!-- Uploaded Files List -->
-    <div v-if="uploadedFiles && uploadedFiles.length > 0" class="space-y-2 mb-4">
-      <div
-        v-for="(file, idx) in uploadedFiles"
-        :key="idx"
-        class="flex items-center justify-between gap-3 p-3 bg-[#F0F9FF] border border-[#E0F2FE] rounded-lg"
-      >
-        <div class="flex items-center gap-2 flex-1 min-w-0">
-          <svg class="w-5 h-5 flex-shrink-0 text-[#1570EF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-[#344054] truncate">
-              {{ file.filename || file.name }}
-            </p>
-            <p class="text-xs text-[#667085]">{{ formatFileSize(file.fileSize || file.size) }}</p>
-          </div>
-        </div>
+    <!-- File Display with Status -->
+    <div v-if="modelValue" class="flex flex-col sm:flex-row sm:items-center gap-2">
+      <div class="w-max flex items-center gap-2 px-4 py-2.5 rounded-[2.5rem] bg-[#27AE601A]">
+        <p class="text-[#27AE60] text-sm font-medium">
+          {{ extractFilename(modelValue.filename || modelValue.name) }}
+        </p>
         <button
+          v-if="!disabled"
           type="button"
-          @click="removeFile(idx)"
-          class="flex-shrink-0 text-[#667085] hover:text-[#F04438] transition-colors"
-          title="Remove file"
+          class="cursor-pointer hover:opacity-80 transition-opacity"
+          @click="removeFile"
         >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-[#27AE60]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
+
+      <!-- Status Display -->
+      <div v-if="modelValue.status" class="mt-2.5 sm:mt-0">
+        <div
+          v-if="modelValue.status === 'pending'"
+          class="px-3 py-1.5 rounded-full text-sm font-medium"
+          style="background-color: #FFFAEB; color: #B54708; border: 1px solid #FEDF89"
+        >
+          Verification Pending
+        </div>
+        <div
+          v-else-if="modelValue.status === 'approved'"
+          class="px-3 py-1.5 rounded-full text-sm font-medium"
+          style="background-color: #ECFDF3; color: #067647; border: 1px solid #ABEFC6"
+        >
+          Approved
+        </div>
+        <div
+          v-else-if="modelValue.status === 'rejected'"
+          class="flex items-center gap-2"
+        >
+          <div
+            class="px-3 py-1.5 rounded-full text-sm font-medium"
+            style="background-color: #FEF3F2; color: #B42318; border: 1px solid #FECDCA"
+          >
+            Rejected
+          </div>
+          <p class="text-[#182230] text-base font-medium underline cursor-pointer">
+            View Reason
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div v-if="uploadProgress.isUploading && uploadProgress.percentage > 0" class="mt-2">
+      <div class="w-full bg-[#E9EAEB] rounded-full h-2">
+        <div
+          class="bg-[#1570EF] h-2 rounded-full transition-all duration-300"
+          :style="{ width: uploadProgress.percentage + '%' }"
+        ></div>
+      </div>
+      <p class="text-xs text-[#667085] mt-1">{{ uploadProgress.percentage }}%</p>
     </div>
 
     <!-- Error Messages -->
-    <div v-if="error || uploadError" class="text-sm text-[#F04438] font-medium">
-      {{ error || uploadError }}
+    <div v-if="error" class="mt-2 text-sm text-[#F04438] font-normal">
+      {{ error }}
     </div>
 
-    <!-- Empty State Message -->
-    <div v-if="uploadedFiles.length === 0 && helperText" class="text-xs text-[#667085] mt-2">
+    <div v-if="uploadErrorMessage" class="mt-2 text-base text-[#F04438] font-normal">
+      {{ uploadErrorMessage }}
+    </div>
+
+    <!-- Helper Text -->
+    <div v-if="helperText && !modelValue" class="text-xs text-[#667085] mt-2">
       {{ helperText }}
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, computed } from "vue";
 import { toast } from "vue3-toastify";
 import { uploaddocument } from "~/services/onboardingservice";
 
@@ -104,173 +135,173 @@ interface FileData {
   fileType?: string;
   size?: number;
   fileSize?: number;
+  status?: "pending" | "approved" | "rejected";
 }
 
 interface Props {
   label?: string;
   acceptedTypes?: string;
-  modelValue?: FileData[];
-  value?: FileData[];
+  modelValue?: FileData | null;
   error?: string;
   disabled?: boolean;
-  multiple?: boolean;
   containerStyle?: string;
   isRequired?: boolean;
   helperText?: string;
+  hideUploadField?: boolean;
+}
+
+interface UploadProgress {
+  percentage: number;
+  currentSize: number;
+  isUploading: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   acceptedTypes: "pdf,jpg,jpeg,png",
-  modelValue: () => [],
-  value: () => [],
+  modelValue: null,
   error: "",
   disabled: false,
-  multiple: true,
   containerStyle: "",
   isRequired: false,
   helperText: "",
+  hideUploadField: false,
 });
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: FileData[]): void;
-  (e: "change", value: FileData[]): void;
+  (e: "update:modelValue", value: FileData | null): void;
+  (e: "change", value: FileData | null): void;
 }>();
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
-const isUploading = ref(false);
-const uploadError = ref("");
-const uploadedFiles = ref<FileData[]>((props.modelValue || props.value || []));
+const uploadProgress = ref<UploadProgress>({
+  percentage: 0,
+  currentSize: 0,
+  isUploading: false,
+});
+const uploadErrorMessage = ref("");
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-const handleUploadClick = () => {
-  if (props.disabled || isUploading.value) return;
+const handleUploadContainerClick = () => {
+  if (props.disabled || uploadProgress.value.isUploading) return;
   fileInputRef.value?.click();
 };
 
-const formatFileSize = (bytes: number = 0): string => {
-  if (!bytes) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return (Math.round((bytes / Math.pow(k, i)) * 100) / 100) + " " + sizes[i];
+const extractFilename = (filename: string): string => {
+  if (!filename) return "";
+  // Remove timestamp prefix if exists
+  const parts = filename.split("-");
+  return parts.length > 1 ? parts.slice(1).join("-") : filename;
 };
 
 const handleFileChange = (e: Event) => {
   const target = e.target as HTMLInputElement;
-  const selectedFiles = Array.from(target.files || []);
-  const allowedFiles = selectedFiles.filter((file) => file.size <= MAX_FILE_SIZE);
-  const rejectedFiles = selectedFiles.filter((file) => file.size > MAX_FILE_SIZE);
+  const selectedFile = target.files?.[0];
 
-  if (rejectedFiles.length > 0) {
-    toast.error("Some files exceed the 5MB limit and were skipped");
+  if (!selectedFile) return;
+
+  uploadProgress.value.isUploading = true;
+  uploadErrorMessage.value = "";
+
+  if (selectedFile.size > MAX_FILE_SIZE) {
+    uploadProgress.value.isUploading = false;
+    toast.error("File size exceeds 5MB limit");
+    uploadErrorMessage.value = "File size exceeds 5MB limit";
+    return;
   }
 
-  if (allowedFiles.length > 0) {
-    processFiles(allowedFiles);
-  }
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const result = reader.result as string;
+    const base64 = result.split(",")[1];
+    const extension = selectedFile.name.split(".").pop() || "";
 
-  // Reset input
-  target.value = "";
+    const payload = {
+      base64,
+      extension,
+      file: selectedFile,
+    };
+    await handleFileUpload(payload);
+  };
+
+  reader.readAsDataURL(selectedFile);
 };
 
 const handleFileDrop = (e: DragEvent) => {
-  if (props.disabled || isUploading.value) return;
+  if (props.disabled || uploadProgress.value.isUploading) return;
 
-  const files = Array.from(e.dataTransfer?.files || []);
-  const allowedFiles = files.filter((file) => file.size <= MAX_FILE_SIZE);
-  const rejectedFiles = files.filter((file) => file.size > MAX_FILE_SIZE);
+  const file = e.dataTransfer?.files[0];
+  if (!file) return;
 
-  if (rejectedFiles.length > 0) {
-    toast.error("Some files exceed the 5MB limit and were skipped");
+  uploadProgress.value.isUploading = true;
+  uploadErrorMessage.value = "";
+
+  if (file.size > MAX_FILE_SIZE) {
+    uploadProgress.value.isUploading = false;
+    toast.error("File size exceeds 5MB limit");
+    uploadErrorMessage.value = "File size exceeds 5MB limit";
+    return;
   }
 
-  if (allowedFiles.length > 0) {
-    processFiles(allowedFiles);
-  }
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const result = reader.result as string;
+    const base64 = result.split(",")[1];
+    const extension = file.name.split(".").pop() || "";
+
+    const payload = {
+      base64,
+      extension,
+      file,
+    };
+    await handleFileUpload(payload);
+  };
+
+  reader.readAsDataURL(file);
 };
 
-const processFiles = async (files: File[]) => {
-  if (files.length === 0) return;
-
-  isUploading.value = true;
-  uploadError.value = "";
+const handleFileUpload = async (data: {
+  base64: string;
+  extension: string;
+  file: File;
+}) => {
+  uploadProgress.value.isUploading = true;
+  uploadProgress.value.percentage = 0;
 
   try {
-    const uploadPromises = files.map(
-      (file) =>
-        new Promise<FileData | null>((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = async () => {
-            try {
-              const result = reader.result as string;
-              const base64 = result.split(",")[1];
-              const extension = file.name.split(".").pop() || "";
+    const response = await uploaddocument({
+      base64: data.base64,
+      ext: `.${data.extension}`,
+    });
 
-              const response = await uploaddocument({
-                base64,
-                ext: `.${extension}`,
-              });
+    const fileData: FileData = {
+      filename: `${Date.now()}-${data.file.name}`,
+      name: data.file.name,
+      filePath: response?.data?.data || response?.data?.message,
+      url: response?.data?.data || response?.data?.message,
+      fileType: data.extension,
+      fileSize: data.file.size,
+    };
 
-              if (response?.data?.data || response?.data?.message) {
-                const fileData: FileData = {
-                  filename: file.name,
-                  name: file.name,
-                  filePath: response.data.data || response.data.message,
-                  url: response.data.data || response.data.message,
-                  fileType: extension,
-                  fileSize: file.size,
-                };
-                resolve(fileData);
-              } else {
-                resolve(null);
-              }
-            } catch (err) {
-              console.error("Error uploading file:", err);
-              resolve(null);
-            }
-          };
-          reader.readAsDataURL(file);
-        })
-    );
+    emit("update:modelValue", fileData);
+    emit("change", fileData);
+    toast.success("File uploaded successfully");
 
-    const results = await Promise.all(uploadPromises);
-    const validFiles = results.filter((f): f is FileData => !!f);
-
-    if (validFiles.length > 0) {
-      const newFiles = [...uploadedFiles.value, ...validFiles];
-      uploadedFiles.value = newFiles;
-      emit("update:modelValue", newFiles);
-      emit("change", newFiles);
-      toast.success(`${validFiles.length} file(s) uploaded successfully`);
-    }
-
-    if (results.some((f) => !f) && validFiles.length === 0) {
-      uploadError.value = "Failed to upload files. Please try again.";
-      toast.error("File upload failed. Please try again.");
-    }
-  } catch (err) {
-    console.error("Upload error:", err);
-    uploadError.value = "File upload failed. Please try again.";
-    toast.error("File upload failed. Please try again.");
-  } finally {
-    isUploading.value = false;
+    uploadProgress.value.isUploading = false;
+    uploadProgress.value.percentage = 0;
+  } catch (error) {
+    console.error("Upload error:", error);
+    toast.error("File upload failed. Please try again");
+    uploadErrorMessage.value = "File upload failed. Please try again";
+    uploadProgress.value.isUploading = false;
+    uploadProgress.value.percentage = 0;
   }
 };
 
-const removeFile = (idx: number) => {
-  uploadedFiles.value.splice(idx, 1);
-  emit("update:modelValue", uploadedFiles.value);
-  emit("change", uploadedFiles.value);
+const removeFile = () => {
+  if (props.disabled) return;
+  emit("update:modelValue", null);
+  emit("change", null);
+  uploadErrorMessage.value = "";
 };
-
-// Watch for external changes to modelValue
-watch(
-  () => props.modelValue,
-  (newValue) => {
-    if (newValue) {
-      uploadedFiles.value = newValue;
-    }
-  }
-);
 </script>
