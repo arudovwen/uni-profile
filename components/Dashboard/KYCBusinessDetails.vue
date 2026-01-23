@@ -203,9 +203,7 @@
       </div>
 
       <!-- Form Actions -->
-      <div
-        class="flex gap-x-4 items-center justify-end pt-6"
-      >
+      <div class="flex gap-x-4 items-center justify-end pt-6">
         <AppButton
           :disabled="isLoading"
           :isLoading="isLoading"
@@ -314,6 +312,7 @@ const { handleSubmit, defineField, errors, setFieldValue, setValues, values } =
       website: "",
       city: "",
     },
+    validateOnMount: false,
   });
 
 // Define Fields
@@ -375,25 +374,44 @@ const categorysOptions = computed(() => {
   );
 });
 
-// Load existing data on mount
+const handleSetValue = (fieldName: string, value: any) => {
+  if (value !== undefined && value !== null) {
+    setFieldValue(fieldName, value);
+  }
+};
+
 onMounted(() => {
   getBusinessProfile()
     .then((res) => {
       if (res.status === 200) {
         const data = res.data.data;
-        // Convert country, state, sector, category to CustomDropdown format
-        const processedData = {
-          ...data,
-          country: data.country
-            ? { code: data.country, name: data.country }
-            : null,
-          state: data.state ? { code: data.state, name: data.state } : null,
-          sector: data.sector ? { code: data.sector, name: data.sector } : null,
-          category: data.category
-            ? { code: data.category, name: data.category }
-            : null,
-        };
-        setValues(processedData);
+        // Set values individually to avoid triggering validation
+        handleSetValue("companyName", data.companyName || "");
+        handleSetValue("dateOfIncorporation", data.dateOfIncorporation || null);
+        handleSetValue("companyEmail", data.companyEmail || "");
+        handleSetValue("companyPhone", data.companyPhone || "");
+        handleSetValue(
+          "country",
+          data.country ? { code: data.country, name: data.country } : null,
+        );
+        handleSetValue(
+          "state",
+          data.state ? { code: data.state, name: data.state } : null,
+        );
+        handleSetValue(
+          "sector",
+          data.sector ? { code: data.sector, name: data.sector } : null,
+        );
+        handleSetValue(
+          "category",
+          data.category ? { code: data.category, name: data.category } : null,
+        );
+        handleSetValue("registrationNo", data.registrationNo);
+        handleSetValue("tin", data.tin);
+        handleSetValue("address", data.address);
+        handleSetValue("city", data.city);
+        handleSetValue("website", data.website);
+
         if (data.logo) {
           logo.value = data.logo;
         }

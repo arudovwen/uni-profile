@@ -100,6 +100,7 @@ onMounted(() => {
         const companyDocuments = res.data.data.companyDocuments as CompanyDocument[];
 
         // Map documents to form fields based on documentType
+        // Only populate if documents exist with valid URLs
         companyDocuments?.forEach((doc) => {
           const fileUrl = doc.urls?.[0] || doc.url;
           if (!fileUrl) return;
@@ -114,13 +115,13 @@ onMounted(() => {
 
           switch (doc.documentType) {
             case DOCUMENT_TYPES.INCORPORATION:
-              incorporationFile.value = fileData;
+              if (fileUrl) incorporationFile.value = fileData;
               break;
             case DOCUMENT_TYPES.TAX:
-              taxFile.value = fileData;
+              if (fileUrl) taxFile.value = fileData;
               break;
             case DOCUMENT_TYPES.LICENSE:
-              licenseFile.value = fileData;
+              if (fileUrl) licenseFile.value = fileData;
               break;
           }
         });
@@ -128,6 +129,7 @@ onMounted(() => {
     })
     .catch((err) => {
       console.error("Error loading business profile:", err);
+      // Don't trigger validation errors on load failure
     });
 });
 
