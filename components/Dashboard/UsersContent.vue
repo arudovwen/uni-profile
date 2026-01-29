@@ -39,58 +39,65 @@
     </DashboardTableFilters>
 
     <!-- Data Table with Pagination -->
-    <div v-if="filteredUsers.length > 0 || isLoading" class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden">
+    <div
+      v-if="filteredUsers.length > 0 || isLoading"
+      class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden"
+    >
       <div class="overflow-x-auto">
         <DashboardDataTable
-        :columns="columns"
-        :data="filteredUsers"
-        :loading="isLoading"
-        :show-actions="true"
-        :actions="actions"
-        :paginator="false"
-        empty-message="No users found"
-        @action="handleAction"
-      >
-        <template #cell-user="slotProps">
-          <div class="flex flex-row gap-3">
-            <div
-              :class="`h-8 w-8 rounded-[50%] ${
-                slotProps.data.photoUrl ? 'bg-[#ababab]' : 'bg-[#1570EF]'
-              } flex items-center justify-center flex-shrink-0 overflow-hidden`"
-            >
-              <img
-                v-if="slotProps.data.photoUrl"
-                :src="slotProps.data.photoUrl"
-                :alt="slotProps.data.user"
-                class="w-full h-full object-cover"
-              />
-              <span
-                v-else
-                class="text-white text-sm leading-5 flex justify-center items-center font-500"
+          :columns="columns"
+          :data="filteredUsers"
+          :loading="isLoading"
+          :show-actions="true"
+          :actions="actions"
+          :paginator="false"
+          empty-message="No users found"
+          @action="handleAction"
+        >
+          <template #cell-user="slotProps">
+            <div class="flex flex-row gap-3">
+              <div
+                :class="`h-8 w-8 rounded-[50%] ${
+                  slotProps.data.photoUrl ? 'bg-[#ababab]' : 'bg-[#1570EF]'
+                } flex items-center justify-center flex-shrink-0 overflow-hidden`"
               >
-                {{ getUserInitials(slotProps.data.user) }}
-              </span>
+                <img
+                  v-if="slotProps.data.photoUrl"
+                  :src="slotProps.data.photoUrl"
+                  :alt="slotProps.data.user"
+                  class="w-full h-full object-cover"
+                />
+                <span
+                  v-else
+                  class="text-white text-sm leading-5 flex justify-center items-center font-500"
+                >
+                  {{ getUserInitials(slotProps.data.user) }}
+                </span>
+              </div>
+              <div class="flex flex-col">
+                <span class="font-[500] text-[#344054]">{{
+                  slotProps.data.user
+                }}</span>
+                <span class="text-sm text-[#667085]">{{
+                  slotProps.data.email
+                }}</span>
+              </div>
             </div>
-            <div class="flex flex-col">
-              <span class="font-[500] text-[#344054]">{{
-                slotProps.data.user
-              }}</span>
-              <span class="text-sm text-[#667085]">{{
-                slotProps.data.email
-              }}</span>
-            </div>
-          </div>
-        </template>
+          </template>
 
-        <template #cell-status="slotProps">
-          <UserStatusBadge :status="slotProps.data.status" />
-        </template>
-      </DashboardDataTable>
+          <template #cell-status="slotProps">
+            <UserStatusBadge :status="slotProps.data.status" />
+          </template>
+        </DashboardDataTable>
       </div>
 
       <!-- Pagination Footer -->
-      <div class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]">
-        <div class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium">
+      <div
+        class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]"
+      >
+        <div
+          class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium"
+        >
           {{ 1 }} - {{ users.length }}
         </div>
         <button
@@ -100,10 +107,10 @@
             'px-4 py-2 font-semibold text-xs sm:text-sm rounded-lg border transition-colors w-full sm:w-auto',
             users.length >= queryParams.total || isLoadingMore
               ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer',
           ]"
         >
-          {{ isLoadingMore ? 'Loading...' : 'Load More' }}
+          {{ isLoadingMore ? "Loading..." : "Load More" }}
         </button>
       </div>
     </div>
@@ -118,7 +125,9 @@
         alt="No users"
         class="w-24 h-24 sm:w-32 sm:h-32 mb-4"
       />
-      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">No users found</p>
+      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">
+        No users found
+      </p>
       <p class="text-gray-400 text-xs sm:text-sm mt-2 text-center">
         There are no users to display at the moment.
       </p>
@@ -180,7 +189,7 @@ const queryParams = reactive({
   SortOrder: "",
   PageNumber: 1,
   PageSize: 15,
-  userCategories: [0, 1, 2, 3, 4], // Show all users
+  userCategories: [0, 3, 4], // Show all users
   total: 0,
 });
 
@@ -200,7 +209,7 @@ const inviteModal = ref({
 const roleOptions = [
   { label: "Admin", value: "Admin" },
   { label: "Platform User", value: "Platform User" },
-  { label: "Member", value: "Member" },
+  // { label: "Member", value: "Member" },
 ];
 
 const statusOptions = [
@@ -337,14 +346,13 @@ watch(
   (newSearch) => {
     queryParams.Search = newSearch;
     debounceSearch();
-  }
+  },
 );
 
 // Role filter mapping
 const roleFilterMap: Record<string, number[]> = {
   Admin: [0, 3],
   "Platform User": [4],
-  Member: [1, 2],
 };
 
 // Watch for filter changes
@@ -354,11 +362,11 @@ watch(
     if (newRole) {
       queryParams.userCategories = roleFilterMap[newRole];
     } else {
-      queryParams.userCategories = [0, 1, 2, 3, 4];
+      queryParams.userCategories = [0, 3, 4];
     }
     queryParams.PageNumber = 1;
     fetchUsers();
-  }
+  },
 );
 
 // Watch for status filter changes
@@ -367,7 +375,7 @@ watch(
   () => {
     queryParams.PageNumber = 1;
     // Filtering happens in client-side computed property
-  }
+  },
 );
 
 const handleSearch = (query: string) => {
@@ -375,7 +383,7 @@ const handleSearch = (query: string) => {
 };
 
 const handleDownload = () => {
-  const dataToExport = filteredUsers.value.map(user => ({
+  const dataToExport = filteredUsers.value.map((user) => ({
     user: user.user,
     email: user.email,
     role: getRoleName(user.role),
@@ -384,7 +392,7 @@ const handleDownload = () => {
     status: user.status,
   }));
 
-  exportToCSV(dataToExport, columns, `users-${moment().format('YYYY-MM-DD')}`);
+  exportToCSV(dataToExport, columns, `users-${moment().format("YYYY-MM-DD")}`);
 };
 
 const handleFilterChange = () => {
