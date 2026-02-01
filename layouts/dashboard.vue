@@ -161,24 +161,22 @@
                   : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
               ]"
             >
-              <DashboardNavIcon name="users" :active="isActiveTab('users')" />
+              <DashboardNavIcon name="users" :active="isActiveTab('kyc')" />
               <span>KYC</span>
             </NuxtLink>
           </PermissionGuard>
-          <PermissionGuard :categories="[0, 3]">
-            <NuxtLink
-              to="/?tab=users"
-              :class="[
-                'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
-                isActiveTab('users')
-                  ? 'border-[#1570EF] text-[#1570EF]'
-                  : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
-              ]"
-            >
-              <DashboardNavIcon name="users" :active="isActiveTab('users')" />
-              <span>Users</span>
-            </NuxtLink>
-          </PermissionGuard>
+          <NuxtLink
+            to="/?tab=users"
+            :class="[
+              'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+              isActiveTab('users')
+                ? 'border-[#1570EF] text-[#1570EF]'
+                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+            ]"
+          >
+            <DashboardNavIcon name="users" :active="isActiveTab('users')" />
+            <span>Users</span>
+          </NuxtLink>
 
           <PermissionGuard :categories="[0, 3]">
             <NuxtLink

@@ -124,3 +124,11 @@ export async function resendOwnerInvite(data) {
 export async function delOwnerInvite(id) {
   return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
 }
+
+export async function updateMemberAccess(data) {
+  return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
+}
+
+export async function ownerToggleAppAccess(data) {
+  return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
+}

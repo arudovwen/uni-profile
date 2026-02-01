@@ -9,7 +9,8 @@
       class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4"
     >
       <!-- Users Tab -->
-      <DashboardUsersContent v-if="currentTab === 'users'" />
+      <DashboardUsersContent v-if="currentTab === 'users' && hasCategory([0, 3])" />
+      <DashboardUsersListContent v-else-if="currentTab === 'users'" />
 
       <!-- Logs Tab -->
       <DashboardLogsContent v-else-if="currentTab === 'logs'" />
@@ -163,7 +164,7 @@ interface UserApp {
 }
 
 // Build authenticated URL with encrypted tokens
-const buildAuthUrl = (baseUrl: string) => {
+const buildAuthUrl = (baseUrl: string, appCode: string) => {
   const token = authStore.jwToken;
   const refreshToken = authStore.refreshToken;
 
@@ -178,7 +179,7 @@ const buildAuthUrl = (baseUrl: string) => {
     encryptedToken,
   )}&code=${encodeURIComponent(
     encryptedRefreshToken,
-  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
+  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}&appCode=${encodeURIComponent(appCode)}`;
 };
 
 // Fetch user's registered apps from API
@@ -239,7 +240,7 @@ const fetchUserApps = async () => {
             userAppData?.iconUrl ||
             app.iconUrl ||
             app.logo,
-          url: baseUrl ? buildAuthUrl(baseUrl) : null,
+          url: baseUrl ? buildAuthUrl(baseUrl, appCode) : null,
           isActive:
             !userAppData?.isDisabled !== undefined &&
             userAppData?.isDisabled === false,
