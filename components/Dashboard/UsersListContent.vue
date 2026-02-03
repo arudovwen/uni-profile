@@ -269,7 +269,7 @@ const columns = [
   // { field: "email", header: "Email" },
   { field: "role", header: "Role" },
   { field: "apps", header: "Apps" },
-  { field: "joined", header: "Joined" },
+  // { field: "joined", header: "Joined" },
   { field: "lastSeen", header: "Last Seen" },
   { field: "status", header: "Status" },
 ];
@@ -504,7 +504,7 @@ const handleInviteUser = () => {
 
 const handleInviteSubmit = (data: any) => {
   if (data.type === "email") {
-    console.log("Inviting users via email:", data);
+    // console.log("Inviting users via email:", data);
     // TODO: Call API to send invites
     // Example: await inviteUsersByEmail(data.emails, data.roles);
   }

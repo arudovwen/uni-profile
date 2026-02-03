@@ -405,7 +405,7 @@ const handleInviteUser = () => {
 
 const handleInviteSubmit = (data: any) => {
   if (data.type === "email") {
-    console.log("Inviting users via email:", data);
+    // console.log("Inviting users via email:", data);
     // TODO: Call API to send invites
     // Example: await inviteUsersByEmail(data.emails, data.roles);
   }

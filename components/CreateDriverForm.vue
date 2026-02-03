@@ -300,11 +300,6 @@ const schema = yup.object({
 // const schema = yup.object({});
 const driverData = inject("driverData");
 
-watch(
-  () => driverData.value,
-  () => console.log("Yppp", driverData)
-);
-
 const {
   handleSubmit,
   defineField,
@@ -370,6 +365,6 @@ function handleFileSelection(file, id) {
   setFieldValue("driverDocuments", formDocs);
 }
 function handleFileRemoval() {
-  console.log("File removed");
+  // console.log("File removed");
 }
 </script>

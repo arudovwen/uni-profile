@@ -56,6 +56,7 @@ const walletApi = createAxiosInstance("wallet");
 const deltaApi = createAxiosInstance("flux");
 const currencyApi = createAxiosInstance("currency");
 const oxideApi = createAxiosInstance("oxide");
+const polymerApi = createAxiosInstance("polymer");
 const notificationApi = createAxiosInstance("notification");
 // Handle token refresh logic
 const handleTokenRefresh = async () => {
@@ -111,6 +112,7 @@ export const walletMethods = createApiMethods(walletApi);
 export const deltaMethods = createApiMethods(deltaApi);
 export const currencyMethods = createApiMethods(currencyApi);
 export const oxideMethods = createApiMethods(oxideApi);
+export const polymerMethods = createApiMethods(polymerApi);
 export const notificationMethods = createApiMethods(notificationApi);
 
 // Export the API methods
@@ -144,6 +146,11 @@ export const oxideGet = oxideMethods.get;
 export const oxidePost = oxideMethods.post;
 export const oxidePut = oxideMethods.put;
 export const oxideDelete = oxideMethods.delete;
+
+export const polymerGet = polymerMethods.get;
+export const polymerPost = polymerMethods.post;
+export const polymerPut = polymerMethods.put;
+export const polymerDelete = polymerMethods.delete;
 
 export const notificationGet = notificationMethods.get;
 export const notificationPost = notificationMethods.post;

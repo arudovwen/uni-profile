@@ -1,4 +1,4 @@
-import { marketPost, oxidePost } from "~/helpers/api_helpers";
+import { marketPost, oxidePost, polymerPost } from "~/helpers/api_helpers";
 import urls from "../helpers/url_helpers";
 import {
   ssoPost,
@@ -86,14 +86,18 @@ export async function signUpWithMattaOxidePro(data, config = {}) {
   return await oxidePost(
     `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,
     data,
-    config
+    config,
   );
+}
+
+export async function signUpWithMattaPolymer(data, config = {}) {
+  return await polymerPost(`${urls.SIGN_UP_WITH_MATTA_POLYMER}`, data, config);
 }
 
 export async function getUserApps(version = "1", params = {}, config = {}) {
   const queryString = new URLSearchParams(params).toString();
   return await ssoGet(
     `${urls.GET_USER_APPS(version)}${queryString ? `?${queryString}` : ""}`,
-    config
+    config,
   );
 }

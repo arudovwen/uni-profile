@@ -30,7 +30,7 @@ useHead(
   },
   {
     mode: "client", // Load the script 'strict-dynamically' on client-side only
-  }
+  },
 );
 const authStore = useAuthStore();
 function getData() {
@@ -38,7 +38,9 @@ function getData() {
     if (res.status === 200) {
       const rows = res.data.data.map((i) => ({
         ...i,
-        url: `${i.url}/auth/validate?token=${encodeURIComponent(encrypt(authStore.jwToken))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
+        url: `${i.url}/auth/validate?token=${encodeURIComponent(
+          encrypt(authStore.jwToken),
+        )}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
         defaultUrl: i.url,
       }));
       authStore.setAppList(rows);

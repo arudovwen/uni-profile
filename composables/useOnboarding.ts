@@ -4,6 +4,7 @@ import {
   signUpWithMattaFlux,
   signUpWithMattaOrbital,
   signUpWithMattaOxidePro,
+  signUpWithMattaPolymer,
 } from "~/services/authservices";
 
 export interface RoleSelection {
@@ -96,7 +97,7 @@ export const useOnboarding = () => {
     (newState) => {
       saveState(newState);
     },
-    { deep: true }
+    { deep: true },
   );
 
   // Restore state from localStorage on client-side mount
@@ -118,7 +119,7 @@ export const useOnboarding = () => {
   const addRoleSelection = (selection: RoleSelection) => {
     // Remove any existing role selection for this app
     state.value.roleSelections = state.value.roleSelections.filter(
-      (r) => r.appCode !== selection.appCode
+      (r) => r.appCode !== selection.appCode,
     );
     // Add the new role selection
     state.value.roleSelections.push(selection);
@@ -216,6 +217,8 @@ export const useOnboarding = () => {
         return signUpWithMattaOrbital;
       case "OXI972":
         return signUpWithMattaOxidePro;
+      case "POL628":
+        return signUpWithMattaPolymer;
       default:
         return signUpWithMatta;
     }
@@ -239,9 +242,9 @@ export const useOnboarding = () => {
     for (const app of state.value.selectedApps) {
       try {
         const payload = buildAppPayload(app.code, encryptedEmail);
-        console.log("Email = ", userEmail, decrypt(userEmail));
+        // console.log("Email = ", userEmail, decrypt(userEmail));
         const signupFn = getSignupFunction(app.code);
-        console.log(`Submitting signup for ${app.code}:`, payload);
+        // console.log(`Submitting signup for ${app.code}:`, payload);
         await signupFn(payload);
         results.push({ appCode: app.code, success: true });
       } catch (error) {

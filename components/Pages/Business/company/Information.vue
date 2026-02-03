@@ -207,7 +207,6 @@ import { updateCompanyProfile } from "~/services/settingservices";
 import { toast } from "vue3-toastify";
 
 const form = inject("form");
-console.log("🚀 ~ form:", form)
 const isLoading = ref(false);
 const active = inject("active");
 const authStore = useAuthStore();

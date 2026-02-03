@@ -9,7 +9,9 @@
       class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4"
     >
       <!-- Users Tab -->
-      <DashboardUsersContent v-if="currentTab === 'users' && hasCategory([0, 3])" />
+      <DashboardUsersContent
+        v-if="currentTab === 'users' && hasCategory([0, 3])"
+      />
       <DashboardUsersListContent v-else-if="currentTab === 'users'" />
 
       <!-- Logs Tab -->
@@ -179,7 +181,9 @@ const buildAuthUrl = (baseUrl: string, appCode: string) => {
     encryptedToken,
   )}&code=${encodeURIComponent(
     encryptedRefreshToken,
-  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}&appCode=${encodeURIComponent(appCode)}`;
+  )}&refreshToken=${encodeURIComponent(
+    encryptedRefreshToken,
+  )}&appCode=${encodeURIComponent(appCode)}`;
 };
 
 // Fetch user's registered apps from API

@@ -88,10 +88,6 @@ const emit = defineEmits<{
   (e: "click", app: AppCardProps["app"]): void;
 }>();
 
-onMounted(() => {
-  console.log("AppCard mounted with app:", props.app?.customerType);
-});
-
 const handleClick = () => {
   emit("click", props.app);
 };

@@ -261,7 +261,7 @@ const handleDownload = () => {
 };
 
 const handleFilterChange = () => {
-  console.log("Filters changed:", filters.value);
+  // console.log("Filters changed:", filters.value);
 };
 
 const handleDateChange = (range: DateRange | null) => {
@@ -269,7 +269,7 @@ const handleDateChange = (range: DateRange | null) => {
 };
 
 const handleAction = (action: string, data: any, index: number) => {
-  console.log("Action:", action, "Data:", data, "Index:", index);
+  // console.log("Action:", action, "Data:", data, "Index:", index);
 };
 
 const handleLoadMore = () => {

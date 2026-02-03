@@ -115,11 +115,6 @@ const handleCardClick = () => {
   emit("click", props.app);
 };
 
-onMounted(() => {
-  // Component mounted
-  console.log("AdminAppCard mounted", props.app);
-});
-
 onUnmounted(() => {
   // Component unmounted
 });

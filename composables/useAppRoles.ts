@@ -1,6 +1,6 @@
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
-import { useOnboarding } from './useOnboarding';
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { useOnboarding } from "./useOnboarding";
 
 export interface Role {
   value: string;
@@ -66,7 +66,8 @@ export const appRolesMap: Record<string, Role[]> = {
     {
       value: "Funder",
       label: "Funding Partner",
-      description: "Full platform access. Onboard and manage your own customers",
+      description:
+        "Full platform access. Onboard and manage your own customers",
       conditionalFields: [],
     },
     {
@@ -83,7 +84,7 @@ export const appRolesMap: Record<string, Role[]> = {
     },
   ],
   ORB789: [],
-  POL766: [],
+  POL628: [],
 };
 
 export const useAppRoles = () => {
@@ -103,7 +104,9 @@ export const useAppRoles = () => {
     if (appCode === "OXI972") {
       if (slug.value) {
         // With slug: only show Buyer or Supplier
-        return roles.filter((role) => role.value === "Buyer" || role.value === "Supplier");
+        return roles.filter(
+          (role) => role.value === "Buyer" || role.value === "Supplier",
+        );
       } else {
         // Without slug: only show Funder
         return roles.filter((role) => role.value === "Funder");
