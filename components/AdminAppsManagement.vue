@@ -64,7 +64,8 @@
         Delete Application
       </h3>
       <p class="text-sm text-[#667085] mb-6">
-        Are you sure you want to delete <strong>{{ selectedAppForDelete.name }}</strong
+        Are you sure you want to delete
+        <strong>{{ selectedAppForDelete.name }}</strong
         >? This action cannot be undone.
       </p>
       <div class="flex gap-3">
@@ -121,23 +122,18 @@ const selectedAppForDelete = ref<App | null>(null);
 const isApplicationModalOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isDeleting = ref(false);
-
+const encryptedToken = encrypt(authStore.jwToken);
+const encryptedRefreshToken = encrypt(authStore.refreshToken);
 // Build authenticated URL with encrypted tokens
 const buildAuthUrl = (baseUrl: string) => {
-  const token = authStore.jwToken;
-  const refreshToken = authStore.refreshToken;
-
-  if (!token || !refreshToken) {
+  if (!encryptedToken || !encryptedRefreshToken) {
     return baseUrl;
   }
 
-  const encryptedToken = encrypt(token);
-  const encryptedRefreshToken = encrypt(refreshToken);
-
   return `${baseUrl}/auth/validate?token=${encodeURIComponent(
-    encryptedToken
+    encryptedToken,
   )}&code=${encodeURIComponent(
-    encryptedRefreshToken
+    encryptedRefreshToken,
   )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
 };
 

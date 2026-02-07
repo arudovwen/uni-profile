@@ -165,7 +165,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
 import { useToast } from '~/composables/useToast';
 import { addSubApp, editSubApp } from '~/services/userservices';
 import CustomDropdown from '~/components/Onboarding/CustomDropdown.vue';

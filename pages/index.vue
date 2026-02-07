@@ -9,24 +9,18 @@
       class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4"
     >
       <!-- Users Tab -->
-      <DashboardUsersContent
-        v-if="currentTab === 'users' && hasCategory([0, 3])"
-      />
+      <DashboardUsersContent v-if="currentTab === 'users' && isAdmin" />
       <DashboardUsersListContent v-else-if="currentTab === 'users'" />
 
       <!-- Logs Tab -->
       <DashboardLogsContent v-else-if="currentTab === 'logs'" />
 
-      <!-- KYC Tab -->
-
-      <!-- Settings Tab
-
-      <!-- Apps Tab (default) -->
-      <template v-else-if="currentTab === 'apps'" class="mt-[16px]">
+      <!-- Apps Tab -->
+      <template v-else-if="currentTab === 'apps'">
         <!-- Dashboard Header -->
         <div class="mb-5 sm:mb-[26px] mt-6 sm:mt-10 lg:mt-[60px]">
           <h1
-            class="text-xl sm:text-2xl lg:text-3xl font-[700] text-[#182230] mb-1 sm:mb-2"
+            class="text-xl sm:text-2xl lg:text-3xl font-bold text-[#182230] mb-1 sm:mb-2"
           >
             Welcome back, {{ userName }}!
           </h1>
@@ -40,7 +34,7 @@
         </div>
 
         <!-- Admin Apps Management -->
-        <AdminAppsManagement v-if="hasCategory([0, 3])" />
+        <AdminAppsManagement v-if="isAdmin" />
 
         <!-- User Apps View -->
         <template v-else>
@@ -51,7 +45,9 @@
           >
             <div
               class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#1570EF]"
-            ></div>
+              role="status"
+              aria-label="Loading applications"
+            />
           </div>
 
           <!-- Error State -->
@@ -87,7 +83,7 @@
               v-for="app in userApps"
               :key="app.code"
               :app="app"
-              @click="navigateToApp"
+              @click="navigateToApp(app)"
             />
           </div>
         </template>
@@ -97,7 +93,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
 import { getSubApps } from "~/services/userservices";
 import { getUserApps } from "~/services/authservices";
 import { useEncryption } from "~/composables/useEncryption";
@@ -105,6 +100,7 @@ import { usePermissions } from "~/composables/usePermissions";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+
 const { hasCategory } = usePermissions();
 
 definePageMeta({
@@ -112,148 +108,157 @@ definePageMeta({
 });
 
 const route = useRoute();
-const authStore = useAuthStore();
+const authStore: any = useAuthStore();
 const { encrypt } = useEncryption();
 
-// Current tab based on query param
-const currentTab = computed(() => {
-  return (route.query.tab as string) || "apps";
-});
-
-// App icons mapping
-const appIcons: Record<string, string> = {
-  FLU722: FluxLogo,
-  ORB789: OrbitalLogo,
-  OXI972: OxideProLogo,
-  POL766:
-    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
-};
-
-// App base URLs mapping
-const appBaseUrls: Record<string, string> = {
-  ORB789: "https://dev.orbital.matta.trade",
-  FLU722: "https://dev.deltalog.co",
-  OXI972: "https://dev.oxidepro.oxidefinance.com",
-};
-
-// State
-const isLoading = ref(true);
-const error = ref("");
-const userApps = ref<UserApp[]>([]);
-
-// Get user name from auth store or default
-const userName = computed(() => {
-  return authStore.loggedUser?.firstName || "User";
-});
-
-// Check if user is admin
-const isAdmin = computed(() => {
-  const userCategory = authStore.userInfo?.userCategory;
-  // Admin roles: superadmin (0), platform admin (3), and others (1, 4)
-  return [0, 3].includes(userCategory);
-});
+/* ---------------- Interfaces ---------------- */
 
 interface UserApp {
   code: string;
   name: string;
   description: string;
   iconUrl?: string;
-  url?: string;
+  url?: string | null;
   isActive: boolean;
   role?: string;
   customerType?: string;
-  status?: "Active" | "Inactive" | "Not Onboarded";
+  status: "Active" | "Inactive" | "Not Onboarded";
 }
 
-// Build authenticated URL with encrypted tokens
-const buildAuthUrl = (baseUrl: string, appCode: string) => {
-  const token = authStore.jwToken;
-  const refreshToken = authStore.refreshToken;
+/* ---------------- Constants ---------------- */
 
-  if (!token || !refreshToken) {
+const APP_ICONS: Readonly<Record<string, string>> = {
+  FLU722: FluxLogo,
+  ORB789: OrbitalLogo,
+  OXI972: OxideProLogo,
+  POL766:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
+} as const;
+
+const ADMIN_CATEGORIES = [0, 3] as const;
+const DEFAULT_PAGE_SIZE = 50;
+
+/* ---------------- Computed Values ---------------- */
+
+const currentTab = computed(() => (route.query.tab as string) || "apps");
+
+const userName = computed(() => authStore.loggedUser?.firstName || "User");
+
+const isAdmin = computed(() => {
+  const userCategory = authStore.userInfo?.userCategory;
+  return ADMIN_CATEGORIES.includes(userCategory);
+});
+
+/* ---------------- State ---------------- */
+
+const isLoading = ref(true);
+const error = ref("");
+const userApps = ref<UserApp[]>([]);
+const encryptedToken = encrypt(authStore.jwToken);
+const encryptedRefreshToken = encrypt(authStore.refreshToken);
+
+/* ---------------- Helper Functions ---------------- */
+
+const buildAuthUrl = (baseUrl: string, appCode: string): string => {
+  if (!encryptedToken || !encryptedRefreshToken) {
     return baseUrl;
   }
 
-  const encryptedToken = encrypt(token);
-  const encryptedRefreshToken = encrypt(refreshToken);
+  try {
+    const params = new URLSearchParams({
+      token: baseUrl.includes("polymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedToken))
+        : encodeURIComponent(encryptedToken),
+      code: baseUrl.includes("polymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
+        : encodeURIComponent(encryptedRefreshToken),
+      refreshToken: baseUrl.includes("polymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
+        : encodeURIComponent(encryptedRefreshToken),
+      appCode: appCode,
+    });
 
-  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
-    encryptedToken,
-  )}&code=${encodeURIComponent(
-    encryptedRefreshToken,
-  )}&refreshToken=${encodeURIComponent(
-    encryptedRefreshToken,
-  )}&appCode=${encodeURIComponent(appCode)}`;
+    return `${baseUrl}/auth/validate?${params.toString()}`;
+  } catch (err) {
+    console.error("Error encrypting tokens:", err);
+    return baseUrl;
+  }
 };
 
-// Fetch user's registered apps from API
+const getUserAppsMap = async (): Promise<Record<string, any>> => {
+  if (isAdmin.value) return {};
+
+  try {
+    const response = await getUserApps("1", {
+      PageNumber: 1,
+      PageSize: DEFAULT_PAGE_SIZE,
+    });
+
+    if (response.status === 200 && response.data?.data) {
+      const appsData = response.data.data.data || response.data.data;
+
+      if (Array.isArray(appsData)) {
+        return appsData.reduce((map, app) => {
+          map[app.code] = {
+            isDisabled: app.isDisabled,
+            customerType: app.customerType,
+            iconUrl: app.iconUrl || app.logoUrl,
+            description: app.description,
+          };
+          return map;
+        }, {} as Record<string, any>);
+      }
+    }
+  } catch (err) {
+    console.error("Error fetching user apps map:", err);
+  }
+
+  return {};
+};
+
+const getAppStatus = (userAppData: any): UserApp["status"] => {
+  if (!userAppData) return "Not Onboarded";
+  return userAppData.isDisabled ? "Inactive" : "Active";
+};
+
+const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
+  const appCode = app.appCode || app.code;
+  const baseUrl = app.url;
+  const userAppData = userAppsMap[appCode];
+
+  return {
+    code: appCode,
+    name: app.appName || app.name,
+    description:
+      userAppData?.description ||
+      app.description ||
+      "Access your application dashboard and manage your account.",
+    iconUrl:
+      APP_ICONS[appCode] || userAppData?.iconUrl || app.iconUrl || app.logo,
+    url: baseUrl ? buildAuthUrl(baseUrl, appCode) : null,
+    isActive: userAppData?.isDisabled === false,
+    customerType: userAppData?.customerType,
+    role: userAppData?.customerType,
+    status: getAppStatus(userAppData),
+  };
+};
+
+/* ---------------- API Functions ---------------- */
+
 const fetchUserApps = async () => {
   isLoading.value = true;
   error.value = "";
 
   try {
-    // Map to store user apps data for non-admin users
-    let userAppsMap: Record<string, any> = {};
+    // Fetch both in parallel for non-admin users
+    const [userAppsMap, subAppsResponse] = await Promise.all([
+      getUserAppsMap(),
+      getSubApps({}),
+    ]);
 
-    // For non-admin users, call getUserApps endpoint
-    if (!isAdmin.value) {
-      const userAppsResponse = await getUserApps("1", {
-        PageNumber: 1,
-        PageSize: 50,
-      });
-      // Build map of user apps from response
-      if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
-        const appsData =
-          userAppsResponse.data.data.data || userAppsResponse.data.data;
-        // console.log("User apps data:", appsData);
-        if (Array.isArray(appsData)) {
-          appsData.forEach((app: any) => {
-            userAppsMap[app.code] = {
-              isDisabled: app.isDisabled,
-              customerType: app.customerType,
-              iconUrl: app.iconUrl || app.logoUrl,
-              description: app.description,
-            };
-          });
-        }
-      }
-    }
-    const response = await getSubApps({});
-
-    if (response.status === 200) {
-      const apps = response.data?.data || response.data || [];
-      userApps.value = apps.map((app: any) => {
-        const appCode = app.appCode || app.code;
-        const baseUrl = app.url;
-        const userAppData = userAppsMap[appCode];
-        // Determine status: Active if enabled and onboarded, Inactive if disabled, Not Onboarded if not in user apps
-        let status: "Active" | "Inactive" | "Not Onboarded" = "Not Onboarded";
-        if (userAppData) {
-          status = userAppData.isDisabled ? "Inactive" : "Active";
-        }
-
-        return {
-          code: appCode,
-          name: app.appName || app.name,
-          description:
-            userAppData?.description ||
-            app.description ||
-            "Access your application dashboard and manage your account.",
-          iconUrl:
-            appIcons[appCode] ||
-            userAppData?.iconUrl ||
-            app.iconUrl ||
-            app.logo,
-          url: baseUrl ? buildAuthUrl(baseUrl, appCode) : null,
-          isActive:
-            !userAppData?.isDisabled !== undefined &&
-            userAppData?.isDisabled === false,
-          // role: app.userType || app.accountType || app.role,
-          customerType: userAppData?.customerType,
-          role: userAppData?.customerType,
-          status: status,
-        };
-      });
+    if (subAppsResponse.status === 200) {
+      const apps = subAppsResponse.data?.data || subAppsResponse.data || [];
+      userApps.value = apps.map((app: any) => mapAppData(app, userAppsMap));
     }
   } catch (err: any) {
     console.error("Error fetching user apps:", err);
@@ -263,17 +268,15 @@ const fetchUserApps = async () => {
   }
 };
 
-// Navigate to app URL
-const navigateToApp = (app: UserApp | any) => {
-  const appToOpen = app.app || app;
-  if (appToOpen.url) {
-    window.open(appToOpen.url, "_blank");
+/* ---------------- Event Handlers ---------------- */
+
+const navigateToApp = (app: UserApp) => {
+  if (app.url) {
+    window.open(app.url, "_blank", "noopener,noreferrer");
   }
 };
 
-// watch(userApps, (newApps) => {
-//   console.log("User Apps:", newApps);
-// });
+/* ---------------- Lifecycle ---------------- */
 
 onMounted(() => {
   fetchUserApps();

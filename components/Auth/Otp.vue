@@ -163,9 +163,15 @@ function resendOTP() {
       })
       .catch((err) => {
         toast.error(
-          err?.response?.data?.Message || err?.response?.data?.message
+          err?.response?.data?.Message || err?.response?.data?.message,
         );
       });
   }
 }
+watchEffect(() => {
+  // auto submit on otp complete
+  if (form.otp.length === props.numInput) {
+    handleSubmit();
+  }
+});
 </script>
