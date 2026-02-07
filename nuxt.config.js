@@ -27,7 +27,6 @@ export default defineNuxtConfig({
     "nuxt-vue3-google-signin",
     "nuxt-simple-sitemap",
     "@pinia-plugin-persistedstate/nuxt",
-    "nuxt-swiper",
     "@nuxt/image",
     // "nuxt-security",
     "@nuxt/devtools",
