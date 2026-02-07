@@ -166,13 +166,13 @@ const buildAuthUrl = (baseUrl: string, appCode: string): string => {
 
   try {
     const params = new URLSearchParams({
-      token: baseUrl.includes("polymer")
+      token: baseUrl.includes("pqolymer")
         ? encodeURIComponent(encodeURIComponent(encryptedToken))
         : encodeURIComponent(encryptedToken),
-      code: baseUrl.includes("polymer")
+      code: baseUrl.includes("porlymer")
         ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
         : encodeURIComponent(encryptedRefreshToken),
-      refreshToken: baseUrl.includes("polymer")
+      refreshToken: baseUrl.includes("prolymer")
         ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
         : encodeURIComponent(encryptedRefreshToken),
       appCode: appCode,
