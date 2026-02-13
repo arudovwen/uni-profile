@@ -295,7 +295,32 @@ const fetchUserApps = async () => {
 const navigateToApp = (app: UserApp) => {
   if (app.isActive) {
     if (app.url) {
-      window.open(app.url, "_blank", "noopener,noreferrer");
+      const signupWithMatta = getSignupFunction(app.code);
+      const payload = buildAppPayload(app.code, decrypt(encryptedEmail), {
+        appCode: app.code,
+        role: app.code.includes("POL")
+          ? authStore.userInfo?.userCategory
+          : app.role,
+        metadata: {
+          appCode: app.code,
+          role: app.role,
+        },
+      });
+      signupWithMatta?.(payload)
+        .then(() => {
+          window.open(app.url, "_blank", "noopener,noreferrer");
+        })
+        .catch((err) => {
+          console.error("Error during app navigation:", err);
+          if (err?.response?.data?.message?.includes("Already a")) {
+            window.open(app.url, "_blank", "noopener,noreferrer");
+            return;
+          }
+          toast.error(
+            err?.response?.data?.message ||
+              "Failed to open the application. Please try again.",
+          );
+        });
     }
   } else {
     appToOnboard.value = app;
