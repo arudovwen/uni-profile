@@ -152,13 +152,13 @@ export const useOnboarding = () => {
     encryptedEmail: string,
     roleSelection?: RoleSelection | null,
     slug?: string | null,
+    ssoCategory: number | string = 1,
   ) => {
     const basePayload = {
       email: encryptedEmail,
       appCode,
-      ssoUserCategory: 1,
+      ssoUserCategory: ssoCategory, 
     };
-
     switch (appCode) {
       case "FLU722": {
         // Flux requires userType, preferredSize, preferredTruckType for clients

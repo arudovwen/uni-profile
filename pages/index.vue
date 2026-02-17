@@ -293,19 +293,32 @@ const fetchUserApps = async () => {
 /* ---------------- Event Handlers ---------------- */
 
 const navigateToApp = (app: UserApp) => {
+  const slug = authStore.userInfo?.companyName
+    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
+    : "default";
+  const ssoCatetory = app.code.includes("POL")
+    ? authStore.userInfo?.userCategory
+    : 1;
+
   if (app.isActive) {
     if (app.url) {
       const signupWithMatta = getSignupFunction(app.code);
-      const payload = buildAppPayload(app.code, decrypt(encryptedEmail), {
-        appCode: app.code,
-        role: app.code.includes("POL")
-          ? authStore.userInfo?.userCategory
-          : app.role,
-        metadata: {
+      const payload = buildAppPayload(
+        app.code,
+        decrypt(encryptedEmail),
+        {
           appCode: app.code,
-          role: app.role,
+          role: app.code.includes("POL")
+            ? authStore.userInfo?.userCategory
+            : app.role,
+          metadata: {
+            appCode: app.code,
+            role: app.role,
+          },
         },
-      });
+        slug,
+        ssoCatetory,
+      );
       signupWithMatta?.(payload)
         .then(() => {
           window.open(app.url, "_blank", "noopener,noreferrer");
