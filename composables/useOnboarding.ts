@@ -45,6 +45,7 @@ const defaultState: OnboardingState = {
   roleSelections: [],
   currentStep: 1,
   slug: null,
+  successfulRegistrations: [],
 };
 
 const STORAGE_KEY = "matta_onboarding_state";
@@ -146,14 +147,18 @@ export const useOnboarding = () => {
   };
 
   // Build payload for each app based on its requirements
-  const buildAppPayload = (appCode: string, encryptedEmail: string) => {
-    const roleSelection = getRoleSelection(appCode);
+  const buildAppPayload = (
+    appCode: string,
+    encryptedEmail: string,
+    roleSelection?: RoleSelection | null,
+    slug?: string | null,
+    ssoCategory: number | string = 1,
+  ) => {
     const basePayload = {
       email: encryptedEmail,
       appCode,
-      ssoUserCategory: 1,
+      ssoUserCategory: ssoCategory, 
     };
-
     switch (appCode) {
       case "FLU722": {
         // Flux requires userType, preferredSize, preferredTruckType for clients
@@ -185,7 +190,9 @@ export const useOnboarding = () => {
           ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
           : "Buyer";
         const username =
-          authStore.loggedUser?.fullName || authStore.userInfo?.fullName || "";
+          (authStore.loggedUser as any)?.fullName ||
+          (authStore.userInfo as any)?.fullName ||
+          "";
         return {
           // email: decrypt(encryptedEmail),
           email: basePayload.email,
@@ -196,7 +203,7 @@ export const useOnboarding = () => {
           accessToken: null,
           ssoUserCategory: "Admin",
           tenant: 1,
-          slug: accountType !== "Funder" ? state.value.slug : null,
+          slug: accountType !== "Funder" ? slug : null,
         };
       }
 
@@ -225,7 +232,9 @@ export const useOnboarding = () => {
   };
 
   const submitOnboarding = async () => {
-    const userEmail = authStore.loggedUser?.email || authStore.userInfo?.email;
+    const userEmail =
+      (authStore.loggedUser as any)?.email ||
+      (authStore.userInfo as any)?.email;
     if (!userEmail) {
       throw new Error("User email not found");
     }
@@ -241,10 +250,14 @@ export const useOnboarding = () => {
     // Call the appropriate signup function for each selected app
     for (const app of state.value.selectedApps) {
       try {
-        const payload = buildAppPayload(app.code, encryptedEmail);
-        // console.log("Email = ", userEmail, decrypt(userEmail));
+        const roleSelection = getRoleSelection(app.code);
+        const payload = buildAppPayload(
+          app.code,
+          encryptedEmail,
+          roleSelection,
+          state.value.slug,
+        );
         const signupFn = getSignupFunction(app.code);
-        // console.log(`Submitting signup for ${app.code}:`, payload);
         await signupFn(payload);
         results.push({ appCode: app.code, success: true });
       } catch (error) {
@@ -277,7 +290,9 @@ export const useOnboarding = () => {
     setCurrentStep,
     clearOnboarding,
     getOnboardingData,
+    buildAppPayload,
     submitOnboarding,
     restoreState,
+    getSignupFunction,
   };
 };
