@@ -80,6 +80,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      environment: process.env.NODE_ENV,
       API_BASE_URL: process.env.API_BASE_URL,
       SSO_BASE_URL: process.env.SSO_BASE_URL,
       APP_BASE_URL: process.env.APP_BASE_URL,

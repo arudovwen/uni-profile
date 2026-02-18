@@ -10,8 +10,15 @@ export const defaultOptions = {
   httpOnly: false, // false by default to allow JS access
 };
 
+export const localAppUrls = {
+  OXI742: "http://localhost:3001",
+  POL628: "http://localhost:3030",
+  ORB789: "http://localhost:3040",
+  FLU722: "http://localhost:3000", 
+}
+
 export const appCodeColorMap = {
-  OXI742: "#1570EF",
+  OXI972: "#1570EF",
   MAT763: "#1570EF",
   MAT678: "#1570EF",
   FLU120: "#021242",
