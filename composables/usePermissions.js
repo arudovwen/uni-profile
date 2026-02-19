@@ -11,7 +11,7 @@
  */
 
 export const usePermissions = () => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
 
   /**
    * Check if user's category matches the allowed categories
@@ -19,33 +19,34 @@ export const usePermissions = () => {
    * @returns {boolean} - True if user's category matches, false otherwise
    */
   const hasCategory = (categories) => {
-    const userCategory = authStore.userInfo?.userCategory
-    console.log("cat", authStore.userInfo?.userCategory, categories);
-    
+    const userCategory = authStore.userInfo?.userCategory;
+
     // Return false if userCategory is undefined or null
     if (userCategory === undefined || userCategory === null) {
-      return false
+      return false;
     }
 
     // Check if categories is an array
     if (Array.isArray(categories)) {
-      return categories.includes(userCategory)
+      return categories.includes(userCategory);
     }
 
     // Check if categories is a single number
-    return categories === userCategory
-  }
+    return categories === userCategory;
+  };
 
   // Convenience computed properties for common checks
-  const isSuperadmin = computed(() => authStore.userInfo?.userCategory === 3)
+  const isSuperadmin = computed(() => authStore.userInfo?.userCategory === 3);
 
-  const isOwner = computed(() => authStore.userInfo?.userCategory === 1)
+  const isOwner = computed(() => authStore.userInfo?.userCategory === 1);
 
-  const isMember = computed(() => authStore.userInfo?.userCategory === 2)
+  const isMember = computed(() => authStore.userInfo?.userCategory === 2);
 
-  const isAdmin = computed(() => [0, 3, 4].includes(authStore.userInfo?.userCategory))
+  const isAdmin = computed(() =>
+    [0, 3, 4].includes(authStore.userInfo?.userCategory),
+  );
 
-  const userCategory = computed(() => authStore.userInfo?.userCategory)
+  const userCategory = computed(() => authStore.userInfo?.userCategory);
 
   return {
     hasCategory,
@@ -54,5 +55,5 @@ export const usePermissions = () => {
     isMember,
     isAdmin,
     userCategory,
-  }
-}
+  };
+};

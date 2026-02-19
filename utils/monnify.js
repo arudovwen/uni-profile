@@ -1,17 +1,12 @@
 /* eslint-disable no-unused-vars */
 // import { nanoid } from "nanoid"; //if using nanoid
-export function payWithMonnify(
-  data,
-  onModalClose,
-  onSuccess,
-) {
+export function payWithMonnify(data, onModalClose, onSuccess) {
   const config = useRuntimeConfig();
-  console.log("cfg", config);
-  
   window.MonnifySDK.initialize({
     amount: data.amount,
     currency: "NGN",
-    reference: data.reference || "" + Math.floor(Math.random() * 1000000000 + 1),
+    reference:
+      data.reference || "" + Math.floor(Math.random() * 1000000000 + 1),
     customerName: data.name,
     customerEmail: data.email,
     apiKey: config.public.APP_MONNIFYAPIKEY,

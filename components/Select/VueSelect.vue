@@ -168,13 +168,11 @@ const selectedValue = ref(props.modelValue);
 
 // Watch for changes in selectedValue and emit update events
 watch(selectedValue, (newValue) => {
-  console.log('Model value changed:', newValue);
   emit('update:modelValue', newValue);
 });
 
 // Watch for changes in modelValue from parent and update local state
 watch(() => props.modelValue, (newValue) => {
-  console.log('Model value changed:', newValue);
   selectedValue.value = newValue;
 });
 </script>

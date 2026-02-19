@@ -97,12 +97,15 @@ export const useAppRoles = () => {
   /**
    * Get available roles for an app, filtered by context (e.g., slug)
    */
-  const getAvailableRoles = (appCode: string): Role[] => {
+  const getAvailableRoles = (
+    appCode: string,
+    accountSlug: string | null = slug.value,
+  ): Role[] => {
     const roles = appRolesMap[appCode] || [];
 
     // For Oxide Pro, filter roles based on slug presence
     if (appCode === "OXI972") {
-      if (slug.value) {
+      if (accountSlug) {
         // With slug: only show Buyer or Supplier
         return roles.filter(
           (role) => role.value === "Buyer" || role.value === "Supplier",

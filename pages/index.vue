@@ -302,6 +302,10 @@ const navigateToApp = (app: UserApp) => {
 
   if (app.isActive) {
     if (app.url) {
+      if (app.code.includes("OXI")) {
+        window.open(app.url, "_blank", "noopener,noreferrer");
+        return;
+      }
       const signupWithMatta = getSignupFunction(app.code);
       const payload = buildAppPayload(
         app.code,
@@ -347,6 +351,9 @@ const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
   //   appToOnboard.value = null;
   //   fetchUserApps(); // Refresh apps to reflect onboarding status
   // });
+  const slug = authStore.userInfo?.companyName
+    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
+    : null;
   isOnboarding.value = true;
   const onboardFunction = getSignupFunction(appToOnboard.value.code);
   const payload = buildAppPayload(
@@ -357,6 +364,7 @@ const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
       role: selectedRoles,
       metadata: conditionalFields,
     },
+    slug,
   );
   try {
     const response = await onboardFunction?.(payload);
