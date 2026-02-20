@@ -142,6 +142,7 @@ import { computed, ref, watch } from "vue";
 import { useAppRoles } from "@/composables/useAppRoles";
 import { useOnboarding } from "@/composables/useOnboarding";
 import AppLoader from "./AppLoader.vue";
+import auth from "~/middleware/auth";
 
 interface ConditionalField {
   name: string;
@@ -178,8 +179,22 @@ const authStore = useAuthStore();
 const toast = useToast();
 const isReady = ref(false);
 
+const categorySlug: Record<any, any> = {
+  1: null,
+  2:
+    authStore?.loggedUser && "companyName" in authStore.loggedUser
+      ? authStore.loggedUser.companyName?.toLowerCase()?.replace(" ", "-")
+      : null,
+  3: null,
+};
+
 const { getAvailableRoles } = useAppRoles();
-const availableRoles = computed(() => getAvailableRoles(props.appCode));
+const availableRoles = computed(() =>
+  getAvailableRoles(
+    props.appCode,
+    categorySlug[authStore.loggedUser?.userCategory],
+  ),
+);
 
 // Role selection state
 const selectedRoleValue = ref("");

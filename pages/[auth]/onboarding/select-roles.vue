@@ -123,8 +123,6 @@ const autoHandleAppIfPossible = async (appCode: string): Promise<boolean> => {
   const availableRoles = getAvailableRoles(appCode);
   const role = availableRoles[0].value;
 
-  console.log(`Auto-handling ${appCode} with role: ${role}`);
-
   // Store the role selection
   addRoleSelection({
     appCode: appCode,

@@ -14,8 +14,6 @@ export async function clearCookies() {
         domain: cookie.domain,
       });
     }
-
-    console.log("Cookies deleted successfully");
   } else {
     console.log("No cookies found");
   }

@@ -205,8 +205,6 @@ const verifyOtp = (token) => {
 };
 
 onMounted(() => {
-  console.log("Ypp");
-
   resend2FA({ email: route.query.email }).then((res) => {
     if (res.status === 200) {
     }

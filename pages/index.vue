@@ -88,6 +88,20 @@
           </div>
         </template>
       </template>
+      <OnboardingModal
+        v-if="showOnboardingModal"
+        :isOpen="showOnboardingModal"
+        :appCode="appToOnboard?.code"
+        :app="appToOnboard"
+        :isOnboarding="isOnboarding"
+        @close="
+          () => {
+            showOnboardingModal = false;
+            appToOnboard = null;
+          }
+        "
+        @confirm="handleConfirm"
+      />
     </div>
   </NuxtLayout>
 </template>
@@ -100,8 +114,15 @@ import { usePermissions } from "~/composables/usePermissions";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+import { useOnboarding } from "~/composables/useOnboarding";
+import { toast } from "vue3-toastify";
 
 const { hasCategory } = usePermissions();
+const appToOnboard = ref<any>(null);
+const showOnboardingModal = ref(false);
+const isOnboarding = ref(false);
+
+const { getSignupFunction, buildAppPayload } = useOnboarding();
 
 definePageMeta({
   middleware: "auth",
@@ -109,7 +130,7 @@ definePageMeta({
 
 const route = useRoute();
 const authStore: any = useAuthStore();
-const { encrypt } = useEncryption();
+const { encrypt, decrypt } = useEncryption();
 
 /* ---------------- Interfaces ---------------- */
 
@@ -118,7 +139,7 @@ interface UserApp {
   name: string;
   description: string;
   iconUrl?: string;
-  url?: string | null;
+  url?: string;
   isActive: boolean;
   role?: string;
   customerType?: string;
@@ -155,6 +176,7 @@ const isLoading = ref(true);
 const error = ref("");
 const userApps = ref<UserApp[]>([]);
 const encryptedToken = encrypt(authStore.jwToken);
+const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 
 /* ---------------- Helper Functions ---------------- */
@@ -166,9 +188,15 @@ const buildAuthUrl = (baseUrl: string, appCode: string): string => {
 
   try {
     const params = new URLSearchParams({
-      token: encodeURIComponent(encryptedToken),
-      code: encodeURIComponent(encryptedRefreshToken),
-      refreshToken: encodeURIComponent(encryptedRefreshToken),
+      token: baseUrl.includes("pqolymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedToken))
+        : encodeURIComponent(encryptedToken),
+      code: baseUrl.includes("porlymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
+        : encodeURIComponent(encryptedRefreshToken),
+      refreshToken: baseUrl.includes("prolymer")
+        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
+        : encodeURIComponent(encryptedRefreshToken),
       appCode: appCode,
     });
 
@@ -216,12 +244,8 @@ const getAppStatus = (userAppData: any): UserApp["status"] => {
 };
 
 const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
-  const runtimeConfig = useRuntimeConfig();
   const appCode = app.appCode || app.code;
-  const baseUrl =
-    runtimeConfig.public.environment === "development"
-      ? (localAppUrls as Record<string, string>)[appCode]
-      : app.url;
+  const baseUrl = app.url;
   const userAppData = userAppsMap[appCode];
 
   return {
@@ -233,7 +257,7 @@ const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
       "Access your application dashboard and manage your account.",
     iconUrl:
       APP_ICONS[appCode] || userAppData?.iconUrl || app.iconUrl || app.logo,
-    url: buildAuthUrl(baseUrl, appCode),
+    url: baseUrl ? buildAuthUrl(baseUrl, appCode) : undefined,
     isActive: userAppData?.isDisabled === false,
     customerType: userAppData?.customerType,
     role: userAppData?.customerType,
@@ -269,8 +293,103 @@ const fetchUserApps = async () => {
 /* ---------------- Event Handlers ---------------- */
 
 const navigateToApp = (app: UserApp) => {
-  if (app.url) {
-    window.open(app.url, "_blank", "noopener,noreferrer");
+  const slug = authStore.userInfo?.companyName
+    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
+    : "default";
+  const ssoCatetory = app.code.includes("POL")
+    ? authStore.userInfo?.userCategory
+    : 1;
+
+  if (app.isActive) {
+    if (app.url) {
+      if (app.code.includes("OXI")) {
+        window.open(app.url, "_blank", "noopener,noreferrer");
+        return;
+      }
+      const signupWithMatta = getSignupFunction(app.code);
+      const payload = buildAppPayload(
+        app.code,
+        decrypt(encryptedEmail),
+        {
+          appCode: app.code,
+          role: app.code.includes("POL")
+            ? authStore.userInfo?.userCategory
+            : app.role,
+          metadata: {
+            appCode: app.code,
+            role: app.role,
+          },
+        },
+        slug,
+        ssoCatetory,
+      );
+      signupWithMatta?.(payload)
+        .then(() => {
+          window.open(app.url, "_blank", "noopener,noreferrer");
+        })
+        .catch((err) => {
+          console.error("Error during app navigation:", err);
+          if (err?.response?.data?.message?.includes("Already a")) {
+            window.open(app.url, "_blank", "noopener,noreferrer");
+            return;
+          }
+          toast.error(
+            err?.response?.data?.message ||
+              "Failed to open the application. Please try again.",
+          );
+        });
+    }
+  } else {
+    appToOnboard.value = app;
+    showOnboardingModal.value = true;
+  }
+};
+
+const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
+  // getSignupFunction(appToOnboard.value.code)?.().then(() => {
+  //   showOnboardingModal.value = false;
+  //   appToOnboard.value = null;
+  //   fetchUserApps(); // Refresh apps to reflect onboarding status
+  // });
+  const slug = authStore.userInfo?.companyName
+    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
+    : null;
+  isOnboarding.value = true;
+  const onboardFunction = getSignupFunction(appToOnboard.value.code);
+  const payload = buildAppPayload(
+    appToOnboard.value.code,
+    decrypt(encryptedEmail),
+    {
+      appCode: appToOnboard.value.code,
+      role: selectedRoles,
+      metadata: conditionalFields,
+    },
+    slug,
+  );
+  try {
+    const response = await onboardFunction?.(payload);
+
+    if (response.status === 200) {
+      navigateToApp({ ...appToOnboard.value, isActive: true }); // Open the app after successful onboarding
+      showOnboardingModal.value = false;
+      appToOnboard.value = null;
+      isOnboarding.value = false;
+      fetchUserApps(); // Refresh apps to reflect onboarding status
+    } else {
+      isOnboarding.value = false;
+      appToOnboard.value = null;
+      isOnboarding.value = false;
+      // Optionally show an error message to the user here
+    }
+  } catch (err: any) {
+    console.error("Error during onboarding:", err);
+    isOnboarding.value = false;
+    appToOnboard.value = null;
+    showOnboardingModal.value = false;
+    toast.error(
+      err?.response?.data?.message || "Onboarding failed. Please try again.",
+    );
+    // Optionally show an error message to the user here
   }
 };
 
