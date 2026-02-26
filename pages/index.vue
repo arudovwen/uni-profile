@@ -135,6 +135,7 @@ const { encrypt, decrypt } = useEncryption();
 /* ---------------- Interfaces ---------------- */
 
 interface UserApp {
+  appUserCategory: any;
   code: string;
   name: string;
   description: string;
@@ -226,6 +227,7 @@ const getUserAppsMap = async (): Promise<Record<string, any>> => {
             customerType: app.customerType,
             iconUrl: app.iconUrl || app.logoUrl,
             description: app.description,
+            appUserCategory: app.appUserCategory?.appUserCategory,
           };
           return map;
         }, {} as Record<string, any>);
@@ -260,6 +262,7 @@ const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
     url: baseUrl ? buildAuthUrl(baseUrl, appCode) : undefined,
     isActive: userAppData?.isDisabled === false,
     customerType: userAppData?.customerType,
+    appUserCategory: userAppData?.appUserCategory,
     role: userAppData?.customerType,
     status: getAppStatus(userAppData),
   };
@@ -322,7 +325,9 @@ const navigateToApp = (app: UserApp) => {
         },
         slug,
         ssoCatetory,
+        app.appUserCategory,
       );
+
       signupWithMatta?.(payload)
         .then(() => {
           window.open(app.url, "_blank", "noopener,noreferrer");

@@ -153,11 +153,13 @@ export const useOnboarding = () => {
     roleSelection?: RoleSelection | null,
     slug?: string | null,
     ssoCategory: number | string = 1,
+    userCategory: number | string = 1,
   ) => {
     const basePayload = {
       email: encryptedEmail,
       appCode,
-      ssoUserCategory: ssoCategory, 
+      ssoUserCategory: ssoCategory,
+      userCategory,
     };
     switch (appCode) {
       case "FLU722": {
