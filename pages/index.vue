@@ -17,7 +17,7 @@
 
       <!-- Apps Tab -->
       <template v-else-if="currentTab === 'apps'">
-        <!-- Dashboard Header -->
+        <!-- Header -->
         <div class="mb-5 sm:mb-[26px] mt-6 sm:mt-10 lg:mt-[60px]">
           <h1
             class="text-xl sm:text-2xl lg:text-3xl font-bold text-[#182230] mb-1 sm:mb-2"
@@ -33,12 +33,12 @@
           </p>
         </div>
 
-        <!-- Admin Apps Management -->
+        <!-- Admin View -->
         <AdminAppsManagement v-if="isAdmin" />
 
-        <!-- User Apps View -->
+        <!-- User View -->
         <template v-else>
-          <!-- Loading State -->
+          <!-- Loading -->
           <div
             v-if="isLoading"
             class="flex justify-center items-center py-8 sm:py-12"
@@ -50,7 +50,7 @@
             />
           </div>
 
-          <!-- Error State -->
+          <!-- Error -->
           <div
             v-else-if="error"
             class="text-center py-8 sm:py-12 px-4 bg-white rounded-lg border border-[#E5E7EB]"
@@ -64,7 +64,7 @@
             </button>
           </div>
 
-          <!-- Empty State -->
+          <!-- Empty -->
           <div
             v-else-if="userApps.length === 0"
             class="text-center py-8 sm:py-12 px-4 bg-white rounded-lg border border-[#E5E7EB]"
@@ -74,7 +74,7 @@
             </p>
           </div>
 
-          <!-- Apps Grid -->
+          <!-- Grid -->
           <div
             v-else
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-[15px]"
@@ -110,30 +110,20 @@
 import { getSubApps } from "~/services/userservices";
 import { getUserApps } from "~/services/authservices";
 import { useEncryption } from "~/composables/useEncryption";
-import { usePermissions } from "~/composables/usePermissions";
+import { useOnboarding } from "~/composables/useOnboarding";
+import { toast } from "vue3-toastify";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
-import { useOnboarding } from "~/composables/useOnboarding";
-import { toast } from "vue3-toastify";
 
-const { hasCategory } = usePermissions();
-const appToOnboard = ref<any>(null);
-const showOnboardingModal = ref(false);
-const isOnboarding = ref(false);
-
-const { getSignupFunction, buildAppPayload } = useOnboarding();
-
-definePageMeta({
-  middleware: "auth",
-});
+definePageMeta({ middleware: "auth" });
 
 const route = useRoute();
 const authStore: any = useAuthStore();
 const { encrypt, decrypt } = useEncryption();
+const { getSignupFunction, buildAppPayload } = useOnboarding();
 
-/* ---------------- Interfaces ---------------- */
-
+// Types
 interface UserApp {
   appUserCategory: any;
   code: string;
@@ -147,109 +137,105 @@ interface UserApp {
   status: "Active" | "Inactive" | "Not Onboarded";
 }
 
-/* ---------------- Constants ---------------- */
-
-const APP_ICONS: Readonly<Record<string, string>> = {
+// Constants
+const APP_ICONS = {
   FLU722: FluxLogo,
   ORB789: OrbitalLogo,
   OXI972: OxideProLogo,
   POL766:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 } as const;
+const ADMIN_CATEGORIES = [0, 3];
+const PAGE_SIZE = 50;
 
-const ADMIN_CATEGORIES = [0, 3] as const;
-const DEFAULT_PAGE_SIZE = 50;
-
-/* ---------------- Computed Values ---------------- */
-
+// Reactive state
 const currentTab = computed(() => (route.query.tab as string) || "apps");
-
 const userName = computed(() => authStore.loggedUser?.firstName || "User");
-
-const isAdmin = computed(() => {
-  const userCategory = authStore.userInfo?.userCategory;
-  return ADMIN_CATEGORIES.includes(userCategory);
-});
-
-/* ---------------- State ---------------- */
+const isAdmin = computed(() =>
+  ADMIN_CATEGORIES.includes(authStore.userInfo?.userCategory),
+);
+const slug = computed(
+  () =>
+    authStore.userInfo?.companyName?.toLowerCase().replace(/\s+/g, "-") ||
+    "default",
+);
 
 const isLoading = ref(true);
 const error = ref("");
 const userApps = ref<UserApp[]>([]);
-const encryptedToken = encrypt(authStore.jwToken);
+const appToOnboard = ref<UserApp | null>(null);
+const showOnboardingModal = ref(false);
+const isOnboarding = ref(false);
+
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
+const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 
-/* ---------------- Helper Functions ---------------- */
-
+// Helper: Build auth URL
 const buildAuthUrl = (baseUrl: string, appCode: string): string => {
-  if (!encryptedToken || !encryptedRefreshToken) {
-    return baseUrl;
-  }
-
+  if (!encryptedToken || !encryptedRefreshToken) return baseUrl;
   try {
     const params = new URLSearchParams({
-      token: baseUrl.includes("pqolymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedToken))
-        : encodeURIComponent(encryptedToken),
-      code: baseUrl.includes("porlymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
-        : encodeURIComponent(encryptedRefreshToken),
-      refreshToken: baseUrl.includes("prolymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
-        : encodeURIComponent(encryptedRefreshToken),
-      appCode: appCode,
+      token: encodeURIComponent(
+        baseUrl.includes("pqolymer")
+          ? encodeURIComponent(encryptedToken)
+          : encryptedToken,
+      ),
+      code: encodeURIComponent(
+        baseUrl.includes("porlymer")
+          ? encodeURIComponent(encryptedRefreshToken)
+          : encryptedRefreshToken,
+      ),
+      refreshToken: encodeURIComponent(
+        baseUrl.includes("prolymer")
+          ? encodeURIComponent(encryptedRefreshToken)
+          : encryptedRefreshToken,
+      ),
+      appCode,
     });
-
     return `${baseUrl}/auth/validate?${params.toString()}`;
   } catch (err) {
-    console.error("Error encrypting tokens:", err);
+    console.error("Error building auth URL:", err);
     return baseUrl;
   }
 };
 
+// Helper: Get user apps map
 const getUserAppsMap = async (): Promise<Record<string, any>> => {
   if (isAdmin.value) return {};
-
   try {
-    const response = await getUserApps("1", {
+    const { data, status } = await getUserApps("1", {
       PageNumber: 1,
-      PageSize: DEFAULT_PAGE_SIZE,
+      PageSize: PAGE_SIZE,
     });
-
-    if (response.status === 200 && response.data?.data) {
-      const appsData = response.data.data.data || response.data.data;
-
-      if (Array.isArray(appsData)) {
-        return appsData.reduce((map, app) => {
-          map[app.code] = {
-            isDisabled: app.isDisabled,
-            customerType: app.customerType,
-            iconUrl: app.iconUrl || app.logoUrl,
-            description: app.description,
-            appUserCategory: app.appUserCategory?.appUserCategory,
-          };
-          return map;
-        }, {} as Record<string, any>);
-      }
+    if (status === 200) {
+      const appsData = data?.data?.data || data?.data || [];
+      return Array.isArray(appsData)
+        ? appsData.reduce((map, app) => {
+            map[app.code] = {
+              isDisabled: app.isDisabled,
+              customerType: app.customerType,
+              iconUrl: app.iconUrl || app.logoUrl,
+              description: app.description,
+              appUserCategory: String(app.appUserCategory?.appUserCategory),
+            };
+            return map;
+          }, {} as Record<string, any>)
+        : {};
     }
   } catch (err) {
     console.error("Error fetching user apps map:", err);
   }
-
   return {};
 };
 
-const getAppStatus = (userAppData: any): UserApp["status"] => {
-  if (!userAppData) return "Not Onboarded";
-  return userAppData.isDisabled ? "Inactive" : "Active";
-};
-
+// Helper: Map app data
 const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
   const appCode = app.appCode || app.code;
-  const baseUrl = app.url;
   const userAppData = userAppsMap[appCode];
-
+  const isDisabled = userAppData?.isDisabled;
+  const userCategory = userAppData?.appUserCategory;
+  console.log("Mapping app data for", appCode, { app, userAppData });
   return {
     code: appCode,
     name: app.appName || app.name,
@@ -258,149 +244,118 @@ const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
       app.description ||
       "Access your application dashboard and manage your account.",
     iconUrl:
-      APP_ICONS[appCode] || userAppData?.iconUrl || app.iconUrl || app.logo,
-    url: baseUrl ? buildAuthUrl(baseUrl, appCode) : undefined,
-    isActive: userAppData?.isDisabled === false,
+      APP_ICONS[appCode as keyof typeof APP_ICONS] ||
+      userAppData?.iconUrl ||
+      app.iconUrl ||
+      app.logo,
+    url: app.url ? buildAuthUrl(app.url, appCode) : undefined,
+    isActive: isDisabled === false,
     customerType: userAppData?.customerType,
-    appUserCategory: userAppData?.appUserCategory,
+    appUserCategory: userCategory,
     role: userAppData?.customerType,
-    status: getAppStatus(userAppData),
+    status: !userAppData ? "Not Onboarded" : isDisabled ? "Inactive" : "Active",
   };
 };
 
-/* ---------------- API Functions ---------------- */
-
+// API: Fetch user apps
 const fetchUserApps = async () => {
   isLoading.value = true;
   error.value = "";
-
   try {
-    // Fetch both in parallel for non-admin users
-    const [userAppsMap, subAppsResponse] = await Promise.all([
+    const [userAppsMap, { data, status }] = await Promise.all([
       getUserAppsMap(),
       getSubApps({}),
     ]);
-
-    if (subAppsResponse.status === 200) {
-      const apps = subAppsResponse.data?.data || subAppsResponse.data || [];
-      userApps.value = apps.map((app: any) => mapAppData(app, userAppsMap));
+    if (status === 200) {
+      userApps.value = (data?.data || data || []).map((app: any) =>
+        mapAppData(app, userAppsMap),
+      );
     }
   } catch (err: any) {
-    console.error("Error fetching user apps:", err);
     error.value = err?.response?.data?.message || "Failed to load applications";
   } finally {
     isLoading.value = false;
   }
 };
 
-/* ---------------- Event Handlers ---------------- */
-
+// Handler: Navigate to app
 const navigateToApp = (app: UserApp) => {
-  const slug = authStore.userInfo?.companyName
-    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
-    : "default";
+  if (!app.isActive) {
+    appToOnboard.value = app;
+    showOnboardingModal.value = true;
+    return;
+  }
+  if (!app.url) return;
+
+  if (app.code.includes("OXI")) {
+    window.open(app.url, "_blank", "noopener,noreferrer");
+    return;
+  }
+
   const ssoCatetory = app.code.includes("POL")
     ? authStore.userInfo?.userCategory
     : 1;
-
-  if (app.isActive) {
-    if (app.url) {
-      if (app.code.includes("OXI")) {
-        window.open(app.url, "_blank", "noopener,noreferrer");
-        return;
-      }
-      const signupWithMatta = getSignupFunction(app.code);
-      const payload = buildAppPayload(
-        app.code,
-        decrypt(encryptedEmail),
-        {
-          appCode: app.code,
-          role: app.code.includes("POL")
-            ? authStore.userInfo?.userCategory
-            : app.role,
-          metadata: {
-            appCode: app.code,
-            role: app.role,
-          },
-        },
-        slug,
-        ssoCatetory,
-        app.appUserCategory,
-      );
-
-      signupWithMatta?.(payload)
-        .then(() => {
-          window.open(app.url, "_blank", "noopener,noreferrer");
-        })
-        .catch((err) => {
-          console.error("Error during app navigation:", err);
-          if (err?.response?.data?.message?.includes("Already a")) {
-            window.open(app.url, "_blank", "noopener,noreferrer");
-            return;
-          }
-          toast.error(
-            err?.response?.data?.message ||
-              "Failed to open the application. Please try again.",
-          );
-        });
-    }
-  } else {
-    appToOnboard.value = app;
-    showOnboardingModal.value = true;
-  }
-};
-
-const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
-  // getSignupFunction(appToOnboard.value.code)?.().then(() => {
-  //   showOnboardingModal.value = false;
-  //   appToOnboard.value = null;
-  //   fetchUserApps(); // Refresh apps to reflect onboarding status
-  // });
-  const slug = authStore.userInfo?.companyName
-    ? authStore.userInfo.companyName.toLowerCase().replace(/\s+/g, "-")
-    : null;
-  isOnboarding.value = true;
-  const onboardFunction = getSignupFunction(appToOnboard.value.code);
   const payload = buildAppPayload(
-    appToOnboard.value.code,
+    app.code,
     decrypt(encryptedEmail),
     {
-      appCode: appToOnboard.value.code,
-      role: selectedRoles,
-      metadata: conditionalFields,
+      appCode: app.code,
+      role: app.code.includes("POL")
+        ? authStore.userInfo?.userCategory
+        : app.role,
+      metadata: { appCode: app.code, role: app.role },
     },
-    slug,
+    slug.value,
+    ssoCatetory,
+    app.appUserCategory,
   );
-  try {
-    const response = await onboardFunction?.(payload);
 
-    if (response.status === 200) {
-      navigateToApp({ ...appToOnboard.value, isActive: true }); // Open the app after successful onboarding
+  getSignupFunction(app.code)?.(payload)
+    .then(() => window.open(app.url, "_blank", "noopener,noreferrer"))
+    .catch((err: any) => {
+      if (err?.response?.data?.message?.includes("Already a")) {
+        window.open(app.url, "_blank", "noopener,noreferrer");
+      } else {
+        toast.error(
+          err?.response?.data?.message ||
+            "Failed to open the application. Please try again.",
+        );
+      }
+    });
+};
+
+// Handler: Confirm onboarding
+const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
+  if (!appToOnboard.value) return;
+  isOnboarding.value = true;
+  try {
+    const payload = buildAppPayload(
+      appToOnboard.value.code,
+      decrypt(encryptedEmail),
+      {
+        appCode: appToOnboard.value.code,
+        role: selectedRoles,
+        metadata: conditionalFields,
+      },
+      slug.value,
+    );
+    const response = await getSignupFunction(appToOnboard.value.code)?.(
+      payload,
+    );
+    if (response?.status === 200) {
+      navigateToApp({ ...appToOnboard.value, isActive: true });
       showOnboardingModal.value = false;
       appToOnboard.value = null;
-      isOnboarding.value = false;
-      fetchUserApps(); // Refresh apps to reflect onboarding status
-    } else {
-      isOnboarding.value = false;
-      appToOnboard.value = null;
-      isOnboarding.value = false;
-      // Optionally show an error message to the user here
+      await fetchUserApps();
     }
   } catch (err: any) {
-    console.error("Error during onboarding:", err);
-    isOnboarding.value = false;
-    appToOnboard.value = null;
-    showOnboardingModal.value = false;
     toast.error(
       err?.response?.data?.message || "Onboarding failed. Please try again.",
     );
-    // Optionally show an error message to the user here
+  } finally {
+    isOnboarding.value = false;
   }
 };
 
-/* ---------------- Lifecycle ---------------- */
-
-onMounted(() => {
-  fetchUserApps();
-});
+onMounted(() => fetchUserApps());
 </script>
