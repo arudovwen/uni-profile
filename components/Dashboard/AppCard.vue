@@ -28,7 +28,7 @@
             class="w-full h-full object-contain p-2"
           />
           <span v-else class="text-white text-xl font-bold">
-            {{ app.name.charAt(0).toUpperCase() }}
+            {{ app.name?.charAt(0).toUpperCase() }}
           </span>
         </div>
       </div>
@@ -78,6 +78,8 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
+
 interface AppCardProps {
   app: {
     code: string;
@@ -135,6 +137,9 @@ const getRole = (role: string | undefined, app: any) => {
     if (app?.appUserCategory) return appRoles[app.code]?.default;
   }
 
-  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+  const formattedRole = role || "Owner";
+  return (
+    formattedRole.charAt(0).toUpperCase() + formattedRole.slice(1).toLowerCase()
+  );
 };
 </script>

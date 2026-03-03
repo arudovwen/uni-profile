@@ -217,7 +217,7 @@ const getUserAppsMap = async (): Promise<Record<string, any>> => {
               customerType: app.customerType,
               iconUrl: app.iconUrl || app.logoUrl,
               description: app.description,
-              appUserCategory: String(app.appUserCategory?.appUserCategory),
+              appUserCategory: app.appUserCategory?.appUserCategory,
             };
             return map;
           }, {} as Record<string, any>)
