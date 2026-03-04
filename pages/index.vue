@@ -188,15 +188,9 @@ const buildAuthUrl = (baseUrl: string, appCode: string): string => {
 
   try {
     const params = new URLSearchParams({
-      token: baseUrl.includes("pqolymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedToken))
-        : encodeURIComponent(encryptedToken),
-      code: baseUrl.includes("porlymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
-        : encodeURIComponent(encryptedRefreshToken),
-      refreshToken: baseUrl.includes("prolymer")
-        ? encodeURIComponent(encodeURIComponent(encryptedRefreshToken))
-        : encodeURIComponent(encryptedRefreshToken),
+      token: encodeURIComponent(encryptedToken),
+      code: encodeURIComponent(encryptedRefreshToken),
+      refreshToken: encodeURIComponent(encryptedRefreshToken),
       appCode: appCode,
     });
 
@@ -244,8 +238,12 @@ const getAppStatus = (userAppData: any): UserApp["status"] => {
 };
 
 const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
+  const runtimeConfig = useRuntimeConfig();
   const appCode = app.appCode || app.code;
-  const baseUrl = app.url;
+  const baseUrl =
+    runtimeConfig.public.environment === "development"
+      ? (localAppUrls as Record<string, string>)[appCode]
+      : app.url;
   const userAppData = userAppsMap[appCode];
 
   return {
