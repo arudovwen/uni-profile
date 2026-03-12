@@ -153,7 +153,8 @@ const navigateToApp = async (app: App | any) => {
 
   // For OXI apps, open directly without signup
   if (appToOpen.code.includes("OXI")) {
-    window.open(appToOpen.url, "_blank", "noopener,noreferrer");
+    const authUrl = buildAuthUrl(appToOpen.url);
+    window.open(authUrl, "_blank", "noopener,noreferrer");
     return;
   }
   const payload = buildAppPayload(
