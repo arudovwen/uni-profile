@@ -13,38 +13,65 @@
 
         <!-- Email and Apps Section -->
         <div class="space-y-4">
-          <!-- Labels Row -->
-          <div class="grid grid-cols-2 gap-3">
-            <label class="block text-sm font-medium text-[#2F2F2F]">
-              Email addresses
-            </label>
-            <label class="block text-sm font-medium text-[#2F2F2F]">
-              Select apps
-            </label>
-          </div>
-
-          <!-- Input Rows -->
-          <div class="space-y-2">
+          <!-- Input Rows with Labels -->
+          <div class="space-y-3">
             <div
               v-for="(pair, index) in inviteData.email.pairs"
               :key="index"
-              class="grid grid-cols-2 gap-3"
+              class="space-y-2"
             >
-              <input
-                v-model="pair.emailAddresses"
-                type="text"
-                placeholder="user@example.com"
-                class="w-full px-3 py-2 border border-[#D0D5DD] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
-              />
+              <div
+                :class="[
+                  'grid gap-3',
+                  getSelectedAppsWithRoles(pair.apps).length > 0
+                    ? 'grid-cols-3'
+                    : 'grid-cols-2',
+                ]"
+              >
+                <div>
+                  <label class="block text-sm font-medium text-[#2F2F2F] mb-2">
+                    Email addresses
+                  </label>
+                  <input
+                    v-model="pair.emailAddresses"
+                    type="text"
+                    placeholder="user@example.com"
+                    class="w-full px-3 py-3 border border-[#D0D5DD] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-600"
+                  />
+                </div>
 
-              <MultiSelectDropdown
-                v-model="pair.apps"
-                :options="appOptions"
-                placeholder="Select apps"
-                containerStyles="w-full"
-                buttonClass="!rounded-[6px] !bg-[#F9FAFB] !border-[#E4E7EC] w-full"
-                :showSearchFilter="false"
-              />
+                <div>
+                  <label class="block text-sm font-medium text-[#2F2F2F] mb-2">
+                    Select apps
+                  </label>
+                  <MultiSelectDropdown
+                    v-model="pair.apps"
+                    :options="appOptions"
+                    placeholder="Select apps"
+                    containerStyles="w-full"
+                    buttonClass="!rounded-[6px] !bg-[#F9FAFB] !border-[#E4E7EC] w-full"
+                    :showSearchFilter="false"
+                  />
+                </div>
+
+                <div v-if="getSelectedAppsWithRoles(pair.apps).length > 0">
+                  <CustomDropdown
+                    v-model="pair.role"
+                    :options="
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]]
+                        .options
+                    "
+                    :placeholder="`Select role for ${
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]].name
+                    }`"
+                    :label="`Select role for ${
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]].name
+                    }`"
+                    :buttonClass="'w-full rounded-[5px] border-[#E2E2E2]'"
+                    :showSearchFilter="false"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -84,7 +111,9 @@
 import { ref, reactive, watch, computed } from "vue";
 import { useToast } from "~/composables/useToast";
 import MultiSelectDropdown from "~/components/Onboarding/MultiSelectDropdown.vue";
+import CustomDropdown from "~/components/Onboarding/CustomDropdown.vue";
 import { sendAdminInvite, sendOwnerInvite } from "~/services/userservices";
+import { a } from "vitest/dist/suite-IbNSsUWN.js";
 
 interface Props {
   isOpen: boolean;
@@ -115,12 +144,24 @@ const appOptions = computed(() => {
   }));
 });
 
+// Role options for polymer
+const roleOptions = {
+  POL628: {
+    name: "Polymer",
+    options: [
+      { code: "0", name: "Admin" },
+      { code: "2", name: "Procurement Manager" },
+    ],
+  },
+};
+
 const inviteData = reactive({
   email: {
     pairs: [
       {
         emailAddresses: "",
         apps: [] as AppOption[],
+        role: null as any,
       },
     ],
   },
@@ -130,93 +171,117 @@ const closeModal = () => {
   emit("close");
 };
 
-const sendInvites = async () => {
-  // Parse all emails with their apps
-  interface EmailToSend {
-    email: string;
-    appCodes: string[];
-    pairIndex: number;
-  }
+const getSelectedAppsWithRoles = (apps: AppOption[]): string[] => {
+  return apps
+    .map((app) =>
+      Object.keys(roleOptions).find(
+        (key) =>
+          roleOptions[
+            key as keyof typeof roleOptions
+          ].name.toLocaleLowerCase() === app.name.toLocaleLowerCase(),
+      ),
+    )
+    .filter((code): code is string => !!code);
+};
 
-  const emailsToSend: EmailToSend[] = [];
-  inviteData.email.pairs.forEach((pair, pairIndex) => {
-    const emails = pair.emailAddresses
+const hasAppsWithRoles = (apps: AppOption[]): boolean => {
+  return getSelectedAppsWithRoles(apps).length > 0;
+};
+
+const sendInvites = async () => {
+  // Parse emails from all pairs with app and role information
+  const emailsToSend = inviteData.email.pairs.flatMap((pair) =>
+    pair.emailAddresses
       .split(",")
       .map((email) => email.trim())
-      .filter((email) => email.length > 0);
-
-    emails.forEach((email) => {
-      emailsToSend.push({
+      .filter((email) => email.length > 0)
+      .map((email) => ({
         email,
-        appCodes: pair.apps.map((app) => app.code),
-        pairIndex,
-      });
-    });
-  });
+        apps: pair.apps,
+        role: pair.role,
+      })),
+  );
 
+  // Validate inputs
   if (emailsToSend.length === 0) {
     toast.error("Please enter at least one email address");
     return;
   }
 
-  // Check if apps are selected
-  if (emailsToSend.some((item) => item.appCodes.length === 0)) {
+  if (emailsToSend.some((item) => item.apps.length === 0)) {
     toast.error("Please select at least one app for each email");
+    return;
+  }
+
+  if (
+    inviteData.email.pairs.some(
+      (pair) => hasAppsWithRoles(pair.apps) && !pair.role,
+    )
+  ) {
+    const appWithRole = getSelectedAppsWithRoles(
+      inviteData.email.pairs.find(
+        (pair) => hasAppsWithRoles(pair.apps) && !pair.role,
+      )?.apps || [],
+    )[0];
+    toast.error(
+      `Please select a role for ${
+        roleOptions[appWithRole as keyof typeof roleOptions]?.name || "this app"
+      }`,
+    );
     return;
   }
 
   isLoading.value = true;
   const failedEmails: string[] = [];
-  const successfulEmails: string[] = [];
 
   try {
-    // Send individual request for each email
+    // Send invites
     for (const item of emailsToSend) {
       try {
-        // Build payload with appCodes
-        const payload = {
+        // Build appUserCategory array
+        const appUserCategory = item.apps.map((app) => {
+          const appWithRole = getSelectedAppsWithRoles([app]);
+          const roleVal =
+            appWithRole.length > 0 ? parseInt(item.role?.code || "2") : 2;
+          return {
+            appCode: app.code,
+            appUserCategory: roleVal,
+          };
+        });
+
+        const response = await sendOwnerInvite({
           email: item.email,
-          role: 2, // Default role for non-admin users
-          appCodes: item.appCodes,
-        };
+          appUserCategory,
+          appCodes: item.apps.map((app) => app.code),
+          role: 2,
+        });
 
-        const response = await sendOwnerInvite(payload);
-
-        if (response.status === 200) {
-          successfulEmails.push(item.email);
+        if (response.status !== 200) {
+          failedEmails.push(item.email);
         }
-      } catch (error) {
+      } catch {
         failedEmails.push(item.email);
       }
     }
 
     // Handle results
     if (failedEmails.length === 0) {
-      // All succeeded
-      toast.success(`Invite sent to ${successfulEmails.length} user(s)`);
+      toast.success(`Invite sent to ${emailsToSend.length} user(s)`);
       closeModal();
-    } else if (successfulEmails.length > 0) {
-      // Some succeeded, some failed - show detailed error
-      const failedList = failedEmails.join(", ");
-      toast.error(`Failed to send invites to: ${failedList}`);
-
-      // Remove successful emails, keep only failed ones
+    } else if (failedEmails.length < emailsToSend.length) {
+      // Some succeeded
+      toast.error(`Failed to send invites to: ${failedEmails.join(", ")}`);
       inviteData.email.pairs = inviteData.email.pairs
-        .map((pair) => {
-          const failedInPair = failedEmails.filter((email) => {
-            const pairEmails = pair.emailAddresses
-              .split(",")
-              .map((e) => e.trim());
-            return pairEmails.includes(email);
-          });
-          return {
-            ...pair,
-            emailAddresses: failedInPair.join(", "),
-          };
-        })
+        .map((pair) => ({
+          ...pair,
+          emailAddresses: pair.emailAddresses
+            .split(",")
+            .map((e) => e.trim())
+            .filter((email) => failedEmails.includes(email))
+            .join(", "),
+        }))
         .filter((pair) => pair.emailAddresses.trim().length > 0);
     } else {
-      // All failed
       toast.error("Failed to send all invites. Please try again.");
     }
   } finally {
@@ -228,6 +293,7 @@ const addAnotherPair = () => {
   inviteData.email.pairs.push({
     emailAddresses: "",
     apps: [] as AppOption[],
+    role: null,
   });
 };
 
@@ -237,8 +303,10 @@ watch(
   (newIsOpen) => {
     if (newIsOpen) {
       // Reset form when modal opens
-      inviteData.email.pairs = [{ emailAddresses: "", apps: [] as AppOption[] }];
+      inviteData.email.pairs = [
+        { emailAddresses: "", apps: [] as AppOption[], role: null },
+      ];
     }
-  }
+  },
 );
 </script>

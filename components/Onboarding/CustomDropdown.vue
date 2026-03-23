@@ -2,7 +2,7 @@
   <div :class="[containerStyles, 'w-full font-Avenir']">
     <!-- Label Section -->
     <div v-if="label" class="flex items-start font-Avenir mb-2">
-      <span class="text-base text-[#344054] font-medium leading-5">
+      <span class="text-[#344054] font-medium text-sm">
         {{ label }}
       </span>
       <span

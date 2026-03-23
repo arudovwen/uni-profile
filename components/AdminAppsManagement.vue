@@ -88,10 +88,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import ComputerSvg from "~/assets/images/icon/ComputerSvg.vue";
 import { useToast } from "~/composables/useToast";
 import { useEncryption } from "~/composables/useEncryption";
+import { useOnboarding } from "~/composables/useOnboarding";
 import { getSubApps } from "~/services/userservices";
 
 interface App {
@@ -106,7 +107,8 @@ interface App {
 
 const toast = useToast();
 const authStore = useAuthStore();
-const { encrypt } = useEncryption();
+const { encrypt, decrypt } = useEncryption();
+const { getSignupFunction, buildAppPayload } = useOnboarding();
 
 // Custom app URLs mapping - override API response URLs
 const customAppUrls: Record<string, string> = {
@@ -114,6 +116,12 @@ const customAppUrls: Record<string, string> = {
   FLU722: "https://dev.admin.flux.oxidefinance.com",
   OXI972: "https://dev.oxidepro.oxidefinance.com",
 };
+
+const slug = computed(
+  () =>
+    authStore.userInfo?.companyName?.toLowerCase().replace(/\s+/g, "-") ||
+    "default",
+);
 
 const apps = ref<App[]>([]);
 const isLoading = ref(false);
@@ -124,25 +132,60 @@ const isDeleteOpen = ref(false);
 const isDeleting = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
+const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 // Build authenticated URL with encrypted tokens
-const buildAuthUrl = (baseUrl: string) => {
+const buildAuthUrl = (baseUrl: string, appCode: string) => {
   if (!encryptedToken || !encryptedRefreshToken) {
     return baseUrl;
   }
-
-  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
-    encryptedToken,
-  )}&code=${encodeURIComponent(
-    encryptedRefreshToken,
-  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
+  const params = new URLSearchParams({
+    token: encodeURIComponent(encryptedToken),
+    code: encodeURIComponent(encryptedRefreshToken),
+    refreshToken: encodeURIComponent(encryptedRefreshToken),
+    appCode,
+  });
+  return `${baseUrl}/auth/validate?${params.toString()}`;
 };
 
 // Navigate to app URL
-const navigateToApp = (app: App | any) => {
+const navigateToApp = async (app: App | any) => {
   const appToOpen = app.app || app;
-  if (appToOpen.url) {
-    const authUrl = buildAuthUrl(appToOpen.url);
-    window.open(authUrl, "_blank");
+  if (!appToOpen.url) return;
+
+  // For OXI apps, open directly without signup
+  if (appToOpen.code.includes("OXI")) {
+    const authUrl = buildAuthUrl(appToOpen.url, appToOpen.code);
+    window.open(authUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+  const payload = buildAppPayload(
+    appToOpen.code,
+    decrypt(encryptedEmail),
+    {
+      appCode: appToOpen.code,
+      role: authStore.userInfo?.userCategory || 0,
+      metadata: {
+        appCode: appToOpen.code,
+        role: authStore.userInfo?.userCategory || 0,
+      },
+    },
+    slug.value,
+    authStore.userInfo?.userCategory || 0,
+    authStore.userInfo?.userCategory || 0,
+  );
+  try {
+    await getSignupFunction(appToOpen.code)?.(payload);
+    const authUrl = buildAuthUrl(appToOpen.url, appToOpen.code);
+    window.open(authUrl, "_blank", "noopener,noreferrer");
+  } catch (err: any) {
+    if (err?.response?.data?.message?.includes("Already a")) {
+      window.open(appToOpen.url, "_blank", "noopener,noreferrer");
+    } else {
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to open the application. Please try again.",
+      );
+    }
   }
 };
 

@@ -28,7 +28,7 @@
             class="w-full h-full object-contain p-2"
           />
           <span v-else class="text-white text-xl font-bold">
-            {{ app.name.charAt(0).toUpperCase() }}
+            {{ app.name?.charAt(0).toUpperCase() }}
           </span>
         </div>
       </div>
@@ -66,10 +66,20 @@
     >
       {{ getRole(app.role, app) }}
     </span>
+
+    <!-- App User Category Badge -->
+    <!-- <span
+      v-if="app.appUserCategory"
+      class="w-fit px-3.5 py-1 text-xs font-medium rounded-[19px] bg-[#F0F4FF] text-[#3E5EFF] whitespace-nowrap capitalize"
+    >
+      {{ app.appUserCategory }}
+    </span> -->
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted } from "vue";
+
 interface AppCardProps {
   app: {
     code: string;
@@ -79,6 +89,7 @@ interface AppCardProps {
     url?: string;
     isActive: boolean;
     role?: string;
+    appUserCategory?: any;
   };
 }
 
@@ -92,20 +103,43 @@ const handleClick = () => {
   emit("click", props.app);
 };
 
-const appRoles: Record<string, { default: string }> = {
+const appRoles: Record<string, Object> = {
   OXP975: { default: "Funder" },
   ORB789: { default: "vendor" },
   OXR123: { default: "Member" },
+  POL628: {
+    default: "Member",
+    0: "Admin",
+    1: "Owner",
+    2: "Procurement Officer",
+  },
   // Add other app codes and their default roles as needed
 };
 
+onMounted(() => {
+  console.log("AppCard mounted with app data:", props.app);
+});
+
 const getRole = (role: string | undefined, app: any) => {
+  console.log("app = ", app);
+
+  if (app.appUserCategory) {
+    return (
+      appRoles[app.code]?.[app.appUserCategory] ||
+      appRoles[app.code]?.default ||
+      "User"
+    );
+  }
   if (!role) {
     if (!app?.isActive) {
       return "Not Onboarded";
     }
-    return appRoles[app.code]?.default;
+    if (app?.appUserCategory) return appRoles[app.code]?.default;
   }
-  return role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+
+  const formattedRole = role || "Owner";
+  return (
+    formattedRole.charAt(0).toUpperCase() + formattedRole.slice(1).toLowerCase()
+  );
 };
 </script>
