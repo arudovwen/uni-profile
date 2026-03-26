@@ -44,6 +44,10 @@ export async function deleteSubApp(id) {
   return await ssoDelete(`${urls.DELETE_SUBAPP(id)}`, {});
 }
 
+export async function uploadAppLogo(base64Data) {
+  return await ssoPost(`${urls.UPLOAD_FILE}`, { base64: base64Data });
+}
+
 export async function adminToggleAccess(data) {
   return await ssoPost(`${urls.REGISTER_APP_REVOKE}`, data);
 }

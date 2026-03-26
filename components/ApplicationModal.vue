@@ -166,7 +166,7 @@
 
 <script setup lang="ts">
 import { useToast } from '~/composables/useToast';
-import { addSubApp, editSubApp } from '~/services/userservices';
+import { addSubApp, editSubApp, uploadAppLogo } from '~/services/userservices';
 import CustomDropdown from '~/components/Onboarding/CustomDropdown.vue';
 
 interface ApplicationModalProps {
@@ -337,9 +337,44 @@ const handleSubmit = async () => {
   isLoading.value = true;
 
   try {
+    let logoUrl = logoPreview.value
+    
+    // Upload logo if a new file was selected
+    if (logoFile.value) {
+      try {
+        const uploadResponse = await uploadAppLogo(logoPreview.value.split("base64,")[1] || '');
+        
+        // Check if upload was successful
+        if (!uploadResponse.data?.succeeded) {
+          logoError.value = uploadResponse.data?.message || 'Failed to upload logo';
+          toast.error(logoError.value);
+          isLoading.value = false;
+          return;
+        }
+
+        // Use the uploaded URL from response
+        logoUrl = uploadResponse.data?.data;
+        
+        if (!logoUrl) {
+          logoError.value = 'Upload successful but no URL returned';
+          toast.error(logoError.value);
+          isLoading.value = false;
+          return;
+        }
+      } catch (uploadError: any) {
+        const errorMessage = uploadError.response?.data?.message || 
+                           uploadError.message || 
+                           'Failed to upload logo';
+        logoError.value = errorMessage;
+        toast.error(errorMessage);
+        isLoading.value = false;
+        return;
+      }
+    }
+
     const submitData = {
       ...formData.value,
-      iconUrl: logoPreview.value,
+      iconUrl: logoUrl,
       isTwoFactorAuthEnabled: true,
     };
 

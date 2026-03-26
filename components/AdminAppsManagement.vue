@@ -134,17 +134,16 @@ const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 // Build authenticated URL with encrypted tokens
-const buildAuthUrl = (baseUrl: string, appCode: string) => {
+const buildAuthUrl = (baseUrl: string) => {
   if (!encryptedToken || !encryptedRefreshToken) {
     return baseUrl;
   }
-  const params = new URLSearchParams({
-    token: encodeURIComponent(encryptedToken),
-    code: encodeURIComponent(encryptedRefreshToken),
-    refreshToken: encodeURIComponent(encryptedRefreshToken),
-    appCode,
-  });
-  return `${baseUrl}/auth/validate?${params.toString()}`;
+
+  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
+    encryptedToken,
+  )}&code=${encodeURIComponent(
+    encryptedRefreshToken,
+  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
 };
 
 // Navigate to app URL
@@ -154,7 +153,7 @@ const navigateToApp = async (app: App | any) => {
 
   // For OXI apps, open directly without signup
   if (appToOpen.code.includes("OXI")) {
-    const authUrl = buildAuthUrl(appToOpen.url, appToOpen.code);
+    const authUrl = buildAuthUrl(appToOpen.url);
     window.open(authUrl, "_blank", "noopener,noreferrer");
     return;
   }
@@ -175,7 +174,7 @@ const navigateToApp = async (app: App | any) => {
   );
   try {
     await getSignupFunction(appToOpen.code)?.(payload);
-    const authUrl = buildAuthUrl(appToOpen.url, appToOpen.code);
+    const authUrl = buildAuthUrl(appToOpen.url);
     window.open(authUrl, "_blank", "noopener,noreferrer");
   } catch (err: any) {
     if (err?.response?.data?.message?.includes("Already a")) {
