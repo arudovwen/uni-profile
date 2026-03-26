@@ -1,14 +1,16 @@
-// notification_helpers.test.js
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as notificationHelpers from "~/services/notificationservice";
-// import urls from "~/helpers/url_helpers";
-import { get, post } from "~/helpers/api_helpers";
-// import store from "~/store";
+import { 
+  getnotifications, 
+  marknotification, 
+  markallnotification 
+} from "~/services/notificationservice";
 
-// Mock store and helpers
-vi.mock("~/helpers/api_helpers", () => ({
-  get: vi.fn(),
-  post: vi.fn(),
+import urls from "~/helpers/url_helpers";
+import { notificationGet, notificationPost } from "~/services/api_services";
+
+vi.mock("~/services/api_services", () => ({
+  notificationGet: vi.fn(),
+  notificationPost: vi.fn(),
 }));
 
 vi.mock("~/store", () => ({
@@ -27,70 +29,54 @@ vi.mock("~/helpers/url_helpers", () => ({
   },
 }));
 
+global.cleanObject = vi.fn((obj) => obj);
+
 describe("Notification Helper Functions", () => {
+  const expectedConfig = {
+    headers: { Authorization: `Bearer mock-access-token` },
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should call getnotification with the correct URL and config", async () => {
-    const mockData = {
-      PageNumber: 1,
-      PageSize: 10,
-      BusinessId: "mock-business-id",
-      UserId: "mock-user-id",
-      Role: "mock-role",
-    };
+  it("should call getnotifications with the correct URL and config", async () => {
+    const mockData = { PageNumber: 1 };
+    notificationGet.mockResolvedValue({ data: "mock-response" });
 
-    const expectedConfig = {
-      headers: { Authorization: `Bearer mock-access-token` },
-    };
+    const response = await getnotifications(mockData);
 
-    get.mockResolvedValue({ data: "mock-response" });
-
-    const response = await notificationHelpers.getnotification(mockData);
-
-    expect(get).toHaveBeenCalledWith(
-      "mock-get-notification-url?PageNumber=1&PageSize=10&Role=mock-role&BusinessId=mock-business-id&UserId=mock-user-id",
+    expect(notificationGet).toHaveBeenCalledWith(
+      `${urls.GET_NOTIFICATION}?PageNumber=1`,
       expectedConfig
     );
     expect(response).toEqual({ data: "mock-response" });
   });
 
-  it("should call marknotification with the correct URL, data, and config", async () => {
-    const mockData = { someKey: "someValue" };
+  it("should call marknotification with correctly", async () => {
+    const mockData = { id: "123" };
+    notificationPost.mockResolvedValue({ success: true });
 
-    const expectedConfig = {
-      headers: { Authorization: `Bearer mock-access-token` },
-    };
+    const response = await marknotification(mockData);
 
-    post.mockResolvedValue({ data: "mock-response" });
-
-    const response = await notificationHelpers.marknotification(mockData);
-
-    expect(post).toHaveBeenCalledWith(
-      "mock-mark-notification-url",
+    expect(notificationPost).toHaveBeenCalledWith(
+      urls.MARK_NOTIFICATION,
       mockData,
       expectedConfig
     );
-    expect(response).toEqual({ data: "mock-response" });
+    expect(response).toEqual({ success: true });
   });
 
-  it("should call markallnotification with the correct URL, data, and config", async () => {
-    const mockData = { someKey: "someValue" };
+  it("should call markallnotification correctly", async () => {
+    const mockData = { businessId: "abc" };
+    notificationPost.mockResolvedValue({ success: true });
 
-    const expectedConfig = {
-      headers: { Authorization: `Bearer mock-access-token` },
-    };
+    const response = await markallnotification(mockData);
 
-    post.mockResolvedValue({ data: "mock-response" });
-
-    const response = await notificationHelpers.markallnotification(mockData);
-
-    expect(post).toHaveBeenCalledWith(
-      "mock-mark-all-notification-url",
+    expect(notificationPost).toHaveBeenCalledWith(
+      urls.MARK_ALL_NOTIFICATION,
       mockData,
       expectedConfig
     );
-    expect(response).toEqual({ data: "mock-response" });
   });
 });
