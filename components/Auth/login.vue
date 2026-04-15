@@ -10,7 +10,6 @@
         Welcome Back! Please enter your details
       </p>
       <form @submit.prevent="onSubmit">
-        {{ email }}
         <div class="mb-5">
           <TextinputTwo
             iconType="email"
