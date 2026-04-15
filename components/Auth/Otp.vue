@@ -158,4 +158,12 @@ function resendOTP() {
     // Logic to actually resend the OTP can go here
   }
 }
+watch(
+  () => form.otp,
+  (newVal) => {
+    if (newVal.length === props.numInput) {
+      handleSubmit();
+    }
+  },
+);
 </script>
