@@ -215,7 +215,7 @@ if (app === "FLU120") {
 
 
 const color = appCodeColorMap[app] || "#1570EF";
-const step = ref(1);
+const step = ref(route.query.step || 1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
@@ -289,7 +289,7 @@ const onSubmit = handleSubmit((values) => {
         (data.message || data.Message).includes("Email has not verified yet")
       ) {
         router.push(
-          `/auth/${app ? `/${app}` : ""}?email=${encodeURIComponent(
+          `/auth/login${app ? `/${app}` : ""}?email=${encodeURIComponent(
             values.email
           )}&step=2`
         );
