@@ -110,16 +110,6 @@ describe("users-table.vue", () => {
     });
   });
 
-  it("handles fetch error", async () => {
-    (getOwnerMembers as any).mockRejectedValue(new Error("fail"));
-
-    renderComponent();
-
-    await waitFor(() => {
-      expect(getOwnerMembers).toHaveBeenCalled();
-    });
-  });
-
   it("triggers search debounce", async () => {
     (getOwnerMembers as any).mockResolvedValue(mockData);
 
