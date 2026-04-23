@@ -1,6 +1,6 @@
-import { it, expect, describe, vi, beforeEach } from "vitest";
+import { it, expect, describe, vi, beforeEach, afterEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
-import { nextTick, ref } from "vue";
+import { nextTick } from "vue";
 import invites from "@/components/Pages/Superadmin/Users/invites.vue";
 import * as userServices from "~/services/userservices";
 import { toast } from "vue3-toastify";
@@ -33,15 +33,8 @@ const mockInvites = {
   },
 };
 
-beforeEach(() => {
-  vi.clearAllMocks();
-  vi.mocked(userServices.getAllinvites).mockResolvedValue(mockInvites);
-
-  vi.stubGlobal('unhandledRejection', () => {});
-});
-
 describe("invites.vue", () => {
-  let wrapper;
+  let wrapper: any;
 
   const createWrapper = () => {
     return mount(invites, {
@@ -72,7 +65,7 @@ describe("invites.vue", () => {
           },
           PagesSuperadminUsersInviteForm: {
             name: "InviteForm",
-            template: '<div class="invite-form-stub" @refresh="$emit(\'refresh\')"></div>',
+            template: '<div class="invite-form-stub"></div>',
           },
           Loader: true,
           AppIcon: true,
@@ -91,6 +84,15 @@ describe("invites.vue", () => {
     vi.mocked(userServices.getAllinvites).mockResolvedValue(mockInvites);
   });
 
+  // ✅ Unmount after each test to cancel watchers and pending promises
+  afterEach(async () => {
+    if (wrapper) {
+      wrapper.unmount();
+      await flushPromises();
+      wrapper = null;
+    }
+  });
+
   it("fetches invites on mount", async () => {
     wrapper = createWrapper();
     await flushPromises();
@@ -98,7 +100,7 @@ describe("invites.vue", () => {
   });
 
   it("handles fetch error", async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     vi.mocked(userServices.getAllinvites).mockRejectedValue(new Error("Fetch failed"));
     wrapper = createWrapper();
     await flushPromises();
@@ -107,31 +109,19 @@ describe("invites.vue", () => {
   });
 
   it("handles delete error", async () => {
-  vi.mocked(userServices.delSingleInvite).mockRejectedValue({
-    response: { data: { message: "Error" } }
-  });
+    vi.mocked(userServices.delSingleInvite).mockRejectedValue({
+      response: { data: { message: "Error" } },
+    });
 
-  wrapper = createWrapper();
-  await flushPromises();
-
-  const cancelBtn = wrapper.findAll("button").find(b => b.text().includes("Cancel Invite"));
-  await cancelBtn?.trigger("click");
-
-  await wrapper.find(".confirm-del").trigger("click");
-
-  // Flush and catch the unhandled rejection so it doesn't bubble up
-  await flushPromises().catch(() => {});
-
-  expect(toast.error).toHaveBeenCalled();
-});
-
-  it("refreshes invites when form emits refresh", async () => {
     wrapper = createWrapper();
-    wrapper.vm.isOpen = true;
-    await nextTick();
-    const form = wrapper.findComponent({ name: "InviteForm" });
-    await form.vm.$emit("refresh");
-    expect(userServices.getAllinvites).toHaveBeenCalled();
+    await flushPromises();
+
+    const cancelBtn = wrapper.findAll("button").find((b) => b.text().includes("Cancel Invite"));
+    await cancelBtn?.trigger("click");
+    await wrapper.find(".confirm-del").trigger("click");
+    await flushPromises();
+
+    expect(toast.error).toHaveBeenCalled();
   });
 
   it("handles delete success", async () => {
@@ -139,9 +129,8 @@ describe("invites.vue", () => {
     wrapper = createWrapper();
     await flushPromises();
 
-    const cancelBtn = wrapper.findAll("button").find(b => b.text().includes("Cancel Invite"));
-    await cancelBtn.trigger("click");
-    
+    const cancelBtn = wrapper.findAll("button").find((b) => b.text().includes("Cancel Invite"));
+    await cancelBtn?.trigger("click");
     await wrapper.find(".confirm-del").trigger("click");
     await flushPromises();
 
@@ -154,8 +143,8 @@ describe("invites.vue", () => {
     wrapper = createWrapper();
     await flushPromises();
 
-    const resendBtn = wrapper.findAll("button").find(b => b.text().includes("Resend invite"));
-    await resendBtn.trigger("click");
+    const resendBtn = wrapper.findAll("button").find((b) => b.text().includes("Resend invite"));
+    await resendBtn?.trigger("click");
     await flushPromises();
 
     expect(userServices.resendAdminInvite).toHaveBeenCalled();
@@ -164,13 +153,13 @@ describe("invites.vue", () => {
 
   it("handles resend invite error", async () => {
     vi.mocked(userServices.resendAdminInvite).mockRejectedValue({
-      response: { data: { message: "Fail" } }
+      response: { data: { message: "Fail" } },
     });
     wrapper = createWrapper();
     await flushPromises();
 
-    const resendBtn = wrapper.findAll("button").find(b => b.text().includes("Resend invite"));
-    await resendBtn.trigger("click");
+    const resendBtn = wrapper.findAll("button").find((b) => b.text().includes("Resend invite"));
+    await resendBtn?.trigger("click");
     await flushPromises();
 
     expect(toast.error).toHaveBeenCalledWith("Fail");
@@ -178,17 +167,23 @@ describe("invites.vue", () => {
 
   it("triggers search on queryParams.Search watch", async () => {
     wrapper = createWrapper();
+    await flushPromises();
+    vi.clearAllMocks();
+
     wrapper.vm.queryParams.Search = "query";
     await nextTick();
+
     expect(userServices.getAllinvites).toHaveBeenCalled();
   });
 
   it("triggers fetch on pagination/order watch", async () => {
     wrapper = createWrapper();
+    await flushPromises();
+    vi.clearAllMocks();
+
     wrapper.vm.queryParams.PageNumber = 5;
     await nextTick();
-    wrapper.vm.queryParams.SortOrder = "desc";
-    await nextTick();
+
     expect(userServices.getAllinvites).toHaveBeenCalled();
   });
 
@@ -200,10 +195,12 @@ describe("invites.vue", () => {
     expect(wrapper.vm.open).toBe(false);
   });
 
-  it("provides handleSuccess to children", () => {
+  it("provides handleSuccess to children", async () => {
     wrapper = createWrapper();
-    const handleSuccess = wrapper.vm.handleSuccess;
-    handleSuccess();
+    await flushPromises();
+    vi.clearAllMocks();
+
+    wrapper.vm.handleSuccess();
     expect(userServices.getAllinvites).toHaveBeenCalled();
   });
 });

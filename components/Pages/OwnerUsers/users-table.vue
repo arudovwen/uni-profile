@@ -247,8 +247,6 @@ const handleDelete = () => {
           err?.response?.data?.Message ||
           "Invite cancellation failed"
       );
-      isErrorOpen.value = true;
-      isLoading.value = false;
     });
 };
 function handleSuccess() {
