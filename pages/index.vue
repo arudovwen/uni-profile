@@ -88,6 +88,17 @@
           </div>
         </template>
       </template>
+      <!-- Navigation / Signup Loading Overlay -->
+      <div
+        v-if="isNavigating"
+        class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-black/20 backdrop-blur-sm"
+      >
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-4 border-[#e5e7eb] border-t-[#1570EF]"
+        />
+        <p class="text-sm font-semibold text-[#475467]">Opening application, please wait&hellip;</p>
+      </div>
+
       <OnboardingModal
         v-if="showOnboardingModal"
         :isOpen="showOnboardingModal"
@@ -166,6 +177,7 @@ const userApps = ref<UserApp[]>([]);
 const appToOnboard = ref<UserApp | null>(null);
 const showOnboardingModal = ref(false);
 const isOnboarding = ref(false);
+const isNavigating = ref(false);
 
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 const encryptedToken = encrypt(authStore.jwToken);
@@ -279,7 +291,7 @@ const fetchUserApps = async () => {
 };
 
 // Handler: Navigate to app
-const navigateToApp = (app: UserApp) => {
+const navigateToApp = async (app: UserApp) => {
   if (!app.isActive) {
     appToOnboard.value = app;
     showOnboardingModal.value = true;
@@ -310,18 +322,22 @@ const navigateToApp = (app: UserApp) => {
     app.appUserCategory,
   );
 
-  getSignupFunction(app.code)?.(payload)
-    .then(() => window.open(app.url, "_blank", "noopener,noreferrer"))
-    .catch((err: any) => {
-      if (err?.response?.data?.message?.includes("Already a")) {
-        window.open(app.url, "_blank", "noopener,noreferrer");
-      } else {
-        toast.error(
-          err?.response?.data?.message ||
-            "Failed to open the application. Please try again.",
-        );
-      }
-    });
+  isNavigating.value = true;
+  try {
+    await getSignupFunction(app.code)?.(payload);
+    window.open(app.url, "_blank", "noopener,noreferrer");
+  } catch (err: any) {
+    if (err?.response?.data?.message?.includes("Already a")) {
+      window.open(app.url, "_blank", "noopener,noreferrer");
+    } else {
+      toast.error(
+        err?.response?.data?.message ||
+          "Failed to open the application. Please try again.",
+      );
+    }
+  } finally {
+    isNavigating.value = false;
+  }
 };
 
 // Handler: Confirm onboarding

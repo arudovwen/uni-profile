@@ -53,6 +53,17 @@
     @submit="handleApplicationSubmit"
   />
 
+  <!-- Navigation / Signup Loading Overlay -->
+  <div
+    v-if="isNavigating"
+    class="fixed inset-0 z-[9999] flex flex-col items-center justify-center gap-4 bg-black/20 backdrop-blur-sm"
+  >
+    <div
+      class="animate-spin rounded-full h-12 w-12 border-4 border-[#e5e7eb] border-t-[#1570EF]"
+    />
+    <p class="text-sm font-semibold text-[#475467]">Opening application, please wait&hellip;</p>
+  </div>
+
   <!-- Delete Confirmation Modal -->
   <div
     v-if="selectedAppForDelete && isDeleteOpen"
@@ -130,6 +141,7 @@ const selectedAppForDelete = ref<App | null>(null);
 const isApplicationModalOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isDeleting = ref(false);
+const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
@@ -157,6 +169,7 @@ const navigateToApp = async (app: App | any) => {
     window.open(authUrl, "_blank", "noopener,noreferrer");
     return;
   }
+
   const payload = buildAppPayload(
     appToOpen.code,
     decrypt(encryptedEmail),
@@ -172,6 +185,8 @@ const navigateToApp = async (app: App | any) => {
     authStore.userInfo?.userCategory || 0,
     authStore.userInfo?.userCategory || 0,
   );
+
+  isNavigating.value = true;
   try {
     await getSignupFunction(appToOpen.code)?.(payload);
     const authUrl = buildAuthUrl(appToOpen.url);
@@ -185,6 +200,8 @@ const navigateToApp = async (app: App | any) => {
           "Failed to open the application. Please try again.",
       );
     }
+  } finally {
+    isNavigating.value = false;
   }
 };
 
