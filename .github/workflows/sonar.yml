@@ -34,5 +34,5 @@ jobs:
         with:
              args: >
               -Dsonar.organization=matta-trade
-              Dsonar.projectKey=Matta-Trade_Universal.Profile.Frontend          
+              -Dsonar.projectKey=Matta-Trade_Universal.Profile.Frontend          
             
