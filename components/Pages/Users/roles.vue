@@ -60,6 +60,10 @@
   const isAutoSettlement = ref(false);
   const rows = ref([]);
   const loading = ref(false);
+  const errorText = ref('');
+  const isErrorOpen = ref(false);
+  const isLoading = ref(false);
+  const isSuccessOpen = ref(false);
   const columns = [
     {
       header: "Name",
