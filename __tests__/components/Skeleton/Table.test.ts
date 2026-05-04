@@ -1,42 +1,32 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from "@testing-library/vue";
-import { RouterLinkStub } from "@vue/test-utils";
-import { it, expect, describe, vi } from "vitest";
-import { createTestingPinia } from "@pinia/testing";
-import * as authServices from "~/services/authservices";
-import * as vueRouter  from "vue-router";
-import Table from "~/components/Skeleton/Project-grid.vue";
+import { mount } from '@vue/test-utils';
+import { describe, it, expect } from 'vitest';
+import TableSkeleton from '@/components/Skeleton/Table.vue';
 
-describe("Table", () => {
+describe('TableSkeleton.vue', () => {
+  it('renders the default number of rows', () => {
+    const wrapper = mount(TableSkeleton);
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBe(6);
+  });
 
-  it("renders", async () => {
-    const component = render(Table, {
-      props: {},
-      global: {
-        stubs: {
-          RouterLink: RouterLinkStub,
-        },
-        plugins: [
-          createTestingPinia({
-            initialState: {
-              auth: {
-                loggedUser: {
-                  firstName: "Bruce",
-                  lastName: "Wayne",
-                },
-              },
-            },
-          }),
-        ],
-        mocks: {},
-      },
+  it('renders a specific number of rows based on the count prop', () => {
+    const count = 10;
+    const wrapper = mount(TableSkeleton, {
+      props: { count },
     });
-    expect(screen).toMatchSnapshot();
-    component.unmount();
+    const rows = wrapper.findAll('tbody tr');
+    expect(rows.length).toBe(count);
+  });
+
+  it('renders the correct table structure', () => {
+    const wrapper = mount(TableSkeleton);
+    expect(wrapper.find('table').exists()).toBe(true);
+    expect(wrapper.findAll('thead th').length).toBe(5);
+    expect(wrapper.findAll('tbody td').length).toBe(6 * 5);
+  });
+
+  it('applies the animate-pulse class for skeleton effect', () => {
+    const wrapper = mount(TableSkeleton);
+    expect(wrapper.find('table').classes()).toContain('animate-pulse');
   });
 });
