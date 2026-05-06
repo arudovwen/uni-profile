@@ -47,7 +47,7 @@
         class="flex flex-row justify-between px-[24px] items-start pt-[32px] pb-0 gap-0 lg:w-[400px] h-[100px] flex-none order-2 self-stretch flex-grow-0 z-20"
       >
         <AppButton
-          btnClass="h-[44px] lg:w-[170px] text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
+          btnClass="h-[42px] lg:w-[170px] text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
           type="button"
           @click="
             () => {
@@ -60,7 +60,7 @@
           text="Add New Driver"
         />
         <AppButton
-          class="h-[44px] w-[150px] lg:w-[170px]"
+          class="h-[42px] w-[150px] lg:w-[170px]"
           type="button"
           @click="
             () => {
@@ -218,12 +218,12 @@
                     isOpen = false;
                   }
                 "
-                btnClass="h-[44px] w-[150px] lg:w-[290px] text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
+                btnClass="h-[42px] w-[150px] lg:w-[290px] text-[#344054] bg-white border-[#D0D5DD] border-[1px]"
                 type="button"
                 text="Cancel"
               />
               <AppButton
-                btnClass="h-[44px] lg:w-[290px] btn-primary"
+                btnClass="h-[42px] lg:w-[290px] btn-primary"
                 @click="onSubmit"
                 type="submit"
                 :is-disabled="

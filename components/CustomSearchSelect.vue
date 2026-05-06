@@ -3,10 +3,10 @@
     <Combobox v-model="selectedOption">
       <div class="relative mt-1">
         <div
-          class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left border border-[#EAECF0] input sm:text-sm"
+          class="relative w-full overflow-hidden text-left bg-white rounded-lg cursor-default input-control input "
         >
           <ComboboxInput
-            :class="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer px-3 outline-none focus:outline-none`"
+            :class="`min-w-[180px] !bg-white  !rounded-lg !text-[#475467]  cursor-pointer text-sm outline-none focus:outline-none`"
             :displayValue="(option) => (option ? option.label : '')"
             @change="handleSearch"
             :placeholder="placeholder"
@@ -37,7 +37,7 @@
         >
           <ComboboxOptions
             v-if="showOptions"
-            class="absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
+            class="absolute z-50 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-gray-100 ring-opacity-5 focus:outline-none sm:text-sm"
           >
             <div
               v-if="isLoading"
@@ -60,7 +60,7 @@
               <li
                 :class="[
                   'relative cursor-default select-none py-2 pl-10 pr-4',
-                  active ? 'bg-primary-300 text-white' : 'text-secondary-500',
+                  active ? 'bg-primary-500 text-white' : 'text-secondary-500',
                 ]"
               >
                 <span
@@ -120,7 +120,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
-
+  modelValue: {
+    type: Object,
+    default: null,
+  },
   minSearchLength: {
     type: Number,
     default: 2,
@@ -197,6 +200,9 @@ const fetchSearchResults = async () => {
     filteredOptions.value = response.data.data.map((i) => ({
       label: `${i.firstName} ${i.lastName}`,
       value: i.id,
+      email: i.email || i.contactEmail || "",
+      firstName: i.firstName,
+      lastName: i.lastName,
     }));
   } catch (error) {
     console.error("Error fetching search results:", error);
@@ -206,6 +212,13 @@ const fetchSearchResults = async () => {
   }
 };
 
+// Watch for external modelValue changes
+watch(() => props.modelValue, (newVal) => {
+  if (newVal) {
+    selectedOption.value = newVal;
+  }
+}, { immediate: true });
+
 // Watch for selection changes
 watch(selectedOption, (newVal) => {
   if (newVal) {
@@ -213,4 +226,8 @@ watch(selectedOption, (newVal) => {
     emit("option-selected", newVal);
   }
 });
+
+onMounted(()=>{
+   fetchSearchResults();
+})
 </script>

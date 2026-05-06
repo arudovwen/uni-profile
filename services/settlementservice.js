@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { get, post, del, put, walletGet, walletDelete, walletPut, walletPost } from "../helpers/api_helpers";
+import { get, post, del, put, walletGet, walletDelete, walletPut, walletPost } from "../services/api_services";
 import store from "../store";
 
 const config = {

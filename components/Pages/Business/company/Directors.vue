@@ -73,12 +73,12 @@
           leave-to="opacity-0"
         >
           <div
-            class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+            class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75"
           />
         </TransitionChild>
-        <div class="fixed z-10 inset-0 overflow-y-auto">
+        <div class="fixed inset-0 z-10 overflow-y-auto">
           <div
-            class="flex items-end sm:items-center justify-center min-h-full p-4 text-center sm:p-0"
+            class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0"
           >
             <TransitionChild
               as="template"
@@ -90,7 +90,7 @@
               leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <DialogPanel
-                class="relative bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-lg sm:w-full"
+                class="relative overflow-hidden text-left transition-all transform bg-white rounded-lg shadow-xl sm:my-8 sm:max-w-lg sm:w-full"
                 :class="
                   action == 'add' ? 'sm:max-w-[600px]' : 'sm:max-w-[343px]'
                 "
@@ -158,7 +158,7 @@ function onDelete() {
 }
 
 async function handleSubmit() {
-  const mattaAuth = useCookie("mattaAuth_Dev", defaultOptions);
+  const mattaAuth = useCookie(AUTH_COOKIE_NAME, defaultOptions);
   if (!form.directors.length) return;
   isLoading.value = true;
   const data = {

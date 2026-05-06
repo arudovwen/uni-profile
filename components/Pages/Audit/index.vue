@@ -64,8 +64,8 @@ const columns = [
     isStatus: false,
   },
   {
-    header: "Apps",
-    key: "apps",
+    header: "App",
+    key: "app",
     isHtml: false,
     isStatus: false,
   },
@@ -117,13 +117,14 @@ const docLoading = ref(false);
 const users = ref([]);
 function getAuditData() {
   docLoading.value = true;
-  GetAudit[authStore.userInfo.userCategory](queryParams).then((res) => {
+  GetAudit[authStore?.userInfo?.userCategory](queryParams).then((res) => {
     auditData.value = res.data.data.map((i) => ({
       ...i,
       userName: i.userName?.split(" ").map(capitalize).join(" "),
       lastActive: moment(i.created).format("lll"),
-      app: authStore.appList.find((j) => j.appCode === i.appCode)?.name,
+      app: authStore.appList.find((j) => j.code === i.appCode)?.name,
     }));
+  
     queryParams.total = res.data.totalCount;
     docLoading.value = false;
   });

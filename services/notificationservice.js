@@ -1,5 +1,5 @@
 import urls from "../helpers/url_helpers";
-import { notificationGet, notificationPost } from "../helpers/api_helpers";
+import { notificationGet, notificationPost } from "../services/api_services";
 import store from "../store";
 
 const config = {

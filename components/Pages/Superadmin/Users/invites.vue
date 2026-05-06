@@ -224,8 +224,6 @@ const handleDelete = () => {
           err?.response?.data?.Message ||
           "Invite deletion failed"
       );
-      isErrorOpen.value = true;
-      isLoading.value = false;
     });
 };
 async function resendInvite() {

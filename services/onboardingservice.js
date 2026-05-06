@@ -1,7 +1,7 @@
 import urls from "../helpers/url_helpers";
-import { post } from "../helpers/api_helpers";
+// import { post } from "../helpers/api_helpers";
 import store from "../store";
-import { ssoPost } from "./api_services";
+import { ssoPost, post } from "./api_services";
 
 const config = {
   headers: { Authorization: `Bearer ${store.getters.accessToken}` },

@@ -2,7 +2,7 @@
 <template>
   <div class="relative">
     <label
-      class="flex items-center gap-x-[15px] border p-1 border-[#EAECF0] rounded-lg bg-[#F9FAFB] h-[44px]"
+      class="flex items-center gap-x-[15px] border p-1 border-[#EAECF0] rounded-lg bg-[#F9FAFB] h-[42px]"
     >
       <input type="file" id="uploadId" class="hidden" @change="handleFile" />
       <span

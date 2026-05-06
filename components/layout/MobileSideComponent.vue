@@ -1,211 +1,131 @@
 <template>
   <div
     v-show="showSideBar"
-    class="w-screen h-screen lg:hidden flex bg-[#545860] backdrop backdrop-blur-xl z-99999!"
+    class="w-screen h-screen lg:hidden flex bg-[#545860]/60 backdrop-blur-xl z-[99999]"
   >
-    <aside
-      class="box-border lg:hidden flex flex-col items-start justify-between w-[311px] h-full bg-[#0C111D]"
-    >
-      <div class="w-full pt-[32px] gap-[48px]">
-        <div
-          class="flex flex-col items-start p-0 pl-[24px] mb-[30px] pr-[20px] w-[311px] h-[30px] z-20"
-        >
-          <AppLogo :dark="true" />
+    <!-- SIDEBAR -->
+    <aside class="flex flex-col justify-between w-[280px] h-full bg-white border-r border-gray-200">
+      <!-- LOGO + NAVIGATION -->
+      <div class="pt-3">
+        <div class="px-6 mb-6">
+          <AppLogo />
         </div>
-        <div class="w-full flex justify-center items-center mb-6">
-          <div
-            class="flex flex-col items-start p-0 px-[4px] gap-[8px] w-[279px] z-0"
-          >
-            <HeaderSearchText
-              mobile
-              classInput="!border-none !text-base"
-              iconPosition="left"
-            />
-          </div>
-        </div>
-        <nav
-          class="flex flex-col items-start p-0 px-[4px] gap-[8px] w-full h-[184px] z-0"
-        >
-          <ul class="grid gap-y-2 w-full">
-            <li
-              v-for="item in mappedNavigation"
-              :key="item.name"
-              class="block w-full"
-            >
+
+        <nav class="">
+          <ul class="space-y-2">
+            <li v-for="item in mappedNavigation" :key="item.name">
               <router-link
                 :to="item.url"
-                class="flex flex-row items-center p-2 gap-2 w-full h-[40px] bg-blue rounded-[6px]"
-                activeClass="bg-[#182230] !text-[#ffffff]"
+                class="flex items-center gap-3 px-6 py-2.5 transition text-matta-black"
+                activeClass="bg-[#0C111D] text-white"
               >
-                <div class="flex flex-row items-center p-2 gap-x-3">
-                  <span class="">
-                    <SvgsDashboardSvg
-                      v-if="item.key === 'dashboard'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsDriversSvg
-                      v-if="item.key === 'drivers'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsOrdersSvg
-                      v-if="item.key === 'orders'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsVehiclesSvg
-                      v-if="item.key === 'vehicles'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsHomeSvg
-                      v-if="item.key === 'home'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsCustomersSvg
-                      v-if="item.key === 'customers'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsCardSvg
-                      v-if="item.key === 'payments'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsTeamSvg
-                      v-if="item.key === 'team-management'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsProfileSvg
-                      v-if="item.key === 'settings'"
-                      :active="route.path === item.url"
-                    />
-                    <SvgsKeysSvg
-                      v-if="item.key === 'api-keys'"
-                      :active="route.path === item.url"
-                    />
-                  </span>
-
-                  <span
-                    class="block h-[24px] font-onest font-normal text-[16px] leading-[24px] text"
-                  >
-                    <!-- Text content here -->
-                    {{ item.name }}
-                  </span>
-                </div>
+                <span class="text-base truncate font-onest">
+                  {{ item.name }}
+                </span>
               </router-link>
             </li>
           </ul>
         </nav>
       </div>
-      <Menu as="div" class="absolute bottom-0">
-        <MenuButton class="outline-none">
-          <div
-            class="flex flex-row items-center justify-center mx-auto w-[311px] h-[88px] order-1 self-stretch flex-grow-0"
-          >
-            <div
-              class="flex flex-row items-center p-0 gap-3 w-[255px] h-[40px] flex-none order-0 z-0"
-            >
-              <div class="h-[40px] w-[40px] rounded-[50%] bg-[#ffffff]"></div>
-              <div
-                class="flex flex-col items-start p-0 w-[179px] h-[40px] text-[#ffffff] flex-none order-1 flex-grow-0"
-              >
-                <!-- Main Text -->
-                <p class="font-Onest font-semibold text-sm text-black">
-                  {{ authStore.loggedUser?.fullName }}
-                </p>
 
-                <!-- Supporting Text -->
-                <p
-                  class="text-sm font-normal font-onest truncate text-gray-500"
-                >
-                  {{ authStore.loggedUser?.email }}
-                </p>
-              </div>
+      <!-- USER DROPDOWN -->
+      <Menu as="div" class="relative">
+        <MenuButton
+          class="w-full p-4 flex items-center justify-between transition border-t"
+        >
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-matta-black rounded-full flex items-center justify-center">
+              <span class="text-white text-sm font-semibold">{{ authStore.loggedUser?.fullName?.charAt(0) }}</span>
             </div>
-            <div
-              class="flex flex-row justify-center items-center p-2 gap-2 w-[36px] h-[36px] right-0 top-4 rounded-lg flex-none order-1 flex-grow-0 z-10"
-            >
-              <LogoutIcon />
+
+            <div class="flex flex-col  w-[160px] truncate text-left">
+              <p class="text-sm font-semibold text-black">
+                {{ authStore.loggedUser?.fullName }}
+              </p>
+              <p class="text-sm text-gray-400 truncate">
+                {{ authStore.loggedUser?.email }}
+              </p>
             </div>
           </div>
+
+          <LogoutIcon class="w-5 h-5" />
         </MenuButton>
+
         <MenuItems
-          class="absolute top-[-40px] z-40 left-16 bg-white shadow right-0 min-w-[150px] w-[213px] rounded-lg overflow-hidden mt-2"
+          class="absolute bottom-16 left-4 w-[200px] bg-white shadow-lg rounded-lg overflow-hidden z-50"
         >
           <div
-            @click="() => (isSigningOut = true)"
-            class="'group flex w-full items-center rounded-md px-[14px] py-[11px] text-sm hover:bg-[rgba(22,94,240,0.09)] whitespace-nowrap gap-x-2 text-[#333] '"
+            @click="isSigningOut = true"
+            class="px-4 py-3 text-sm cursor-pointer hover:bg-primary-50"
           >
             Sign Out
           </div>
         </MenuItems>
       </Menu>
     </aside>
-    <div class="w-full bg-transparent">
-      <div
-        class="h-[40px] w-[40px] ml-[20px] mt-[20px] flex justify-center items-center"
-        @click="toggleSideBar(false)"
-      >
-        <img
-          src="/assets/images/svgs/x-close.png"
-          height="24px"
-          width="24px"
-          color="white"
-        />
+
+    <!-- BACKDROP CLICK CLOSE -->
+    <div class="flex-1" @click="toggleSideBar(false)">
+      <div class="flex items-center justify-center w-10 h-10 m-5">
+        <img src="/assets/images/svgs/x-close.png" class="w-6 h-6" />
       </div>
     </div>
   </div>
+
+  <!-- SIGN OUT MODAL -->
   <ModalCenter v-if="isSigningOut">
-    <template #default>
-      <div class="bg-white p-6 sm:pb-4 rounded-lg" v-if="isSigningOut">
-        <div class="flex justify-between mb-5 items-center">
-          <h4 class="font-medium text-matta-black text-xl">Sign Out</h4>
-          <!-- <i
-            class="uil uil-times cursor-pointer text-lg"
-            @click="isSigniningOut = false"
-          ></i> -->
-        </div>
-
-        <p class="text-sm text-matta-black mb-2">
-          Are you sure you want to sign out?
-        </p>
-
-        <div class="flex justify-between gap-x-2 items-center mt-8">
-          <button
-            type="button"
-            @click="isSigningOut = false"
-            class="appearance-none border min-w-[140px] w-1/2 leading-none px-8 py-3 rounded-lg text-matta-black hover:bg-gray-100 text-[13px] uppercase"
-          >
-            Cancel
-          </button>
-
-          <button
-            type="button"
-            @click="logOut"
-            class="appearance-none border min-w-[140px] w-1/2 border-primary-500 leading-none px-8 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px] uppercase"
-          >
-            Yes
-          </button>
-        </div>
+    <div class="p-6 bg-white rounded-lg">
+      <div class="flex items-center justify-between mb-5">
+        <h4 class="text-xl font-medium">Sign Out</h4>
       </div>
-    </template>
+
+      <p class="mb-5 text-sm">Are you sure you want to sign out?</p>
+
+      <div class="flex gap-3 mt-6">
+        <button
+          @click="isSigningOut = false"
+          class="w-1/2 px-4 py-3 border rounded-lg hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+
+        <button
+          @click="logOut"
+          class="w-1/2 px-4 py-3 text-white rounded-lg bg-primary-500 hover:opacity-80"
+        >
+          Yes
+        </button>
+      </div>
+    </div>
   </ModalCenter>
 </template>
 <script setup>
+import { computed, inject, provide, ref } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useRoute } from "vue-router";
 
 import LogoutIcon from "@/assets/images/svgs/log-out-01.svg";
-import { useStore } from "vuex";
-import { computed } from "vue";
-import HeaderSearchText from "../Textinput/HeaderSearchText.vue";
+
+import { Menu, MenuButton, MenuItems } from "@headlessui/vue";
 import { logOut } from "~/services/authservices";
-import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 
 const authStore = useAuthStore();
 const route = useRoute();
-const mappedNavigation = computed(() => Navigation);
+
+const NavMapper = {
+  3: SuperNavigation,
+  0: Navigation,
+  1: OwnerNavigation,
+  2: UserNavigation,
+  4: PlatformAdminNavigation,
+};
+const mappedNavigation = computed(
+  () => NavMapper[authStore?.userInfo?.userCategory]
+);
+
 const isSigningOut = ref(false);
 const showSideBar = inject("showSideBar");
 const toggleSideBar = inject("toggleSideBar");
+
 provide("isOpen", isSigningOut);
 </script>
-<style scoped lang="scss">
-.backdrop {
-  backdrop-filter: blur(16px);
-}
-</style>

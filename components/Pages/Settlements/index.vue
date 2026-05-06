@@ -197,6 +197,10 @@ const setLoader = ref(false);
 const detail = ref(null);
 const authStore = useAuthStore();
 const isAutoSettlement = ref(false);
+const errorText = ref("");
+const isErrorOpen = ref(false);
+const isLoading = ref(false);
+const isSuccessOpen = ref(false);
 
 const theads = ["account name", "account number", "bank"];
 const financeData = ref([]);

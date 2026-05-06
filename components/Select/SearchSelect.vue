@@ -16,11 +16,11 @@
       <div class="text-sm">
         <span
           v-show="hasIcon"
-          class="absolute left-0 h-[44px] w-[44px] flex justify-center items-center"
+          class="absolute left-0 h-[42px] w-[44px] flex justify-center items-center"
           ><TextinputLocationIcon
         /></span>
         <input
-          :class="`input-control w-full block focus:outline-none h-[44px] ${
+          :class="`input-control w-full block focus:outline-none h-[42px] ${
             hasIcon ? '!pl-[44px]' : ''
           }`"
           :name="name"
@@ -170,7 +170,7 @@ export default {
 <style lang="scss">
 .formGroup {
   .vs__dropdown-toggle {
-    @apply bg-transparent placeholder:text-[#CDD2DA]  border border-[#D0D5DD] rounded-lg min-h-[44px] text-[#475467] text-sm placeholder:text-sm;
+    @apply bg-transparent placeholder:text-[#CDD2DA]  border border-[#D0D5DD] rounded-lg min-h-[42px] text-[#475467] text-sm placeholder:text-sm;
   }
   // .v-select {
   //   @apply darks:text-slate-300;

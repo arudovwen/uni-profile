@@ -8,7 +8,7 @@
         <div class="w-full">
           <div
             :class="{ 'border-red-500': error }"
-            class="relative px-[14px] py-[10px] min-h-[44px] rounded-lg items-center flex flex-wrap gap-x-2 w-full border border-[#DCDEE6] placeholder:text-[#B6B7B9] focus:outline-matta-black/20"
+            class="relative px-[14px] py-[10px] min-h-[42px] rounded-lg items-center flex flex-wrap gap-x-2 w-full border border-[#DCDEE6] placeholder:text-[#B6B7B9] focus:outline-matta-black/20"
           >
             <ul
               v-if="data.selectedmarkets.length > 0"

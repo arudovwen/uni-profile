@@ -5,7 +5,7 @@
       class="min-w-[300px] px-6 py-6 text-center flex flex-row justify-center items-center"
     >
       <div class="min-w-[320px] lg:w-[40vw] max-w-[424px]">
-        <div class="w-full flex justify-center items-center">
+        <div class="flex items-center justify-center w-full">
           <CircleTick v-if="isResetSuccess" />
           <SecuritySafeIcon v-else />
         </div>
@@ -68,18 +68,18 @@
             :isDisabled="isLoading"
             text="Continue"
             btnClass="btn-primary !py-3"
-             :style="{
-                  background: isLoading || !meta.valid ? '' : color,
-                }"
+            :style="{
+              background: isLoading || !meta.valid ? '' : color,
+            }"
           />
         </div>
         <NuxtLink
-          :to="`/auth/login${app ? `/${app}`:''}`"
-          class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
+          :to="`/auth/login${app ? `/${app}` : ''}`"
+          class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           @click="emit('close')"
         >
           <AppIcon icon="eva:arrow-back-fill" />
-          <span class="font-normal"   :style="{ color: color }"> Back </span>
+          <span class="font-normal" :style="{ color: color }"> Back </span>
         </NuxtLink>
       </div>
     </div>
@@ -120,7 +120,7 @@ definePageMeta({
 useHead({
   title: "Reset password | MATTA",
 });
-
+const { encrypt } = useEncryption();
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
 const isResetSuccess = ref(false);
@@ -160,14 +160,18 @@ const [confirmPassword, confirmPasswordAtt] = defineField("confirmPassword");
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  resetPassword(values)
+  resetPassword({
+    email: encrypt(values.email),
+    password: encrypt(values.password),
+    confirmPassword: encrypt(values.confirmPassword),
+  })
     .then((res) => {
       if (res.status === 200) {
         isResetSuccess.value = true;
 
         setTimeout(() => {
           toast.success("Password Reset successful");
-          router.push(`/auth/login${app ? `/${app}`:''}`);
+          router.push(`/auth/login${app ? `/${app}` : ""}`);
         }, 2000);
       }
     })

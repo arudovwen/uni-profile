@@ -43,7 +43,7 @@ function getData() {
   getSubApps({isDisabled: false})
     .then(res => {
       if (res.status === 200 && res.data.data) {
-        const isAdminUser = [0, 3, 4].includes(authStore.userInfo.userCategory);
+        const isAdminUser = [0, 3, 4].includes(authStore?.userInfo?.userCategory);
         
         rows.value = res.data.data.map(i => {
           if (!i.url) return { ...i, url: "" };
@@ -66,6 +66,7 @@ function getData() {
       }
     })
     .catch(error => {
+      
       console.error("Error fetching sub-apps:", error);
       rows.value = []; // Clear or reset rows on error
     });

@@ -67,7 +67,7 @@
           <button
             type="button"
             @click="isSigniningOut = false"
-            class="appearance-none border min-w-[140px] w-1/2 leading-none px-8 py-3 rounded-lg text-matta-black hover:bg-gray-100 text-[13px] uppercase"
+            class="appearance-none border min-w-[140px] w-1/2 leading-none px-8 py-3 rounded-lg text-matta-black hover:bg-gray-100 text-sm"
           >
             Cancel
           </button>
@@ -75,7 +75,7 @@
           <button
             type="button"
             @click="handleLogout"
-            class="appearance-none border min-w-[140px] w-1/2 disabled:opacity-60 disabled:cursor-not-allowed border-primary-500 leading-none px-4 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-[13px]"
+            class="appearance-none border min-w-[140px] w-1/2 disabled:opacity-60 disabled:cursor-not-allowed border-primary-500 leading-none px-4 py-3 rounded-lg text-white bg-primary-500 hover:opacity-70 text-sm"
           >
             Yes
           </button>
@@ -117,7 +117,7 @@
 </template>
 <script setup>
 const authStore = useAuthStore();
-const mattaProfiles = useCookie("mattaProfiles_Dev", defaultOptions);
+const mattaProfiles = useCookie(PROFILE_COOKIE_NAME, defaultOptions);
 defineEmits([
   "close",
   "click",

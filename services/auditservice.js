@@ -7,7 +7,7 @@ import {
   ssoGet,
   ssoPut,
   ssoDelete,
-} from "../helpers/api_helpers";
+} from "../services/api_services";
 import store from "../store";
 
 const config = {

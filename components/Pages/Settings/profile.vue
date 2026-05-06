@@ -1,25 +1,38 @@
 <template>
   <div class="w-full mx-auto max-w-[640px] px-4 lg:px-0">
-    <div class="mb-6">
+    <div class="flex items-center justify-between mb-6">
       <HeaderComponent
         title="Personal info"
         subtext="Update your photo and personal details here."
       />
+
+      <div v-if="refDetail">
+        <span class="text-xs text-[#98A2B3] block text-right mb-0.5"
+          >Referral code</span
+        >
+        <button
+          @click="openRef = true"
+          type="button"
+          class="flex items-center text-xs gap-x-2.5 bg-[#EAECF5] rounded-lg px-2.5 py-2"
+        >
+          <span>{{refDetail.referralCode}}</span> <AppIcon icon="lucide:copy" />
+        </button>
+      </div>
     </div>
     <div class="w-full bg-white rounded-lg py-6 border border-[#E9EAEB]">
       <form @submit.prevent="onSubmit" class="w-full">
-        <div class="px-6 mb-6 flex gap-x-4 items-center">
+        <div class="flex items-center px-6 mb-6 gap-x-4">
           <span
             class="h-16 w-16 bg-gray-100 rounded-full block border border-[#E4E7EC]"
           >
-            <img :src="photo" class="h-16 w-16 rounded-full object-cover" />
+            <img :src="photo" class="object-cover w-16 h-16 rounded-full" />
           </span>
           <div class="flex-1">
             <FileUploadToo v-model="photo" accept="jpg, jpeg, png" />
           </div>
         </div>
         <div
-          class="grid grid-cols-1 lg:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6"
+          class="grid grid-cols-1 xl:grid-cols-2 gap-x-[25px] gap-y-4 mb-6 px-6"
         >
           <Textinput
             placeholder=""
@@ -80,7 +93,7 @@
               />
             </FormGroup> -->
 
-          <div class="md:col-span-2">
+          <div class="xl:col-span-2">
             <Textinput
               placeholder=""
               label="Address"
@@ -109,6 +122,11 @@
       </form>
     </div>
   </div>
+  <IndexModal :is-open="openRef" @toggle-popup="openRef = false">
+    <template #content>
+      <PagesSettingsReferralLinks :refDetail="refDetail" />
+    </template>
+  </IndexModal>
 </template>
 
 <script setup>
@@ -116,6 +134,7 @@ import { useForm } from "vee-validate";
 import * as yup from "yup";
 import { getUserProfile, updateUserProfile } from "~/services/settingservices";
 import { toast } from "vue3-toastify";
+import { getRefferralByUser } from "../../../services/userservices";
 
 const form = reactive({
   firstName: "",
@@ -127,9 +146,8 @@ const form = reactive({
   category: "",
 });
 const isLoading = ref(false);
-
-const authStore = useAuthStore();
-const phoneRegex = /^[0-9]{18}$/;
+const openRef = ref(false);
+const refDetail = ref(null);
 
 onMounted(() => {
   getUserProfile().then((res) => {
@@ -206,5 +224,16 @@ const categorysOptions = businessTypes?.map((i) => {
     label: i.sector,
     value: i.sector,
   };
+});
+
+async function fetchRefDetail() {
+  try {
+    const { data } = await getRefferralByUser();
+    refDetail.value = data?.data;
+  } catch {}
+}
+
+onMounted(() => {
+  fetchRefDetail();
 });
 </script>

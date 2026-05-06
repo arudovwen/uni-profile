@@ -32,7 +32,7 @@
         :name="name"
         :data-testid="name"
         :placeholder="placeholder"
-        :class="`${classInput} input-control  w-full block placeholder-[#f9bb64] focus:outline-none h-[44px] ${
+        :class="`${classInput} input-control  w-full block placeholder-[#f9bb64] focus:outline-none h-[42px] ${
           hasicon ? 'pr-10' : ''
         } ${iconPosition === 'left' ? '!pl-10' : 'pr-10'} `"
         :value="modelValue"
@@ -45,7 +45,7 @@
         v-if="!isMask"
       />
       <cleave
-        :class="`${classInput} cleave !border-none input-control block placeholder-[#f9bb64] w-full  focus:outline-none h-[44px] `"
+        :class="`${classInput} cleave !border-none input-control block placeholder-[#f9bb64] w-full  focus:outline-none h-[42px] `"
         :name="name"
         :placeholder="placeholder"
         :value="modelValue"

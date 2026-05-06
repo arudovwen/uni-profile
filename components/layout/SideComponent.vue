@@ -2,9 +2,9 @@
   <aside
     class="box-border flex flex-col items-start w-[282px] h-full bg-white border-r border-gray-200"
   >
-    <div class="w-full pt-[32px] grid gap-y-12">
+    <div class="w-full grid gap-y-12">
       <div
-        class="flex flex-col items-start p-0 pl-[24px] pr-[20px] w-full h-[30px] z-20"
+        class="flex flex-col items-start p-0 py-4 pl-[24px] pr-[20px] w-full h-[30px] z-20 mb-4"
       >
         <AppLogo />
       </div>
@@ -33,6 +33,14 @@
                   />
                   <SvgsUsersSvg
                     v-if="item.key === 'users-management'"
+                    :active="isActive(item)"
+                  />
+                  <SvgsUsersSvg
+                    v-if="item.key === 'referral-management'"
+                    :active="isActive(item)"
+                  />
+                     <SvgsRankingSvg
+                    v-if="item.key === 'referral-leaderboard'"
                     :active="isActive(item)"
                   />
                   <SvgsAppSvg
@@ -67,22 +75,22 @@
               </div>
             </router-link>
           </li>
-       
         </ul>
       </nav>
     </div>
   </aside>
 </template>
 <script setup>
-
 const route = useRoute();
-const authStore = useAuthStore()
+const authStore = useAuthStore();
 const NavMapper = {
   0: Navigation,
   3: SuperNavigation,
   4: Navigation,
 };
-const mappedNavigation = computed(() => NavMapper[authStore?.userInfo?.userCategory]);
+const mappedNavigation = computed(
+  () => NavMapper[authStore?.userInfo?.userCategory]
+);
 
 const isActive = (item) => {
   return (
