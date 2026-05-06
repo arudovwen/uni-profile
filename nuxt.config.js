@@ -62,7 +62,7 @@ export default defineNuxtConfig({
           "'self'",
           "https:",
           "data:",
-          "https://gateway.oxidefinance.com",
+          "https://gateway.matta.trade",
           "https://res.cloudinary.com",
         ],
         "script-src": [

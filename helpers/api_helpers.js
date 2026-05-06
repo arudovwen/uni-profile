@@ -7,7 +7,7 @@ let refreshAttemptCount = 0;
 let hasLoggedOut = false; // Track if logout has already been called
 
 // Base URL for API services
-const BASE_URL = "https://dev.proxy.oxidefinance.com";
+const BASE_URL = "https://dev.gateway.matta.trade";
 
 // Create an Axios instance with custom configuration
 const createAxiosInstance = (service, baseUrl = BASE_URL) => {

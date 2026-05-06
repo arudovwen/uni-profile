@@ -6,11 +6,11 @@ const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
 
 // Base URL for API services
-const BASE_URL = "https://dev.proxy.oxidefinance.com";
+const BASE_URL = "https://dev.gateway.matta.trade";
 const SSO_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
 const MATTA_URL = process.env.API_BASE_URL || "https://dev.gateway.matta.trade";
 const OXIDE_PRO_URL =
-  process.env.OXIDE_PRO_URL || "https://dev.oxidepro.api.oxidefinance.com/api";
+  process.env.OXIDE_PRO_URL || "https://dev.oxidepro.api.matta.trade/api";
 // Create an Axios instance with custom configuration
 const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   const instance = Axios.create({
