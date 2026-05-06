@@ -1,6 +1,6 @@
 <!-- HtmlCell.vue -->
 <template>
-    <div v-html="row[column.key] ?? '-'" class="html-content whitespace-nowrap "></div>
+    <span class="html-content whitespace-nowrap">{{ row[column.key] ?? '-' }}</span>
   </template>
   
   <script setup>

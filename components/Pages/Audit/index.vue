@@ -122,9 +122,9 @@ function getAuditData() {
       ...i,
       userName: i.userName?.split(" ").map(capitalize).join(" "),
       lastActive: moment(i.created).format("lll"),
-      app: authStore.appList.find((j) => j.code === i.appCode)?.name,
+      app: authStore.appList?.find((j) => j.code === i.appCode)?.name,
     }));
-  
+
     queryParams.total = res.data.totalCount;
     docLoading.value = false;
   });
@@ -150,12 +150,12 @@ watch(
   () => [queryParams.Search],
   () => {
     debounceSearch();
-  }
+  },
 );
 watch(
   () => [queryParams.PageNumber, queryParams.BusinessId, queryParams.userId],
   () => {
     getAuditData();
-  }
+  },
 );
 </script>

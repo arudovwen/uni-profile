@@ -67,7 +67,9 @@
               }
             "
           />
-          <p class="block mt-1 text-sm text-danger-500">{{ errors.appCodes }}</p>
+          <p class="block mt-1 text-sm text-danger-500">
+            {{ errors.appCodes }}
+          </p>
         </div>
         <div class="z-30 flex w-full p-0 pt-4 gap-x-4">
           <AppButton
@@ -154,7 +156,7 @@ const schema = yup.object({
           yup.object({
             appCode: yup.string().required("App code is required"),
             role: yup.string().required("Role is required for the sub-app"),
-          })
+          }),
         ),
     otherwise: (schema) => schema.notRequired(), // No validation if the role is not "Admin"
   }),
@@ -183,13 +185,14 @@ const isOpen = inject("isOpen");
 
 const emits = defineEmits(["refresh"]);
 const onSubmit = handleSubmit(async (values) => {
-
-  const appList = authStore.appList.map((i) => i.code);
+  const appList = authStore.appList?.map((i) => i.code);
 
   try {
     isLoading.value = true;
     const response = await sendAdminInvite(
-      values.role === 1 ? { ...values, appCodes: appList } : { ...values, appCodes: values.appCodes.map(i=>i.appCode) }
+      values.role === 1
+        ? { ...values, appCodes: appList }
+        : { ...values, appCodes: values.appCodes.map((i) => i.appCode) },
     );
 
     if (response.status === 200) {
@@ -203,7 +206,7 @@ const onSubmit = handleSubmit(async (values) => {
   }
 });
 
-onMounted(()=>{
+onMounted(() => {
   authStore.getAppsData();
-})
+});
 </script>

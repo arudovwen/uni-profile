@@ -32,7 +32,7 @@ const authStore = useAuthStore();
 function getData() {
   getSubApps().then((res) => {
     if (res.status === 200) {
-      const rows = res.data.data.map((i) => ({
+      const rows = res?.data?.data?.map((i) => ({
         ...i,
         url: `${i.url}/auth/validate?token=${encodeURIComponent(
           encrypt(authStore.jwToken),

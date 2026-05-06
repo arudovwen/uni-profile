@@ -155,7 +155,7 @@ export const useAuthStore = defineStore(
           refreshToken: refreshToken.value,
         });
         if (response.status === 200) {
-          localStorage.clear();
+          localStorage.removeItem("matta_user");
           isLoggingOut.value = false;
 
           clearAuth();

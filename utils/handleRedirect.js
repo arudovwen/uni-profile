@@ -1,3 +1,28 @@
+// Trusted domains for redirect validation
+const ALLOWED_REDIRECT_DOMAINS = [
+  "matta.trade",
+  "fluxafrica.com",
+  "oxidepro.com",
+  "deltalog.co",
+  "localhost",
+];
+
+/**
+ * Check if a URL is safe to redirect to.
+ * Only allows URLs on trusted domains.
+ */
+function isAllowedRedirectUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return ALLOWED_REDIRECT_DOMAINS.some(
+      (domain) =>
+        parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`)
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function handleRedirect(
   route,
   { jwToken, userCategory, refreshToken },
@@ -13,6 +38,12 @@ export function handleRedirect(
   }
 
   let targetUrl = route.query.continue || null;
+
+  // Validate the continue URL against the allowlist
+  if (targetUrl && !isAllowedRedirectUrl(targetUrl)) {
+    console.error("Redirect blocked: untrusted domain", targetUrl);
+    targetUrl = null;
+  }
 
   if (app && !targetUrl) {
     const appInfo = authStore.appList?.find((i) => i.code === app);

@@ -4,10 +4,14 @@ import { toast } from "vue3-toastify";
 const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
 let hasLoggedOut = false;
+// Cache the resolved base URL so useRuntimeConfig is only called once
+let _cachedBaseUrl = null;
 const getBaseUrl = () => {
+  if (_cachedBaseUrl) return _cachedBaseUrl;
   try {
     const config = useRuntimeConfig();
-    return config?.public?.API_BASE_URL || "";
+    _cachedBaseUrl = config?.public?.API_BASE_URL || "";
+    return _cachedBaseUrl;
   } catch {
     return "";
   }
@@ -32,13 +36,17 @@ const getEncryption = () => {
     return defaultEncryption;
   }
 
-  const encryption = useEncryption();
-  if (
-    encryption &&
-    typeof encryption.encrypt === "function" &&
-    typeof encryption.decrypt === "function"
-  ) {
-    return encryption;
+  try {
+    const encryption = useEncryption();
+    if (
+      encryption &&
+      typeof encryption.encrypt === "function" &&
+      typeof encryption.decrypt === "function"
+    ) {
+      return encryption;
+    }
+  } catch {
+    // useEncryption not available outside Nuxt context
   }
 
   return defaultEncryption;
@@ -49,7 +57,11 @@ const getAuthStore = () => {
     return null;
   }
 
-  return useAuthStore();
+  try {
+    return useAuthStore();
+  } catch {
+    return null;
+  }
 };
 
 const normalizeHeaders = (headers = {}) => ({
@@ -94,11 +106,19 @@ const decryptFields = (payload, decrypt) => {
   return data;
 };
 
-const createAxiosInstance = (service, baseUrl = BASE_URL) => {
-  const { encrypt, decrypt } = getEncryption();
-  const instance = Axios.create({ baseURL: `${baseUrl}/${service}/` });
+const createAxiosInstance = (service, baseUrl) => {
+  // Create instance without a baseURL — resolved lazily per-request
+  // because useRuntimeConfig() is not available at module load time.
+  const instance = Axios.create();
 
   instance.interceptors.request.use((config = {}) => {
+    // Lazily resolve base URL on first request (Nuxt context is now available)
+    if (!config.baseURL) {
+      const resolvedBaseUrl = baseUrl || getBaseUrl();
+      config.baseURL = `${resolvedBaseUrl}/${service}/`;
+    }
+
+    const { encrypt } = getEncryption();
     const authStore = getAuthStore();
     config.headers = normalizeHeaders(config.headers);
 
@@ -116,6 +136,7 @@ const createAxiosInstance = (service, baseUrl = BASE_URL) => {
   instance.interceptors.response.use(
     (response) => {
       if (response?.data && typeof response.data === "object") {
+        const { decrypt } = getEncryption();
         response.data = decryptFields(response.data, decrypt);
       }
       return response;

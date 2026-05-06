@@ -35,22 +35,24 @@
     >
       <div class="overflow-x-auto">
         <DashboardDataTable
-        :columns="columns"
-        :data="filteredLogs"
-        :loading="isLoading"
-        :actions="actions"
-        :paginator="false"
-        body-cell-class="px-6 py-4 text-sm font-medium text-[#475467]"
-        empty-message="No logs found"
-        @action="handleAction"
-      />
+          :columns="columns"
+          :data="filteredLogs"
+          :loading="isLoading"
+          :actions="actions"
+          :paginator="false"
+          body-cell-class="px-6 py-4 text-sm font-medium text-[#475467]"
+          empty-message="No logs found"
+          @action="handleAction"
+        />
       </div>
 
       <!-- Pagination Footer -->
       <div
         class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]"
       >
-        <div class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium">
+        <div
+          class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium"
+        >
           {{ 1 }} - {{ logs.length }}
         </div>
         <button
@@ -73,7 +75,9 @@
       v-else
       class="flex flex-col items-center justify-center py-10 sm:py-16 px-4 bg-white rounded-lg border border-[#E9EAEB]"
     >
-      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">No audit logs found</p>
+      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">
+        No audit logs found
+      </p>
       <p class="text-gray-400 text-xs sm:text-sm mt-2 text-center">
         There are no logs to display at the moment.
       </p>
@@ -162,7 +166,7 @@ function getAuditData(isLoadMore: boolean = false) {
         ...item,
         userName: item.userName?.split(" ").map(capitalize).join(" "),
         lastActive: moment(item.created).format("lll"),
-        app: authStore.appList.find((j: any) => j.appCode === item.appCode)
+        app: authStore.appList?.find((j: any) => j.appCode === item.appCode)
           ?.name,
       }));
 
@@ -228,7 +232,7 @@ watch(
   (newQuery) => {
     queryParams.Search = newQuery;
     debounceSearch();
-  }
+  },
 );
 
 // Watch for filter changes
@@ -237,7 +241,7 @@ watch(
   () => {
     queryParams.PageNumber = 1;
   },
-  { deep: true }
+  { deep: true },
 );
 
 const handleSearch = (query: string) => {
@@ -256,7 +260,7 @@ const handleDownload = () => {
   exportToCSV(
     dataToExport,
     columns,
-    `audit-logs-${moment().format("YYYY-MM-DD")}`
+    `audit-logs-${moment().format("YYYY-MM-DD")}`,
   );
 };
 

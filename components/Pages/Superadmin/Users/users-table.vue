@@ -87,7 +87,7 @@
                                   : 's'
                               }-management/user-detail/${row.id}?name=${
                                 row.name
-                              }`
+                              }`,
                             )
                           "
                           class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
@@ -284,8 +284,9 @@ function getInvites() {
     .then((res) => {
       rows.value = res.data.data.map((i) => ({
         ...i,
-        signUpAppCode: authStore.appList.find((j) => j.code === i.signUpAppCode)
-          ?.name,
+        signUpAppCode: authStore.appList?.find(
+          (j) => j.code === i.signUpAppCode,
+        )?.name,
         name: `${capitalize(i.firstName)} ${capitalize(i.lastName)}`,
         lastLoginTime: i.lastLoginTime
           ? moment(i.lastLoginTime).format("lll")
@@ -318,7 +319,7 @@ const handleDelete = () => {
       toast.error(
         err?.response?.data?.message ||
           err?.response?.data?.Message ||
-          "User Deactivation failed"
+          "User Deactivation failed",
       );
       isErrorOpen.value = true;
       isLoading.value = false;
@@ -329,13 +330,13 @@ function handleSuccess() {
   getInvites();
 }
 const Apps = computed(() =>
-  authStore.appList.map((i) => ({ label: i.name, value: i.code }))
+  authStore.appList?.map((i) => ({ label: i.name, value: i.code })),
 );
 watch(
   () => [queryParams.Search],
   () => {
     debounceSearch();
-  }
+  },
 );
 watch(
   () => [
@@ -348,13 +349,13 @@ watch(
   ],
   () => {
     getInvites();
-  }
+  },
 );
 watch(
   () => [queryParams.userCatText],
   () => {
     queryParams.userCategories = RoleMapper[queryParams.userCatText];
-  }
+  },
 );
 watch(date, () => {
   if (date.value) {
