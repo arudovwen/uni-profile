@@ -4,7 +4,6 @@
   >
     <div class="hidden lg:block">
       <AppHeader :showlang="true" />
-      <ProfileHeader />
     </div>
     <MobileHeader />
     <div class="fixed z-10">

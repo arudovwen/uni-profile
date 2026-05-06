@@ -30,7 +30,7 @@ vi.mock("vue-router", () => ({
 }));
 
 vi.mock("#app", () => ({
-  useCookie: vi.fn(() => ref({})),
+  useEncryptedCookie: vi.fn(() => ref({})),
 }));
 
 describe("Directors.vue", () => {

@@ -1,10 +1,7 @@
 import urls from "../helpers/url_helpers";
-import { post, get,ssoGet, ssoPost,ssoPut } from "../services/api_services";
-import store from "../store";
+import { post, get,ssoGet, ssoPost,ssoPut } from "../helpers/api_helpers";
+const config = {};
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
 //Authentication
 
 //Markets

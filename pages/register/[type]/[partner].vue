@@ -37,7 +37,7 @@ const toast = useToast();
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
-const newEmail = useCookie("email", defaultOptions);
+const newEmail = useEncryptedCookie("email", defaultOptions);
 const { setSlug } = useOnboarding();
 
 // Get partner slug from URL params (new approach)

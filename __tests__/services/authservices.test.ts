@@ -4,7 +4,7 @@ import * as authHelpers from "~/services/authservices";
 import urls from "~/helpers/url_helpers";
 
 // ✅ Mock the correct module and function (ssoPost, not post/get)
-vi.mock("~/services/api_services", () => ({
+vi.mock("~/helpers/api_helpers", () => ({
   ssoPost: vi.fn(),
   // add ssoGet here too if confirmemail uses it
   ssoGet: vi.fn(),
@@ -32,7 +32,7 @@ vi.mock("~/helpers/url_helpers", () => ({
 }));
 
 // ✅ Import ssoPost AFTER vi.mock declarations so it's the mocked version
-import { ssoPost } from "~/services/api_services";
+import { ssoPost } from "~/helpers/api_helpers";
 
 describe("Authentication Helpers", () => {
   beforeEach(() => {

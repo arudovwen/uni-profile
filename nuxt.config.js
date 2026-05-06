@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     "nuxt-simple-sitemap",
     "@pinia-plugin-persistedstate/nuxt",
     "@nuxt/image",
-    // "nuxt-security",
+    "nuxt-security",
     "@nuxt/devtools",
     "nuxt-ssr-cache",
     "@vite-pwa/nuxt",
@@ -54,7 +54,7 @@ export default defineNuxtConfig({
   },
 
   security: {
-    hidePoweredBy: false,
+    hidePoweredBy: true,
     headers: {
       crossOriginEmbedderPolicy: "unsafe-none",
       contentSecurityPolicy: {
@@ -84,10 +84,6 @@ export default defineNuxtConfig({
       API_BASE_URL: process.env.API_BASE_URL,
       SSO_BASE_URL: process.env.SSO_BASE_URL,
       APP_BASE_URL: process.env.APP_BASE_URL,
-      APP_MONNIFYAPIKEY: process.env.APP_MONNIFYAPIKEY,
-      APP_MONNIFYCONTRACTCODE: process.env.APP_MONNIFYCONTRACTCODE,
-      APP_MONNIFYISTEST: process.env.APP_MONNIFYISTEST,
-      APP_MONNIFYISTESTMODE: process.env.APP_MONNIFYISTESTMODE,
       TINY_MCE: process.env.APP_TINYMCE_KEY,
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
       encryptionKey: process.env.ENCRYPTION_KEY,
@@ -111,8 +107,7 @@ export default defineNuxtConfig({
   plugins: ["~/plugins/axios.js"],
 
   googleSignIn: {
-    clientId:
-      "56799988480-4d51egljupar9la4djc2tknjodn2vsj5.apps.googleusercontent.com",
+    clientId: process.env.GOOGLE_CLIENT_ID || "",
   },
 
   colorMode: {
@@ -246,7 +241,6 @@ export default defineNuxtConfig({
         { name: "robots", content: "index, follow" }, // Control search engine indexing
         { name: "theme-color", content: "#1570EF" }, // Set the theme color for mobile browsers
       ],
-      script: [{ src: "https://sdk.monnify.com/plugin/monnify.js" }],
     },
   },
 

@@ -1,6 +1,61 @@
+import CryptoJS from "crypto-js";
 import { defineStore } from "pinia";
 import { logoutUser } from "~/services/authservices";
 import { getSubApps } from "~/services/userservices";
+
+const encryptPayload = (data) => {
+  const config = useRuntimeConfig();
+  const secretKey = config?.public?.encryptionKey;
+  if (!secretKey) return JSON.stringify(data);
+
+  const payload = typeof data === "string" ? data : JSON.stringify(data);
+  return CryptoJS.AES.encrypt(payload, secretKey).toString();
+};
+
+const decryptPayload = (value) => {
+  const config = useRuntimeConfig();
+  const secretKey = config?.public?.encryptionKey;
+  if (!secretKey) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+
+  if (!value) return null;
+  try {
+    const bytes = CryptoJS.AES.decrypt(value, secretKey);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    try {
+      return JSON.parse(decrypted);
+    } catch {
+      return decrypted;
+    }
+  } catch {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+};
+
+const encryptedStorage = {
+  getItem: (key) => {
+    if (typeof window === "undefined") return null;
+    const value = window.localStorage.getItem(key);
+    return value ? decryptPayload(value) : null;
+  },
+  setItem: (key, value) => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(key, encryptPayload(value));
+  },
+  removeItem: (key) => {
+    if (typeof window === "undefined") return;
+    window.localStorage.removeItem(key);
+  },
+};
 
 export const useAuthStore = defineStore(
   "matta_user",
@@ -8,8 +63,8 @@ export const useAuthStore = defineStore(
     const route = useRoute();
     const { encrypt } = useEncryption();
     const appList = ref([]);
-    const mattaAuth = useCookie(AUTH_COOKIE_NAME, defaultOptions);
-    const mattaProfiles = useCookie(PROFILE_COOKIE_NAME, defaultOptions);
+    const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
+    const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -142,7 +197,8 @@ export const useAuthStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
+      key: "matta_user",
+      storage: encryptedStorage,
     },
   }
 );

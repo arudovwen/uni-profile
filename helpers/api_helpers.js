@@ -1,102 +1,212 @@
 import Axios from "axios";
 import { toast } from "vue3-toastify";
 
-// Max refresh attempts
 const MAX_REFRESH_ATTEMPTS = 2;
 let refreshAttemptCount = 0;
-let hasLoggedOut = false; // Track if logout has already been called
+let hasLoggedOut = false;
+const getBaseUrl = () => {
+  try {
+    const config = useRuntimeConfig();
+    return config?.public?.API_BASE_URL || "";
+  } catch {
+    return "";
+  }
+};
+const isBrowser = typeof window !== "undefined";
 
-// Base URL for API services
-const BASE_URL = "https://dev.gateway.matta.trade";
+const SENSITIVE_FIELDS = [
+  "email",
+  "password",
+  "confirmPassword",
+  "newPassword",
+  "oldPassword",
+];
 
-// Create an Axios instance with custom configuration
-const createAxiosInstance = (service, baseUrl = BASE_URL) => {
-  const instance = Axios.create({
-    baseURL: `${baseUrl}/${service}/`,
+const defaultEncryption = {
+  encrypt: (value) => value,
+  decrypt: (value) => value,
+};
+
+const getEncryption = () => {
+  if (typeof useEncryption !== "function") {
+    return defaultEncryption;
+  }
+
+  const encryption = useEncryption();
+  if (
+    encryption &&
+    typeof encryption.encrypt === "function" &&
+    typeof encryption.decrypt === "function"
+  ) {
+    return encryption;
+  }
+
+  return defaultEncryption;
+};
+
+const getAuthStore = () => {
+  if (typeof useAuthStore !== "function") {
+    return null;
+  }
+
+  return useAuthStore();
+};
+
+const normalizeHeaders = (headers = {}) => ({
+  ...headers,
+  Accept: "application/json",
+});
+
+const encryptFields = (payload, encrypt) => {
+  if (!payload || typeof payload !== "object") return payload;
+
+  const data = Array.isArray(payload) ? [...payload] : { ...payload };
+
+  SENSITIVE_FIELDS.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(data, key) && data[key]) {
+      data[key] = encrypt(data[key]);
+    }
   });
 
-  instance.interceptors.request.use((config) => {
-    const authStore = useAuthStore();
-    config.headers.Authorization = authStore?.jwToken
-      ? `Bearer ${authStore.jwToken}`
-      : config.headers.Authorization || "";
-    config.headers.Accept = "application/json";
+  return data;
+};
+
+const decryptFields = (payload, decrypt) => {
+  if (!payload || typeof payload !== "object") return payload;
+
+  const data = Array.isArray(payload) ? [...payload] : { ...payload };
+
+  Object.keys(data).forEach((key) => {
+    const value = data[key];
+    if (value === null || value === undefined) return;
+
+    if (SENSITIVE_FIELDS.includes(key)) {
+      try {
+        data[key] = decrypt(value);
+      } catch {
+        data[key] = value;
+      }
+    } else if (typeof value === "object") {
+      data[key] = decryptFields(value, decrypt);
+    }
+  });
+
+  return data;
+};
+
+const createAxiosInstance = (service, baseUrl = BASE_URL) => {
+  const { encrypt, decrypt } = getEncryption();
+  const instance = Axios.create({ baseURL: `${baseUrl}/${service}/` });
+
+  instance.interceptors.request.use((config = {}) => {
+    const authStore = getAuthStore();
+    config.headers = normalizeHeaders(config.headers);
+
+    if (authStore?.jwToken) {
+      config.headers.Authorization = `Bearer ${authStore.jwToken}`;
+    }
+
+    if (config.data && !(config.data instanceof FormData)) {
+      config.data = encryptFields(config.data, encrypt);
+    }
+
     return config;
   });
 
   instance.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      if (response?.data && typeof response.data === "object") {
+        response.data = decryptFields(response.data, decrypt);
+      }
+      return response;
+    },
     async (error) => {
-      if ([403].includes(error?.response?.status)) {
+      const status = error?.response?.status;
+      const config = error?.config;
+
+      if (status === 403 && config) {
         try {
+          if (isBrowser && window.location.href.includes("/auth/logout")) {
+            const authStore = getAuthStore();
+            authStore?.clearAuth?.();
+            return Promise.reject(error);
+          }
+
           const newAccessToken = await handleTokenRefresh();
-          error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
-          return instance.request(error.config);
+          config.headers = normalizeHeaders(config.headers);
+          config.headers.Authorization = `Bearer ${newAccessToken}`;
+          return instance.request(config);
         } catch (refreshError) {
           handleRefreshError();
           return Promise.reject(refreshError);
         }
       }
-      if ([401].includes(error?.response?.status)) {
-        toast.error(error?.response?.data?.Message || "Unauthorised access!");
-        return Promise.reject(error);
+
+      if (status === 401) {
+        toast.error(error?.response?.data?.Message || "Unauthorized access!");
       }
+
       return Promise.reject(error);
-    }
+    },
   );
 
   return instance;
 };
 
-// Create axios instances for each service
-const axiosApi = createAxiosInstance("matta");
-const axiosSSO = createAxiosInstance("sso");
 const marketApi = createAxiosInstance("market");
+const ssoApi = createAxiosInstance("sso");
+const mattaApi = createAxiosInstance("matta");
 const walletApi = createAxiosInstance("wallet");
-const deltaApi = createAxiosInstance("flux");
+const fluxApi = createAxiosInstance("flux");
 const currencyApi = createAxiosInstance("currency");
 const oxideApi = createAxiosInstance("oxide");
 const polymerApi = createAxiosInstance("polymer");
 const notificationApi = createAxiosInstance("notification");
-// Handle token refresh logic
+const oxideProApi = createAxiosInstance("oxidepro");
+
 const handleTokenRefresh = async () => {
-  const authStore = useAuthStore();
+  const authStore = getAuthStore();
   if (refreshAttemptCount >= MAX_REFRESH_ATTEMPTS) {
-    authStore.signOut();
+    authStore?.clearAuth?.() ?? authStore?.signOut?.();
     throw new Error("Max refresh attempts reached");
+  }
+
+  if (!authStore?.refreshToken) {
+    authStore?.clearAuth?.() ?? authStore?.signOut?.();
+    throw new Error("No refresh token available");
   }
 
   try {
     refreshAttemptCount += 1;
 
-    const { data } = await axiosApi.post("/v1/Account/refreshtoken", {
+    const { data } = await marketApi.post("/v1/Account/refreshtoken", {
       token: authStore.refreshToken,
       ipAddress: "",
     });
 
-    authStore.setAccessToken(data.jwToken);
-    authStore.setRefreshToken(data.refreshToken);
-    axiosApi.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${data.jwToken}`;
+    authStore?.setAccessToken?.(data.jwToken);
+    authStore?.setRefreshToken?.(data.refreshToken);
+    marketApi.defaults.headers.common["Authorization"] = `Bearer ${data.jwToken}`;
+    refreshAttemptCount = 0;
     return data.jwToken;
   } catch (error) {
-    throw error; // Don't clear auth here, handled later in the error handler
+    refreshAttemptCount = 0;
+    authStore?.signOut?.() ?? authStore?.clearAuth?.();
+    throw error;
   }
 };
 
-// Handle errors when refreshing token
 const handleRefreshError = () => {
-  const authStore = useAuthStore();
-  if (hasLoggedOut) return; // Ensure logout only happens once
-  if (window.location.pathname !== "/checkout") {
-    toast.info("Your session has expired");
-    hasLoggedOut = true; // Flag logout to prevent multiple logouts
-    authStore.logOut(); // Perform the logout only once
-  }
+  const authStore = getAuthStore();
+  if (hasLoggedOut) return;
+
+  if (!isBrowser || window.location.pathname === "/checkout") return;
+
+  toast.info("Your session has expired");
+  hasLoggedOut = true;
+  authStore?.logOut?.() ?? authStore?.signOut?.() ?? authStore?.clearAuth?.();
 };
 
-// General API methods for each service
 const createApiMethods = (apiInstance) => ({
   get: (url, config = {}) => apiInstance.get(url, config),
   post: (url, data, config = {}) => apiInstance.post(url, data, config),
@@ -104,23 +214,27 @@ const createApiMethods = (apiInstance) => ({
   delete: (url, config = {}) => apiInstance.delete(url, config),
 });
 
-// Create API methods for each service
-export const apiMethods = createApiMethods(axiosApi);
-export const marketMethods = createApiMethods(marketApi);
-export const ssoMethods = createApiMethods(axiosSSO);
-export const walletMethods = createApiMethods(walletApi);
-export const deltaMethods = createApiMethods(deltaApi);
-export const currencyMethods = createApiMethods(currencyApi);
-export const oxideMethods = createApiMethods(oxideApi);
-export const polymerMethods = createApiMethods(polymerApi);
-export const notificationMethods = createApiMethods(notificationApi);
+const marketMethods = createApiMethods(marketApi);
+const mattaMethods = createApiMethods(mattaApi);
+const ssoMethods = createApiMethods(ssoApi);
+const walletMethods = createApiMethods(walletApi);
+const fluxMethods = createApiMethods(fluxApi);
+const currencyMethods = createApiMethods(currencyApi);
+const oxideMethods = createApiMethods(oxideApi);
+const notificationMethods = createApiMethods(notificationApi);
+const polymerMethods = createApiMethods(polymerApi);
+const oxideProMethods = createApiMethods(oxideProApi);
 
-// Export the API methods
-export const { get, post, put, delete: del } = apiMethods;
-export const marketGet = marketMethods.get;
-export const marketPost = marketMethods.post;
-export const marketPut = marketMethods.put;
-export const marketDelete = marketMethods.delete;
+export const { get, post, put, delete: del } = marketMethods;
+export const mattaGet = mattaMethods.get;
+export const mattaPost = mattaMethods.post;
+export const mattaPut = mattaMethods.put;
+export const mattaDelete = mattaMethods.delete;
+
+export const fluxGet = fluxMethods.get;
+export const fluxPost = fluxMethods.post;
+export const fluxPut = fluxMethods.put;
+export const fluxDelete = fluxMethods.delete;
 
 export const ssoGet = ssoMethods.get;
 export const ssoPost = ssoMethods.post;
@@ -132,10 +246,10 @@ export const walletPost = walletMethods.post;
 export const walletPut = walletMethods.put;
 export const walletDelete = walletMethods.delete;
 
-export const deltaGet = deltaMethods.get;
-export const deltaPost = deltaMethods.post;
-export const deltaPut = deltaMethods.put;
-export const deltaDelete = deltaMethods.delete;
+export const orbitalGet = marketMethods.get;
+export const orbitalPost = marketMethods.post;
+export const orbitalPut = marketMethods.put;
+export const orbitalDelete = marketMethods.delete;
 
 export const currencyGet = currencyMethods.get;
 export const currencyPost = currencyMethods.post;
@@ -156,3 +270,8 @@ export const notificationGet = notificationMethods.get;
 export const notificationPost = notificationMethods.post;
 export const notificationPut = notificationMethods.put;
 export const notificationDelete = notificationMethods.delete;
+
+export const oxideProGet = oxideProMethods.get;
+export const oxideProPost = oxideProMethods.post;
+export const oxideProPut = oxideProMethods.put;
+export const oxideProDelete = oxideProMethods.delete;

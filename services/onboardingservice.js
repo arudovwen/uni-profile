@@ -1,12 +1,9 @@
 import urls from "../helpers/url_helpers";
 // import { post } from "../helpers/api_helpers";
-import store from "../store";
-import { ssoPost, post } from "./api_services";
+import { ssoPost, post } from "../helpers/api_helpers";
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
-//Authentication
+const config = {};
+
 
 export async function uploadfile(data) {
   return await ssoPost(urls.UPLOAD_FILE, data, config);

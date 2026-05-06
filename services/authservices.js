@@ -1,14 +1,13 @@
-import { marketPost, oxidePost, polymerPost } from "~/helpers/api_helpers";
 import urls from "../helpers/url_helpers";
 import {
   ssoPost,
   ssoGet,
-  mattaGet,
-  mattaPost,
-  deltaPost,
   orbitalPost,
   oxideProPost,
-} from "../services/api_services";
+  fluxPost,
+  oxidePost,
+  polymerPost,
+} from "../helpers/api_helpers";
 //Authentication
 export async function loginUser(user, config = {}) {
   return await ssoPost(urls.LOGIN_USER, cleanObject(user), config);
@@ -76,14 +75,14 @@ export async function signUpWithMatta(data, config = {}) {
 }
 
 export async function signUpWithMattaOrbital(data, config = {}) {
-  return await marketPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+  return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
 }
 
 export async function signUpWithMattaFlux(data, config = {}) {
-  return await deltaPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
+  return await fluxPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
 }
 export async function signUpWithMattaOxidePro(data, config = {}) {
-  return await oxidePost(
+  return await oxideProPost(
     `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,
     data,
     config,

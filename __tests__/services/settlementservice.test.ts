@@ -4,7 +4,7 @@ import * as orderHelpers from "~/services/settlementservice";
 import urls from "~/helpers/url_helpers";
 
 // ✅ Mock the correct module with the correct function names
-vi.mock("~/services/api_services", () => ({
+vi.mock("~/helpers/api_helpers", () => ({
   walletGet: vi.fn(),
   walletPost: vi.fn(),
   walletPut: vi.fn(),
@@ -39,7 +39,7 @@ vi.mock("~/helpers/url_helpers", () => ({
 }));
 
 // ✅ Import mocked functions AFTER vi.mock declarations
-import { walletGet, walletPost, walletPut, walletDelete } from "~/services/api_services";
+import { walletGet, walletPost, walletPut, walletDelete } from "~/helpers/api_helpers";
 
 describe("Settlement Service Functions", () => {
   // The config the service builds at module load time using the mocked store

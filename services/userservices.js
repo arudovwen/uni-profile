@@ -8,11 +8,8 @@ import {
   ssoPut,
   ssoDelete,
 } from "../helpers/api_helpers";
-import store from "../store";
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
+const config = {};
 //Authentication
 
 export async function getUserInfo() {
@@ -70,7 +67,7 @@ export async function delSingleInvite(id) {
 export async function getAllinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {}
+    {},
   );
 }
 
@@ -85,15 +82,15 @@ export async function toggleUserStatus(email) {
 export async function getOwnerinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {}
+    {},
   );
 }
 export async function getCentralAdminUsers(payload) {
   return await ssoGet(
     `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(
-      cleanObject(payload)
+      cleanObject(payload),
     )}`,
-    {}
+    {},
   );
 }
 

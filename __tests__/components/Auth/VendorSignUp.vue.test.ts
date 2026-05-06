@@ -36,7 +36,7 @@ vi.mock('~/utils/saveAuthProfile', () => ({
 vi.stubGlobal('useRoute', () => mockRoute);
 vi.stubGlobal('useRouter', () => mockRouter);
 vi.stubGlobal('useHead', headSpy);
-vi.stubGlobal('useCookie', () => cookieVal);
+vi.stubGlobal('useEncryptedCookie', () => cookieVal);
 vi.stubGlobal('appCodeColorMap', { 'MAT678': '#000', 'FLU120': '#fff' });
 vi.stubGlobal('handleRouting', routingSpy);
 vi.stubGlobal('handleRedirect', redirectSpy);

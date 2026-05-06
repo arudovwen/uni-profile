@@ -7,12 +7,9 @@ import {
   ssoGet,
   ssoPut,
   ssoDelete,
-} from "../services/api_services";
-import store from "../store";
+} from "../helpers/api_helpers";
+const config = {};
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
 //Authentication
 
 export async function getAdminAudit(payload) {

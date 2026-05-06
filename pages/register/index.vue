@@ -37,7 +37,7 @@ const toast = useToast();
 const route = useRoute();
 const router = useRouter();
 const authStore = useAuthStore();
-const newEmail = useCookie("email", defaultOptions);
+const newEmail = useEncryptedCookie("email", defaultOptions);
 const { setSlug } = useOnboarding();
 
 // No type or partner for completely generic registration
@@ -80,7 +80,7 @@ const handleOtpSubmit = async (code: string) => {
       // Navigate to onboarding
       router.push({ path: `/auth/onboarding/select-apps` });
     }
-  } catch (err) {
+  } catch (err: any) {
     isLoading.value = false;
     const message =
       err?.response?.data?.message || err?.response?.data?.Message;

@@ -10,11 +10,7 @@ const { encrypt } = useEncryption();
 useHead(
   {
     script: [
-      {
-        src: "https://sdk.monnify.com/plugin/monnify.js",
-
-        defer: true,
-      },
+   
       {
         src: "https://kit.fontawesome.com/c1a534ffdb.js",
         crossorigin: "anonymous",
