@@ -121,7 +121,8 @@ onMounted(() => {
         }
       });
     }
-  });
+  })
+  .catch(() => {});
 });
 const formSchema = yup.object({
   firstName: yup

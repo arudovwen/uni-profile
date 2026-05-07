@@ -62,6 +62,7 @@
         <span>
           Didn't receive the Email,
           <button
+            type="button"
             v-if="!isResending"
             class="pl-1 font-semibold text-primary-500"
             @click.prevent="resendOTP"
@@ -76,6 +77,7 @@
       </div>
       <div>
         <button
+          type="button"
           class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
           @click="emit('close')"
         >
@@ -85,13 +87,11 @@
       </div>
     </form>
   </div>
-  
 </template>
 <script setup>
 import VOtpInput from "vue3-otp-input";
 import { resend2FA } from "~/services/authservices";
 import { toast } from "vue3-toastify";
-
 
 const props = defineProps({
   title: {
@@ -158,4 +158,12 @@ function resendOTP() {
     // Logic to actually resend the OTP can go here
   }
 }
+watch(
+  () => form.otp,
+  (newVal) => {
+    if (newVal.length === props.numInput) {
+      handleSubmit();
+    }
+  },
+);
 </script>

@@ -4,11 +4,11 @@
     class="w-screen h-screen lg:hidden flex bg-[#545860]/60 backdrop-blur-xl z-[99999]"
   >
     <!-- SIDEBAR -->
-    <aside class="flex flex-col justify-between w-[280px] h-full bg-[#0C111D]">
+    <aside class="flex flex-col justify-between w-[280px] h-full bg-white border-r border-gray-200">
       <!-- LOGO + NAVIGATION -->
-      <div class="pt-8">
+      <div class="pt-3">
         <div class="px-6 mb-6">
-          <AppLogo :dark="true" />
+          <AppLogo />
         </div>
 
         <nav class="">
@@ -16,8 +16,8 @@
             <li v-for="item in mappedNavigation" :key="item.name">
               <router-link
                 :to="item.url"
-                class="flex items-center gap-3 px-6 py-2 transition text-white/60 hover:text-white"
-                activeClass="bg-[#182230] text-white"
+                class="flex items-center gap-3 px-6 py-2.5 transition text-matta-black"
+                activeClass="bg-[#0C111D] text-white"
               >
                 <span class="text-base truncate font-onest">
                   {{ item.name }}
@@ -31,12 +31,14 @@
       <!-- USER DROPDOWN -->
       <Menu as="div" class="relative">
         <MenuButton
-          class="w-full p-4 flex items-center justify-between hover:bg-[#182230] transition"
+          class="w-full p-4 flex items-center justify-between transition border-t"
         >
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-full"></div>
+            <div class="w-10 h-10 bg-matta-black rounded-full flex items-center justify-center">
+              <span class="text-white text-sm font-semibold">{{ authStore.loggedUser?.fullName?.charAt(0) }}</span>
+            </div>
 
-            <div class="flex flex-col text-white w-[160px] truncate text-left">
+            <div class="flex flex-col  w-[160px] truncate text-left">
               <p class="text-sm font-semibold text-black">
                 {{ authStore.loggedUser?.fullName }}
               </p>

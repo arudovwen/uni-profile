@@ -1,0 +1,38 @@
+name: Build
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install -f
+
+      - name: Run tests with coverage
+        run: npm test -- --coverage
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      
+        with:
+             args: >
+              -Dsonar.organization=matta-trade
+              -Dsonar.projectKey=Matta-Trade_Universal.Profile.Frontend          
+            

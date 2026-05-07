@@ -30,8 +30,10 @@
 const authStore = useAuthStore();
 import { getUserDetail } from "~/services/settingservices";
 
-const { name } = useRoute().query;
-const { id } = useRoute().params;
+const route = useRoute();
+
+const name = route.query.name;
+const id = route.params.id;
 const userData = ref(null)
 const active = ref("profile");
 const tabs = [

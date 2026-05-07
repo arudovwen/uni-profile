@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout v-if="step === 1" name="auth">
-    <div v-if="step === 1" class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
+    <div class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
       <h1
         class="text-[#021242] darks:text-white mb-2 text-2xl lg:text-3xl font-medium w-full"
       >
@@ -39,30 +39,25 @@
             :error="errors.password"
           />
         </div>
+
         <span
           class="block mb-10 text-sm darks:text-white/80"
-          :style="{ color: color }"
+          :style="{ color }"
         >
-          <NuxtLink
-            :to="
-              handleRouting(
-                route,
-                `/${auth}/forgot-password${app ? `/${app}` : ''}`
-              )
-            "
-            class="font-medium"
+          <NuxtLink :to="forgotPasswordLink" class="font-medium"
             >Forgot password?</NuxtLink
           >
         </span>
+
         <div class="grid gap-y-[22px]">
           <AppButton
             type="submit"
             :isLoading="isLoading"
-            :isDisabled="isLoading || !meta.valid"
+            :isDisabled="isLoading"
             text="Sign In"
             btnClass="btn-primary !py-3"
             :style="{
-              background: isLoading || !meta.valid ? '' : color,
+              background: isLoading ? '' : color,
             }"
           />
         </div>
@@ -70,30 +65,21 @@
         <span
           class="flex items-center text-center text-sm text-[#182230] mt-9 darks:text-white/80 gap-x-1 justify-center"
         >
-          Don’t have an account?
-          <NuxtLink
-            :to="
-              handleRouting(route, `/${auth}/register${app ? `/${app}` : ''}`)
-            "
-            class="font-medium"
-            :style="{ color: color }"
+          Don't have an account?
+          <NuxtLink :to="registerLink" class="font-medium" :style="{ color }"
             >Sign Up</NuxtLink
           >
         </span>
       </form>
     </div>
   </NuxtLayout>
-  <NuxtLayout name="empty" v-if="step === 2">
+
+  <NuxtLayout name="empty" v-else-if="step === 2">
     <AuthOtp
-      v-if="step === 2"
       :title="isVerified ? 'Email Verified' : 'Email Verification'"
       :isVerifyPin="isVerifyPin"
       :isVerified="isVerified"
-      @close="
-        step = 1;
-        isLoading = false;
-        resetForm();
-      "
+      @close="onOtpClose"
       :subtext="
         isVerified
           ? 'Your email has been verified. You will be automatically redirected to the dashboard'
@@ -102,11 +88,12 @@
       buttonText="Verify Email"
       @handleSubmit="handleFinalSubmit"
       :isLoading="isLoading"
-      :email="formValues.email"
+      :email="loginEmail"
       continue-link="/vendor/dashboard"
     />
   </NuxtLayout>
 </template>
+
 <script setup>
 import { useForm } from "vee-validate";
 import * as yup from "yup";
@@ -119,11 +106,12 @@ const route = useRoute();
 const router = useRouter();
 const { app, auth } = route.params;
 
+// ─── Analytics ────────────────────────────────────────────────────────────────
 if (app === "MAT678") {
   useHead({
     script: [
       {
-        id: "gtm-init", // this ID must match the key in __dangerouslyDisableSanitizersByTagID
+        id: "gtm-init",
         innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
           j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -133,8 +121,7 @@ if (app === "MAT678") {
       },
       {
         id: "facebook-pixel",
-        innerHTML: `
-        !function(f,b,e,v,n,t,s)
+        innerHTML: `!function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
         n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
@@ -143,8 +130,7 @@ if (app === "MAT678") {
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '979825461003897');
-        fbq('track', 'PageView');
-      `,
+        fbq('track', 'PageView');`,
         type: "text/javascript",
       },
     ],
@@ -163,29 +149,24 @@ if (app === "FLU120") {
       },
       {
         id: "ga-init",
-        innerHTML: `
-        window.dataLayer = window.dataLayer || [];
+        innerHTML: `window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-        gtag('config', 'G-9YFZLVNCG5');
-      `,
+        gtag('config', 'G-9YFZLVNCG5');`,
         type: "text/javascript",
       },
       {
         id: "gtm-init",
-        innerHTML: `
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-WKXBWCB5');
-      `,
+        })(window,document,'script','dataLayer','GTM-WKXBWCB5');`,
         type: "text/javascript",
       },
       {
         id: "facebook-pixel",
-        innerHTML: `
-        !function(f,b,e,v,n,t,s)
+        innerHTML: `!function(f,b,e,v,n,t,s)
         {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
         n.callMethod.apply(n,arguments):n.queue.push(arguments)};
         if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
@@ -194,8 +175,7 @@ if (app === "FLU120") {
         s.parentNode.insertBefore(t,s)}(window, document,'script',
         'https://connect.facebook.net/en_US/fbevents.js');
         fbq('init', '873140148927572');
-        fbq('track', 'PageView');
-      `,
+        fbq('track', 'PageView');`,
         type: "text/javascript",
       },
     ],
@@ -213,18 +193,15 @@ if (app === "FLU120") {
   });
 }
 
-
+// ─── State ─────────────────────────────────────────────────────────────────────
 const color = appCodeColorMap[app] || "#1570EF";
-const step = ref(1);
+const step = ref(Number(route.query.step) || 1);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
 const isLoading = ref(false);
-const formValues = {
-  email: "",
-  password: "",
-  appCode: app,
-};
+const loginEmail = ref("");
 
+// ─── Form ──────────────────────────────────────────────────────────────────────
 const schema = yup.object({
   email: yup
     .string()
@@ -233,97 +210,125 @@ const schema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const { handleSubmit, defineField, errors, meta, resetForm } = useForm({
+const { handleSubmit, defineField, errors } = useForm({
   validationSchema: schema,
-  initialValues: formValues,
+  initialValues: { email: loginEmail.value, password: "", appCode: app },
   mode: "onBlur",
 });
+
 const [email, emailAtt] = defineField("email");
 const [password, passwordAtt] = defineField("password");
+
+// ─── Computed links ────────────────────────────────────────────────────────────
+const appSuffix = app ? `/${app}` : "";
+const forgotPasswordLink = computed(() =>
+  handleRouting(route, `/${auth}/forgot-password${appSuffix}`),
+);
+const registerLink = computed(() =>
+  handleRouting(route, `/${auth}/register${appSuffix}`),
+);
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+const getErrorMessage = (data) => data?.message || data?.Message || "";
 
 const handleFinalRedirect = (data) => {
   if (route.query.continue || app) {
     handleRedirect(route, data, app);
     return;
   }
-
-  toast.success("Login successful");
   isLoading.value = false;
+  toast.success("Login successful");
   window.location.replace(intialRoute[data?.userCategory]);
 };
+
+const onOtpClose = () => {
+  isLoading.value = false;
+  router.push(
+    `/auth/login${appSuffix}?email=${encodeURIComponent(
+      loginEmail.value,
+    )}&step=1`,
+  );
+};
+
+// ─── Submit handlers ───────────────────────────────────────────────────────────
 const onSubmit = handleSubmit((values) => {
-  formValues.email = values.email;
-  formValues.password = values.password;
+  loginEmail.value = values.email;
   isLoading.value = true;
+
   loginUser({ ...values, appCode: app })
     .then((res) => {
-      if (res.status === 200) {
-        if (typeof fbq === "function") {
-          fbq("track", "Login", {
-            method: "email",
-            device: window.innerWidth < 768 ? "mobile" : "desktop",
-            value: 0,
-            currency: "NGN",
-          });
-        }
-        if (!res.data.data.is2FA && app) {
-          authStore.setLoggedUser(res.data.data);
-          saveAuthProfile(res.data.data);
-          handleFinalRedirect(res.data.data);
-          return;
-        }
-        isVerifyPin.value = true;
-        step.value = 2;
-        isLoading.value = false;
-      }
-    })
+      if (res.status !== 200) return;
 
-    .catch((err) => {
-      isLoading.value = false;
-      if (!err.response.data) return;
-      const { data } = err.response;
-      if (data.message || data.Message) {
-        toast.error(data.message || data.Message);
+      if (typeof fbq === "function") {
+        fbq("track", "Login", {
+          method: "email",
+          device: window.innerWidth < 768 ? "mobile" : "desktop",
+          value: 0,
+          currency: "NGN",
+        });
       }
-      if (
-        (data.message || data.Message).includes("Email has not verified yet")
-      ) {
-        router.push(
-          `/auth/${app ? `/${app}` : ""}?email=${encodeURIComponent(
-            values.email
-          )}&step=2`
-        );
-      }
-    });
-});
 
-const handleFinalSubmit = async (token) => {
-  isLoading.value = true;
-
-  loginUser2FA({ token, email: formValues.email, appCode: app })
-    .then(async (res) => {
-      if (res.status === 200) {
+      if (!res.data.data.is2FA && app) {
         authStore.setLoggedUser(res.data.data);
         saveAuthProfile(res.data.data);
         handleFinalRedirect(res.data.data);
+        return;
       }
+
+      isVerifyPin.value = true;
+      step.value = 2;
+      isLoading.value = false;
     })
     .catch((err) => {
-      console.log("🚀 ~ .then ~ err:", err);
-      isLoading.value = false;
-
-      if (!err?.response?.data) return;
+      if (!err.response?.data) return;
       const { data } = err.response;
-      if (data?.message || data?.Message) {
-        toast.error(data?.message || data?.Message);
-      }
-      if (
-        (data?.message || data?.Message).includes("Email has not verified yet")
-      ) {
+      const message = getErrorMessage(data);
+      if (message) toast.error(message);
+      if (message.includes("Email has not verified yet")) {
         router.push(
-          `/auth/register?email=${encodeURIComponent(formValues.email)}`
+          `/auth/login${appSuffix}?email=${encodeURIComponent(
+            values.email,
+          )}&step=2`,
         );
       }
+    })
+    .finally(() => {
+      if (isLoading.value) isLoading.value = false;
+    });
+});
+
+const handleFinalSubmit = (token) => {
+  isLoading.value = true;
+
+  loginUser2FA({ token, email: loginEmail.value, appCode: app })
+    .then((res) => {
+      if (res.status !== 200) return;
+      authStore.setLoggedUser(res.data.data);
+      saveAuthProfile(res.data.data);
+      handleFinalRedirect(res.data.data);
+    })
+    .catch((err) => {
+      if (!err?.response?.data) return;
+      const { data } = err.response;
+      const message = getErrorMessage(data);
+      if (message) toast.error(message);
+      if (message.includes("Email has not verified yet")) {
+        router.push(
+          `/auth/register?email=${encodeURIComponent(loginEmail.value)}`,
+        );
+      }
+    })
+    .finally(() => {
+      if (isLoading.value) isLoading.value = false;
     });
 };
+
+// ─── Watchers ──────────────────────────────────────────────────────────────────
+watch(
+  () => route.query.step,
+  (newStep) => {
+    step.value = Number(newStep) || 1;
+  },
+  { immediate: true },
+);
 </script>

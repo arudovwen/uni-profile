@@ -8,7 +8,9 @@
         <LayoutMobileSideComponent />
 
         <div class="flex-1 h-full w-full lg:min-h-[80vh] overflow-auto">
-          <AppHeader :hideLogo="true" />
+          <div class="hidden lg:block">
+            <AppHeader :hideLogo="true" />
+          </div>
           <MobileHeader />
           <!-- <LayoutMainComponent /> -->
           <div class="px-4 py-8 mt-12 lg:px-8 lg:mt-0">
@@ -22,7 +24,6 @@
 
 <script setup>
 const showSideBar = ref(false);
-
 
 provide("showSideBar", showSideBar);
 provide("toggleSideBar", (val) => {
