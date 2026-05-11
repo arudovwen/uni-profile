@@ -25,7 +25,7 @@ const countries = [
     min: 9,
     max: 9,
   },
-  { code: "CI", label: "Cote d'Ivoire", phone: "225", min: 8, max: 8 },
+  { code: "CI", label: "Cote d'Ivoire", phone: "225", min: 10, max: 10 },
   { code: "DJ", label: "Djibouti", phone: "253", min: 8, max: 8 },
   { code: "EG", label: "Egypt", phone: "20", min: 10, max: 10 },
   { code: "GQ", label: "Equatorial Guinea", phone: "240", min: 9, max: 9 },

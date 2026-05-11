@@ -1,3 +1,4 @@
+
 import urls from "../helpers/url_helpers";
 import {
   post,
@@ -7,9 +8,12 @@ import {
   ssoGet,
   ssoPut,
   ssoDelete,
-} from "../helpers/api_helpers";
+} from "../services/api_services";
+import store from "../store";
 
-const config = {};
+const config = {
+  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
+};
 //Authentication
 
 export async function getUserInfo() {
@@ -37,14 +41,6 @@ export async function editSubApp(data) {
   return await ssoPut(`${urls.UPDATE_SUBAPP}`, data);
 }
 
-export async function deleteSubApp(id) {
-  return await ssoDelete(`${urls.DELETE_SUBAPP(id)}`, {});
-}
-
-export async function uploadAppLogo(base64Data) {
-  return await ssoPost(`${urls.UPLOAD_FILE}`, { base64: base64Data });
-}
-
 export async function adminToggleAccess(data) {
   return await ssoPost(`${urls.REGISTER_APP_REVOKE}`, data);
 }
@@ -67,7 +63,7 @@ export async function delSingleInvite(id) {
 export async function getAllinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {},
+    {}
   );
 }
 
@@ -82,15 +78,15 @@ export async function toggleUserStatus(email) {
 export async function getOwnerinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {},
+    {}
   );
 }
 export async function getCentralAdminUsers(payload) {
   return await ssoGet(
     `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(
-      cleanObject(payload),
+      cleanObject(payload)
     )}`,
-    {},
+    {}
   );
 }
 
@@ -125,15 +121,6 @@ export async function resendOwnerInvite(data) {
 export async function delOwnerInvite(id) {
   return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
 }
-
-export async function updateMemberAccess(data) {
-  return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
-}
-
-export async function ownerToggleAppAccess(data) {
-  return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
-}
-
 
 export async function generateReferralCode() {
   return await ssoGet(urls.GENERATE_REFERRAL_CODE, config);

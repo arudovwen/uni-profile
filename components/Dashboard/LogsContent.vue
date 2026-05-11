@@ -90,7 +90,6 @@ import { ref, computed, reactive, onMounted, watch } from "vue";
 import debounce from "lodash/debounce";
 import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
 import moment from "moment";
-import { exportToCSV } from "~/utils/exportCsv";
 
 const capitalize = (str: string) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";

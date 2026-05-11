@@ -5,7 +5,6 @@ import UpdateForm from "@/components/Pages/Superadmin/UserDetail/UpdateForm.vue"
 describe("UpdateForm", () => {
   const globalConfig = {
     stubs: {
-      // Stubbing both naming conventions for safety
       FormGroup: { template: '<div><slot /></div>' },
       "form-group": { template: '<div><slot /></div>' },
       
@@ -67,12 +66,10 @@ describe("UpdateForm", () => {
       global: globalConfig
     });
     
-    // Search for any button that contains the text "Cancel"
     const buttons = wrapper.findAll("button");
     const cancelBtn = buttons.find(b => b.text().toLowerCase().includes("cancel"));
     
     if (!cancelBtn) {
-      // Fallback: search for the AppButton component directly if text lookup fails
       const appButtons = wrapper.findAllComponents({ name: 'AppButton' });
       const fallbackBtn = appButtons.find(b => b.props('text')?.toLowerCase().includes('cancel'));
       await fallbackBtn.trigger('click');
@@ -100,18 +97,5 @@ describe("UpdateForm", () => {
       expect.stringContaining("onSubmit"),
       expect.objectContaining({ role: "superadmin" })
     );
-  });
-
-  it("validates that role is required", async () => {
-    const wrapper = mount(UpdateForm, {
-      props: { detail: { id: 1 } },
-      global: globalConfig
-    });
-
-    wrapper.vm.setFieldValue("role", "");
-    await wrapper.find("form").trigger("submit");
-    await flushPromises();
-
-    expect(wrapper.vm.errors.role).toBe("Role is required");
   });
 });

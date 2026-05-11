@@ -1,4 +1,4 @@
-import { useForm as useVeeForm, UseFormOptions, UseFormReturn } from 'vee-validate';
+import { useForm as useVeeForm } from "vee-validate";
 
 /**
  * Wrapper around VeeValidate's useForm that configures validation to only happen on form submission.
@@ -7,12 +7,10 @@ import { useForm as useVeeForm, UseFormOptions, UseFormReturn } from 'vee-valida
  * @param options - VeeValidate form options
  * @returns VeeValidate form instance with onSubmit mode enabled
  */
-export const useValidatedForm = <TValues extends Record<string, any>>(
-  options: UseFormOptions<TValues>
-): UseFormReturn<TValues> => {
+export const useValidatedForm = (options) => {
   return useVeeForm({
     ...options,
     // Validate only on form submission, not on change or blur
-    mode: 'onSubmit',
+    mode: "onSubmit",
   });
 };
