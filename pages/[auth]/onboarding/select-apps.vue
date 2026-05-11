@@ -71,7 +71,7 @@
         <button
           type="button"
           class="w-full md:max-w-[218px] py-3 px-4 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="selectedAppsData.length === 0 || isSubmitting || isLoading"
+          :disabled="!canContinue || isSubmitting || isLoading"
           @click="continueToRoles"
         >
           {{
@@ -100,6 +100,7 @@ import SelectAppIcon from "@/assets/images/icon/SelectAppIcon.vue";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+import { APP_CODES } from "~/utils/app-config";
 
 interface App {
   id: string;
@@ -122,15 +123,19 @@ const slug = computed(() => (route.query.slug as string) || state.value.slug);
 
 // Fallback icons for apps (used when API doesn't provide icons)
 const appIcons: Record<string, string> = {
-  FLU722: FluxLogo,
-  ORB789: OrbitalLogo,
-  OXI972: OxideProLogo,
-  POL766:
+  [APP_CODES.OXIDE_PRO]: OxideProLogo,
+  [APP_CODES.ORBITAL]: OrbitalLogo,
+  [APP_CODES.OXIDE]:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
+  [APP_CODES.FLUX]: FluxLogo,
+  [APP_CODES.MATTA]:
+    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle fill='%23000000' cx='12' cy='12' r='10'/%3E%3C/svg%3E",
+  [APP_CODES.MATTAPEDIA]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 };
 
 // Apps that have roles to select (fallback - ideally from API)
-const appsWithRolesFallback = ["FLU722", "OXI972"];
+const appsWithRolesFallback = [APP_CODES.FLUX, APP_CODES.OXIDE_PRO];
 
 const isSubmitting = ref(false);
 const isLoading = ref(true);
@@ -223,6 +228,12 @@ const selectedAppsData = computed(() => {
   return apps.value.filter((app) => selectedAppsIds.value.includes(app.id));
 });
 
+const hasRegisteredApps = computed(() => registeredAppCodes.value.length > 0);
+
+const canContinue = computed(() => {
+  return selectedAppsData.value.length > 0 || hasRegisteredApps.value;
+});
+
 const isAppSelected = (appId: string) => {
   return selectedAppsIds.value.includes(appId);
 };
@@ -247,8 +258,13 @@ const hasAppsRequiringUserInput = computed(() => {
 });
 
 const continueToRoles = async () => {
-  if (selectedAppsData.value.length === 0) {
+  if (!canContinue.value) {
     toast.error("Please select at least one application");
+    return;
+  }
+
+  if (selectedAppsData.value.length === 0 && hasRegisteredApps.value) {
+    router.push("/");
     return;
   }
 

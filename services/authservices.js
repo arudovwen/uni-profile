@@ -75,7 +75,8 @@ export async function signUpWithMatta(data, config = {}) {
 }
 
 export async function signUpWithMattaOrbital(data, config = {}) {
-  return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+  // return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+  return await ssoPost(`${urls.SIGN_UP_WITH_MATTA}`, data, config);
 }
 
 export async function signUpWithMattaFlux(data, config = {}) {

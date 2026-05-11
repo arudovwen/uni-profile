@@ -122,7 +122,7 @@
               </div>
             </div>
             <div
-              v-if="app === 'MAT678'"
+              v-if="app === APP_CODES.MATTA"
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
             >
               <Checkbox
@@ -159,7 +159,7 @@
                 :isDisabled="
                   isLoading ||
                   !meta.valid ||
-                  (app === 'MAT678' && !agree) ||
+                  (app === APP_CODES.MATTA && !agree) ||
                   !!phoneError
                 "
                 :style="{
@@ -202,7 +202,7 @@
       subtext="Enter the  6-Digit verification code has been sent to your registered email address. Check your inbox."
     />
   </NuxtLayout>
-  <noscript v-if="app === 'MAT678'">
+  <noscript v-if="app === APP_CODES.MATTA">
     <iframe
       src="https://www.googletagmanager.com/ns.html?id=GTM-M7KP6CJG"
       height="0"
@@ -218,6 +218,7 @@ import { registerUser, confirmRegister } from "~/services/authservices";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
 import { useValidatedForm } from "~/composables/useValidatedForm";
 import countries from "~/utils/countries.json";
+import { APP_CODES } from "~/utils/app-config";
 
 // ----------------------------
 // Basic Setup
@@ -242,7 +243,7 @@ const allcountries = computed(() => {
 // ----------------------------
 // Head Scripts by App Type
 // ----------------------------
-if (app === "MAT678") {
+if (app === APP_CODES.MATTA) {
   useHead({
     script: [
       {
@@ -261,7 +262,7 @@ if (app === "MAT678") {
   });
 }
 
-if (app === "FLU120") {
+if (app === APP_CODES.FLUX) {
   useHead({
     script: [
       {

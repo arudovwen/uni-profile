@@ -96,7 +96,9 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-4 border-[#e5e7eb] border-t-[#1570EF]"
         />
-        <p class="text-sm font-semibold text-[#475467]">Opening application, please wait&hellip;</p>
+        <p class="text-sm font-semibold text-[#475467]">
+          Opening application, please wait&hellip;
+        </p>
       </div>
 
       <OnboardingModal
@@ -126,6 +128,7 @@ import { toast } from "vue3-toastify";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+import { APP_CODES } from "~/utils/app-config.ts";
 
 definePageMeta({ middleware: "auth" });
 
@@ -150,10 +153,10 @@ interface UserApp {
 
 // Constants
 const APP_ICONS = {
-  FLU722: FluxLogo,
-  ORB789: OrbitalLogo,
-  OXI972: OxideProLogo,
-  POL766:
+  [APP_CODES.FLUX]: FluxLogo,
+  [APP_CODES.ORBITAL]: OrbitalLogo,
+  [APP_CODES.OXIDE_PRO]: OxideProLogo,
+  [APP_CODES.POLYMER_LEGACY]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 } as const;
 const ADMIN_CATEGORIES = [0, 3];
@@ -368,6 +371,8 @@ const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
     toast.error(
       err?.response?.data?.message || "Onboarding failed. Please try again.",
     );
+    showOnboardingModal.value = false;
+    appToOnboard.value = null;
   } finally {
     isOnboarding.value = false;
   }

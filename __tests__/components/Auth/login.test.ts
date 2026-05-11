@@ -14,7 +14,7 @@ const mocks = vi.hoisted(() => ({
   toastSuccess: vi.fn(),
   toastError: vi.fn(),
   route: {
-    params: { app: "MAT678", auth: "vendor" },
+    params: { app: "MAT460", auth: "vendor" },
     query: {},
   },
 }));
@@ -41,8 +41,8 @@ vi.mock("#app", async (importOriginal) => {
 vi.mock("~/stores/auth", () => ({
   useAuthStore: vi.fn(() => ({
     appList: [
-      { code: "MAT678", name: "Matta" },
-      { code: "FLU120", name: "Fluid" },
+      { code: "MAT460", name: "Matta" },
+      { code: "FLU722", name: "Fluid" },
     ],
     setLoggedUser: mocks.setLoggedUser,
   })),
@@ -106,11 +106,11 @@ describe("login.vue", () => {
     vi.stubGlobal("location", { replace: mocks.replace });
     vi.stubGlobal("window", { location: { replace: mocks.replace }, innerWidth: 1024 });
     vi.stubGlobal("fbq", vi.fn());
-    vi.stubGlobal("appCodeColorMap", { MAT678: "#1570EF", FLU120: "#000000" });
+    vi.stubGlobal("appCodeColorMap", { MAT460: "#1570EF", FLU722: "#000000" });
     vi.stubGlobal("intialRoute", { admin: "/admin/dashboard", vendor: "/vendor/dashboard" });
     vi.stubGlobal("handleRedirect", mocks.handleRedirect);
     vi.stubGlobal("handleRouting", (route, path) => path);
-    setRoute({ app: "MAT678", auth: "vendor" });
+    setRoute({ app: "MAT460", auth: "vendor" });
   });
 
   const submit = async (wrapper) => {
@@ -148,7 +148,7 @@ describe("login.vue", () => {
     expect(wrapper.vm.color).toBe("#1570EF");
   });
 
-  it("uses correct color for MAT678", async () => {
+  it("uses correct color for MAT460", async () => {
     const wrapper = await mountSuspended(Login, { global: globalConfig });
     expect(wrapper.vm.color).toBe("#1570EF");
   });

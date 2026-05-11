@@ -112,8 +112,8 @@ import { ref, reactive, watch, computed } from "vue";
 import { useToast } from "~/composables/useToast";
 import MultiSelectDropdown from "~/components/Onboarding/MultiSelectDropdown.vue";
 import CustomDropdown from "~/components/Onboarding/CustomDropdown.vue";
+import { APP_CODES } from "~/utils/app-config";
 import { sendAdminInvite, sendOwnerInvite } from "~/services/userservices";
-import { a } from "vitest/dist/suite-IbNSsUWN.js";
 
 interface Props {
   isOpen: boolean;
@@ -144,13 +144,18 @@ const appOptions = computed(() => {
   }));
 });
 
-// Role options for polymer
-const roleOptions = {
-  POL628: {
-    name: "Polymer",
+type RoleOptionGroup = {
+  name: string;
+  options: Array<{ code: string; name: string }>;
+};
+
+const roleOptions: Record<string, RoleOptionGroup> = {
+  [APP_CODES.OXIDE_PRO]: {
+    name: "Oxide Pro",
     options: [
-      { code: "0", name: "Admin" },
-      { code: "2", name: "Procurement Manager" },
+      { code: "Funder", name: "Funder" },
+      { code: "Supplier", name: "Supplier" },
+      { code: "Buyer", name: "Buyer" },
     ],
   },
 };

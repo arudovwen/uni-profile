@@ -48,7 +48,7 @@
   <!-- Application Modal -->
   <ApplicationModal
     :is-open="isApplicationModalOpen"
-    :app="selectedApp"
+    :app="selectedAppForModal"
     @close="closeApplicationModal"
     @submit="handleApplicationSubmit"
   />
@@ -104,6 +104,7 @@ import ComputerSvg from "~/assets/images/icon/ComputerSvg.vue";
 import { useToast } from "~/composables/useToast";
 import { useEncryption } from "~/composables/useEncryption";
 import { useOnboarding } from "~/composables/useOnboarding";
+import { APP_CODES } from "~/utils/app-config";
 import { getSubApps } from "~/services/userservices";
 
 interface App {
@@ -112,7 +113,7 @@ interface App {
   name: string;
   description?: string;
   iconUrl?: string;
-  url?: string;
+  url: string;
   isDisabled: boolean;
 }
 
@@ -123,9 +124,12 @@ const { getSignupFunction, buildAppPayload } = useOnboarding();
 
 // Custom app URLs mapping - override API response URLs
 const customAppUrls: Record<string, string> = {
-  ORB789: "https://dev.orbital.matta.trade",
-  FLU722: "https://dev.admin.flux.matta.trade",
-  OXI972: "https://dev.oxidepro.matta.trade",
+  [APP_CODES.OXIDE_PRO]: "https://dev.oxidepro.matta.trade",
+  [APP_CODES.ORBITAL]: "https://dev.orbital.matta.trade",
+  [APP_CODES.OXIDE]: "https://dev.oxide.matta.trade",
+  [APP_CODES.FLUX]: "https://dev.deltalog.co",
+  [APP_CODES.MATTA]: "https://dev.matta.trade",
+  [APP_CODES.MATTAPEDIA]: "https://dev.mattapedia.matta.trade",
 };
 
 const slug = computed(
@@ -138,13 +142,14 @@ const apps = ref<App[]>([]);
 const isLoading = ref(false);
 const selectedApp = ref<App | null>(null);
 const selectedAppForDelete = ref<App | null>(null);
+const selectedAppForModal = computed(() => selectedApp.value as any);
 const isApplicationModalOpen = ref(false);
 const isDeleteOpen = ref(false);
 const isDeleting = ref(false);
 const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
-const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
+const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
 // Build authenticated URL with encrypted tokens
 const buildAuthUrl = (baseUrl: string) => {
   if (!encryptedToken || !encryptedRefreshToken) {
@@ -218,7 +223,11 @@ const loadApps = async () => {
       // Apply custom URLs if available for matching app codes
       apps.value = loadedApps.map((app: App) => {
         const customUrl = customAppUrls[app.code];
-        return customUrl ? { ...app, url: customUrl } : app;
+        return {
+          ...app,
+          description: app.description || "No description available",
+          url: customUrl || app.url || "",
+        };
       });
     }
   } catch (error) {
@@ -234,12 +243,12 @@ const handleAddApp = () => {
   isApplicationModalOpen.value = true;
 };
 
-const handleEditApp = (app: App) => {
+const handleEditApp = (app: any) => {
   selectedApp.value = app;
   isApplicationModalOpen.value = true;
 };
 
-const handleDeleteApp = (app: App) => {
+const handleDeleteApp = (app: any) => {
   selectedAppForDelete.value = app;
   isDeleteOpen.value = true;
 };

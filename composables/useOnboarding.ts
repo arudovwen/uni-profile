@@ -1,4 +1,5 @@
 import { useEncryption } from "~/composables/useEncryption";
+import { APP_CODES } from "~/utils/app-config";
 import {
   signUpWithMatta,
   signUpWithMattaFlux,
@@ -162,7 +163,7 @@ export const useOnboarding = () => {
       userCategory,
     };
     switch (appCode) {
-      case "FLU722": {
+      case APP_CODES.FLUX: {
         // Flux requires userType, preferredSize, preferredTruckType for clients
         const userType = roleSelection
           ? fluxRoleToUserType[roleSelection.role] ?? 0
@@ -186,7 +187,7 @@ export const useOnboarding = () => {
         return payload;
       }
 
-      case "OXI972": {
+      case APP_CODES.OXIDE_PRO: {
         // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
         const accountType = roleSelection
           ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
@@ -209,10 +210,13 @@ export const useOnboarding = () => {
         };
       }
 
-      case "ORB789":
-      case "POL766":
+      case APP_CODES.ORBITAL:
+      case APP_CODES.POLYMER:
+      case APP_CODES.OXIDE:
+      case APP_CODES.MATTA:
+      case APP_CODES.MATTAPEDIA:
       default:
-        // Orbital and Polymer don't have roles, just basic payload
+        // Orbital, Polymer and the remaining apps don't have roles, just basic payload
         return basePayload;
     }
   };
@@ -220,13 +224,13 @@ export const useOnboarding = () => {
   // Get the appropriate signup function for each app
   const getSignupFunction = (appCode: string) => {
     switch (appCode) {
-      case "FLU722":
+      case APP_CODES.FLUX:
         return signUpWithMattaFlux;
-      case "ORB789":
+      case APP_CODES.ORBITAL:
         return signUpWithMattaOrbital;
-      case "OXI972":
+      case APP_CODES.OXIDE_PRO:
         return signUpWithMattaOxidePro;
-      case "POL628":
+      case APP_CODES.POLYMER:
         return signUpWithMattaPolymer;
       default:
         return signUpWithMatta;
