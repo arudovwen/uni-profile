@@ -198,7 +198,6 @@ import {
 } from "~/services/userservices";
 import { getUserApps } from "~/services/authservices";
 import { useToast } from "~/composables/useToast";
-import { exportToCSV } from "~/utils/exportCsv";
 import SuspendIcon from "~/assets/images/icon/SuspendIcon.vue";
 import ReactivateIcon from "~/assets/images/icon/ReactivateIcon.vue";
 import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";

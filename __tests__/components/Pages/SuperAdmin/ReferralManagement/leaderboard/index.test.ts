@@ -4,7 +4,7 @@ import { nextTick } from 'vue';
 import Leaderboard from '@/components/Pages/Superadmin/ReferralManagement/leaderboard/index.vue';
 import { getReferralLeaderboard } from "~/services/userservices";
 import { toast } from "vue3-toastify";
-import { exportToCSV } from "~/utils/exportToCSV";
+
 
 vi.mock("~/services/userservices", () => ({
   getReferralLeaderboard: vi.fn(),
@@ -14,7 +14,7 @@ vi.mock("vue3-toastify", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-vi.mock("~/utils/exportToCSV", () => ({
+vi.mock("~/utils/exportCsv", () => ({
   exportToCSV: vi.fn(),
 }));
 

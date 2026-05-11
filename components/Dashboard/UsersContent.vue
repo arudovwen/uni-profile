@@ -163,7 +163,6 @@ import debounce from "lodash/debounce";
 import moment from "moment";
 import { getAllUsers, toggleUserStatus } from "~/services/userservices";
 import { useToast } from "~/composables/useToast";
-import { exportToCSV } from "~/utils/exportCsv";
 import SuspendIcon from "~/assets/images/icon/SuspendIcon.vue";
 import ReactivateIcon from "~/assets/images/icon/ReactivateIcon.vue";
 import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";

@@ -106,7 +106,7 @@ import { getReferralLeaderboard } from "~/services/userservices";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
 import moment from "moment";
-import { exportToCSV } from "~/utils/exportToCSV";
+
 
 defineProps({
   customClass: {
