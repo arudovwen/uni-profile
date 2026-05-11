@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative formGroup"
+    class="relative formGroup font-Avenir"
     :class="{
       'has-error': phoneError,
       flex: horizontal,
@@ -12,7 +12,7 @@
       v-if="label"
       :class="`${classLabel} ${
         horizontal ? 'flex-0 mr-6 md:w-[100px] w-[60px] break-words' : ''
-      } flex items-center gap-x-1 input-label text-sm !text-[#1B2B41B8]`"
+      } flex items-center gap-x-1 text-sm font-medium text-[#2F2F2F] leading-6 mb-1.5`"
       :for="name"
       :data-testid="label"
     >
@@ -28,79 +28,86 @@
     </label>
 
     <!-- Input Group -->
-    <div
-      class="relative !flex items-center input-control text-[#667085] z-[99]"
-    >
-      <span class="text-[#667085]"><AppIcon icon="lucide:phone-call" /></span>
-
+    <div class="flex items-center gap-3">
       <!-- Country Code Dropdown -->
       <Combobox v-model="selectedCountry">
-        <Float placement="bottom-end" :offset="4" :flip="true">
+        <Float placement="bottom-start" :offset="4" :flip="true">
           <div class="relative">
-            <ComboboxInput
-              class="pl-3 pr-2 bg-white border-r z-[2] whitespace-nowrap outline-none max-w-16 mr-1"
-              :displayValue="(country) => country?.phone || '+234'"
-              placeholder="+234"
-              @change="query = $event.target.value"
-            />
-            <ComboboxButton
-              class="absolute inset-y-0 right-0 flex items-center pr-2"
+            <div
+              class="flex items-center h-[41px] w-[104px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px]"
+              :class="[{ 'border-[#F04438]': phoneError }, dropdownClass]"
             >
-              <AppIcon icon="lucide:chevron-down" aria-hidden="true" />
-            </ComboboxButton>
-          </div>
+              <ComboboxInput
+                class="w-full bg-transparent outline-none text-sm font-normal text-[#475467]"
+                :displayValue="(country) => country?.phone || '+234'"
+                placeholder="+234"
+                @change="query = $event.target.value"
+              />
+              <ComboboxButton class="flex items-center">
+                <svg
+                  class="w-[13px] h-2"
+                  viewBox="0 0 13 8"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 1.5L6.5 7L12 1.5"
+                    stroke="#000000"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </ComboboxButton>
+            </div>
 
-          <ComboboxOptions
-            class="w-full bg-white border rounded-md shadow-lg max-h-[400px] overflow-y-auto"
-          >
-            <ComboboxOption
-              v-for="country in filteredCountryList"
-              :key="country.code"
-              :value="country"
-              class="px-4 py-2 cursor-pointer hover:bg-gray-100 z-[2]"
+            <ComboboxOptions
+              class="absolute top-full left-0 mt-1 w-[250px] bg-white border border-[#E2E2E2] rounded-[5px] shadow-lg max-h-[200px] overflow-y-auto z-50"
             >
-              {{ country.phone }} - {{ country.label }}
-            </ComboboxOption>
-          </ComboboxOptions>
+              <ComboboxOption
+                v-for="country in filteredCountryList"
+                :key="country.code"
+                :value="country"
+                class="px-4 py-2 cursor-pointer hover:bg-[#F9FAFB] text-sm text-[#475467]"
+              >
+                {{ country.phone }} - {{ country.label }}
+              </ComboboxOption>
+            </ComboboxOptions>
+          </div>
         </Float>
       </Combobox>
 
       <!-- Phone Input -->
-      <div class="relative flex items-center flex-1 z-[1]">
+      <div class="relative flex-1">
         <input
           v-model="phoneData.number"
           type="tel"
           inputmode="numeric"
-          class="w-full px-3 outline-none"
-          :placeholder="placeholder"
+          class="w-full h-[41px] px-[17px] py-[11px] bg-white border border-[#E2E2E2] rounded-[5px] outline-none text-sm font-normal text-[#475467] placeholder:text-[#667085]"
+          :class="[{ 'border-[#F04438]': phoneError }, textInputClass]"
+          :placeholder="placeholder || '0816*******'"
           :readonly="isReadonly"
           :disabled="disabled"
           @input="phoneData.number = phoneData.number.slice(0, max)"
         />
 
-        <!-- Icons -->
-        <div class="absolute flex text-xl -translate-y-1/2 top-1/2 right-4">
-          <span
-            v-if="!phoneError && phoneData.number.length > 0"
-            class="text-success-500"
-          >
-            <AppIcon icon="bi:check-lg" />
-          </span>
-          <div v-if="icon || iconType" class="text-[#667085]">
-            <AppIcon v-if="icon" :icon="icon" />
-          </div>
-          <span class="text-sm"><slot name="suffix"></slot></span>
+        <!-- Success Icon -->
+        <div
+          v-if="!phoneError && phoneData.number.length > 0"
+          class="absolute right-3 top-1/2 -translate-y-1/2 text-[#2ecc71]"
+        >
+          <AppIcon icon="bi:check-lg" />
         </div>
       </div>
     </div>
 
     <!-- Error / Success -->
-    <span v-if="phoneError" class="block mt-1 text-sm text-danger-500">
+    <span v-if="phoneError" class="block mt-1 text-xs text-[#F04438]">
       {{ phoneError }}
     </span>
     <span
-      v-else-if="!phoneError && phoneData.number.length > 0"
-      class="block mt-1 text-sm text-success-500"
+      v-else-if="!phoneError && phoneData.number.length > 0 && validate"
+      class="block mt-1 text-xs text-[#2ecc71]"
     >
       {{ validate }}
     </span>
@@ -108,7 +115,7 @@
     <!-- Description -->
     <span
       v-if="description"
-      class="block text-[#475467] font-light leading-4 text-xs mt-2"
+      class="block text-[#475467] font-normal leading-4 text-xs mt-1"
     >
       {{ description }}
     </span>
@@ -147,6 +154,8 @@ const props = defineProps({
   type: { type: String, default: "text" },
   isRequired: Boolean,
   isOptional: Boolean,
+  dropdownClass: String,
+  textInputClass: String,
   name: String,
   modelValue: { type: String, default: "" },
   error: String,
@@ -248,33 +257,3 @@ watch(
   }
 );
 </script>
-
-<style scoped>
-.input-control {
-  color: #101828;
-  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
-  border-radius: 8px;
-  border: 1px solid #d0d5dd;
-}
-.has-error .input-control {
-  border-color: #e74c3c;
-}
-.is-valid .input-control {
-  border-color: #2ecc71;
-}
-.text-danger-500 {
-  color: #e74c3c;
-}
-.text-success-500 {
-  color: #2ecc71;
-}
-
-input[type="tel"]::-webkit-outer-spin-button,
-input[type="tel"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-input[type="tel"] {
-  -moz-appearance: textfield;
-}
-</style>

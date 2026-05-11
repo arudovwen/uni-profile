@@ -179,7 +179,6 @@ const onSubmit = handleSubmit(async (values) => {
       emits("refresh");
     }
   } catch (error) {
-    console.log("🚀 ~ onSubmit ~ error:", error);
     toast.error(error.response?.data?.message || "An error occurred");
   } finally {
     isLoading.value = false;

@@ -1,76 +1,90 @@
 <template>
   <NuxtLayout name="auth">
-    <div class="pt-0 lg:pt-0 max-w-[450px] mx-auto items-center grid flex-1">
-      <div class="w-full">
-        <div class="flex items-center justify-center mb-6" v-if="isSent">
-          <AuthSmsNotificationIcon />
+    <div class="w-full max-w-[400px] mx-auto !font-Avenir">
+      <!-- Reset Password Form -->
+      <div v-if="!isSent" class="w-full">
+        <!-- Icon -->
+        <div class="flex justify-center mb-6">
+          <img
+            src="@/assets/images/reset-password.png"
+            alt="Reset Password"
+            class="w-[115px] h-[115px]"
+          />
         </div>
-        <h1
-          :class="`text-[#182230] darks:text-white mb-3 text-3xl font-medium ${
-            isSent ? 'text-center' : ''
-          }`"
-        >
-          {{ isSent ? title2 : title1 }}
-        </h1>
-        <p
-          :class="`mb-[30px] text-base text-[#667085] darks:text-white/80 ${
-            isSent ? 'text-center' : ''
-          }`"
-        >
-          {{ isSent ? text2 : text1 }}
-        </p>
-        <form @submit.prevent="onSubmit" v-if="!isSent">
-          <div class="mb-5">
-            <Textinput
-              iconPosition="left"
-              iconType="email"
-              placeholder=""
-              label="Email address"
-              type="email"
-              v-bind="emailAtt"
-              v-model="email"
-              :error="errors.email"
-            />
-          </div>
 
-          <div class="grid gap-y-[22px] mb-9">
-            <AppButton
-              type="submit"
-              :isLoading="isLoading"
-              :isDisabled="isLoading || !meta.valid"
-              text="Reset Password"
-              btnClass="btn-primary !py-3"
-            />
-          </div>
-          <NuxtLink
-            :to="
-              handleRouting(
-                route,
-                `/${auth || 'auth'}/login${app ? `/${app}` : ''}`
-              )
-            "
-            class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
-          >
-            <AppIcon icon="eva:arrow-back-fill" />
-            <span class="font-normal"> Back to Login </span>
-          </NuxtLink>
-        </form>
-        <div class="pt-5" v-if="isSent">
-          <NuxtLink
-            :to="
-              handleRouting(
-                route,
-                `/${auth || 'auth'}/login${app ? `/${app}` : ''}`
-              )
-            "
-            class="w-full"
-          >
-            <AppButton
-              text="Return to Login"
-              btnClass="btn-primary !py-3 w-full !normal-case"
-            />
-          </NuxtLink>
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">
+            {{ title1 }}
+          </h1>
+          <p class="text-base text-[#5E5E5E] font-[350] max-w-[406px] mx-auto">
+            {{ text1 }}
+          </p>
         </div>
+
+        <!-- Form -->
+        <form @submit.prevent="onSubmit" class="space-y-5">
+          <TextinputInputField
+            v-model="email"
+            name="email"
+            type="email"
+            label="Email Address"
+            placeholder="Enter your email address"
+            :error="errors.email"
+          />
+
+          <AppButton
+            type="submit"
+            text="Continue"
+            :isLoading="isLoading"
+            :isDisabled="isLoading || !meta.valid"
+            btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+          />
+
+          <div class="text-center">
+            <NuxtLink
+              :to="
+                handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)
+              "
+              class="`font-medium text-base !mt-8 block` text-[#475467]"
+            >
+              Go Back
+            </NuxtLink>
+          </div>
+        </form>
+      </div>
+
+      <!-- Success State -->
+      <div v-else class="w-full text-center">
+        <!-- Icon -->
+        <div class="flex justify-center mb-6">
+          <img
+            src="@/assets/images/reset-password.png"
+            alt="Reset Password"
+            class="w-[115px] h-[115px]"
+          />
+        </div>
+
+        <!-- Header -->
+        <div class="mb-8">
+          <h1 class="text-2xl font-[800] text-[#2F2F2F] mb-2">
+            {{ title2 }}
+          </h1>
+          <p class="text-base text-[#475467]">
+            {{ text2 }}
+          </p>
+        </div>
+
+        <!-- Return Button -->
+        <NuxtLink
+          :to="handleRouting(route, `/${auth}/login${app ? `/${app}` : ''}`)"
+          class="block"
+        >
+          <AppButton
+            text="Return to Login"
+            btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+          />
+        </NuxtLink>
       </div>
     </div>
   </NuxtLayout>
@@ -82,18 +96,20 @@ definePageMeta({
 });
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
-
 import { forgotPassword } from "~/services/authservices";
+import { useToast } from "~/composables/useToast";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
-const { app } = useRoute().params;
-const title1 = "Forgot password";
+// Toast
+const toast = useToast();
+
+const { app, auth } = useRoute().params;
+const title1 = "Reset Password";
 const title2 = "Check your email";
 const text1 =
-  "Don’t worry, it happens to the best of us. Provide your registered email address and we’ll get you sorted out.";
+  "Provide your registered email address and we would send you a verification code to reset your password";
 const text2 =
-  "We have sent an account activation link to your email address. Click on the link to activate your account.";
+  "We have sent a password reset link to your email address. Click on the link to reset your password";
 const isSent = ref(false);
 
 const isLoading = ref(false);
@@ -120,19 +136,19 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  forgotPassword({ ...values, subApp: app })
+
+  forgotPassword({ email: values.email, subApp: app })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;
       }
     })
-
     .catch((err) => {
       isLoading.value = false;
-      if (err?.response?.data?.message || err?.response?.data?.Message) {
-        toast.error(
-          err?.response?.data?.message || err?.response?.data?.Message
-        );
+      const message =
+        err?.response?.data?.message || err?.response?.data?.Message;
+      if (message) {
+        toast.error(message);
       }
     });
 });

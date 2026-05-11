@@ -24,10 +24,17 @@ const urls = {
   OXIDE_FLUX_REGISTER: "/v1/onboarding/sign-up",
   OXIDE_CONFIRM_EMAIL: "v1/onboarding/confirm-email",
   OXIDE_ONBOARDING_SIGNUP: "v1/onboarding/sign-up-with-matta-account",
+  SIGN_UP_WITH_MATTA_ORBITAL: "v1/Register/sign-up-with-matta-account",
+  SIGN_UP_WITH_MATTA_FLUX: "v1/onboarding/sign-up-with-matta-account",
+  SIGN_UP_WITH_MATTA_OXIDE_PRO: "v1/Account/sign-up-with-matta",
+  SIGN_UP_WITH_MATTA_POLYMER: "v1/Account/sign-up-with-matta",
 
   FLUX_CONFIRM_EMAIL: "v1/account/confirm-email",
 
-  REGISTER: "/v1/register",
+  SSO_REGISTER: "sso/v1/Register",
+  REGISTER: "v1/Register",
+  MATTA_CONFIRM_EMAIL: "v1/Account/confirm-email",
+  MATTA_RESEND_2FA: "v1/Account/resend-2fa-code",
   ORBITAL_CONFIRM_EMAIL: "v1/account/confirm-email",
 
   //Customers
@@ -64,6 +71,7 @@ const urls = {
   GET_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
   ADD_SUBAPP: "admin/v1/subapplication",
   UPDATE_SUBAPP: "admin/v1/subapplication",
+  DELETE_SUBAPP: (id) => `admin/v1/subapplication/apps/${id}`,
 
   // Invitation
   INVITATION: "admin/v1/Invitation",
@@ -88,13 +96,7 @@ const urls = {
   MARK_NOTIFICATION: "v1/notification/markasviewed",
   MARK_ALL_NOTIFICATION: "v1/notification/markallasviewed",
 
-  // Referral Management
-  GENERATE_REFERRAL_CODE: "admin/v1/referalls/generate-code",
-  CREATE_REFERRAL: "admin/v1/referalls/add",
-  UPDATE_REFERRAL: "admin/v1/referalls",
-  GET_REFERRAL: (id) => `admin/v1/referalls/${id}`,
-  GET_REFERRALS: "admin/v1/referalls/get-all",
-  DELETE_REFERRAL: (id, version = "1") => `admin/v${version}/referalls/delete/${id}`,
-  GET_REFERRAL_LEADERBOARD: 'admin/v1/referalls/leaderboard'
+  // User Apps
+  GET_USER_APPS: (version) => `v${version}/Account/user-apps`,
 };
 export default urls;

@@ -17,9 +17,9 @@ import {
 } from "~/services/userservices"; 
 
 import urls from "~/helpers/url_helpers";
-import { get, ssoPost, ssoGet, ssoDelete } from "../services/api_services";
+import { get, ssoPost, ssoGet, ssoDelete } from "../helpers/api_helpers";
 
-vi.mock("../services/api_services", () => ({
+vi.mock("../helpers/api_helpers", () => ({
   get: vi.fn(),
   ssoPost: vi.fn(),
   ssoGet: vi.fn(),

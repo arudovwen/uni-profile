@@ -27,13 +27,13 @@ import { toast } from "vue3-toastify";
 const props = defineProps(["refDetail"]);
 const authStore = useAuthStore();
 const appInfo = computed(() =>
-  authStore.appList.filter(
+  authStore.appList?.filter(
     (app) =>
       !app.isDisabled &&
       props.refDetail?.assignedApps
         ?.toLowerCase()
-        .includes(app.name?.toLowerCase())
-  )
+        .includes(app.name?.toLowerCase()),
+  ),
 );
 
 function copyToClipboard(app) {
@@ -51,7 +51,7 @@ function copyToClipboard(app) {
     },
     (err) => {
       console.error("Could not copy text: ", err);
-    }
+    },
   );
 }
 </script>

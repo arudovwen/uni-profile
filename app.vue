@@ -7,15 +7,10 @@
 <script setup>
 import { getSubApps } from "~/services/userservices";
 const { encrypt } = useEncryption();
- const mattaProfiles = useCookie(PROFILE_COOKIE_NAME, defaultOptions);
 useHead(
   {
     script: [
-      {
-        src: "https://sdk.monnify.com/plugin/monnify.js",
-
-        defer: true,
-      },
+   
       {
         src: "https://kit.fontawesome.com/c1a534ffdb.js",
         crossorigin: "anonymous",
@@ -31,17 +26,17 @@ useHead(
   },
   {
     mode: "client", // Load the script 'strict-dynamically' on client-side only
-  }
+  },
 );
-console.log({mattaProfiles:mattaProfiles.value});
-
 const authStore = useAuthStore();
 function getData() {
   getSubApps().then((res) => {
     if (res.status === 200) {
-      const rows = res.data.data.map((i) => ({
+      const rows = res?.data?.data?.map((i) => ({
         ...i,
-        url: `${i.url}/auth/validate?token=${encodeURIComponent(encrypt(authStore.jwToken))}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
+        url: `${i.url}/auth/validate?token=${encodeURIComponent(
+          encrypt(authStore.jwToken),
+        )}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
         defaultUrl: i.url,
       }));
       authStore.setAppList(rows);
@@ -59,7 +54,7 @@ html {
   box-sizing: border-box;
 }
 body {
-  font-family: "Onest", sans-serif;
+  font-family: "Avenir", sans-serif;
   color: #475467;
 }
 

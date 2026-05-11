@@ -1,83 +1,70 @@
-import { universalRoutes } from "~/utils/constants";
+import { intialRoute, superadminRoutes, univeralRoutes } from "~/utils/constants";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
-  const mattaAuth = useCookie(AUTH_COOKIE_NAME, defaultOptions);
+  const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
 
   // Check if the user is authenticated
   const isAuthenticated = !!mattaAuth.value;
-  const userCategory = mattaAuth.value?.userCategory ?? null;
 
-  const routeName = to.name || ""; // avoid undefined issues
-
-  // ---- ALWAYS ALLOW UNIVERSAL ROUTES ----
-  if (universalRoutes.includes(routeName)) {
-    return;
-  }
-
-  // ---- AUTHENTICATED USERS ----
+  // Handle authenticated user logic
   if (isAuthenticated) {
-
-    // Prevent looping by avoiding redirect to the same route
-    if (from.name === to.name) return;
-
-    // Prevent authenticated users from visiting auth pages
-    if (routeName.includes("auth")) {
-      if (routeName !== "home") {
-        return navigateTo("/");
-      }
+    // Redirect if the user is trying to access a route with a `continue` query parameter
+    if (to.query.continue) {
+      abortNavigation();
+      handleRedirect(to, { ...mattaAuth.value }, to.params.app);
       return;
     }
 
-    // Allowed route map per user type
-    const access = {
-      3: superadminRoutes,
-      0: adminRoutes,
-      4: adminRoutes,
-      1: userRoutes,
-      2: userRoutes,
-    };
-
-    const allowedRoutes = [
-      ...access[userCategory] ?? [],
-      ...universalRoutes
-    ];
-
-    // Only block if route actually exists AND is not allowed
-    if (routeName && !allowedRoutes.includes(routeName)) {
-      // prevent superadmin loops
-      if (userCategory === 3 && to.path !== "/user-management") {
-        return navigateTo("/user-management");
-      }
-
-      // prevent home loop
-      if (to.path !== "/") {
-        return navigateTo("/");
-      }
+    // Redirect non-superadmin users trying to access superadmin routes
+    if (
+      mattaAuth.value.userCategory !== 3 &&
+      superadminRoutes.includes(to.name)
+    ) {
+      abortNavigation();
+      return navigateTo("/");
     }
 
-    return;
+    // Redirect superadmin users trying to access non-superadmin routes
+    if (
+      mattaAuth.value.userCategory === 3 &&
+      !superadminRoutes.includes(to.name) &&
+      !univeralRoutes.includes(to.name)
+    ) {
+      abortNavigation();
+      return navigateTo("/user-management");
+    }
+
+    // Redirect authenticated users away from auth-related routes
+    if (to?.name?.includes("auth") || to.path?.includes("register")) {
+      const redirectPath = intialRoute[mattaAuth.value.userCategory] || "/";
+      return navigateTo(redirectPath);
+    }
   }
 
-  // ---- UNAUTHENTICATED USERS ----
-  const isAuthRoute = to.path.includes("auth");
-  const isInvitedRoute = to.path.includes("invited-user");
+  // Handle unauthenticated user logic
+  if (!isAuthenticated) {
+    // Redirect unauthenticated users to the login page if they're not already there
+    if (!to.path?.includes("auth") && !to.path?.includes("invited-user") && !to.path?.includes("register")) {
+      abortNavigation();
 
-  if (!isAuthRoute && !isInvitedRoute) {
+      // Create the base URL for redirection
+      let redirectUrl = `/auth/login${
+        to.params.app ? `/${to.params.app}` : ""
+      }`;
 
-    // Prevent redirect loop if already on login
-    if (from.path === to.path) return;
+      // Prepare the query parameters
+      const queryParams = new URLSearchParams(to.query);
 
-    let loginUrl = `/auth/login${to.params.app ? `/${to.params.app}` : ""}`;
+      // Add redirected_from only if to.path is valid
+      if (to.path) {
+        queryParams.set("redirected_from", to.path);
+      }
 
-    const query = new URLSearchParams(to.query);
+      // Append query parameters to the URL
+      redirectUrl += `?${queryParams.toString()}`;
 
-    // Avoid infinite redirects if already redirected
-    if (!query.has("redirected_from")) {
-      query.set("redirected_from", to.fullPath);
+      return navigateTo(redirectUrl);
     }
-
-    loginUrl += `?${query.toString()}`;
-    return navigateTo(loginUrl);
   }
 });

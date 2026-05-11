@@ -12,8 +12,15 @@ export const defaultOptions = {
 export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
 export const PROFILE_COOKIE_NAME = "mattaProfiles_Dev";
 
+export const localAppUrls = {
+  OXI742: "http://localhost:3001",
+  POL628: "http://localhost:3030",
+  ORB789: "http://localhost:3040",
+  FLU722: "http://localhost:3000", 
+}
+
 export const appCodeColorMap = {
-  OXI742: "#1570EF",
+  OXI972: "#1570EF",
   MAT763: "#1570EF",
   MAT678: "#1570EF",
   FLU120: "#021242",
@@ -292,11 +299,6 @@ export const Navigation = [
     key: "profile",
   },
   {
-    name: "Referral Management",
-    url: "/referral-management",
-    key: "referral-management",
-  },
-  {
     name: "Notifications",
     url: "/notifications",
     key: "notifications",
@@ -314,6 +316,7 @@ export const PlatformAdminNavigation = [
     url: "/users-management",
     key: "users-management",
   },
+
 
   // {
   //   name: "Settings",
@@ -333,11 +336,15 @@ export const PlatformAdminNavigation = [
 ];
 export const SuperNavigation = [
   {
+    name: "Dashboard",
+    url: "/",
+    key: "dashboard",
+  },
+  {
     name: "User Management",
     url: "/user-management",
     key: "user-management",
   },
-
   {
     name: "App Management",
     url: "/application-management",
@@ -350,12 +357,6 @@ export const SuperNavigation = [
     key: "audit-logs",
   },
   {
-    name: "Referral Management",
-    url: "/referral-management",
-    key: "referral-management",
-  },
-
-  {
     name: "Profile",
     url: "/profile",
     key: "profile",
@@ -367,37 +368,27 @@ export const superadminRoutes = [
   "user-management-user-detail-id",
   "application-management",
   "application-management-action-id",
-  "referral-management",
-  "referral-management-create",
-  "referral-management-edit-id",
 ];
 
 export const adminRoutes = [
-  "users-management",
+  "user-management",
   "settlements",
   "business-information",
-  "referral-management",
-  "referral-management-create",
-  "referral-management-edit-id",
-  "my-applications",
 ];
 export const userRoutes = [
-  "business-information",
   "security",
   "settlements",
   "notifications",
-  "users-management",
 ];
-export const universalRoutes = [
+export const univeralRoutes = [
+  "",
   "audit-logs",
   "user-management-user-detail-id",
   "account-login-app",
   "account-forgot-password",
   "account-reset-password",
   "account-type-app",
-  "profile",
-  "referral-leaderboard",
-  "notifications",
+  "profile"
 ];
 export const RoleMap = {
   0: "Platform Admin",
@@ -465,12 +456,6 @@ export const OwnerNavigation = [
     key: "audit-logs",
   },
   {
-    name: "Leaderboard",
-    url: "/referral-leaderboard",
-    key: "referral-leaderboard",
-  },
-
-  {
     name: "Notifications",
     url: "/notifications",
     key: "notifications",
@@ -481,9 +466,9 @@ export const nigeriaTypes = [0, 1, 2, 3, 4];
 export const nonNigeriaTypes = [0, 4];
 
 export const intialRoute = {
-  0: "/my-applications",
-  1: "/business-information",
-  2: "/business-information",
-  3: "/user-management",
+  0: "/",
+  1: "/",
+  2: "/",
+  3: "/",
   4: "/",
 };

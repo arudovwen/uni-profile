@@ -1,98 +1,103 @@
 <template>
-  <NuxtLayout name="empty">
-    <div
-      v-if="isVerified"
-      class="min-w-[300px] px-6 py-6 text-center flex flex-row justify-center items-center"
-    >
-      <div class="min-w-[320px] lg:w-[40vw] max-w-[424px]">
-        <div class="flex items-center justify-center w-full">
-          <CircleTick v-if="isResetSuccess" />
-          <SecuritySafeIcon v-else />
-        </div>
-        <h1
-          class="text-[#182230] darks:text-white mb-[6px] mt-4 text-[30px] font-bold text-center"
-        >
-          Reset Password
+  <NuxtLayout name="auth">
+    <div v-if="isVerified" class="w-full max-w-[400px] mx-auto font-Avenir">
+      <!-- Icon -->
+      <div class="flex justify-center mb-8">
+        <img
+          v-if="!isResetSuccess"
+          src="@/assets/images/set-password.png"
+          alt="Set Password"
+          class="w-[115px] h-[115px]"
+        />
+        <CircleTick v-else />
+      </div>
+
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-semibold text-[#2F2F2F] mb-2">
+          {{ isResetSuccess ? "Password Reset" : "Set password" }}
         </h1>
-        <p
-          class="mb-[40px] text-[14px] w-full text-[#666] darks:text-white/80 text-center"
-        >
+        <p class="text-base font-[350] !text-[#475467]">
           {{
             isResetSuccess
               ? "Your password has been successfully reset. You will be automatically redirected to the login page"
-              : "Set your new password"
+              : "Set a new password for your account"
           }}
         </p>
-        <form v-if="!isResetSuccess" @submit.prevent="onSubmit">
-          <div class="mb-5">
-            <Textinput
-              hasicon
-              placeholder=""
-              label="New Password"
-              type="password"
-              v-model="password"
-              v-bind="passwordAtt"
-              :error="errors.password"
-              icon-position="left"
-              iconType="password"
-            />
-          </div>
-          <div class="mb-6">
-            <Textinput
-              hasicon
-              placeholder=""
-              label="Confirm Password"
-              type="password"
-              v-model="confirmPassword"
-              v-bind="confirmPasswordAtt"
-              :error="errors.confirmPassword"
-              icon-position="left"
-              iconType="password"
-            />
-          </div>
-          <div class="mb-6 text-sm font-normal">
-            <span>
-              Didn't receive an OTP,
-              <button
-              type="button"
-                v-if="!isResending"
-                class="pl-1 font-semibold text-primary-500"
-                @click.prevent="resendOtp"
-                :disabled="isResending || countdown > 0"
-              >
-                Click to resend
-              </button>
-              <span v-if="countdown > 0" class="ml-2"
-                >Resend available in {{ countdown }}s</span
-              >
-            </span>
-          </div>
-          <div class="grid gap-y-[22px] mb-9">
-            <AppButton
-              type="submit"
-              :isLoading="isLoading"
-              :isDisabled="isLoading || !meta.valid"
-              text="Set Password"
-              btnClass="btn-primary !py-3"
-            />
-          </div>
-        </form>
-        <div v-else class="grid gap-y-[22px] mb-9">
-          <AppButton
-            type="submit"
-            :isLoading="isLoading"
-            :isDisabled="isLoading"
-            text="Continue"
-            btnClass="btn-primary !py-3"
-          />
-        </div>
+        <p class="text-base font-[350] !text-[#475467] mt-2">
+          {{
+            isResetSuccess
+              ? ""
+              : "Password should be at least 8 characters long with at least a uppercase, lower case, number and special character"
+          }}
+        </p>
+      </div>
+
+      <!-- Form -->
+      <form v-if="!isResetSuccess" @submit.prevent="onSubmit" class="space-y-5">
+        <TextinputInputField
+          v-model="password"
+          name="password"
+          :type="passwordType"
+          label="New Password"
+          placeholder="Enter your new password"
+          :error="errors.password"
+          @toggle-password="togglePasswordVisibility"
+        />
+
+        <TextinputInputField
+          v-model="confirmPassword"
+          name="confirmPassword"
+          :type="confirmPasswordType"
+          label="Confirm Password"
+          placeholder="Confirm your new password"
+          :error="errors.confirmPassword"
+          @toggle-password="toggleConfirmPasswordVisibility"
+        />
+
+        <!-- Resend OTP -->
+        <!-- <div class="text-sm text-[#475467] font-normal">
+          <span>Didn't receive code. </span>
+          <button
+            v-if="!isResending"
+            type="button"
+            class="font-semibold text-[#1570EF] hover:underline disabled:opacity-50"
+            @click.prevent="resendOtp"
+            :disabled="isResending || countdown > 0"
+          >
+            Resend code
+          </button>
+          <span v-if="countdown > 0" class="font-semibold text-[#1570EF]">
+            Resend available in {{ countdown }}s
+          </span>
+        </div> -->
+
+        <AppButton
+          type="submit"
+          text="Set Password"
+          :isLoading="isLoading"
+          :isDisabled="isLoading || !meta.valid"
+          btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+        />
+      </form>
+
+      <!-- Success State -->
+      <div v-else class="space-y-4">
+        <AppButton
+          text="Continue"
+          :isLoading="isLoading"
+          :isDisabled="isLoading"
+          btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+        />
+      </div>
+
+      <!-- Back Link -->
+      <div class="text-center mt-6">
         <NuxtLink
           :to="`/auth/login${app ? `/${app}` : ''}`"
-          class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
-          @click="emit('close')"
+          class="text-base font-medium text-[#475467] hover:text-[#1570EF]"
         >
-          <AppIcon icon="eva:arrow-back-fill" />
-          <span class="font-normal"> Back </span>
+          Go Back
         </NuxtLink>
       </div>
     </div>
@@ -142,6 +147,8 @@ const route = useRoute();
 const router = useRouter();
 const countdown = ref(0);
 const isResending = ref(false);
+const passwordType = ref("password");
+const confirmPasswordType = ref("password");
 
 const formValues = {
   confirmPassword: "",
@@ -174,8 +181,18 @@ const { handleSubmit, defineField, errors, meta } = useForm({
 const [password, passwordAtt] = defineField("password");
 const [confirmPassword, confirmPasswordAtt] = defineField("confirmPassword");
 
+const togglePasswordVisibility = () => {
+  passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
+
+const toggleConfirmPasswordVisibility = () => {
+  confirmPasswordType.value =
+    confirmPasswordType.value === "password" ? "text" : "password";
+};
+
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
+
   resetPassword(values)
     .then((res) => {
       if (res.status === 200) {

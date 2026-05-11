@@ -7,12 +7,9 @@ import {
   ssoGet,
   ssoPut,
   ssoDelete,
-} from "../services/api_services";
-import store from "../store";
+} from "../helpers/api_helpers";
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
+const config = {};
 //Authentication
 
 export async function getUserInfo() {
@@ -40,6 +37,14 @@ export async function editSubApp(data) {
   return await ssoPut(`${urls.UPDATE_SUBAPP}`, data);
 }
 
+export async function deleteSubApp(id) {
+  return await ssoDelete(`${urls.DELETE_SUBAPP(id)}`, {});
+}
+
+export async function uploadAppLogo(base64Data) {
+  return await ssoPost(`${urls.UPLOAD_FILE}`, { base64: base64Data });
+}
+
 export async function adminToggleAccess(data) {
   return await ssoPost(`${urls.REGISTER_APP_REVOKE}`, data);
 }
@@ -62,7 +67,7 @@ export async function delSingleInvite(id) {
 export async function getAllinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {}
+    {},
   );
 }
 
@@ -77,15 +82,15 @@ export async function toggleUserStatus(email) {
 export async function getOwnerinvites(payload) {
   return await ssoGet(
     `${urls.INVITATION}/get-invites?${new URLSearchParams(payload)}`,
-    {}
+    {},
   );
 }
 export async function getCentralAdminUsers(payload) {
   return await ssoGet(
     `${urls.CENRTAL_ADMIN_GET_USERS}?${new URLSearchParams(
-      cleanObject(payload)
+      cleanObject(payload),
     )}`,
-    {}
+    {},
   );
 }
 
@@ -121,94 +126,10 @@ export async function delOwnerInvite(id) {
   return await ssoPost(`v1/owner/invites/cancel/${id}`, {});
 }
 
-export async function generateReferralCode() {
-  return await ssoGet(urls.GENERATE_REFERRAL_CODE, config);
+export async function updateMemberAccess(data) {
+  return await ssoPost(`${urls.OWNERS_REGISTER_MEMBER}`, data);
 }
 
-export async function createReferral(data) {
-  return await ssoPost(urls.CREATE_REFERRAL, data);
-}
-
-export async function updateReferral(data) {
-  return await ssoPut(urls.UPDATE_REFERRAL, data);
-}
-
-export async function getReferral(id) {
-  return await ssoGet(urls.GET_REFERRAL(id), {});
-}
-
-export async function getReferrals(queryParams) {
-  return await ssoGet(
-    `${urls.GET_REFERRALS}?${new URLSearchParams(queryParams)}`,
-    {}
-  );
-}
-
-export async function getReferralByCode(referralCode) {
-  return await ssoPost(`admin/v1/referalls/get-all`, {
-    referralCode,
-  });
-}
-export async function getReferralLeaderboard(queryParams) {
-  return await ssoPost(
-    `${urls.GET_REFERRAL_LEADERBOARD}`,
-    cleanObject(queryParams),
-    {}
-  );
-}
-
-export async function updateReferralStatus(referralCode, status) {
-  return await ssoPost(`admin/v1/referalls/update-status`, {
-    referralCode,
-    status,
-  });
-}
-
-export async function deleteReferral(id, version = "1") {
-  return await ssoDelete(urls.DELETE_REFERRAL(id, version), {});
-}
-
-export async function getDepartments(queryParams) {
-  return await ssoGet(
-    `admin/v1/referalls/department/get-all?${new URLSearchParams(
-      cleanObject(queryParams)
-    )}`,
-    {}
-  );
-}
-
-export async function addDepartment(payload) {
-  return await ssoPost(`admin/v1/referalls/department/add`, payload);
-}
-export async function updateDepartment(payload) {
-  return await ssoPost(`admin/v1/referalls/department/edit`, payload);
-}
-
-export async function deleteDepartment(id) {
-  return await ssoDelete(`admin/v1/referalls/department/delete/${id}`, {});
-}
-
-export async function getRefferralByUser() {
-  return await ssoGet(`admin/v1/referalls/get-referral-by-user`, {});
-}
-export async function checkReferralCodeUniqueness(
-  referralCode,
-  excludeId = null
-) {
-  try {
-    const response = await getReferrals({});
-    const codes = response.data?.data || [];
-
-    // Check if code exists (case-insensitive)
-    const exists = codes.some(
-      (item) =>
-        item.referralCode?.toLowerCase() === referralCode.toLowerCase() &&
-        (!excludeId || item.id !== excludeId)
-    );
-
-    return !exists; // Return true if unique, false if duplicate
-  } catch (error) {
-    console.error("Error checking referral code uniqueness:", error);
-    return false;
-  }
+export async function ownerToggleAppAccess(data) {
+  return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
 }

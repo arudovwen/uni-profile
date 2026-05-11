@@ -27,49 +27,162 @@ export default defineNuxtConfig({
     "nuxt-vue3-google-signin",
     "nuxt-simple-sitemap",
     "@pinia-plugin-persistedstate/nuxt",
-    "nuxt-swiper",
     "@nuxt/image",
-    // "nuxt-security",
+    "nuxt-security",
     "@nuxt/devtools",
     "nuxt-ssr-cache",
     "@vite-pwa/nuxt",
     "@nuxt/test-utils/module",
     "nuxt-svgo",
+    "@primevue/nuxt-module",
   ],
 
+  veeValidate: {
+    autoImports: true,
+    componentNames: {
+      Form: "VeeForm",
+      Field: "VeeField",
+      FieldArray: "VeeFieldArray",
+      ErrorMessage: "VeeErrorMessage",
+    },
+  },
+
+  primevue: {
+    options: {
+      unstyled: true,
+    },
+  },
+
   security: {
-    hidePoweredBy: false,
+    hidePoweredBy: true,
+    // Disable server-side middleware (not applicable in SPA mode with ssr: false)
+    rateLimiter: false,
+    requestSizeLimiter: false,
+    xssValidator: false,
+    corsHandler: false,
+    allowedMethodsRestricter: false,
+    removeLoggers: false,
     headers: {
       crossOriginEmbedderPolicy: "unsafe-none",
       contentSecurityPolicy: {
-        "img-src": [
+        // Form submissions
+        "form-action": [
           "'self'",
-          "https:",
-          "data:",
-          "https://gateway.matta.trade",
-          "https://res.cloudinary.com",
+          "https://www.facebook.com",
+          "https://www.google.com",
+          "https://*.matta.trade",
         ],
+
+        // Scripts — self, Facebook, and all Google services
         "script-src": [
           "'self'",
-          "https:",
           "'unsafe-inline'",
-          "'strict-dynamic'",
-          "'nonce-{{nonce}}'",
+          "'unsafe-eval'",
+          "https://*.matta.trade",
+          // Google Tag Manager
+          "https://www.googletagmanager.com",
+          // Google Analytics / gtag.js
+          "https://www.google-analytics.com",
+          "https://ssl.google-analytics.com",
+          // Google Ads & Conversion tracking
+          "https://www.googleadservices.com",
+          "https://googleads.g.doubleclick.net",
+          // Google APIs (Maps, etc.)
+          "https://maps.googleapis.com",
+          // Facebook Pixel
+          "https://connect.facebook.net",
+          // IP Geolocation (already in head)
+          "https://cdn.jsdelivr.net",
+          // Microsoft Clarity
+          "https://www.clarity.ms",
         ],
+
+        // XHR / fetch / WebSocket connections
+        "connect-src": [
+          "'self'",
+          // Matta APIs
+          "https://*.matta.trade",
+          // Google Analytics & GTM
+          "https://www.google-analytics.com",
+          "https://analytics.google.com",
+          "https://stats.g.doubleclick.net",
+          "https://www.googletagmanager.com",
+          // Google Ads
+          "https://www.googleadservices.com",
+          "https://googleads.g.doubleclick.net",
+          // Facebook
+          "https://www.facebook.com",
+          "https://mpc-prod-25-s6uit34pua-wl.a.run.app", // Facebook/Google event processing
+          // Microsoft Clarity
+          "https://www.clarity.ms",
+          // Iconify API fallback (icons not found in local @iconify-json bundles)
+          "https://api.iconify.design",
+          "https://api.simplesvg.com",
+          "https://api.unisvg.com",
+        ],
+
+        // Images (pixel tracking beacons etc.)
+        "img-src": [
+          "'self'",
+          "data:",
+          "https:",
+          // Matta
+          "https://*.matta.trade",
+          "https://res.cloudinary.com",
+          "https://matta.s3.us-east-1.amazonaws.com",
+          // Google tracking pixels
+          "https://www.google-analytics.com",
+          "https://www.googletagmanager.com",
+          "https://www.google.com",
+          "https://googleads.g.doubleclick.net",
+          "https://www.googleadservices.com",
+          // Facebook pixel
+          "https://www.facebook.com",
+          "https://mpc-prod-25-s6uit34pua-wl.a.run.app",
+          "https://demo-1.conversionsapigateway.com",
+        ],
+
+        // iFrames (GTM tag preview, Google Ads conversion, reCAPTCHA)
+        "frame-src": [
+          "'self'",
+          "https://*.matta.trade",
+          "https://www.googletagmanager.com",
+          "https://td.doubleclick.net",
+          "https://www.google.com",
+          "https://www.youtube.com",
+          "https://www.facebook.com",
+          "https://*.facebook.net",
+          "https://*.facebook.com",
+        ],
+
+        // Web fonts
+        "font-src": [
+          "'self'",
+          "data:",
+          "https://fonts.gstatic.com",
+          "https://unicons.iconscout.com",
+        ],
+
+        // Stylesheets
+        "style-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com",
+          "https://unicons.iconscout.com",
+        ],
+
         "upgrade-insecure-requests": true,
       },
-      xFrameOptions: "deny",
+      xFrameOptions: "DENY",
     },
   },
 
   runtimeConfig: {
     public: {
+      environment: process.env.NODE_ENV,
       API_BASE_URL: process.env.API_BASE_URL,
+      SSO_BASE_URL: process.env.SSO_BASE_URL,
       APP_BASE_URL: process.env.APP_BASE_URL,
-      APP_MONNIFYAPIKEY: process.env.APP_MONNIFYAPIKEY,
-      APP_MONNIFYCONTRACTCODE: process.env.APP_MONNIFYCONTRACTCODE,
-      APP_MONNIFYISTEST: process.env.APP_MONNIFYISTEST,
-      APP_MONNIFYISTESTMODE: process.env.APP_MONNIFYISTESTMODE,
       TINY_MCE: process.env.APP_TINYMCE_KEY,
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
       encryptionKey: process.env.ENCRYPTION_KEY,
@@ -93,8 +206,7 @@ export default defineNuxtConfig({
   plugins: ["~/plugins/axios.js"],
 
   googleSignIn: {
-    clientId:
-      "56799988480-4d51egljupar9la4djc2tknjodn2vsj5.apps.googleusercontent.com",
+    clientId: process.env.GOOGLE_CLIENT_ID || "",
   },
 
   colorMode: {
@@ -113,8 +225,7 @@ export default defineNuxtConfig({
 
   googleFonts: {
     families: {
-      // Rubik: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntRubiker font
-      Onest: [100, 200, 300, 400, 500, 600, 700, 800], // Enable the IntRubiker font
+      // Avenir is loaded locally from /public/fonts/
     },
   },
 
@@ -229,7 +340,6 @@ export default defineNuxtConfig({
         { name: "robots", content: "index, follow" }, // Control search engine indexing
         { name: "theme-color", content: "#1570EF" }, // Set the theme color for mobile browsers
       ],
-      script: [{ src: "https://sdk.monnify.com/plugin/monnify.js" }],
     },
   },
 

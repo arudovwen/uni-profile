@@ -53,16 +53,16 @@ watch(
         role: "superadmin",
       }));
   },
-  { deep: true }
+  { deep: true },
 );
 
 watchEffect(() => {
-    selectedApps.value.length > 0 &&  emits("getData", selectedApps.value);
+  selectedApps.value.length > 0 && emits("getData", selectedApps.value);
 });
 
 onMounted(() => {
   // Assuming authStore.appList is populated with the list of apps
-  apps.value = authStore.appList.map((app) => ({
+  apps.value = authStore.appList?.map((app) => ({
     ...app,
     appCode: false, // Initialize appCode as false (unselected)
     role: "superadmin", // Initialize role as empty

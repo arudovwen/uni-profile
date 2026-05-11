@@ -18,7 +18,6 @@
           :input-classes="`otp-input w-12 h-12 flex items-center border border-[#344054] focus:border-matta-black/50 outline-none mx-1 rounded-md text-center text-sm `"
           separator=" "
           :num-inputs="numInput"
-          :should-auto-focus="true"
           input-type="letter-numeric"
           :conditionalClass="['one', 'two', 'three', 'four']"
           :placeholder="['', '', '', '']"

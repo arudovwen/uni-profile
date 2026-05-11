@@ -1,10 +1,6 @@
 import urls from "../helpers/url_helpers";
-import { get, post, del, put, walletGet, walletDelete, walletPut, walletPost } from "../services/api_services";
-import store from "../store";
-
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
+import { get, post, del, put, walletGet, walletDelete, walletPut, walletPost } from "../helpers/api_helpers";
+const config = {};
 
 export const viewSettlement = () => {
   return walletGet(`${urls.VIEW_SETTLEMENT}`, config);

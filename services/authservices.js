@@ -1,6 +1,13 @@
 import urls from "../helpers/url_helpers";
-import { ssoPost } from "../services/api_services";
-
+import {
+  ssoPost,
+  ssoGet,
+  orbitalPost,
+  oxideProPost,
+  fluxPost,
+  oxidePost,
+  polymerPost,
+} from "../helpers/api_helpers";
 //Authentication
 export async function loginUser(user, config = {}) {
   return await ssoPost(urls.LOGIN_USER, cleanObject(user), config);
@@ -46,6 +53,50 @@ export async function fluxConfirmemail(data, config = {}) {
 export async function confirmRegister(data, config = {}) {
   return await ssoPost(`${urls.ORBITAL_CONFIRM_EMAIL}`, data, config);
 }
+
+// Matta Register endpoint
 export async function registerUser(user, config = {}) {
+  // return await mattaPost(urls.REGISTER, user, config);
   return await ssoPost(urls.REGISTER, user, config);
+}
+
+// Confirm Email endpoint (POST with email and code)
+export async function confirmEmail(email, code, config = {}) {
+  return await ssoPost(urls.MATTA_CONFIRM_EMAIL, { code, email }, config);
+}
+
+// Matta Resend 2FA code endpoint
+export async function resendEmailVerification(email, config = {}) {
+  return await ssoPost(urls.MATTA_RESEND_2FA, { email }, config);
+}
+
+export async function signUpWithMatta(data, config = {}) {
+  return await ssoPost(`${urls.SIGN_UP_WITH_MATTA}`, data, config);
+}
+
+export async function signUpWithMattaOrbital(data, config = {}) {
+  return await orbitalPost(`${urls.SIGN_UP_WITH_MATTA_ORBITAL}`, data, config);
+}
+
+export async function signUpWithMattaFlux(data, config = {}) {
+  return await fluxPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
+}
+export async function signUpWithMattaOxidePro(data, config = {}) {
+  return await oxideProPost(
+    `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,
+    data,
+    config,
+  );
+}
+
+export async function signUpWithMattaPolymer(data, config = {}) {
+  return await polymerPost(`${urls.SIGN_UP_WITH_MATTA_POLYMER}`, data, config);
+}
+
+export async function getUserApps(version = "1", params = {}, config = {}) {
+  const queryString = new URLSearchParams(params).toString();
+  return await ssoGet(
+    `${urls.GET_USER_APPS(version)}${queryString ? `?${queryString}` : ""}`,
+    config,
+  );
 }

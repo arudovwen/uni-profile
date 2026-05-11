@@ -2,7 +2,7 @@
   <NuxtLayout name="auth">
     <div class="pt-0 lg:pt-0 max-w-[450px] mx-auto items-center grid flex-1">
       <div class="w-full">
-        <div class="flex items-center justify-center mb-6" v-if="isSent">
+        <div class="mb-6 justify-center items-center flex" v-if="isSent">
           <AuthSmsNotificationIcon />
         </div>
         <h1
@@ -47,7 +47,7 @@
           </div>
           <NuxtLink
             :to="handleRouting(route, `/auth/login`)"
-            class="flex items-center justify-center mx-auto text-sm font-semibold gap-x-2"
+            class="flex items-center gap-x-2 justify-center mx-auto font-semibold text-sm"
           >
             <AppIcon icon="eva:arrow-back-fill" />
             <span class="font-normal" :style="{ color: color }">
@@ -77,18 +77,19 @@ definePageMeta({
 });
 import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
-
 import { forgotPassword } from "~/services/authservices";
+import { useToast } from "~/composables/useToast";
 import SmsNotificationIcon from "~/components/Auth/SmsNotificationIcon.vue";
 
-const { encrypt } = useEncryption();
+// Toast
+const toast = useToast();
+
 const { app } = useRoute().params;
 const color = appCodeColorMap[app] || "#1570EF";
 const title1 = "Forgot password";
 const title2 = "Check your email";
 const text1 =
-  "Don’t worry, it happens to the best of us. Provide your registered email address and we’ll get you sorted out.";
+  "Don't worry, it happens to the best of us. Provide your registered email address and we'll get you sorted out.";
 const text2 =
   "We have sent an account activation link to your email address. Click on the link to activate your account.";
 const isSent = ref(false);
@@ -117,21 +118,18 @@ const router = useRouter();
 
 const onSubmit = handleSubmit((values) => {
   isLoading.value = true;
-  forgotPassword({
-    email: encrypt(values.email),
-  })
+
+  forgotPassword({ email: values.email })
     .then((res) => {
       if (res.status === 200) {
         isSent.value = true;
       }
     })
-
     .catch((err) => {
       isLoading.value = false;
-      if (err?.response?.data?.message || err?.response?.data?.Message) {
-        toast.error(
-          err?.response?.data?.message || err?.response?.data?.Message
-        );
+      const message = err?.response?.data?.message || err?.response?.data?.Message;
+      if (message) {
+        toast.error(message);
       }
     });
 });

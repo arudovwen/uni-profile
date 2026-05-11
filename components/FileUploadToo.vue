@@ -1,7 +1,31 @@
 <template>
   <div class="w-full">
+    <!-- Link Style Variant -->
+    <button
+      v-if="isLinkOnly"
+      type="button"
+      @click="triggerFileInput"
+      class="text-primary-[#667085] text-sm font-medium hover:underlin focus:outline-none"
+    >
+      <input
+        ref="fileInputRef"
+        type="file"
+        class="hidden"
+        @change="
+          (e) => {
+            multiple ? handleMultiple(e) : handleEvent(e);
+          }
+        "
+        :accept="accept"
+        :multiple="multiple"
+      />
+      {{ linkText || "Upload file" }}
+    </button>
+
+    <!-- Standard Upload Variant -->
     <label
-      class="flex-1 rounded-lg py-3 px-6 text-sm w-full border border-[#E4E7EC] flex items-center gap-x-3"
+      v-else
+      class="flex-1 rounded-lg py-3 px-6 text-sm w-full border border-[#E4E7EC] flex items-center gap-x-3 cursor-pointer"
     >
       <input
         ref="fileInputRef"
@@ -66,6 +90,14 @@ const props = defineProps({
   lClass: {
     default: " max-w-[300px] xl:max-w-[380px]",
   },
+  isLinkOnly: {
+    type: Boolean,
+    default: false,
+  },
+  linkText: {
+    type: String,
+    default: "Upload file",
+  },
 });
 const emits = defineEmits(["update:modelValue"]);
 
@@ -81,7 +113,10 @@ function handleEvent(e) {
   // Add more allowed extensions if needed
   const fileExtension = file.name.split(".").pop().toLowerCase();
 
-  if (!props.accept.split(", ").includes(fileExtension)) {
+  // Split by comma with optional whitespace to handle both "jpg, jpeg, png" and "jpg,jpeg,png"
+  const acceptedFormats = props.accept.split(/,\s*/).map(format => format.trim());
+
+  if (!acceptedFormats.includes(fileExtension)) {
     // Show an error message or handle accordingly
     toast.error("Invalid file type. Please upload a document.");
     return;
@@ -123,7 +158,10 @@ function handleMultiple(e) {
 
     const fileExtension = file.name.split(".").pop().toLowerCase();
 
-    if (!props.accept.split(",").includes(fileExtension)) {
+    // Split by comma with optional whitespace to handle both "jpg, jpeg, png" and "jpg,jpeg,png"
+    const acceptedFormats = props.accept.split(/,\s*/).map(format => format.trim());
+
+    if (!acceptedFormats.includes(fileExtension)) {
       // Show an error message or handle accordingly
       toast.error("Invalid file type. Please upload a document.");
       return;

@@ -1,14 +1,95 @@
 import Vue3Toastify, { toast } from "vue3-toastify";
 import "vue3-toastify/dist/index.css";
+import { h } from "vue";
+
+// Custom success icon (rounded square with checkmark)
+const SuccessIcon = () =>
+  h(
+    "svg",
+    {
+      width: "24",
+      height: "24",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+    },
+    [
+      h("path", {
+        d: "M7.80957 2.5H16.1904C17.9108 2.50008 19.2233 3.01135 20.1045 3.89355C20.9856 4.77581 21.495 6.08836 21.4902 7.80859V16.1904C21.4901 17.9107 20.9792 19.2239 20.0967 20.1064C19.2141 20.9891 17.9003 21.5 16.1797 21.5H7.80957C6.08923 21.4999 4.77604 20.9891 3.89355 20.1055C3.01097 19.2217 2.5 17.9056 2.5 16.1797V7.80957C2.50009 6.08922 3.011 4.77611 3.89355 3.89355C4.77611 3.011 6.08922 2.50009 7.80957 2.5ZM17.1338 8.28613C16.6485 7.80092 15.8515 7.80092 15.3662 8.28613L10.5801 13.0723L8.63379 11.126C8.14855 10.6409 7.35145 10.6409 6.86621 11.126C6.38099 11.6112 6.38107 12.4083 6.86621 12.8936L9.69629 15.7236C9.92899 15.9563 10.246 16.0898 10.5801 16.0898C10.9142 16.0898 11.2312 15.9563 11.4639 15.7236L17.1396 10.0479C17.6137 9.5574 17.6223 8.77464 17.1338 8.28613Z",
+        fill: "white",
+        stroke: "white",
+      }),
+    ]
+  );
+
+// Custom error icon (hexagon with exclamation)
+const ErrorIcon = () =>
+  h(
+    "svg",
+    {
+      width: "24",
+      height: "24",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      xmlns: "http://www.w3.org/2000/svg",
+    },
+    [
+      h("path", {
+        d: "M10.668 2.85449C11.495 2.38188 12.5058 2.3823 13.3203 2.85254L19.2598 6.2832C20.0771 6.76499 20.5813 7.63205 20.5898 8.58398V15.4199C20.5898 16.3723 20.0839 17.2466 19.2695 17.7168L13.332 21.1455C12.505 21.6181 11.4942 21.6177 10.6797 21.1475L4.74023 17.7168C3.92325 17.2352 3.41992 16.3595 3.41992 15.4199V8.58008L3.42578 8.40234C3.48043 7.57872 3.91274 6.83047 4.59082 6.37598L4.74023 6.2832L10.667 2.85352L10.668 2.85449ZM12.9814 15.1104C12.5643 14.753 11.9628 14.6461 11.4404 14.8633C11.2375 14.9414 11.0858 15.0503 10.9551 15.168L10.9453 15.1768L10.9365 15.1865C10.6475 15.4755 10.5 15.865 10.5 16.25C10.5 16.4297 10.5274 16.6279 10.6084 16.8223L10.6152 16.8379L10.623 16.8535C10.6982 17.0038 10.7914 17.1542 10.918 17.2949L10.9355 17.3145L10.9551 17.332C11.083 17.4471 11.2313 17.5532 11.4277 17.6309V17.6318C11.4319 17.6336 11.4362 17.635 11.4404 17.6367V17.6357C11.6086 17.7042 11.7991 17.75 12 17.75C12.3976 17.75 12.7763 17.6007 13.0635 17.3135L13.0732 17.3047L13.082 17.2949C13.2085 17.1544 13.3094 16.9962 13.3818 16.8223C13.4531 16.6512 13.5 16.4558 13.5 16.25C13.5 16.0442 13.4531 15.8488 13.3818 15.6777H13.3809C13.3032 15.4813 13.1971 15.333 13.082 15.2051L13.0732 15.1953L13.0635 15.1865L12.9814 15.1104ZM12 6.5C11.3139 6.5 10.75 7.06386 10.75 7.75V13C10.75 13.6861 11.3139 14.25 12 14.25C12.6861 14.25 13.25 13.6861 13.25 13V7.75C13.25 7.06388 12.6861 6.50004 12 6.5Z",
+        fill: "white",
+        stroke: "white",
+      }),
+    ]
+  );
+
+// Default autoClose duration in ms
+const AUTO_CLOSE_DURATION = 3500;
+
+// Custom toast wrapper with styling
+const customToast = {
+  success: (message, options = {}) => {
+    return toast.success(message, {
+      icon: SuccessIcon,
+      autoClose: AUTO_CLOSE_DURATION,
+      style: {
+        background: "#5CB85C",
+        color: "white",
+        fontWeight: "500",
+      },
+      ...options,
+    });
+  },
+  error: (message, options = {}) => {
+    return toast.error(message, {
+      icon: ErrorIcon,
+      autoClose: AUTO_CLOSE_DURATION,
+      style: {
+        background: "#E57373",
+        color: "white",
+        fontWeight: "500",
+      },
+      ...options,
+    });
+  },
+  info: (message, options = {}) => {
+    return toast.info(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
+  },
+  warning: (message, options = {}) => {
+    return toast.warning(message, { autoClose: AUTO_CLOSE_DURATION, ...options });
+  },
+};
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(Vue3Toastify, {
     autoClose: 3500,
     clearOnUrlChange: false,
     multiple: false,
+    hideProgressBar: true,
+    closeButton: false,
+    toastClassName: "custom-toast",
   });
 
   return {
-    provide: { toast },
+    provide: { toast: customToast },
   };
 });

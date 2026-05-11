@@ -1,62 +1,81 @@
+/**
+ * @typedef {import('#app').CookieOptions} CookieOptions
+ * @typedef {import('#app').CookieRef} CookieRef
+ */
+
 import CryptoJS from "crypto-js";
 
-export const useEncryptedCookie = (key, options = {}) => {
-  const config = useRuntimeConfig();
-  const secretKey = config.public.encryptionKey;
+/** @type {CookieOptions} */
+const defaultOptions = {
+  sameSite: "lax",
+  path: "/",
+  secure: process.env.NODE_ENV === "production",
+};
 
-  if (!secretKey) {
-    console.error("Encryption key is missing");
+const ENCRYPTED_PREFIX = "ENC:";
+
+const tryParseJson = (value) => {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+};
+
+const encryptValue = (value, secretKey) => {
+  if (value === null || value === undefined) return value;
+
+  const stringValue =
+    typeof value === "string" ? value : JSON.stringify(value);
+
+  return `${ENCRYPTED_PREFIX}${CryptoJS.AES.encrypt(stringValue, secretKey).toString()}`;
+};
+
+const decryptValue = (value, secretKey) => {
+  if (value === null || value === undefined) return value;
+  if (typeof value !== "string") return value;
+  if (!value.startsWith(ENCRYPTED_PREFIX)) {
+    return tryParseJson(value);
   }
 
-  const cookie = useCookie(key, {
-    encode: (value) => value, // We'll handle manually
-    decode: (value) => value,
+  try {
+    const encrypted = value.slice(ENCRYPTED_PREFIX.length);
+    const bytes = CryptoJS.AES.decrypt(encrypted, secretKey);
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+    return tryParseJson(decrypted);
+  } catch {
+    return tryParseJson(value);
+  }
+};
+
+/**
+ * @param {string} key
+ * @param {Record<string, any>} [options]
+ * @returns {CookieRef<any>}
+ */
+export const useEncryptedCookie = (key, options = {}) => {
+  const config = useRuntimeConfig();
+  const secretKey = config?.public?.encryptionKey;
+  const isEncryptionEnabled = typeof secretKey === "string" && secretKey.length > 0;
+
+  if (!isEncryptionEnabled && process.client) {
+    console.warn(
+      `useEncryptedCookie(${key}): encryption key is missing. Cookie values will be stored without encryption.`
+    );
+  }
+
+  return useCookie(key, {
+    ...defaultOptions,
     ...options,
+    encode: (value) => {
+      if (value === null || value === undefined) return value;
+      if (!isEncryptionEnabled) return typeof value === "string" ? value : JSON.stringify(value);
+      return encryptValue(value, secretKey);
+    },
+    decode: (value) => {
+      if (value === null || value === undefined) return value;
+      if (!isEncryptionEnabled) return tryParseJson(value);
+      return decryptValue(value, secretKey);
+    },
   });
-
-  // Encrypt any value (string, number, object, array)
-  const encryptValue = (value) => {
-    if (!secretKey || value == null) return value;
-
-    const stringValue =
-      typeof value === "string" ? value : JSON.stringify(value);
-
-    return CryptoJS.AES.encrypt(stringValue, secretKey).toString();
-  };
-
-  // Decrypt — return parsed object if valid JSON
-  const decryptValue = (encrypted) => {
-    if (!secretKey || !encrypted) return encrypted;
-
-    try {
-      const bytes = CryptoJS.AES.decrypt(encrypted, secretKey);
-      const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-
-      // Check if decrypted is JSON
-      try {
-        return JSON.parse(decrypted);
-      } catch {
-        return decrypted; // plain string
-      }
-    } catch {
-      return encrypted; // fallback if data wasn't encrypted
-    }
-  };
-
-  return {
-    // Returns decrypted value
-    get value() {
-      return decryptValue(cookie.value);
-    },
-
-    // Encrypts and sets value
-    set value(val) {
-      cookie.value = encryptValue(val);
-    },
-
-    // For explicit clearing
-    clear() {
-      cookie.value = null;
-    },
-  };
 };

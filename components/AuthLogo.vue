@@ -3,9 +3,14 @@
     v-if="appInfo?.logoUrl"
     :src="appInfo.logoUrl"
     :alt="appInfo.name"
-    class="w-[150px] h-auto"
+    class="w-[150px] !h-[35px] object-contain"
   />
-  <img v-else src="@/assets/apps/mat.png" alt="sso logo" class="w-auto h-10" />
+  <img
+    v-else
+    src="@/assets/apps/mat.png"
+    alt="sso logo"
+    class="w-auto h-[25px]"
+  />
 </template>
 
 <script setup>
@@ -14,7 +19,7 @@ const { appCode } = useRoute().query;
 const authStore = useAuthStore();
 
 const appInfo = computed(() =>
-  authStore.appList.find((i) => i.code === app || i.code === appCode)
+  authStore.appList?.find((i) => i.code === app || i.code === appCode),
 );
 defineProps({
   className: {

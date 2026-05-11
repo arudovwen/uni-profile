@@ -1,207 +1,144 @@
 <template>
+  <!-- Step 1: Login Form -->
   <NuxtLayout v-if="step === 1" name="auth">
-    <div class="pt-10 lg:pt-0 w-full lg:w-[450px] mx-auto">
-      <h1
-        class="text-[#021242] darks:text-white mb-2 text-2xl lg:text-3xl font-medium w-full"
-      >
-        Log In {{ authStore.appList.find((i) => i.code === app)?.name ?? "" }}
-      </h1>
-      <p class="mb-8 text-base text-[#475467] darks:text-white/80">
-        Welcome Back! Please enter your details
-      </p>
-      <form @submit.prevent="onSubmit">
-        <div class="mb-5">
-          <TextinputTwo
-            iconType="email"
-            placeholder=""
-            label="Email address"
-            type="email"
-            name="email"
-            icon-position="left"
-            v-bind="emailAtt"
-            v-model="email"
-            :error="errors.email"
-          />
-        </div>
+    <div class="w-full max-w-[400px] mx-auto font-Avenir">
+      <!-- Header -->
+      <div class="text-center mb-[41px]">
+        <h1 class="text-2xl font-[800] text-[#2F2F2F] mb-2">
+          Welcome back! 👋
+        </h1>
+        <p class="text-base text-[#475467]">
+          Login to your account to continue
+        </p>
+      </div>
 
-        <div class="mb-5">
-          <TextinputTwo
-            placeholder=""
-            iconType="password"
-            label="Password"
-            type="password"
-            types="password"
-            name="password"
-            v-model="password"
-            icon-position="left"
-            v-bind="passwordAtt"
-            :hasicon="true"
-            :error="errors.password"
-          />
-        </div>
+      <!-- Form -->
+      <form @submit.prevent="onSubmit" class="space-y-5">
+        <TextinputInputField
+          v-model="email"
+          name="email"
+          type="email"
+          label="Email Address"
+          placeholder="Enter your email address"
+          :error="errors.email"
+        />
 
-        <span
-          class="block mb-10 text-sm darks:text-white/80"
-          :style="{ color }"
+        <TextinputInputField
+          v-model="password"
+          name="password"
+          :type="passwordType"
+          label="Password"
+          placeholder="Enter your password"
+          :error="errors.password"
+          @toggle-password="togglePassword"
+        />
+
+        <NuxtLink
+          :to="forgotPasswordLink"
+          class="block text-sm font-medium text-[#344054] !mt-4"
         >
-          <NuxtLink :to="forgotPasswordLink" class="font-medium"
-            >Forgot password?</NuxtLink
-          >
-        </span>
+          Forgot Password?
+        </NuxtLink>
 
-        <div class="grid gap-y-[22px]">
-          <AppButton
-            type="submit"
-            :isLoading="isLoading"
-            :isDisabled="isLoading"
-            text="Sign In"
-            btnClass="btn-primary !py-3"
-            :style="{
-              background: isLoading ? '' : color,
-            }"
-          />
-        </div>
+        <AppButton
+          type="submit"
+          text="Login"
+          :isLoading="isLoading"
+          :isDisabled="isLoading || !meta.valid"
+          btnClass="w-full !py-3 !rounded-lg !bg-[#1570EF] !text-white"
+        />
 
-        <span
-          class="flex items-center text-center text-sm text-[#182230] mt-9 darks:text-white/80 gap-x-1 justify-center"
-        >
+        <p class="text-center text-sm text-[#475467] !mt-8">
           Don't have an account?
-          <NuxtLink :to="registerLink" class="font-medium" :style="{ color }"
-            >Sign Up</NuxtLink
-          >
-        </span>
+          <NuxtLink :to="signUpLink" class="font-semibold text-[#0058E5]">
+            Sign Up
+          </NuxtLink>
+        </p>
       </form>
     </div>
   </NuxtLayout>
 
-  <NuxtLayout name="empty" v-else-if="step === 2">
+  <!-- Step 2: OTP Verification -->
+  <NuxtLayout v-else-if="step === 2" name="auth">
     <AuthOtp
-      :title="isVerified ? 'Email Verified' : 'Email Verification'"
+      :title="otpTitle"
+      :subtext="otpSubtext"
+      :imgSrc="otpImg"
       :isVerifyPin="isVerifyPin"
-      :isVerified="isVerified"
-      @close="onOtpClose"
-      :subtext="
-        isVerified
-          ? 'Your email has been verified. You will be automatically redirected to the dashboard'
-          : 'We have sent an OTP to your email address and your registered mobile number'
-      "
-      buttonText="Verify Email"
-      @handleSubmit="handleFinalSubmit"
+      :isVerified="false"
       :isLoading="isLoading"
-      :email="loginEmail"
+      :email="formValues.email"
+      :buttonText="otpButtonText"
       continue-link="/vendor/dashboard"
+      @close="resetToStep1"
+      @handleSubmit="handleOtpSubmit"
     />
   </NuxtLayout>
 </template>
 
 <script setup>
-import { useForm } from "vee-validate";
 import * as yup from "yup";
-import { toast } from "vue3-toastify";
 import { saveAuthProfile } from "~/utils/saveAuthProfile";
-import { loginUser, loginUser2FA } from "~/services/authservices";
+import { loginUser, loginUser2FA, confirmEmail } from "~/services/authservices";
+import { useToast } from "~/composables/useToast";
+import { useValidatedForm } from "~/composables/useValidatedForm";
+import { intialRoute } from "~/utils/constants";
+import otpImg from "@/assets/images/otp.png";
 
+// Toast
+const toast = useToast();
+
+// Stores & Router
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
+
+// Route params
 const { app, auth } = route.params;
 
-// ─── Analytics ────────────────────────────────────────────────────────────────
-if (app === "MAT678") {
-  useHead({
-    script: [
-      {
-        id: "gtm-init",
-        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-M7KP6CJG');`,
-        type: "text/javascript",
-      },
-      {
-        id: "facebook-pixel",
-        innerHTML: `!function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '979825461003897');
-        fbq('track', 'PageView');`,
-        type: "text/javascript",
-      },
-    ],
-    __dangerouslyDisableSanitizersByTagID: {
-      "gtm-init": ["innerHTML"],
-    },
-  });
-}
-
-if (app === "FLU120") {
-  useHead({
-    script: [
-      {
-        src: "https://www.googletagmanager.com/gtag/js?id=G-9YFZLVNCG5",
-        async: true,
-      },
-      {
-        id: "ga-init",
-        innerHTML: `window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-9YFZLVNCG5');`,
-        type: "text/javascript",
-      },
-      {
-        id: "gtm-init",
-        innerHTML: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-WKXBWCB5');`,
-        type: "text/javascript",
-      },
-      {
-        id: "facebook-pixel",
-        innerHTML: `!function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '873140148927572');
-        fbq('track', 'PageView');`,
-        type: "text/javascript",
-      },
-    ],
-    noscript: [
-      {
-        innerHTML: `<img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=873140148927572&ev=PageView&noscript=1"/>`,
-      },
-    ],
-    __dangerouslyDisableSanitizersByTagID: {
-      "ga-init": ["innerHTML"],
-      "gtm-init": ["innerHTML"],
-      "facebook-pixel": ["innerHTML"],
-    },
-  });
-}
-
-// ─── State ─────────────────────────────────────────────────────────────────────
-const color = appCodeColorMap[app] || "#1570EF";
-const step = ref(Number(route.query.step) || 1);
+// State
+const step = ref(1);
+const isLoading = ref(false);
 const isVerified = ref(false);
 const isVerifyPin = ref(false);
-const isLoading = ref(false);
-const loginEmail = ref("");
+const isEmailVerification = ref(false);
+const passwordType = ref("password");
+const formValues = reactive({
+  email: "",
+  password: "",
+  appCode: app,
+});
 
-// ─── Form ──────────────────────────────────────────────────────────────────────
+// Computed
+const forgotPasswordLink = computed(() =>
+  handleRouting(route, `/${auth}/forgot-password${app ? `/${app}` : ""}`)
+);
+
+const signUpLink = computed(() =>
+  handleRouting(route, `/register/funder`)
+);
+
+const otpSubtext = computed(() => {
+  if (isVerified.value) {
+    return "Your email has been verified. You will be automatically redirected to the dashboard";
+  }
+  if (isEmailVerification.value) {
+    return "Your email is not verified. Enter the 6-digit verification code sent to your email address.";
+  }
+  return "Enter the 6-digit code sent to your registered email address. Check your inbox.";
+});
+
+const otpTitle = computed(() => {
+  if (isVerified.value) return "OTP Verified";
+  if (isEmailVerification.value) return "Email Verification";
+  return "OTP Verification";
+});
+
+const otpButtonText = computed(() => {
+  return isEmailVerification.value ? "Verify Email" : "Verify OTP";
+});
+
+// Validation
 const schema = yup.object({
   email: yup
     .string()
@@ -210,125 +147,150 @@ const schema = yup.object({
   password: yup.string().required("Password is required"),
 });
 
-const { handleSubmit, defineField, errors } = useForm({
-  validationSchema: schema,
-  initialValues: { email: loginEmail.value, password: "", appCode: app },
-  mode: "onBlur",
-});
+const { handleSubmit, defineField, errors, meta, resetForm, } = useValidatedForm(
+  {
+    validationSchema: schema,
+    initialValues: formValues,
+  }
+)
 
-const [email, emailAtt] = defineField("email");
-const [password, passwordAtt] = defineField("password");
+const [email] = defineField("email");
+const [password] = defineField("password");
 
-// ─── Computed links ────────────────────────────────────────────────────────────
-const appSuffix = app ? `/${app}` : "";
-const forgotPasswordLink = computed(() =>
-  handleRouting(route, `/${auth}/forgot-password${appSuffix}`),
-);
-const registerLink = computed(() =>
-  handleRouting(route, `/${auth}/register${appSuffix}`),
-);
+// Methods
+const togglePassword = () => {
+  passwordType.value = passwordType.value === "password" ? "text" : "password";
+};
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
-const getErrorMessage = (data) => data?.message || data?.Message || "";
+const resetToStep1 = () => {
+  step.value = 1;
+  isLoading.value = false;
+  isEmailVerification.value = false;
+  resetForm();
+};
 
 const handleFinalRedirect = (data) => {
   if (route.query.continue || app) {
     handleRedirect(route, data, app);
     return;
   }
-  isLoading.value = false;
+
+  // Use intialRoute mapping for category-based redirects
+  const redirectPath = intialRoute[data.userCategory] || "/";
+
   toast.success("Login successful");
-  window.location.replace(intialRoute[data?.userCategory]);
-};
-
-const onOtpClose = () => {
   isLoading.value = false;
-  router.push(
-    `/auth/login${appSuffix}?email=${encodeURIComponent(
-      loginEmail.value,
-    )}&step=1`,
-  );
+  window.location.replace(redirectPath);
 };
 
-// ─── Submit handlers ───────────────────────────────────────────────────────────
-const onSubmit = handleSubmit((values) => {
-  loginEmail.value = values.email;
+const handleLoginError = (err, email) => {
+  isLoading.value = false;
+  const data = err?.response?.data;
+  if (!data) return;
+
+  const message = data.message || data.Message;
+  if (message) {
+    toast.error(message);
+    if (message.includes("Email has not verified yet")) {
+      formValues.email = email;
+      isEmailVerification.value = true;
+      isVerifyPin.value = false;
+      step.value = 2;
+    }
+  }
+};
+
+const onSubmit = handleSubmit(async (values) => {
+  formValues.email = values.email;
+  formValues.password = values.password;
   isLoading.value = true;
 
-  loginUser({ ...values, appCode: app })
-    .then((res) => {
-      if (res.status !== 200) return;
-
-      if (typeof fbq === "function") {
-        fbq("track", "Login", {
-          method: "email",
-          device: window.innerWidth < 768 ? "mobile" : "desktop",
-          value: 0,
-          currency: "NGN",
-        });
-      }
-
-      if (!res.data.data.is2FA && app) {
-        authStore.setLoggedUser(res.data.data);
-        saveAuthProfile(res.data.data);
-        handleFinalRedirect(res.data.data);
-        return;
-      }
-
-      isVerifyPin.value = true;
-      step.value = 2;
-      isLoading.value = false;
-    })
-    .catch((err) => {
-      if (!err.response?.data) return;
-      const { data } = err.response;
-      const message = getErrorMessage(data);
-      if (message) toast.error(message);
-      if (message.includes("Email has not verified yet")) {
-        router.push(
-          `/auth/login${appSuffix}?email=${encodeURIComponent(
-            values.email,
-          )}&step=2`,
-        );
-      }
-    })
-    .finally(() => {
-      if (isLoading.value) isLoading.value = false;
+  try {
+    const res = await loginUser({
+      email: values.email,
+      password: values.password,
+      appCode: app,
     });
+    if (res.status === 200) {
+      const userData = res.data.data;
+      if (!userData.is2FA && app) {
+        authStore.setLoggedUser(userData);
+        saveAuthProfile(userData);
+        handleFinalRedirect(userData);
+      } else {
+        isVerifyPin.value = true;
+        step.value = 2;
+        isLoading.value = false;
+      }
+    }
+  } catch (err) {
+    handleLoginError(err, values.email);
+  }
 });
 
-const handleFinalSubmit = (token) => {
+watch(step, (newStep) => {
+  if (newStep === 2 && route.query.email) {
+    formValues.email = String(route.query.email);
+  }
+  if (newStep === 1) {
+    resetForm({
+      values: {
+        email: formValues.email,
+        password: formValues.password,
+      }
+    });
+  }
+});
+
+const handleOtpSubmit = async (token) => {
   isLoading.value = true;
 
-  loginUser2FA({ token, email: loginEmail.value, appCode: app })
-    .then((res) => {
-      if (res.status !== 200) return;
-      authStore.setLoggedUser(res.data.data);
-      saveAuthProfile(res.data.data);
-      handleFinalRedirect(res.data.data);
-    })
-    .catch((err) => {
-      if (!err?.response?.data) return;
-      const { data } = err.response;
-      const message = getErrorMessage(data);
-      if (message) toast.error(message);
-      if (message.includes("Email has not verified yet")) {
-        router.push(
-          `/auth/register?email=${encodeURIComponent(loginEmail.value)}`,
-        );
+  // Handle email verification flow
+  if (isEmailVerification.value) {
+    try {
+      const res = await confirmEmail(formValues.email, token);
+      if (res.status === 200) {
+        const userData = res.data?.data || res.data;
+        if (userData) {
+          authStore.setLoggedUser(userData);
+          authStore.setHasPin(userData.hasTransactionPIN);
+          saveAuthProfile(userData);
+        }
+        toast.success("Email verified successfully");
+        isEmailVerification.value = false;
+        handleFinalRedirect(userData);
       }
-    })
-    .finally(() => {
-      if (isLoading.value) isLoading.value = false;
-    });
-};
+    } catch (err) {
+      isLoading.value = false;
+      const data = err?.response?.data;
+      const message = data?.message || data?.Message;
+      if (message) {
+        toast.error(message);
+      }
+    }
+    return;
+  }
 
-// ─── Watchers ──────────────────────────────────────────────────────────────────
-watch(
-  () => route.query.step,
-  (newStep) => {
-    step.value = Number(newStep) || 1;
-  },
-  { immediate: true },
-);
+  // Handle 2FA flow
+  try {
+    const res = await loginUser2FA({
+      token,
+      email: formValues.email,
+      appCode: app,
+    });
+    if (res.status === 200) {
+      const userData = res.data.data;
+      authStore.setLoggedUser(userData);
+      saveAuthProfile(userData);
+      handleFinalRedirect(userData);
+    }
+  } catch (err) {
+    isLoading.value = false;
+    const data = err?.response?.data;
+    const message = data?.message || data?.Message;
+    if (message) {
+      toast.error(message);
+    }
+  }
+};
 </script>

@@ -48,7 +48,6 @@
               v-model="query"
               placeholder="Search customer name"
               type="text"
-              autofocus
             />
           </div>
           <div v-if="filteredOptions.length" class="max-h-60 overflow-auto">
@@ -173,8 +172,6 @@ function getData() {
   getCustomers(query)
     .then((res) => {
       if (res.status == 200) {
-        console.log(res.data.data);
-
         options.value = [
           { id: "", name: "All" },
           ...res.data.data.map((i) => ({
@@ -229,7 +226,7 @@ watch(
 watch(selectedOption, () => {
   if (selectedOption.value == null) return;
   emits("update:modelValue", selectedOption.value.id);
-  console.log("op", options);
+  // console.log("op", options);
 
   const usr = options.value.find((i) => i.id === selectedOption.value.id);
   emits("selectUser", usr);

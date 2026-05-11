@@ -1,6 +1,6 @@
 // composables/useApi.js
 export const useApi = (service = "sso") => {
-  const { $oxideApi, $ssoApi, $mattaApi, $walletApi, $deltaApi, $orbitalApi } =
+  const { $oxideApi, $ssoApi, $mattaApi, $walletApi, $fluxApi, $orbitalApi } =
     useNuxtApp();
 
   const ApiService = {
@@ -8,7 +8,7 @@ export const useApi = (service = "sso") => {
     oxide: $oxideApi,
     matta: $mattaApi,
     wallet: $walletApi,
-    flux: $deltaApi,
+    flux: $fluxApi,
     orbital: $orbitalApi,
   };
   const get = (url, config = {}) => ApiService[service].get(url, config);

@@ -6,9 +6,9 @@ import {
 } from "~/services/notificationservice";
 
 import urls from "~/helpers/url_helpers";
-import { notificationGet, notificationPost } from "~/services/api_services";
+import { notificationGet, notificationPost } from "~/helpers/api_helpers";
 
-vi.mock("~/services/api_services", () => ({
+vi.mock("~/helpers/api_helpers", () => ({
   notificationGet: vi.fn(),
   notificationPost: vi.fn(),
 }));

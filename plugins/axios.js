@@ -78,7 +78,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     instance.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error?.response?.status === 403 || error?.response?.status === 401) {
+        if (error?.response?.status === 401) {
           try {
             const newAccessToken = await handleTokenRefresh();
             error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
@@ -101,7 +101,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   const ssoApi = createAxiosInstance("sso");
   const mattaApi = createAxiosInstance("matta");
   const walletApi = createAxiosInstance("wallet");
-  const deltaApi = createAxiosInstance("flux");
+  const fluxApi = createAxiosInstance("flux");
   const orbitalApi = createAxiosInstance("market");
 
   // Provide Axios instances to the Nuxt app
@@ -109,6 +109,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.provide("ssoApi", ssoApi);
   nuxtApp.provide("mattaApi", mattaApi);
   nuxtApp.provide("walletApi", walletApi);
-  nuxtApp.provide("deltaApi", deltaApi);
+  nuxtApp.provide("fluxApi", fluxApi);
   nuxtApp.provide("orbitalApi", orbitalApi);
 });

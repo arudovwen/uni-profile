@@ -1,10 +1,7 @@
 import urls from "../helpers/url_helpers";
-import { notificationGet, notificationPost } from "../services/api_services";
-import store from "../store";
+import { notificationGet, notificationPost } from "../helpers/api_helpers";
+const config = {};
 
-const config = {
-  headers: { Authorization: `Bearer ${store.getters.accessToken}` },
-};
 
 export async function getnotifications(payload) {
   return await notificationGet(

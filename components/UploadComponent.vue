@@ -112,8 +112,6 @@ function preventDefaults(e) {
 const isLoading = ref(false);
 function handleFile(e) {
   const files = [...e.target.files];
-  console.log(files);
-  
   files.forEach((file) => {
     // Check file size (in bytes)
     const maxSize = 800 * 1024; // 800 KB
@@ -144,9 +142,8 @@ function handleFile(e) {
       if (props.type == "doc") {
         documents.value.push(data);
       }
-       
+
       if (props.type == "image") {
-        console.log("image");
         uploadfile({
           base64: base64String.replace("data:", "").replace(/^.+,/, ""),
         }).then((res) => {
@@ -155,7 +152,6 @@ function handleFile(e) {
           isLoading.value = false;
         });
       } else {
-        console.log("here");
         uploaddocument({
           base64: base64String.replace("data:", "").replace(/^.+,/, ""),
           ext: `.${ext}`,

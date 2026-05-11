@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as authMarketHelpers from "~/services/settingservices";
-import { get, post, ssoGet, ssoPut } from "../services/api_services"; // ✅ match real import path
+import { get, post, ssoGet, ssoPut } from "../helpers/api_helpers"; // ✅ match real import path
 import store from "~/store";
 
 // ✅ Mock the correct module with ALL used functions
-vi.mock("../services/api_services", () => ({
+vi.mock("../helpers/api_helpers", () => ({
   get: vi.fn(),
   post: vi.fn(),
   ssoGet: vi.fn(),
