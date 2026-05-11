@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   nitro: {
     baseURL: "/",
     prerender: {
-      crawlLinks: true,
+      crawlLinks: false,
     },
   },
 
@@ -30,7 +30,6 @@ export default defineNuxtConfig({
     "@nuxt/image",
     "nuxt-security",
     "@nuxt/devtools",
-    "nuxt-ssr-cache",
     "@vite-pwa/nuxt",
     "@nuxt/test-utils/module",
     "nuxt-svgo",
@@ -54,6 +53,7 @@ export default defineNuxtConfig({
   },
 
   security: {
+    ssg: false,
     hidePoweredBy: true,
     // Disable server-side middleware (not applicable in SPA mode with ssr: false)
     rateLimiter: false,
@@ -344,4 +344,7 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2024-10-31",
+  experimental: {
+    appManifest: false,
+  },
 });
