@@ -211,7 +211,7 @@ const buildAuthUrl = (baseUrl: string, appCode: string): string => {
 const mapBaseUrl = (baseUrl: string, apCode: string) => {
   if (process.env.NODE_ENV === "development") {
     if (apCode === APP_CODES.OXIDE.code) {
-      return "http://localhost:3000";
+      return "http://localhost:3005";
     }
     if (apCode === APP_CODES.ORBITAL.code) {
       return "http://localhost:3040";
@@ -223,10 +223,13 @@ const mapBaseUrl = (baseUrl: string, apCode: string) => {
       return "http://localhost:3002";
     }
     if (apCode === APP_CODES.MATTAPEDIA.code) {
-      return "http://localhost:5000";
+      return "http://localhost:5173";
     }
     if (apCode === APP_CODES.FLUX.code) {
       return "http://localhost:3001";
+    }
+    if (apCode === APP_CODES.POLYMER.code) {
+      return "http://localhost:3030";
     }
   }
   return baseUrl;
@@ -312,7 +315,6 @@ const fetchUserApps = async () => {
 
 // Handler: Navigate to app
 const navigateToApp = async (app: UserApp) => {
-
   if (!app.isActive) {
     appToOnboard.value = app;
     showOnboardingModal.value = true;
