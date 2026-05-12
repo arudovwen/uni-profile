@@ -123,19 +123,19 @@ const slug = computed(() => (route.query.slug as string) || state.value.slug);
 
 // Fallback icons for apps (used when API doesn't provide icons)
 const appIcons: Record<string, string> = {
-  [APP_CODES.OXIDE_PRO]: OxideProLogo,
-  [APP_CODES.ORBITAL]: OrbitalLogo,
-  [APP_CODES.OXIDE]:
+  [APP_CODES.OXIDE_PRO.code]: OxideProLogo,
+  [APP_CODES.ORBITAL.code ]: OrbitalLogo,
+  [APP_CODES.OXIDE.code]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
-  [APP_CODES.FLUX]: FluxLogo,
-  [APP_CODES.MATTA]:
+  [APP_CODES.FLUX.code]: FluxLogo,
+  [APP_CODES.MATTA.code]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle fill='%23000000' cx='12' cy='12' r='10'/%3E%3C/svg%3E",
-  [APP_CODES.MATTAPEDIA]:
+  [APP_CODES.MATTAPEDIA.code]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 };
 
 // Apps that have roles to select (fallback - ideally from API)
-const appsWithRolesFallback = [APP_CODES.FLUX, APP_CODES.OXIDE_PRO];
+const appsWithRolesFallback = [APP_CODES.FLUX.code, APP_CODES.OXIDE_PRO.code];
 
 const isSubmitting = ref(false);
 const isLoading = ref(true);

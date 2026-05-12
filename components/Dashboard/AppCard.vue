@@ -110,11 +110,11 @@ type AppRoleConfig = {
 };
 
 const appRoles: Record<string, AppRoleConfig> = {
-  [APP_CODES.OXIDE_PRO]: { default: "Funder" },
-  [APP_CODES.ORBITAL]: { default: "vendor" },
-  [APP_CODES.OXIDE]: { default: "Member" },
-  [APP_CODES.MATTA]: { default: "Member" },
-  [APP_CODES.MATTAPEDIA]: {
+  [APP_CODES.OXIDE_PRO.code]: { default: "Funder" },
+  [APP_CODES.ORBITAL.code]: { default: "vendor" },
+  [APP_CODES.OXIDE.code]: { default: "Member" },
+  [APP_CODES.MATTA.code]: { default: "Member" },
+  [APP_CODES.MATTAPEDIA.code]: {
     default: "Member",
     0: "Admin",
     1: "Owner",
