@@ -1,6 +1,8 @@
 <template>
   <NuxtLayout name="dashboard">
-    <div class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4">
+    <div
+      class="font-Avenir max-w-[1120px] mx-auto mt-8 sm:mt-10 lg:mt-[44px] pb-8 lg:px-4"
+    >
       <div class="mb-5 sm:mb-[26px] mt-6 sm:mt-10 lg:mt-[60px]">
         <h1
           class="text-xl sm:text-2xl lg:text-3xl font-bold text-[#182230] mb-1 sm:mb-2"
@@ -311,14 +313,21 @@ const navigateToApp = async (app: UserApp) => {
 const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
   if (!appToOnboard.value) return;
   isOnboarding.value = true;
+  console.log("enc", encryptedToken);
+
   try {
+    const metadata =
+      appToOnboard.value.code === APP_CODES.MATTA.code
+        ? { ...conditionalFields, accessToken: encryptedToken }
+        : conditionalFields;
+
     const payload = buildAppPayload(
       appToOnboard.value.code,
       decrypt(encryptedEmail),
       {
         appCode: appToOnboard.value.code,
         role: selectedRoles,
-        metadata: conditionalFields,
+        metadata: metadata,
       },
       slug.value,
     );

@@ -70,22 +70,40 @@
       >
         <div v-for="field in selectedRoleConditionalFields" :key="field.name">
           <OnboardingCustomDropdown
-            v-if="field.type === 'select'"
+            v-if="field.type === 'select' || field.type === 'select-search'"
             :label="field.label"
             containerStyles="w-full"
             buttonClass="!w-full !rounded-[5px]"
-            :showSearchFilter="false"
+            :showSearchFilter="field.type === 'select-search'"
             :modelValue="getDropdownValue(field.name)"
             :options="transformOptions(field.options || [], field.optionValues)"
             :placeholder="field.placeholder || `Select ${field.label}`"
             @update:modelValue="
               (val) =>
+                val &&
                 updateConditionalField(
                   field.name,
                   field.optionValues ? val.value : val.name
                 )
             "
           />
+          <label
+            v-else-if="field.type === 'checkbox'"
+            class="flex items-center gap-3 cursor-pointer select-none"
+          >
+            <input
+              type="checkbox"
+              class="w-4 h-4 rounded border-[#D0D5DD] accent-[#1570EF] cursor-pointer"
+              :checked="Boolean(conditionalFieldValues[field.name])"
+              @change="
+                updateConditionalField(
+                  field.name,
+                  ($event.target as HTMLInputElement).checked
+                )
+              "
+            />
+            <span class="text-sm text-[#344054]">{{ field.label }}</span>
+          </label>
         </div>
       </div>
 
@@ -102,7 +120,7 @@
         <button
           type="button"
           class="px-8 py-3 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          :disabled="!modelValue || isSubmitting"
+          :disabled="!hasRoleSelection || isSubmitting"
           @click="handleNext"
         >
           {{
@@ -125,14 +143,16 @@ import UserTick from "@/assets/images/icon/UserTick.vue";
 interface ConditionalField {
   name: string;
   label: string;
-  type: "select" | "text" | "radio";
+  type: "select" | "select-search" | "checkbox" | "text" | "radio";
   options?: string[];
-  optionValues?: Array<{ label: string; value: number }>;
+  optionValues?: Array<{ label: string; value: number | string }>;
   placeholder?: string;
+  required?: boolean;
+  defaultValue?: any;
 }
 
 interface Role {
-  value: string;
+  value: string | number;
   label: string;
   description: string;
   conditionalFields?: ConditionalField[];
@@ -142,7 +162,7 @@ interface Props {
   appName: string;
   appIcon?: string;
   roles: Role[];
-  modelValue?: string;
+  modelValue?: string | number | null;
   isLastApp?: boolean;
   isSubmitting?: boolean;
   currentAppNumber: number;
@@ -150,7 +170,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: "",
+  modelValue: null,
   isLastApp: false,
   isSubmitting: false,
   currentAppNumber: 1,
@@ -158,11 +178,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: string): void;
+  (e: "update:modelValue", value: string | number): void;
   (e: "update:conditionalFields", value: Record<string, any>): void;
   (e: "next"): void;
   (e: "back"): void;
 }>();
+
+const hasRoleSelection = computed(
+  () =>
+    props.modelValue !== null &&
+    props.modelValue !== undefined &&
+    props.modelValue !== "",
+);
 
 const conditionalFieldValues = ref<Record<string, any>>({});
 
@@ -177,11 +204,11 @@ const selectedRoleConditionalFields = computed(
 // Transform options to dropdown format { code, name, value }
 const transformOptions = (
   options: string[],
-  optionValues?: Array<{ label: string; value: number }>
+  optionValues?: Array<{ label: string; value: number | string }>
 ) => {
   if (optionValues && optionValues.length > 0) {
     return optionValues.map((opt) => ({
-      code: opt.value,
+      code: String(opt.value),
       name: opt.label,
       value: opt.value,
     }));
@@ -216,10 +243,16 @@ const getDropdownValue = (fieldName: string) => {
   return { code: storedValue, name: storedValue, value: storedValue };
 };
 
-const selectRole = (roleValue: string) => {
+const selectRole = (roleValue: string | number) => {
   emit("update:modelValue", roleValue);
-  // Reset conditional fields when role changes
+  // Reset conditional fields and seed defaults for the new role
   conditionalFieldValues.value = {};
+  const role = props.roles.find((r) => r.value === roleValue);
+  role?.conditionalFields?.forEach((f) => {
+    if (f.defaultValue !== undefined) {
+      conditionalFieldValues.value[f.name] = f.defaultValue;
+    }
+  });
 };
 
 const updateConditionalField = (fieldName: string, value: any) => {
@@ -228,16 +261,22 @@ const updateConditionalField = (fieldName: string, value: any) => {
 };
 
 const handleNext = () => {
-  if (props.modelValue) {
+  if (hasRoleSelection.value) {
     emit("next");
   }
 };
 
-// Watch for role changes to reset conditional field values
+// Watch for role changes to reset conditional field values and seed defaults
 watch(
   () => props.modelValue,
-  () => {
+  (roleValue) => {
     conditionalFieldValues.value = {};
+    const role = props.roles.find((r) => r.value === roleValue);
+    role?.conditionalFields?.forEach((f) => {
+      if (f.defaultValue !== undefined) {
+        conditionalFieldValues.value[f.name] = f.defaultValue;
+      }
+    });
   }
 );
 </script>

@@ -27,6 +27,7 @@ const urls = {
   SIGN_UP_WITH_MATTA: "v1/Register/sign-up-with-matta-account",
   SIGN_UP_WITH_MATTA_ORBITAL: "v1/Register/sign-up-with-matta-account",
   SIGN_UP_WITH_MATTA_FLUX: "v1/onboarding/sign-up-with-matta-account",
+  SIGN_UP_WITH_MATTA_MARKETPLACE: "v1/Account/sign-up-with-matta",
   SIGN_UP_WITH_MATTA_OXIDE_PRO: "v1/Account/sign-up-with-matta",
   SIGN_UP_WITH_MATTA_POLYMER: "v1/Account/sign-up-with-matta",
 

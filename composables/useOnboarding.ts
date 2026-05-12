@@ -3,6 +3,7 @@ import { APP_CODES } from "~/utils/app-config";
 import {
   signUpWithMatta,
   signUpWithMattaFlux,
+  signUpWithMattaMarketplace,
   signUpWithMattaOrbital,
   signUpWithMattaOxidePro,
   signUpWithMattaPolymer,
@@ -10,7 +11,7 @@ import {
 
 export interface RoleSelection {
   appCode: string;
-  role: string;
+  role: string | number;
   metadata?: Record<string, any>;
 }
 
@@ -187,6 +188,14 @@ export const useOnboarding = () => {
         return payload;
       }
 
+      case APP_CODES.MATTA.code: {
+        const accessToken = encrypt(authStore.jwToken) || null;
+        return {
+          ...basePayload,
+          accessToken,
+        };
+      }
+
       case APP_CODES.OXIDE_PRO.code: {
         // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
         const accountType = roleSelection
@@ -213,11 +222,42 @@ export const useOnboarding = () => {
       case APP_CODES.ORBITAL.code:
       case APP_CODES.POLYMER.code:
       case APP_CODES.OXIDE.code:
-      case APP_CODES.MATTA.code:
       case APP_CODES.MATTAPEDIA.code:
       default:
         // Orbital, Polymer and the remaining apps don't have roles, just basic payload
         return basePayload;
+
+      case APP_CODES.MATTA.code: {
+        const businessUserType = Number(roleSelection?.role ?? 0);
+        const allowNewsLetter = Boolean(
+          roleSelection?.metadata?.allowNewsLetter ?? false,
+        );
+        const country =
+          (authStore.userInfo as any)?.country ||
+          (authStore.loggedUser as any)?.country ||
+          "";
+        const ssoUserCategory =
+          (authStore.userInfo as any)?.userCategory ??
+          (authStore.loggedUser as any)?.userCategory ??
+          ssoCategory;
+
+        const payload: Record<string, any> = {
+          email: encryptedEmail,
+          businessUserType,
+          appCode,
+          accessToken: 0,
+          ssoUserCategory,
+          allowNewsLetter,
+          country,
+        };
+
+        // buyersQuestion only included for Buyers (businessUserType === 0)
+        if (businessUserType === 0 && roleSelection?.metadata?.buyersQuestion) {
+          payload.buyersQuestion = roleSelection.metadata.buyersQuestion;
+        }
+
+        return payload;
+      }
     }
   };
 
@@ -226,6 +266,8 @@ export const useOnboarding = () => {
     switch (appCode) {
       case APP_CODES.FLUX.code:
         return signUpWithMattaFlux;
+      case APP_CODES.MATTA.code:
+        return signUpWithMattaMarketplace;
       case APP_CODES.ORBITAL.code:
         return signUpWithMattaOrbital;
       case APP_CODES.OXIDE_PRO.code:

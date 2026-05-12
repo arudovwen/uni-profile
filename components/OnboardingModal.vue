@@ -78,11 +78,11 @@
               :key="field.name"
             >
               <OnboardingCustomDropdown
-                v-if="field.type === 'select'"
+                v-if="field.type === 'select' || field.type === 'select-search'"
                 :label="field.label"
                 containerStyles="w-full"
                 buttonClass="!w-full !rounded-[5px]"
-                :showSearchFilter="false"
+                :showSearchFilter="field.type === 'select-search'"
                 :modelValue="getDropdownValue(field.name)"
                 :options="
                   transformOptions(field.options || [], field.optionValues)
@@ -99,6 +99,23 @@
                   }
                 "
               />
+              <label
+                v-else-if="field.type === 'checkbox'"
+                class="flex items-center gap-3 cursor-pointer select-none"
+              >
+                <input
+                  type="checkbox"
+                  class="w-4 h-4 rounded border-[#D0D5DD] accent-[#1570EF] cursor-pointer"
+                  :checked="Boolean(conditionalFieldValues[field.name])"
+                  @change="
+                    updateConditionalField(
+                      field.name,
+                      ($event.target as HTMLInputElement).checked,
+                    )
+                  "
+                />
+                <span class="text-sm text-[#344054]">{{ field.label }}</span>
+              </label>
             </div>
           </div>
 
@@ -115,7 +132,11 @@
             <button
               type="button"
               class="px-8 py-3 text-base font-semibold text-white bg-[#1570EF] hover:bg-[#0F5BD3] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              :disabled="!selectedRoleValue || isOnboarding"
+              :disabled="
+                !hasRoleSelection ||
+                !hasRequiredConditionalFields ||
+                isOnboarding
+              "
               @click="handleConfirm"
             >
               {{ isOnboarding ? "Processing..." : "Confirm" }}
@@ -147,14 +168,16 @@ import auth from "~/middleware/auth";
 interface ConditionalField {
   name: string;
   label: string;
-  type: "select" | "text" | "radio";
+  type: "select" | "select-search" | "checkbox" | "text" | "radio";
   options?: string[];
-  optionValues?: Array<{ label: string; value: number }>;
+  optionValues?: Array<{ label: string; value: number | string }>;
   placeholder?: string;
+  required?: boolean;
+  defaultValue?: any;
 }
 
 interface Role {
-  value: string;
+  value: string | number;
   label: string;
   description: string;
   conditionalFields?: ConditionalField[];
@@ -169,7 +192,11 @@ interface Props {
 
 interface Emits {
   (e: "close"): void;
-  (e: "confirm", role: string, conditionalFields: Record<string, any>): void;
+  (
+    e: "confirm",
+    role: string | number,
+    conditionalFields: Record<string, any>,
+  ): void;
 }
 
 const props = defineProps<Props>();
@@ -178,27 +205,32 @@ const emit = defineEmits<Emits>();
 const authStore = useAuthStore();
 const toast = useToast();
 const isReady = ref(false);
+const loggedUser = (authStore?.loggedUser as any) || null;
 
 const categorySlug: Record<any, any> = {
   1: null,
   2:
-    authStore?.loggedUser && "companyName" in authStore.loggedUser
-      ? authStore.loggedUser.companyName?.toLowerCase()?.replace(" ", "-")
+    loggedUser && "companyName" in loggedUser
+      ? loggedUser.companyName?.toLowerCase()?.replace(" ", "-")
       : null,
   3: null,
 };
 
 const { getAvailableRoles } = useAppRoles();
 const availableRoles = computed(() =>
-  getAvailableRoles(
-    props.appCode,
-    categorySlug[authStore.loggedUser?.userCategory],
-  ),
+  getAvailableRoles(props.appCode, categorySlug[loggedUser?.userCategory]),
 );
 
 // Role selection state
-const selectedRoleValue = ref("");
+const selectedRoleValue = ref<string | number | null>(null);
 const conditionalFieldValues = ref<Record<string, any>>({});
+
+const hasRoleSelection = computed(
+  () =>
+    selectedRoleValue.value !== null &&
+    selectedRoleValue.value !== undefined &&
+    selectedRoleValue.value !== "",
+);
 
 // Get selected role from available roles
 const selectedRole = computed(() =>
@@ -210,13 +242,21 @@ const selectedRoleConditionalFields = computed(
   () => selectedRole.value?.conditionalFields || [],
 );
 
+const hasRequiredConditionalFields = computed(() => {
+  return selectedRoleConditionalFields.value.every((field) => {
+    if (!field.required) return true;
+    const value = conditionalFieldValues.value[field.name];
+    return value !== undefined && value !== null && value !== "";
+  });
+});
+
 // Auto-signup when modal opens if 0 or 1 roles available
 watch(
   () => props.isOpen,
   async (newValue) => {
     if (newValue) {
       // Reset state
-      selectedRoleValue.value = "";
+      selectedRoleValue.value = null;
       conditionalFieldValues.value = {};
       // Check if we should auto-signup
       if (availableRoles.value.length <= 1) {
@@ -225,19 +265,34 @@ watch(
         // Auto-select role if available
         if (availableRoles.value.length === 1) {
           selectedRoleValue.value = availableRoles.value[0].value;
+          const onlyRole = availableRoles.value[0];
+          onlyRole.conditionalFields?.forEach((field) => {
+            if (field.defaultValue !== undefined) {
+              conditionalFieldValues.value[field.name] = field.defaultValue;
+            }
+          });
         }
 
         // Trigger signup with default values
         await new Promise((resolve) => setTimeout(resolve, 500)); // Brief delay for UX
-        emit("confirm", selectedRoleValue.value, conditionalFieldValues.value);
+        const selectedRole = selectedRoleValue.value;
+        if (availableRoles.value.length === 0) {
+          emit("confirm", "", conditionalFieldValues.value);
+        } else if (
+          selectedRole !== null &&
+          selectedRole !== undefined &&
+          selectedRole !== ""
+        ) {
+          emit("confirm", selectedRole, conditionalFieldValues.value);
+        }
         // props.isOnboarding = false;
       } else {
         isReady.value = true;
-        selectedRoleValue.value = "";
+        selectedRoleValue.value = null;
         conditionalFieldValues.value = {};
       }
     } else {
-      selectedRoleValue.value = "";
+      selectedRoleValue.value = null;
       conditionalFieldValues.value = {};
     }
   },
@@ -247,7 +302,7 @@ watch(
 // Transform options to dropdown format { code, name, value }
 const transformOptions = (
   options: string[],
-  optionValues?: Array<{ label: string; value: number }>,
+  optionValues?: Array<{ label: string; value: number | string }>,
 ) => {
   if (optionValues && optionValues.length > 0) {
     return optionValues.map((opt) => ({
@@ -279,7 +334,8 @@ const getDropdownValue = (fieldName: string) => {
   const optionValues = getFieldOptionValues(fieldName);
   if (optionValues) {
     const found = optionValues.find(
-      (opt: { label: string; value: number }) => opt.value === storedValue,
+      (opt: { label: string; value: number | string }) =>
+        opt.value === storedValue,
     );
     if (found) {
       return { code: found.value, name: found.label, value: found.value };
@@ -288,10 +344,16 @@ const getDropdownValue = (fieldName: string) => {
   return { code: storedValue, name: storedValue, value: storedValue };
 };
 
-const selectRole = (roleValue: string) => {
+const selectRole = (roleValue: string | number) => {
   selectedRoleValue.value = roleValue;
-  // Reset conditional fields when role changes
+  // Reset conditional fields and apply default values when role changes
   conditionalFieldValues.value = {};
+  const role = availableRoles.value.find((r) => r.value === roleValue);
+  role?.conditionalFields?.forEach((field) => {
+    if (field.defaultValue !== undefined) {
+      conditionalFieldValues.value[field.name] = field.defaultValue;
+    }
+  });
 };
 
 const updateConditionalField = (fieldName: string, value: any) => {
@@ -299,14 +361,20 @@ const updateConditionalField = (fieldName: string, value: any) => {
 };
 
 const handleConfirm = () => {
-  if (selectedRoleValue.value) {
-    emit("confirm", selectedRoleValue.value, conditionalFieldValues.value);
+  const selectedRole = selectedRoleValue.value;
+  if (
+    selectedRole !== null &&
+    selectedRole !== undefined &&
+    selectedRole !== "" &&
+    hasRoleSelection.value
+  ) {
+    emit("confirm", selectedRole, conditionalFieldValues.value);
   }
 };
 
 const closeModal = () => {
   // Reset state when closing
-  selectedRoleValue.value = "";
+  selectedRoleValue.value = null;
   conditionalFieldValues.value = {};
   emit("close");
 };
@@ -316,7 +384,7 @@ watch(
   () => props.isOpen,
   (newValue) => {
     if (!newValue) {
-      selectedRoleValue.value = "";
+      selectedRoleValue.value = null;
       conditionalFieldValues.value = {};
     }
   },
@@ -326,7 +394,7 @@ watch(
 watch(
   () => props.appCode,
   () => {
-    selectedRoleValue.value = "";
+    selectedRoleValue.value = null;
     conditionalFieldValues.value = {};
   },
 );
