@@ -31,7 +31,6 @@ export default defineNuxtConfig({
     "nuxt-security",
     "@nuxt/devtools",
     "@vite-pwa/nuxt",
-    "@nuxt/test-utils/module",
     "nuxt-svgo",
     "@primevue/nuxt-module",
   ],
