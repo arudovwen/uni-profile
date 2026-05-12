@@ -15,7 +15,6 @@
       <AppTab
         :tabs="tabs"
         :active="active"
-        @set-active="(value) => (active = value)"
       />
     </div>
     <div>
@@ -34,15 +33,22 @@ import UsersTable from './users-table.vue';
 definePageMeta({
   layout: "dashboard",
 });
-const active = ref("admin");
+const route = useRoute();
+
+const active = computed(() =>
+  route.path.endsWith("/invites") ? "invites" : "admin",
+);
+
 const tabs = [
   {
     title: "Users",
     key: "admin",
+    to: "/user-management/users",
   },
   {
     title: "Invites",
     key: "invites",
+    to: "/user-management/invites",
   },
 ];
 </script>

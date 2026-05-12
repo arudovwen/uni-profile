@@ -7,9 +7,7 @@
     <div class="w-full font-Avenir">
       <!-- Header -->
       <div class="text-center mb-12 max-w-[615px] mx-auto">
-        <div
-          class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2"
-        >
+        <div class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2">
           <SelectAppIcon class="w-4 h-4 text-[#6B7280]" />
           <span class="text-sm font-medium text-[#4B5563]">Step 1 of 3</span>
         </div>
@@ -17,8 +15,8 @@
           Choose your applications
         </h1>
         <p class="text-base text-[#475467] font-normal">
-          Select the Matta Pro applications you want to access.<br />You can
-          change this later from your dashboard.
+          Select the Matta Pro applications you want to access.<br />You can change this
+          later from your dashboard.
         </p>
       </div>
 
@@ -78,8 +76,8 @@
             isSubmitting
               ? "Processing..."
               : hasAppsRequiringUserInput
-                ? "Continue to Roles"
-                : "Continue to Dashboard"
+              ? "Continue to Roles"
+              : "Continue to Dashboard"
           }}
         </button>
       </div>
@@ -115,7 +113,13 @@ interface App {
 const router = useRouter();
 const route = useRoute();
 const { auth } = route.params;
-const { setSelectedApps, setSlug, submitOnboarding, addRoleSelection, state } = useOnboarding();
+const {
+  setSelectedApps,
+  setSlug,
+  submitOnboarding,
+  addRoleSelection,
+  state,
+} = useOnboarding();
 const { requiresUserRoleSelection, getDefaultRole } = useAppRoles();
 
 // Get slug from URL query or state
@@ -124,7 +128,7 @@ const slug = computed(() => (route.query.slug as string) || state.value.slug);
 // Fallback icons for apps (used when API doesn't provide icons)
 const appIcons: Record<string, string> = {
   [APP_CODES.OXIDE_PRO.code]: OxideProLogo,
-  [APP_CODES.ORBITAL.code ]: OrbitalLogo,
+  [APP_CODES.ORBITAL.code]: OrbitalLogo,
   [APP_CODES.OXIDE.code]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
   [APP_CODES.FLUX.code]: FluxLogo,
@@ -135,7 +139,7 @@ const appIcons: Record<string, string> = {
 };
 
 // Apps that have roles to select (fallback - ideally from API)
-const appsWithRolesFallback = [APP_CODES.FLUX.code, APP_CODES.OXIDE_PRO.code];
+const appsWithRolesFallback = [APP_CODES.FLUX.code, APP_CODES.OXIDE_PRO.code, APP_CODES.MATTA.code];
 
 const isSubmitting = ref(false);
 const isLoading = ref(true);
@@ -157,8 +161,7 @@ const fetchApps = async () => {
       });
 
       if (userAppsResponse.status === 200 && userAppsResponse.data?.data) {
-        const appsData =
-          userAppsResponse.data.data.data || userAppsResponse.data.data;
+        const appsData = userAppsResponse.data.data.data || userAppsResponse.data.data;
         if (Array.isArray(appsData)) {
           registeredAppCodes.value = appsData.map((app: any) => app.code);
         }
@@ -182,7 +185,9 @@ const fetchApps = async () => {
             id: app.id?.toString() || (index + 1).toString(),
             code: appCode,
             name: app.appName || app.name,
-            description: app.description || "Access your application dashboard and manage your account.",
+            description:
+              app.description ||
+              "Access your application dashboard and manage your account.",
             iconUrl: app.iconUrl || app.logo || app.logoUrl || appIcons[appCode],
             hasRoles: app.hasRoles ?? appsWithRolesFallback.includes(appCode),
           };
@@ -214,9 +219,10 @@ onMounted(async () => {
   if (state.value.selectedApps.length > 0) {
     const previouslySelectedCodes = state.value.selectedApps.map((app) => app.code);
     selectedAppsIds.value = apps.value
-      .filter((app) =>
-        previouslySelectedCodes.includes(app.code) &&
-        !registeredAppCodes.value.includes(app.code)
+      .filter(
+        (app) =>
+          previouslySelectedCodes.includes(app.code) &&
+          !registeredAppCodes.value.includes(app.code)
       )
       .map((app) => app.id);
   }
@@ -231,6 +237,8 @@ const selectedAppsData = computed(() => {
 const hasRegisteredApps = computed(() => registeredAppCodes.value.length > 0);
 
 const canContinue = computed(() => {
+  console.log("Can continue = ", selectedAppsData.value);
+
   return selectedAppsData.value.length > 0 || hasRegisteredApps.value;
 });
 

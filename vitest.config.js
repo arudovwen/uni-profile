@@ -4,6 +4,16 @@ export default defineVitestConfig({
   test: {
     globals: true,
     environment: 'nuxt',
+    pool: 'forks',
+    environmentOptions: {
+      nuxt: {
+        overrides: {
+          googleSignIn: {
+            clientId: 'test-client-id.apps.googleusercontent.com',
+          },
+        },
+      },
+    },
     setupFiles: './test.setup.js',
     coverage: {
       reporter: ['text', 'lcov'],

@@ -7,6 +7,7 @@ import {
   fluxPost,
   oxidePost,
   polymerPost,
+  mattaPost
 } from "../helpers/api_helpers";
 //Authentication
 export async function loginUser(user, config = {}) {
@@ -82,6 +83,11 @@ export async function signUpWithMattaOrbital(data, config = {}) {
 export async function signUpWithMattaFlux(data, config = {}) {
   return await fluxPost(`${urls.SIGN_UP_WITH_MATTA_FLUX}`, data, config);
 }
+
+export async function signUpWithMattaMarketplace(data, config = {}) {
+  return await mattaPost(`${urls.SIGN_UP_WITH_MATTA_MARKETPLACE}`, data, config);
+}
+
 export async function signUpWithMattaOxidePro(data, config = {}) {
   return await oxideProPost(
     `${urls.SIGN_UP_WITH_MATTA_OXIDE_PRO}?tenant=${data.tenant}&slug=${data.slug}`,

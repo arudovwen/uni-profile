@@ -4,10 +4,12 @@
       class="custom-shadow bg-white rounded-lg overflow-hidden w-[200px] grid gap-y-1 border border-gray-50"
     >
       <li v-for="tab in tabs" :key="tab.label">
-        <button
-          type="button"
+        <component
+          :is="tab.to ? 'NuxtLink' : 'button'"
+          :to="tab.to"
+          :type="tab.to ? undefined : 'button'"
           class="text-sm font-semibold py-2 px-3 border-l-2 w-full text-left"
-          @click="emits('setActive', tab.value)"
+          @click="!tab.to && emits('setActive', tab.value)"
           :class="
             active === tab.value
               ? 'bg-[#F5FAFF]  border-primary-500 text-primary-500'
@@ -15,7 +17,7 @@
           "
         >
           {{ tab.label }}
-        </button>
+        </component>
       </li>
     </ul>
   </div>

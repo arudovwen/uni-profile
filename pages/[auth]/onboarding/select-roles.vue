@@ -39,7 +39,7 @@ import { useAppRoles } from "~/composables/useAppRoles";
 import { toast } from "vue3-toastify";
 
 interface Role {
-  value: string;
+  value: string | number;
   label: string;
   description: string;
   conditionalFields?: ConditionalField[];
@@ -64,7 +64,7 @@ const isLoading = ref(false);
 const isSubmitting = ref(false);
 const error = ref("");
 const currentAppIndex = ref(0);
-const currentRoleSelection = ref("");
+const currentRoleSelection = ref<string | number | null>(null);
 const currentConditionalFields = ref<Record<string, any>>({});
 
 // Use app roles composable for centralized role definitions
@@ -191,7 +191,7 @@ onMounted(async () => {
   }
 });
 
-const updateRole = (role: string) => {
+const updateRole = (role: string | number) => {
   currentRoleSelection.value = role;
   currentConditionalFields.value = {};
 };
@@ -201,7 +201,11 @@ const updateConditionalFields = (fields: Record<string, any>) => {
 };
 
 const handleNext = async () => {
-  if (!currentRoleSelection.value) {
+  if (
+    currentRoleSelection.value === null ||
+    currentRoleSelection.value === undefined ||
+    currentRoleSelection.value === ""
+  ) {
     toast.error("Please select a role");
     return;
   }
@@ -226,7 +230,7 @@ const handleNext = async () => {
   } else {
     // Move to next app
     currentAppIndex.value++;
-    currentRoleSelection.value = "";
+    currentRoleSelection.value = null;
     currentConditionalFields.value = {};
 
     // Load role if it was previously selected or auto-select if only one option
@@ -250,7 +254,7 @@ const handleNext = async () => {
 const handleBack = () => {
   if (currentAppIndex.value > 0) {
     currentAppIndex.value--;
-    currentRoleSelection.value = "";
+    currentRoleSelection.value = null;
     currentConditionalFields.value = {};
 
     // Load role if it was previously selected or auto-select if only one option

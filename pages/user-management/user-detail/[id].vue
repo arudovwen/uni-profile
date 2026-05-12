@@ -1,16 +1,17 @@
-<template>
-    <NuxtLayout>
-      <div class="container">
-          <PagesSuperadminUserDetail />
-      </div>
-    </NuxtLayout>
-  </template>
-  
-  <script setup>
-  definePageMeta({
-    layout: "superadmin",
-    middleware: "auth",
-  });
-  const route = useRoute();
-  </script>
+<script setup>
+definePageMeta({
+  layout: "superadmin",
+  middleware: "auth",
+});
+
+const route = useRoute();
+
+await navigateTo(
+  {
+    path: `/user-management/user-detail/${route.params.id}/profile`,
+    query: route.query,
+  },
+  { replace: true },
+);
+</script>
   

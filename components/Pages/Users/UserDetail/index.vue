@@ -11,7 +11,6 @@
       <div>
         <SideTab
           :tabs="tabs"
-          @setActive="(val) => (active = val)"
           :active="active"
         />
       </div>
@@ -28,18 +27,29 @@ import Apps from "./apps";
 import { getUserDetail } from "~/services/settingservices";
 
 const { name } = useRoute().query;
-const { id } = useRoute().params;
-const active = ref("profile");
-const tabs = [
+const route = useRoute();
+const { id } = route.params;
+
+const active = computed(() => (route.path.endsWith("/apps") ? "apps" : "profile"));
+
+const tabs = computed(() => [
   {
     label: "Personal Info",
     value: "profile",
+    to: {
+      path: `/users-management/user-detail/${id}/profile`,
+      query: route.query,
+    },
   },
   {
     label: "Applications",
     value: "apps",
+    to: {
+      path: `/users-management/user-detail/${id}/apps`,
+      query: route.query,
+    },
   },
-];
+]);
 const myUserApps = ref([]);
 onMounted(() => {
   getUserDetail(id).then((res) => {
