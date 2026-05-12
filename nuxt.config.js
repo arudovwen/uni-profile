@@ -185,6 +185,8 @@ export default defineNuxtConfig({
       TINY_MCE: process.env.APP_TINYMCE_KEY,
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
       encryptionKey: process.env.ENCRYPTION_KEY,
+      MARKETPLACE_APP_URL: process.env.MARKETPLACE_APP_URL,
+      SSO_APP_URL: process.env.SSO_APP_URL,
     },
   },
 

@@ -122,7 +122,7 @@
               </div>
             </div>
             <div
-              v-if="app === APP_CODES.MATTA"
+              v-if="app === APP_CODES.MATTA.code"
               class="lg:col-span-2 flex items-center text-[#333] darks:text-slate-400 text-xs lg:text-sm gap-x-[2px]"
             >
               <Checkbox
@@ -159,7 +159,7 @@
                 :isDisabled="
                   isLoading ||
                   !meta.valid ||
-                  (app === APP_CODES.MATTA && !agree) ||
+                  (app === APP_CODES.MATTA.code && !agree) ||
                   !!phoneError
                 "
                 :style="{
@@ -202,7 +202,7 @@
       subtext="Enter the  6-Digit verification code has been sent to your registered email address. Check your inbox."
     />
   </NuxtLayout>
-  <noscript v-if="app === APP_CODES.MATTA">
+  <noscript v-if="app === APP_CODES.MATTA.code">
     <iframe
       src="https://www.googletagmanager.com/ns.html?id=GTM-M7KP6CJG"
       height="0"
@@ -243,7 +243,7 @@ const allcountries = computed(() => {
 // ----------------------------
 // Head Scripts by App Type
 // ----------------------------
-if (app === APP_CODES.MATTA) {
+if (app === APP_CODES.MATTA.code) {
   useHead({
     script: [
       {
@@ -262,7 +262,7 @@ if (app === APP_CODES.MATTA) {
   });
 }
 
-if (app === APP_CODES.FLUX) {
+if (app === APP_CODES.FLUX.code) {
   useHead({
     script: [
       {

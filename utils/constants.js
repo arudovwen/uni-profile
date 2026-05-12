@@ -15,21 +15,21 @@ export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
 export const PROFILE_COOKIE_NAME = "mattaProfiles_Dev";
 
 export const localAppUrls = {
-  [APP_CODES.OXIDE_PRO]: "https://dev.oxidepro.matta.trade",
-  [APP_CODES.ORBITAL]: "https://dev.orbital.matta.trade",
-  [APP_CODES.OXIDE]: "https://dev.oxide.matta.trade",
-  [APP_CODES.FLUX]: "https://dev.deltalog.co",
-  [APP_CODES.MATTA]: "https://dev.matta.trade",
-  [APP_CODES.MATTAPEDIA]: "https://dev.mattapedia.matta.trade",
+  [APP_CODES.OXIDE_PRO.code]: "https://dev.oxidepro.matta.trade",
+  [APP_CODES.ORBITAL.code]: "https://dev.orbital.matta.trade",
+  [APP_CODES.OXIDE.code]: "https://dev.oxide.matta.trade",
+  [APP_CODES.FLUX.code]: "https://dev.deltalog.co",
+  [APP_CODES.MATTA.code]: "https://dev.matta.trade",
+  [APP_CODES.MATTAPEDIA.code]: "https://dev.mattapedia.matta.trade",
 };
 
 export const appCodeColorMap = {
-  [APP_CODES.OXIDE_PRO]: "#1570EF",
-  [APP_CODES.ORBITAL]: "#1570EF",
-  [APP_CODES.OXIDE]: "#1570EF",
-  [APP_CODES.FLUX]: "#021242",
-  [APP_CODES.MATTA]: "#1570EF",
-  [APP_CODES.MATTAPEDIA]: "#1570EF",
+  [APP_CODES.OXIDE_PRO.code]: "#1570EF",
+  [APP_CODES.ORBITAL.code]: "#1570EF",
+  [APP_CODES.OXIDE.code]: "#1570EF",
+  [APP_CODES.FLUX.code]: "#021242",
+  [APP_CODES.MATTA.code]: "#1570EF",
+  [APP_CODES.MATTAPEDIA.code]: "#1570EF",
 };
 
 export const countryCodes = {

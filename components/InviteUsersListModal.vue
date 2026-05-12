@@ -150,7 +150,7 @@ type RoleOptionGroup = {
 };
 
 const roleOptions: Record<string, RoleOptionGroup> = {
-  [APP_CODES.OXIDE_PRO]: {
+  [APP_CODES.OXIDE_PRO.code]: {
     name: "Oxide Pro",
     options: [
       { code: "Funder", name: "Funder" },

@@ -32,7 +32,7 @@ const truckSizeOptions = [
 
 // Map of app codes to their available roles
 export const appRolesMap: Record<string, Role[]> = {
-  [APP_CODES.FLUX]: [
+  [APP_CODES.FLUX.code]: [
     {
       value: "clients",
       label: "Clients",
@@ -63,7 +63,7 @@ export const appRolesMap: Record<string, Role[]> = {
       conditionalFields: [],
     },
   ],
-  [APP_CODES.OXIDE_PRO]: [
+  [APP_CODES.OXIDE_PRO.code]: [
     {
       value: "Funder",
       label: "Funding Partner",
@@ -84,11 +84,11 @@ export const appRolesMap: Record<string, Role[]> = {
       conditionalFields: [],
     },
   ],
-  [APP_CODES.ORBITAL]: [],
-  [APP_CODES.POLYMER]: [],
-  [APP_CODES.OXIDE]: [],
-  [APP_CODES.MATTA]: [],
-  [APP_CODES.MATTAPEDIA]: [],
+  [APP_CODES.ORBITAL.code]: [],
+  [APP_CODES.POLYMER.code]: [],
+  [APP_CODES.OXIDE.code]: [],
+  [APP_CODES.MATTA.code]: [],
+  [APP_CODES.MATTAPEDIA.code]: [],
 };
 
 export const useAppRoles = () => {
@@ -108,7 +108,7 @@ export const useAppRoles = () => {
     const roles = appRolesMap[appCode] || [];
 
     // For Oxide Pro, filter roles based on slug presence
-    if (appCode === APP_CODES.OXIDE_PRO) {
+    if (appCode === APP_CODES.OXIDE_PRO.code) {
       if (accountSlug) {
         // With slug: only show Buyer or Supplier
         return roles.filter(
