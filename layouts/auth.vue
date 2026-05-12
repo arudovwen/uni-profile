@@ -26,7 +26,7 @@
     <!-- Footer -->
     <footer class="py-4 text-center">
       <p class="text-sm text-[#475467]">
-        &copy;Oxide Pro {{ new Date().getFullYear() }}. All rights reserved.
+        &copy;Matta {{ new Date().getFullYear() }}. All rights reserved.
       </p>
     </footer>
   </div>
