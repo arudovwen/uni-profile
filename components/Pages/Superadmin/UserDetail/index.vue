@@ -11,7 +11,6 @@
     <div>
       <AppTab
         :tabs="tabs"
-        @setActive="(val) => (active = val)"
         :active="active"
       />
     </div>
@@ -35,17 +34,25 @@ const route = useRoute();
 const name = route.query.name;
 const id = route.params.id;
 const userData = ref(null)
-const active = ref("profile");
-const tabs = [
+const active = computed(() => (route.path.endsWith("/apps") ? "apps" : "profile"));
+const tabs = computed(() => [
   {
     title: "User Profile",
     key: "profile",
+    to: {
+      path: `/user-management/user-detail/${id}/profile`,
+      query: route.query,
+    },
   },
   {
     title: "Apps",
     key: "apps",
+    to: {
+      path: `/user-management/user-detail/${id}/apps`,
+      query: route.query,
+    },
   },
-];
+]);
 function getUserData() {
   getUserDetail(id).then((res) => {
     if (res.status === 200) {

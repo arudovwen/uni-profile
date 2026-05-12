@@ -139,7 +139,7 @@
         class="flex items-center gap-1 sm:gap-[10px] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 lg:px-4"
       >
         <NuxtLink
-          to="/"
+          to="/dashboard/apps"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('apps')
@@ -152,7 +152,7 @@
         </NuxtLink>
         <PermissionGuard :categories="[1]">
           <NuxtLink
-            to="/?tab=kyc"
+            to="/dashboard/kyc"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('kyc')
@@ -165,7 +165,7 @@
           </NuxtLink>
         </PermissionGuard>
         <NuxtLink
-          to="/?tab=users"
+          to="/dashboard/users"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('users')
@@ -179,7 +179,7 @@
 
         <PermissionGuard :categories="[0, 3]">
           <NuxtLink
-            to="/?tab=logs"
+            to="/dashboard/logs"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('logs')
@@ -193,7 +193,7 @@
         </PermissionGuard>
 
         <NuxtLink
-          to="/?tab=settings"
+          to="/dashboard/settings"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('settings')
@@ -249,15 +249,24 @@ const userEmail = computed(() => {
 });
 
 const isActiveTab = (tab) => {
-  if (tab === "apps") {
-    return !route.query.tab || route.query.tab === "apps";
+  const map = {
+    apps: "/dashboard/apps",
+    kyc: "/dashboard/kyc",
+    users: "/dashboard/users",
+    logs: "/dashboard/logs",
+    settings: "/dashboard/settings",
+  };
+
+  if (route.path === "/" && (!route.query.tab || route.query.tab === "apps")) {
+    return tab === "apps";
   }
-  return route.query.tab === tab;
+
+  return route.path === map[tab];
 };
 
 const goToSettings = () => {
   isUserMenuOpen.value = false;
-  router.push("/?tab=settings");
+  router.push("/dashboard/settings");
 };
 
 const handleLogout = async () => {

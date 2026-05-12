@@ -1,19 +1,23 @@
-<template>
-    <NuxtLayout :name="layoutName">
-      <div class="container py-10">
-          <PagesUsersUserDetail />
-      </div>
-    </NuxtLayout>
-  </template>
-  
-  <script setup>
-  definePageMeta({
-    middleware: "auth",
-  });
-  const route = useRoute();
-  const authStore = useAuthStore()
-const layoutName = computed(() =>
-  [0, 3, 4].includes(authStore.userInfo?.userCategory) ? "superadmin" : "default"
+<script setup>
+definePageMeta({
+  middleware: "auth",
+});
+
+const route = useRoute();
+const authStore = useAuthStore();
+
+const basePath = computed(() =>
+  [0, 3, 4].includes(authStore.userInfo?.userCategory)
+    ? "/user-management/user-detail"
+    : "/users-management/user-detail",
 );
-  </script>
+
+await navigateTo(
+  {
+    path: `${basePath.value}/${route.params.id}/profile`,
+    query: route.query,
+  },
+  { replace: true },
+);
+</script>
   

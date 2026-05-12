@@ -3,16 +3,15 @@
     class="flex gap-x-4 mb-6 w-full overflow-x-auto border-b border-[#EAECF0]"
     :class="className"
   >
-    <button
+    <component
       v-for="tab in tabs"
       :key="tab.key"
+      :is="tab.to ? 'NuxtLink' : 'button'"
+      :to="tab.to"
+      :type="tab.to ? undefined : 'button'"
       :data-testid="tab.title"
-      @click="emit('setActive', tab.key)"
-      :class="`capitalize text-xs md:text-sm font-semibold pb-3 border-b-2 px-1 flex items-center gap-x-1 ${
-        active === tab.key
-          ? `${activeClass} border-primary-500 text-primary-500`
-          : 'border-transparent text-[#667085]'
-      } `"
+      @click="!tab.to && emit('setActive', tab.key)"
+      :class="tabClass(tab.key)"
     >
       <span>{{ tab.title }}</span>
       <span
@@ -20,10 +19,17 @@
         v-if="count && count[tab.key]"
         >{{ count[tab.key] }}</span
       >
-    </button>
+    </component>
   </div>
 </template>
 <script setup>
-defineProps(["tabs", "className", "count", "activeClass", "active"]);
+const props = defineProps(["tabs", "className", "count", "activeClass", "active"]);
 const emit = defineEmits(["setActive"]);
+
+const tabClass = (key) =>
+  `capitalize text-xs md:text-sm font-semibold pb-3 border-b-2 px-1 flex items-center gap-x-1 ${
+    props.active === key
+      ? `${props.activeClass || ""} border-primary-500 text-primary-500`
+      : "border-transparent text-[#667085]"
+  } `;
 </script>
