@@ -96,13 +96,15 @@
         <div
           class="animate-spin rounded-full h-12 w-12 border-4 border-[#e5e7eb] border-t-[#1570EF]"
         />
-        <p class="text-sm font-semibold text-[#475467]">Opening application, please wait&hellip;</p>
+        <p class="text-sm font-semibold text-[#475467]">
+          Opening application, please wait&hellip;
+        </p>
       </div>
 
       <OnboardingModal
         v-if="showOnboardingModal"
         :isOpen="showOnboardingModal"
-        :appCode="appToOnboard?.code"
+        :appCode="appToOnboard?.code || ''"
         :app="appToOnboard"
         :isOnboarding="isOnboarding"
         @close="
@@ -126,6 +128,7 @@ import { toast } from "vue3-toastify";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
+import { APP_CODES } from "~/utils/app-config";
 
 definePageMeta({ middleware: "auth" });
 
@@ -150,10 +153,10 @@ interface UserApp {
 
 // Constants
 const APP_ICONS = {
-  FLU722: FluxLogo,
-  ORB789: OrbitalLogo,
-  OXI972: OxideProLogo,
-  POL766:
+  [APP_CODES.FLUX.code]: FluxLogo,
+  [APP_CODES.ORBITAL.code]: OrbitalLogo,
+  [APP_CODES.OXIDE_PRO.code]: OxideProLogo,
+  [APP_CODES.POLYMER.code]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 } as const;
 const ADMIN_CATEGORIES = [0, 3];
@@ -182,34 +185,51 @@ const isNavigating = ref(false);
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
+const allowTokenPass = new Set([APP_CODES.MATTAPEDIA.code]);
 
 // Helper: Build auth URL
 const buildAuthUrl = (baseUrl: string, appCode: string): string => {
   if (!encryptedToken || !encryptedRefreshToken) return baseUrl;
   try {
+    const activeUrl = mapBaseUrl(baseUrl, appCode);
+    const base = `${activeUrl}/auth/validate`;
+
+    if (!allowTokenPass.has(appCode)) return base;
+
     const params = new URLSearchParams({
-      token: encodeURIComponent(
-        baseUrl.includes("pqolymer")
-          ? encodeURIComponent(encryptedToken)
-          : encryptedToken,
-      ),
-      code: encodeURIComponent(
-        baseUrl.includes("porlymer")
-          ? encodeURIComponent(encryptedRefreshToken)
-          : encryptedRefreshToken,
-      ),
-      refreshToken: encodeURIComponent(
-        baseUrl.includes("prolymer")
-          ? encodeURIComponent(encryptedRefreshToken)
-          : encryptedRefreshToken,
-      ),
-      appCode,
+      token: encodeURIComponent(encryptedToken),
+      code: encodeURIComponent(encryptedRefreshToken),
+      refreshToken: encodeURIComponent(encryptedRefreshToken),
     });
-    return `${baseUrl}/auth/validate?${params.toString()}`;
+    return `${base}?${params}`;
   } catch (err) {
     console.error("Error building auth URL:", err);
     return baseUrl;
   }
+};
+
+const mapBaseUrl = (baseUrl: string, apCode: string) => {
+  if (process.env.NODE_ENV === "development") {
+    if (apCode === APP_CODES.OXIDE.code) {
+      return "http://localhost:3000";
+    }
+    if (apCode === APP_CODES.ORBITAL.code) {
+      return "http://localhost:3040";
+    }
+    if (apCode === APP_CODES.OXIDE_PRO.code) {
+      return "http://localhost:4000";
+    }
+    if (apCode === APP_CODES.MATTA.code) {
+      return "http://localhost:3002";
+    }
+    if (apCode === APP_CODES.MATTAPEDIA.code) {
+      return "http://localhost:5000";
+    }
+    if (apCode === APP_CODES.FLUX.code) {
+      return "http://localhost:3001";
+    }
+  }
+  return baseUrl;
 };
 
 // Helper: Get user apps map
@@ -247,7 +267,7 @@ const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
   const userAppData = userAppsMap[appCode];
   const isDisabled = userAppData?.isDisabled;
   const userCategory = userAppData?.appUserCategory;
-  console.log("Mapping app data for", appCode, { app, userAppData });
+
   return {
     code: appCode,
     name: app.appName || app.name,
@@ -292,6 +312,7 @@ const fetchUserApps = async () => {
 
 // Handler: Navigate to app
 const navigateToApp = async (app: UserApp) => {
+
   if (!app.isActive) {
     appToOnboard.value = app;
     showOnboardingModal.value = true;
@@ -368,6 +389,8 @@ const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
     toast.error(
       err?.response?.data?.message || "Onboarding failed. Please try again.",
     );
+    showOnboardingModal.value = false;
+    appToOnboard.value = null;
   } finally {
     isOnboarding.value = false;
   }

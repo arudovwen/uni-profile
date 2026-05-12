@@ -1,3 +1,5 @@
+import { APP_CODES } from "./app-config";
+
 const isProduction = process.env.NODE_ENV === "production";
 const cookieDomain = isProduction ? ".matta.trade" : "localhost";
 
@@ -13,17 +15,21 @@ export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
 export const PROFILE_COOKIE_NAME = "mattaProfiles_Dev";
 
 export const localAppUrls = {
-  OXI742: "http://localhost:3001",
-  POL628: "http://localhost:3030",
-  ORB789: "http://localhost:3040",
-  FLU722: "http://localhost:3000", 
-}
+  [APP_CODES.OXIDE_PRO.code]: "https://dev.oxidepro.matta.trade",
+  [APP_CODES.ORBITAL.code]: "https://dev.orbital.matta.trade",
+  [APP_CODES.OXIDE.code]: "https://dev.oxide.matta.trade",
+  [APP_CODES.FLUX.code]: "https://dev.deltalog.co",
+  [APP_CODES.MATTA.code]: "https://dev.matta.trade",
+  [APP_CODES.MATTAPEDIA.code]: "https://dev.mattapedia.matta.trade",
+};
 
 export const appCodeColorMap = {
-  OXI972: "#1570EF",
-  MAT763: "#1570EF",
-  MAT678: "#1570EF",
-  FLU120: "#021242",
+  [APP_CODES.OXIDE_PRO.code]: "#1570EF",
+  [APP_CODES.ORBITAL.code]: "#1570EF",
+  [APP_CODES.OXIDE.code]: "#1570EF",
+  [APP_CODES.FLUX.code]: "#021242",
+  [APP_CODES.MATTA.code]: "#1570EF",
+  [APP_CODES.MATTAPEDIA.code]: "#1570EF",
 };
 
 export const countryCodes = {

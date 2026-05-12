@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useOnboarding } from "./useOnboarding";
+import { APP_CODES } from "~/utils/app-config";
 
 export interface Role {
   value: string;
@@ -31,7 +32,7 @@ const truckSizeOptions = [
 
 // Map of app codes to their available roles
 export const appRolesMap: Record<string, Role[]> = {
-  FLU722: [
+  [APP_CODES.FLUX.code]: [
     {
       value: "clients",
       label: "Clients",
@@ -62,7 +63,7 @@ export const appRolesMap: Record<string, Role[]> = {
       conditionalFields: [],
     },
   ],
-  OXI972: [
+  [APP_CODES.OXIDE_PRO.code]: [
     {
       value: "Funder",
       label: "Funding Partner",
@@ -83,8 +84,11 @@ export const appRolesMap: Record<string, Role[]> = {
       conditionalFields: [],
     },
   ],
-  ORB789: [],
-  POL628: [],
+  [APP_CODES.ORBITAL.code]: [],
+  [APP_CODES.POLYMER.code]: [],
+  [APP_CODES.OXIDE.code]: [],
+  [APP_CODES.MATTA.code]: [],
+  [APP_CODES.MATTAPEDIA.code]: [],
 };
 
 export const useAppRoles = () => {
@@ -104,7 +108,7 @@ export const useAppRoles = () => {
     const roles = appRolesMap[appCode] || [];
 
     // For Oxide Pro, filter roles based on slug presence
-    if (appCode === "OXI972") {
+    if (appCode === APP_CODES.OXIDE_PRO.code) {
       if (accountSlug) {
         // With slug: only show Buyer or Supplier
         return roles.filter(

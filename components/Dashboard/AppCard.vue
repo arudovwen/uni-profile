@@ -79,6 +79,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
+import { APP_CODES } from "~/utils/app-config";
 
 interface AppCardProps {
   app: {
@@ -103,11 +104,17 @@ const handleClick = () => {
   emit("click", props.app);
 };
 
-const appRoles: Record<string, Object> = {
-  OXP975: { default: "Funder" },
-  ORB789: { default: "vendor" },
-  OXR123: { default: "Member" },
-  POL628: {
+type AppRoleConfig = {
+  default: string;
+  [key: string]: string;
+};
+
+const appRoles: Record<string, AppRoleConfig> = {
+  [APP_CODES.OXIDE_PRO.code]: { default: "Funder" },
+  [APP_CODES.ORBITAL.code]: { default: "vendor" },
+  [APP_CODES.OXIDE.code]: { default: "Member" },
+  [APP_CODES.MATTA.code]: { default: "Member" },
+  [APP_CODES.MATTAPEDIA.code]: {
     default: "Member",
     0: "Admin",
     1: "Owner",
@@ -125,7 +132,7 @@ const getRole = (role: string | undefined, app: any) => {
 
   if (app.appUserCategory) {
     return (
-      appRoles[app.code]?.[app.appUserCategory] ||
+      appRoles[app.code]?.[String(app.appUserCategory)] ||
       appRoles[app.code]?.default ||
       "User"
     );

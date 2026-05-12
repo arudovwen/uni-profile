@@ -33,9 +33,9 @@ describe('Constants', () => {
   });
 
   test('App Code Color Map should have expected keys', () => {
-    expect(appCodeColorMap).toHaveProperty('MAT678');
-    expect(appCodeColorMap).toHaveProperty('FLU120');
-    expect(appCodeColorMap['FLU120']).toBe('#021242');
+    expect(appCodeColorMap).toHaveProperty('OXP975');
+    expect(appCodeColorMap).toHaveProperty('FLU722');
+    expect(appCodeColorMap['FLU722']).toBe('#021242');
   });
 
   test('Navigation should be an array with correct keys', () => {

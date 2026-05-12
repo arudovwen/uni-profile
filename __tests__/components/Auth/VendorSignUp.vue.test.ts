@@ -7,7 +7,7 @@ import { registerUser, confirmRegister } from "~/services/authservices";
 import { toast } from "vue3-toastify";
 
 const mockRoute = {
-  params: { app: 'MAT678', auth: 'vendor' },
+  params: { app: 'MAT460', auth: 'vendor' },
   query: {}
 };
 
@@ -37,7 +37,7 @@ vi.stubGlobal('useRoute', () => mockRoute);
 vi.stubGlobal('useRouter', () => mockRouter);
 vi.stubGlobal('useHead', headSpy);
 vi.stubGlobal('useEncryptedCookie', () => cookieVal);
-vi.stubGlobal('appCodeColorMap', { 'MAT678': '#000', 'FLU120': '#fff' });
+vi.stubGlobal('appCodeColorMap', { 'MAT460': '#000', 'FLU722': '#fff' });
 vi.stubGlobal('handleRouting', routingSpy);
 vi.stubGlobal('handleRedirect', redirectSpy);
 vi.stubGlobal('intialRoute', { 'buyer': '/dashboard' });
@@ -81,7 +81,7 @@ describe('VendorSignUp Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRoute.query = {};
-    mockRoute.params = { app: 'MAT678', auth: 'vendor' };
+    mockRoute.params = { app: 'MAT460', auth: 'vendor' };
     cookieVal.value = null;
   });
 
