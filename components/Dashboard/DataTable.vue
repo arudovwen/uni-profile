@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <!-- Table Container -->
-    <div class="bg-white rounded-lg overflow-hidden">
+    <div class="bg-white rounded-lg overflow-visible">
       <!-- Loading State -->
       <div v-if="loading" class="flex justify-center items-center py-12">
         <div
@@ -99,7 +99,7 @@
               >
                 <div
                   v-if="activeActionMenu === index"
-                  class="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E4E7EC] rounded-lg shadow-lg z-50 py-1"
+                  class="absolute right-0 top-full mt-1 w-48 bg-white border border-[#E4E7EC] rounded-lg shadow-lg z-[120] py-1"
                 >
                   <template v-for="action in actions" :key="action.key">
                     <button

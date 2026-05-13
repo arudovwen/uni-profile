@@ -34,7 +34,7 @@
         />
       </div>
 
-      <div class="flex  items-center justify-center" v-if="loadingUser">
+      <div class="flex items-center justify-center" v-if="loadingUser">
         <FileLoader />
       </div>
       <div v-if="formValues.accountName && !loadingUser">
@@ -48,14 +48,14 @@
       </div>
 
       <div
-        class="flex items-center text-[#333] darks:text-slate-400 text-xs md:text-sm gap-x-[2px]"
+        class="flex flex-row items-center text-[#333] darks:text-slate-400 text-xs md:text-sm gap-x-[2px]"
       >
         <Checkbox
           label="Set as settlement account"
-          labelClass="text-xs md:text-sm"
           v-model="isPrimaryAccount"
           v-bind="isPrimaryAccountAtt"
-        />
+          name="isPrimaryAccount"
+        /> Set as primary settlement account
       </div>
 
       <div class="grid grid-cols-2 gap-x-4 mt-4">
@@ -210,6 +210,6 @@ watch(
           toast.error("Invalid account number");
         });
     }
-  }
+  },
 );
 </script>
