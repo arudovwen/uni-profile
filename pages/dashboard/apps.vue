@@ -82,7 +82,7 @@
       <OnboardingModal
         v-if="showOnboardingModal"
         :isOpen="showOnboardingModal"
-        :appCode="appToOnboard?.code"
+        :appCode="appToOnboard?.code ?? ''"
         :app="appToOnboard"
         :isOnboarding="isOnboarding"
         @close="
@@ -106,7 +106,7 @@ import { toast } from "vue3-toastify";
 import FluxLogo from "@/assets/images/flux-logo.png";
 import OrbitalLogo from "@/assets/images/orbital-logo.png";
 import OxideProLogo from "@/assets/apps/oxide-pro-logo.png";
-import { APP_CODES } from "~/utils/app-config.ts";
+import { APP_CODES } from "~/utils/app-config";
 
 definePageMeta({ middleware: "auth" });
 
@@ -128,10 +128,10 @@ interface UserApp {
 }
 
 const APP_ICONS = {
-  [APP_CODES.FLUX]: FluxLogo,
-  [APP_CODES.ORBITAL]: OrbitalLogo,
-  [APP_CODES.OXIDE_PRO]: OxideProLogo,
-  [APP_CODES.POLYMER_LEGACY]:
+  [APP_CODES.FLUX.code]: FluxLogo,
+  [APP_CODES.ORBITAL.code ?? ""]: OrbitalLogo,
+  [APP_CODES.OXIDE_PRO.code ?? ""]: OxideProLogo,
+  [APP_CODES.POLYMER.code ?? ""]:
     "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect fill='%232563EB' x='4' y='4' width='16' height='16' rx='2'/%3E%3C/svg%3E",
 } as const;
 const ADMIN_CATEGORIES = [0, 3];
@@ -158,34 +158,7 @@ const isNavigating = ref(false);
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
-
-const buildAuthUrl = (baseUrl: string, appCode: string): string => {
-  if (!encryptedToken || !encryptedRefreshToken) return baseUrl;
-  try {
-    const params = new URLSearchParams({
-      token: encodeURIComponent(
-        baseUrl.includes("pqolymer")
-          ? encodeURIComponent(encryptedToken)
-          : encryptedToken,
-      ),
-      code: encodeURIComponent(
-        baseUrl.includes("porlymer")
-          ? encodeURIComponent(encryptedRefreshToken)
-          : encryptedRefreshToken,
-      ),
-      refreshToken: encodeURIComponent(
-        baseUrl.includes("prolymer")
-          ? encodeURIComponent(encryptedRefreshToken)
-          : encryptedRefreshToken,
-      ),
-      appCode,
-    });
-    return `${baseUrl}/auth/validate?${params.toString()}`;
-  } catch (err) {
-    console.error("Error building auth URL:", err);
-    return baseUrl;
-  }
-};
+const allowTokenPass = new Set([APP_CODES.MATTAPEDIA.code]);
 
 const getUserAppsMap = async (): Promise<Record<string, any>> => {
   if (isAdmin.value) return {};
@@ -232,7 +205,16 @@ const mapAppData = (app: any, userAppsMap: Record<string, any>): UserApp => {
       userAppData?.iconUrl ||
       app.iconUrl ||
       app.logo,
-    url: app.url ? buildAuthUrl(app.url, appCode) : undefined,
+    url: app.url
+      ? buildAuthUrl(
+          app.url,
+          appCode,
+          encryptedToken,
+          encryptedRefreshToken,
+          allowTokenPass,
+          isAdmin.value,
+        )
+      : undefined,
     isActive: isDisabled === false,
     customerType: userAppData?.customerType,
     appUserCategory: userCategory,
