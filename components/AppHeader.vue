@@ -205,6 +205,21 @@
           <span>Referrals</span>
         </NuxtLink>
 
+        <PermissionGuard :categories="[1]">
+          <NuxtLink
+            :to="getTabPath('settlements')"
+            :class="[
+              'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+              isActiveTab('settlements')
+                ? 'border-[#1570EF] text-[#1570EF]'
+                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+            ]"
+          >
+            <DashboardNavIcon name="settings" :active="isActiveTab('settlements')" />
+            <span>Settlements</span>
+          </NuxtLink>
+        </PermissionGuard>
+
         <NuxtLink
           :to="getTabPath('settings')"
           :class="[
@@ -270,6 +285,7 @@ const getTabPath = (tab) => {
     users: "/dashboard/users",
     logs: "/dashboard/logs",
     referrals: "/referral-management",
+    settlements: "/settlements",
     settings: "/dashboard/settings",
   };
 
@@ -279,6 +295,7 @@ const getTabPath = (tab) => {
     users: "/user-management",
     logs: "/audit-logs",
     referrals: "/referral-management",
+    settlements: "/settlements",
     settings: "/profile",
   };
 
