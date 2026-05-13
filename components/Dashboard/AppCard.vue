@@ -123,10 +123,6 @@ const appRoles: Record<string, AppRoleConfig> = {
   // Add other app codes and their default roles as needed
 };
 
-onMounted(() => {
-  console.log("AppCard mounted with app data:", props.app);
-});
-
 const getRole = (role: string | undefined, app: any) => {
   console.log("app = ", app);
 
