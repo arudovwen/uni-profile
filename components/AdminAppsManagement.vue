@@ -122,6 +122,7 @@ interface App {
 
 const toast = useToast();
 const authStore = useAuthStore();
+const runtimeConfig = useRuntimeConfig();
 const { encrypt, decrypt } = useEncryption();
 const { getSignupFunction, buildAppPayload } = useOnboarding();
 
@@ -133,6 +134,16 @@ const customAppUrls: Record<string, string> = {
   [APP_CODES.FLUX.code]: "https://dev.deltalog.co",
   [APP_CODES.MATTA.code]: "https://dev.matta.trade",
   [APP_CODES.MATTAPEDIA.code]: "https://dev.mattapedia.matta.trade",
+};
+
+const adminUrls = {
+  [APP_CODES.OXIDE_PRO.code]: runtimeConfig.public.OXIDE_PRO_ADMIN_URL,
+  [APP_CODES.ORBITAL.code]: runtimeConfig.public.ORBITAL_ADMIN_URL,
+  [APP_CODES.OXIDE.code]: runtimeConfig.public.OXIDE_ADMIN_URL,
+  [APP_CODES.FLUX.code]: runtimeConfig.public.FLUX_ADMIN_URL,
+  [APP_CODES.MATTA.code]: runtimeConfig.public.MATTA_ADMIN_URL,
+  [APP_CODES.MATTAPEDIA.code]: runtimeConfig.public.MATTAPEDIA_ADMIN_URL,
+  [APP_CODES.POLYMER.code]: runtimeConfig.public.POLYMER_ADMIN_URL,
 };
 
 const slug = computed(
@@ -153,24 +164,25 @@ const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
-const allowTokenPass = new Set([APP_CODES.FLUX.code]);
+const allowTokenPass = new Set([APP_CODES.FLUX.code, APP_CODES.ORBITAL.code, APP_CODES.OXIDE.code]);
 
 const navigateToApp = async (app: App | any) => {
   const appToOpen = app.app || app;
+
   if (!appToOpen.url) return;
 
-  if (appToOpen.code.includes("OXI")) {
-    const authUrl = buildAuthUrl(
-      appToOpen.url,
-      appToOpen.code,
-      encryptedToken,
-      encryptedRefreshToken,
-      allowTokenPass,
-      true,
-    );
-    window.open(authUrl, "_blank", "noopener,noreferrer");
-    return;
-  }
+  // if (appToOpen.code.includes("OXI")) {
+  //   const authUrl = buildAuthUrl(
+  //     appToOpen.url,
+  //     appToOpen.code,
+  //     encryptedToken,
+  //     encryptedRefreshToken,
+  //     allowTokenPass,
+  //     true,
+  //   );
+  //   window.open(authUrl, "_blank", "noopener,noreferrer");
+  //   return;
+  // }
 
   const payload = buildAppPayload(
     appToOpen.code,
@@ -227,10 +239,13 @@ const loadApps = async () => {
       // Apply custom URLs if available for matching app codes
       apps.value = loadedApps.map((app: App) => {
         const customUrl = customAppUrls[app.code];
+        const adminUrl = adminUrls[app.code];
+
         return {
           ...app,
           description: app.description || "No description available",
-          url: customUrl || app.url || "",
+          adminUrl: adminUrl ?? customUrl,
+          url: adminUrl || customUrl || app.url || "",
         };
       });
     }
