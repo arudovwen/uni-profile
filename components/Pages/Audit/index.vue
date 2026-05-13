@@ -1,32 +1,7 @@
 <template>
   <div class="w-full">
     <!-- Top bar   -->
-
-    <div
-      class="flex flex-col mb-6 lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
-    >
-      <HeaderComponent title="Audit Logs" subtext="Manage your logs here." />
-      <div></div>
-    </div>
-    <div>
-      <div
-        class="max-w-[250px] mb-6"
-        v-if="authStore?.userInfo?.userCategory === 3"
-      >
-        <CustomSearchSelect v-model="queryParams.userId" />
-      </div>
-    </div>
-    <div class="mb-6 bg-white w-full rounded-lg border border-[#E9EAEB]">
-      <CustomTable
-        :columns="columns"
-        :rows="auditData"
-        emptyTitle="No Logs available"
-        :isLoading="docLoading"
-        emptyType="user"
-        :query="queryParams"
-        @onPageChange="(value) => (queryParams.PageNumber = value)"
-      />
-    </div>
+    <LogsContent />
   </div>
 </template>
 <script setup>
@@ -37,6 +12,7 @@ import debounce from "lodash/debounce";
 import { getAllUsers, getCentralAdminUsers } from "~/services/userservices";
 import { getOwnerAudit, getAdminAudit } from "~/services/auditservice";
 import moment from "moment";
+import LogsContent from "~/components/Dashboard/LogsContent.vue";
 
 const capitalize = (str) =>
   str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : "";

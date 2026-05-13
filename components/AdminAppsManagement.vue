@@ -115,6 +115,7 @@ interface App {
   iconUrl?: string;
   url: string;
   isDisabled: boolean;
+  isTwoFactorAuthEnabled?: boolean;
 }
 
 const toast = useToast();

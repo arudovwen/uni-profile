@@ -371,8 +371,13 @@ export const SuperNavigation = [
 
 export const superadminRoutes = [
   "user-management",
+  "user-management-users",
+  "user-management-invites",
   "user-management-user-detail-id",
+  "user-management-user-detail-id-profile",
+  "user-management-user-detail-id-apps",
   "application-management",
+  "application-management-action",
   "application-management-action-id",
 ];
 
@@ -390,6 +395,12 @@ export const univeralRoutes = [
   "",
   "audit-logs",
   "user-management-user-detail-id",
+  "referral-management",
+  "referral-management-management",
+  "referral-management-leaderboard",
+  "referral-management-create",
+  "referral-management-edit-id",
+  "referral-management-user-detail-id",
   "account-login-app",
   "account-forgot-password",
   "account-reset-password",
