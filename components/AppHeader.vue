@@ -139,7 +139,7 @@
         class="flex items-center gap-1 sm:gap-[10px] overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 lg:px-4"
       >
         <NuxtLink
-          to="/dashboard/apps"
+          :to="getTabPath('apps')"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('apps')
@@ -152,7 +152,7 @@
         </NuxtLink>
         <PermissionGuard :categories="[1]">
           <NuxtLink
-            to="/dashboard/kyc"
+            :to="getTabPath('kyc')"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-[11px] pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('kyc')
@@ -165,7 +165,7 @@
           </NuxtLink>
         </PermissionGuard>
         <NuxtLink
-          to="/dashboard/users"
+          :to="getTabPath('users')"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('users')
@@ -179,7 +179,7 @@
 
         <PermissionGuard :categories="[0, 3]">
           <NuxtLink
-            to="/dashboard/logs"
+            :to="getTabPath('logs')"
             :class="[
               'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
               isActiveTab('logs')
@@ -193,7 +193,20 @@
         </PermissionGuard>
 
         <NuxtLink
-          to="/dashboard/settings"
+          :to="getTabPath('referrals')"
+          :class="[
+            'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+            isActiveTab('referrals')
+              ? 'border-[#1570EF] text-[#1570EF]'
+              : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+          ]"
+        >
+          <DashboardNavIcon name="users" :active="isActiveTab('referrals')" />
+          <span>Referrals</span>
+        </NuxtLink>
+
+        <NuxtLink
+          :to="getTabPath('settings')"
           :class="[
             'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
             isActiveTab('settings')
@@ -248,25 +261,47 @@ const userEmail = computed(() => {
   }
 });
 
-const isActiveTab = (tab) => {
-  const map = {
+const isSuperadmin = computed(() => authStore.userInfo?.userCategory === 3);
+
+const getTabPath = (tab) => {
+  const defaultMap = {
     apps: "/dashboard/apps",
     kyc: "/dashboard/kyc",
     users: "/dashboard/users",
     logs: "/dashboard/logs",
+    referrals: "/referral-management",
     settings: "/dashboard/settings",
   };
+
+  const superadminMap = {
+    apps: "/application-management",
+    kyc: "/dashboard/kyc",
+    users: "/user-management",
+    logs: "/audit-logs",
+    referrals: "/referral-management",
+    settings: "/profile",
+  };
+
+  return (isSuperadmin.value ? superadminMap : defaultMap)[tab] || "/";
+};
+
+const isActiveTab = (tab) => {
+  const targetPath = getTabPath(tab);
 
   if (route.path === "/" && (!route.query.tab || route.query.tab === "apps")) {
     return tab === "apps";
   }
 
-  return route.path === map[tab];
+  if (targetPath === "/") {
+    return route.path === "/";
+  }
+
+  return route.path === targetPath || route.path.startsWith(`${targetPath}/`);
 };
 
 const goToSettings = () => {
   isUserMenuOpen.value = false;
-  router.push("/dashboard/settings");
+  router.push(getTabPath("settings"));
 };
 
 const handleLogout = async () => {

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-y-4 bg-[#F9FAFB] h-screen max-w-screen">
     <div class="flex flex-col flex-1 w-full h-full">
       <div class="relative flex flex-1 w-full h-full">
-        <div class="h-[100vh] w-auto hidden lg:block">
+        <div class="h-[100vh] w-auto hidden">
           <LayoutSideComponent />
         </div>
         <LayoutMobileSideComponent />
@@ -13,7 +13,7 @@
           </div>
           <MobileHeader />
           <!-- <LayoutMainComponent /> -->
-          <div class="px-4 py-8 mt-12 lg:px-8 lg:mt-0">
+          <div class="px-4 py-4 mt-12 lg:px-4 lg:mt-0 max-w-[1120px] mx-auto">
             <slot></slot>
           </div>
         </div>

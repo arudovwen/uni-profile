@@ -49,6 +49,9 @@ export default defineNuxtConfig({
     options: {
       unstyled: true,
     },
+    composables: {
+      exclude: ["useToast"],
+    },
   },
 
   security: {

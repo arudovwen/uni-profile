@@ -1,7 +1,7 @@
 <template>
-  <div class="md:px-6">
-    <!-- Top bar   -->
-    <div class="flex flex-col xl:py-10 gap-x-10 md:flex-row gap-y-6 md:gap-y-0">
+  <!-- <div class="md:px-6"> -->
+  <!-- Top bar   -->
+  <!-- <div class="flex flex-col xl:py-10 gap-x-10 md:flex-row gap-y-6 md:gap-y-0">
       <div class="">
         <ul
           class="custom-shadow bg-white rounded-lg overflow-hidden w-full md:w-[200px] max-w-[600px] mx-auto md:mx-0 grid grid-cols-3 md:grid-cols-1 gap-y-1"
@@ -38,8 +38,9 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </div> -->
+  <!-- </div> -->
+  <SettingsContent />
 </template>
 
 <script setup>
@@ -47,6 +48,7 @@ import Profile from "./profile.vue";
 import Security from "./security.vue";
 import Pin from "./pin.vue";
 import Application from "./application.vue";
+import SettingsContent from "~/components/Dashboard/SettingsContent.vue";
 
 const authStore = useAuthStore();
 const active = ref(1);
@@ -71,7 +73,7 @@ const tabs = [
 const filteredTabs = computed(() =>
   [0, 3].includes(authStore?.userInfo?.userCategory)
     ? tabs.filter((i) => i.value !== 3)
-    : tabs
+    : tabs,
 );
 </script>
 <style>

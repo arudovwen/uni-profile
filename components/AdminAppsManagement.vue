@@ -61,7 +61,9 @@
     <div
       class="animate-spin rounded-full h-12 w-12 border-4 border-[#e5e7eb] border-t-[#1570EF]"
     />
-    <p class="text-sm font-semibold text-[#475467]">Opening application, please wait&hellip;</p>
+    <p class="text-sm font-semibold text-[#475467]">
+      Opening application, please wait&hellip;
+    </p>
   </div>
 
   <!-- Delete Confirmation Modal -->
@@ -115,6 +117,7 @@ interface App {
   iconUrl?: string;
   url: string;
   isDisabled: boolean;
+  isTwoFactorAuthEnabled?: boolean;
 }
 
 const toast = useToast();
@@ -124,12 +127,12 @@ const { getSignupFunction, buildAppPayload } = useOnboarding();
 
 // Custom app URLs mapping - override API response URLs
 const customAppUrls: Record<string, string> = {
-  [APP_CODES.OXIDE_PRO]: "https://dev.oxidepro.matta.trade",
-  [APP_CODES.ORBITAL]: "https://dev.orbital.matta.trade",
-  [APP_CODES.OXIDE]: "https://dev.oxide.matta.trade",
-  [APP_CODES.FLUX]: "https://dev.deltalog.co",
-  [APP_CODES.MATTA]: "https://dev.matta.trade",
-  [APP_CODES.MATTAPEDIA]: "https://dev.mattapedia.matta.trade",
+  [APP_CODES.OXIDE_PRO.code]: "https://dev.oxidepro.matta.trade",
+  [APP_CODES.ORBITAL.code]: "https://dev.orbital.matta.trade",
+  [APP_CODES.OXIDE.code]: "https://dev.oxide.matta.trade",
+  [APP_CODES.FLUX.code]: "https://dev.deltalog.co",
+  [APP_CODES.MATTA.code]: "https://dev.matta.trade",
+  [APP_CODES.MATTAPEDIA.code]: "https://dev.mattapedia.matta.trade",
 };
 
 const slug = computed(
@@ -150,27 +153,21 @@ const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
-// Build authenticated URL with encrypted tokens
-const buildAuthUrl = (baseUrl: string) => {
-  if (!encryptedToken || !encryptedRefreshToken) {
-    return baseUrl;
-  }
+const allowTokenPass = new Set([APP_CODES.FLUX.code]);
 
-  return `${baseUrl}/auth/validate?token=${encodeURIComponent(
-    encryptedToken,
-  )}&code=${encodeURIComponent(
-    encryptedRefreshToken,
-  )}&refreshToken=${encodeURIComponent(encryptedRefreshToken)}`;
-};
-
-// Navigate to app URL
 const navigateToApp = async (app: App | any) => {
   const appToOpen = app.app || app;
   if (!appToOpen.url) return;
 
-  // For OXI apps, open directly without signup
   if (appToOpen.code.includes("OXI")) {
-    const authUrl = buildAuthUrl(appToOpen.url);
+    const authUrl = buildAuthUrl(
+      appToOpen.url,
+      appToOpen.code,
+      encryptedToken,
+      encryptedRefreshToken,
+      allowTokenPass,
+      true,
+    );
     window.open(authUrl, "_blank", "noopener,noreferrer");
     return;
   }
@@ -194,7 +191,14 @@ const navigateToApp = async (app: App | any) => {
   isNavigating.value = true;
   try {
     await getSignupFunction(appToOpen.code)?.(payload);
-    const authUrl = buildAuthUrl(appToOpen.url);
+    const authUrl = buildAuthUrl(
+      appToOpen.url,
+      appToOpen.code,
+      encryptedToken,
+      encryptedRefreshToken,
+      allowTokenPass,
+      true,
+    );
     window.open(authUrl, "_blank", "noopener,noreferrer");
   } catch (err: any) {
     if (err?.response?.data?.message?.includes("Already a")) {

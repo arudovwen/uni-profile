@@ -1,148 +1,105 @@
 <template>
-  <div class="w-full">
-    <div
-      class="flex flex-col bg-white w-full border-1px rounded-[10px] border-[#F4F7FE]"
+  <div class="font-Avenir overflow-hidden">
+    <DashboardTableFilters
+      v-model="searchQuery"
+      search-placeholder="Search by referral code"
+      @search="handleSearch"
+      @download="handleDownload"
     >
-      <div class="flex flex-row items-center gap-3 px-6 pb-4">
-        <div
-          class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
-        >
-          <span class="text-[#667085]">
-            <AppIcon icon="uil-search" icon-class="text-xl" />
-          </span>
-          <input
-            type="search"
-            placeholder="Search by code"
-            v-model="queryParams.ReferralCode"
-            @input="debounceSearch"
-            class="flex-1 text-sm font-medium outline-none focus:outline-none"
-          />
-        </div>
-        <filter-button
-          v-model="queryParams.status"
-          :options="filterOptions"
+      <template #filters>
+        <DashboardFilterDropdown
+          v-model="filters.status"
+          :options="statusOptions"
           placeholder="Status"
-          :classInput="`min-w-[100px] !bg-white  !rounded-lg !text-[#475467] !h-11 cursor-pointer  'border-[#D0D5DD]'`"
+          @change="handleFilterChange"
         />
-      </div>
-      <div class="w-full mb-6 bg-white">
-        <div
-          v-if="!loading && rows.length < 1"
-          class="flex flex-col items-center gap-4 py-[140px]"
-        >
-          <svgs-loudspeaker />
-          <span
-            class="font-semibold text-[16px] leading-6 tracking-normal text-center"
-            >No referral code has been created</span
-          >
-          <AppButton
-            text="New Referral Code"
-            :icon="`humbleicons:plus`"
-            :btnClass="`!bg-[#165EF0] border-[#165EF0] !text-[14px] !py-2.5 !leading-5 text-white `"
-            iconClass="text-sm md:text-base"
-            @click="navigateTo('/referral-management/create?refType=1')"
-          />
-        </div>
-        <CustomTable
-          v-else
+      </template>
+    </DashboardTableFilters>
+
+    <div
+      v-if="rows.length > 0 || isLoading"
+      class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <DashboardDataTable
           :columns="columns"
-          :rows="rows"
-          emptyTitle="No referral code has been created"
-          :isLoading="loading"
-          emptyType="referral"
-          className="!rounded-0 !border-0 !shadow-none"
-          :query="queryParams"
-          @onPageChange="(value) => (queryParams.PageNumber = value)"
+          :data="rows"
+          :loading="isLoading"
+          :show-actions="true"
+          :actions="actions"
+          :paginator="false"
+          body-cell-class="px-6 py-4 text-sm font-medium text-[#475467]"
+          empty-message="No referral code has been created"
+          @action="handleAction"
         >
-          <template #table-row-status="{ row }">
-            <AppStatusButton stattype="referral" :status="row.status" />
-          </template>
-          <template #table-row-referralCode="{ row }">
-            <span
-            class="cursor-pointer"
-              @click="
-                () => {
-                  refDetail = row;
-                  openRef = true;
-                }
-              "
-              >{{ row.referralCode }}</span
+          <template #cell-referralCode="slotProps">
+            <button
+              type="button"
+              class="text-[#1570EF] hover:underline"
+              @click="openReferralLinks(slotProps.data)"
             >
+              {{ slotProps.data.referralCode }}
+            </button>
           </template>
-          <template #table-row-assignedUser="{ row }">
-            <span>{{ row.assignedUser  || '-'  }}</span>
+
+          <template #cell-assignedUser="slotProps">
+            <span>{{ slotProps.data.assignedUser || "-" }}</span>
           </template>
-          <template #table-row-assignedUserEmail="{ row }">
-            <span>{{ row.assignedUserEmail  || '-'  }}</span>
+
+          <template #cell-assignedDepartment="slotProps">
+            <span>{{ slotProps.data.assignedDepartment || "-" }}</span>
           </template>
-          <template #table-row-assignedDepartment="{ row }">
-            <span>{{ row.assignedDepartment || '-' }}</span>
+
+          <template #cell-assignedApps="slotProps">
+            <span>{{ slotProps.data.assignedApps || "-" }}</span>
           </template>
-          <template #table-row-assignedApps="{ row }">
-            <div class="flex flex-wrap gap-1">
-              {{ row.assignedApps  || '-'  }}
-            </div>
+
+          <template #cell-created_On="slotProps">
+            <span>{{ formatDate(slotProps.data.created_On) }}</span>
           </template>
-          <template #table-row-created_On="{ row }">
-            <span>{{ moment(row.created_On).format("lll") }}</span>
+
+          <template #cell-status="slotProps">
+            <AppStatusButton stattype="referral" :status="slotProps.data.status" />
           </template>
-          <template #table-row-action="{ row }">
-            <Menu class="" as="div">
-              <Float placement="bottom-end" :offset="4">
-                <MenuButton class="block ml-auto outline-none">
-                  <AppIcon icon="heroicons:ellipsis-vertical-solid" />
-                </MenuButton>
-                <MenuItems
-                  class="z-[999] bg-white shadow-[5px_12px_35px_rgba(44,44,44,0.12)] py-1 min-w-[150px] rounded-xl overflow-hidden flex flex-col items-start gap-y-[2px] justify-start"
-                >
-                  <MenuItem>
-                    <button
-                      type="button"
-                      @click="handleEdit(row)"
-                      class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
-                    >
-                      Edit Referral code
-                    </button></MenuItem
-                  >
-                  <template v-if="row.status !== 1">
-                    <MenuItem>
-                      <button
-                        type="button"
-                        @click="handleActivate(row)"
-                        class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
-                      >
-                        Deactivate Code
-                      </button>
-                    </MenuItem>
-                  </template>
-                  <template v-else>
-                    <MenuItem>
-                      <button
-                        type="button"
-                        @click="handleDeactivate(row)"
-                        class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
-                      >
-                        Activate Code
-                      </button>
-                    </MenuItem>
-                  </template>
-                  <MenuItem>
-                    <button
-                      type="button"
-                      @click="handleDelete(row)"
-                      class="flex items-center w-full px-5 py-2 text-base text-left cursor-pointer hover:bg-gray-50 whitespace-nowrap gap-x-2"
-                    >
-                      Delete code
-                    </button>
-                  </MenuItem>
-                </MenuItems>
-              </Float>
-            </Menu>
-          </template>
-        </CustomTable>
+        </DashboardDataTable>
+      </div>
+
+      <div
+        class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]"
+      >
+        <div
+          class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium"
+        >
+          {{ 1 }} - {{ rows.length }}
+        </div>
+        <button
+          @click="handleLoadMore"
+          :disabled="rows.length >= queryParams.total || isLoadingMore"
+          :class="[
+            'px-4 py-2 font-semibold text-xs sm:text-sm rounded-lg border transition-colors w-full sm:w-auto',
+            rows.length >= queryParams.total || isLoadingMore
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer',
+          ]"
+        >
+          {{ isLoadingMore ? "Loading..." : "Load More" }}
+        </button>
       </div>
     </div>
+
+    <div
+      v-else
+      class="flex flex-col items-center justify-center py-10 sm:py-16 px-4 bg-white rounded-lg border border-[#E9EAEB]"
+    >
+      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">
+        No referral code has been created
+      </p>
+      <p class="text-gray-400 text-xs sm:text-sm mt-2 text-center">
+        There are no referral records to display at the moment.
+      </p>
+    </div>
   </div>
+
   <DeleteModal
     @close="deleteModalOpen = false"
     :title="`Delete Referral Code`"
@@ -159,22 +116,36 @@
     </template>
   </IndexModal>
 </template>
+
 <script setup>
-import AppButton from "~/components/AppButton.vue";
-import AppIcon from "~/components/AppIcon.vue";
-import CustomTable from "~/components/CustomTable/index.vue";
+import { ref, reactive, onMounted, watch, markRaw } from "vue";
+import debounce from "lodash/debounce";
+import moment from "moment";
+import { toast } from "vue3-toastify";
 import AppStatusButton from "~/components/AppStatusButton.vue";
 import DeleteModal from "~/components/DeleteModal.vue";
-import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/vue";
-import { Float } from "@headlessui-float/vue";
+import EditIcon from "~/assets/images/icon/EditIcon.vue";
+import SuspendIcon from "~/assets/images/icon/SuspendIcon.vue";
+import ReactivateIcon from "~/assets/images/icon/ReactivateIcon.vue";
+import DeleteIcon from "~/assets/images/icon/DeleteIcon.vue";
 import {
   getReferrals,
   updateReferralStatus,
   deleteReferral,
 } from "~/services/userservices";
-import { toast } from "vue3-toastify";
-import debounce from "lodash/debounce";
-import moment from "moment";
+
+const searchQuery = ref("");
+const isLoading = ref(false);
+const isLoadingMore = ref(false);
+const deleteModalOpen = ref(false);
+const deleteLoading = ref(false);
+const openRef = ref(false);
+const refDetail = ref(null);
+const selectedReferralForDelete = ref(null);
+
+const filters = ref({
+  status: "all",
+});
 
 const queryParams = reactive({
   ReferralCode: "",
@@ -186,177 +157,237 @@ const queryParams = reactive({
   status: "",
   total: 0,
 });
-const openRef = ref(false);
-const refDetail = ref(null);
-const filterOptions = [
-  {
-    label: "All",
-    key: "all",
-    value: "",
-  },
-  {
-    label: "Active",
-    key: "active",
-    value: 0,
-  },
-  {
-    label: "Inactive",
-    key: "inactive",
-    value: 1,
-  },
-];
 
 const rows = ref([]);
-const loading = ref(false);
-const deleteModalOpen = ref(false);
-const deleteLoading = ref(false);
-const selectedReferralForDelete = ref(null);
+
+const statusOptions = [
+  { label: "All", value: "all" },
+  { label: "Active", value: "0" },
+  { label: "Inactive", value: "1" },
+];
 
 const columns = [
+  { field: "referralCode", header: "Referral Code" },
+  { field: "assignedUser", header: "Assigned User" },
+  { field: "assignedDepartment", header: "Department" },
+  { field: "assignedApps", header: "Assigned Apps" },
+  { field: "created_On", header: "Created" },
+  { field: "status", header: "Status" },
+];
+
+const actions = [
   {
-    header: "Referral Code",
-    key: "referralCode",
-    isHtml: false,
-    isStatus: false,
+    key: "edit",
+    label: "Edit Referral code",
+    icon: markRaw(EditIcon),
+    iconColor: "text-[#667085]",
+    textColor: "text-[#344054]",
   },
   {
-    header: "Assigned User",
-    key: "assignedUser",
-    isHtml: false,
-    isStatus: false,
+    key: "activate",
+    label: "Activate Code",
+    icon: markRaw(ReactivateIcon),
+    iconColor: "text-[#667085]",
+    textColor: "text-[#344054]",
+    condition: (data) => data.status === 1,
   },
   {
-    header: "Department",
-    key: "assignedDepartment",
-    isHtml: false,
-    isStatus: false,
+    key: "deactivate",
+    label: "Deactivate Code",
+    icon: markRaw(SuspendIcon),
+    iconColor: "text-[#667085]",
+    textColor: "text-[#344054]",
+    condition: (data) => data.status !== 1,
   },
   {
-    header: "Assigned Apps",
-    key: "assignedApps",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Created",
-    key: "created_On",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Status",
-    key: "status",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "",
-    key: "action",
-    isHtml: false,
-    isStatus: false,
+    key: "delete",
+    label: "Delete code",
+    icon: markRaw(DeleteIcon),
+    iconColor: "text-[#D92D20]",
+    textColor: "text-[#D92D20]",
   },
 ];
 
-onMounted(() => {
-  fetchReferrals();
-});
+const formatDate = (value) => (value ? moment(value).format("lll") : "-");
 
-async function fetchReferrals() {
-  loading.value = true;
+const fetchReferrals = async (isLoadMore = false) => {
+  if (isLoadMore) {
+    isLoadingMore.value = true;
+  } else {
+    isLoading.value = true;
+  }
+
   try {
-    const res = await getReferrals(queryParams);
-    rows.value = res.data.data || [];
-    queryParams.total = res.data.totalCount || 0;
+    const payload = {
+      ...queryParams,
+      status: queryParams.status === "" ? "" : Number(queryParams.status),
+    };
+    const res = await getReferrals(payload);
+    const newRows = res?.data?.data || [];
+
+    rows.value = isLoadMore ? [...rows.value, ...newRows] : newRows;
+    queryParams.total = res?.data?.totalCount || 0;
   } catch (error) {
     console.error("Error fetching referrals:", error);
     toast.error(
       error?.response?.data?.message ||
         error?.response?.data?.Message ||
-        "Failed to fetch referrals"
+        "Failed to fetch referrals",
     );
   } finally {
-    loading.value = false;
+    if (isLoadMore) {
+      isLoadingMore.value = false;
+    } else {
+      isLoading.value = false;
+    }
   }
-}
+};
 
 const debounceSearch = debounce(() => {
   queryParams.PageNumber = 1;
-  fetchReferrals();
+  fetchReferrals(false);
 }, 800);
 
-// Watch for pagination changes
-watch(
-  () => queryParams.PageNumber,
-  () => {
-    fetchReferrals();
-  }
-);
+const handleSearch = (query) => {
+  searchQuery.value = query;
+};
 
-// Watch for status filter changes
-watch(
-  () => queryParams.status,
-  () => {
-    queryParams.PageNumber = 1;
-    fetchReferrals();
-  }
-);
+const handleFilterChange = () => {
+  // watcher handles refresh
+};
 
-function handleEdit(row) {
+const handleDownload = () => {
+  const csvColumns = [
+    { header: "Referral Code", key: "referralCode" },
+    { header: "Assigned User", key: "assignedUser" },
+    { header: "Department", key: "assignedDepartment" },
+    { header: "Assigned Apps", key: "assignedApps" },
+    { header: "Created", key: "created_On" },
+    { header: "Status", key: "status" },
+  ];
+
+  const dataToExport = rows.value.map((item) => ({
+    ...item,
+    created_On: formatDate(item.created_On),
+    status: item.status === 1 ? "Inactive" : "Active",
+  }));
+
+  exportToCSV(
+    dataToExport,
+    csvColumns,
+    `referral-management-${moment().format("YYYY-MM-DD")}`,
+  );
+};
+
+const handleLoadMore = () => {
+  queryParams.PageNumber += 1;
+  fetchReferrals(true);
+};
+
+const openReferralLinks = (row) => {
+  refDetail.value = row;
+  openRef.value = true;
+};
+
+const handleEdit = (row) => {
   navigateTo(`/referral-management/edit/${row.referralCode}`);
-}
+};
 
-async function handleActivate(row) {
+const handleActivate = async (row) => {
   try {
     await updateReferralStatus(row.referralCode, 1);
     toast.success("Referral code activated successfully");
-    fetchReferrals();
+    fetchReferrals(false);
   } catch (error) {
     console.error("Error activating referral:", error);
     toast.error(
       error?.response?.data?.message ||
         error?.response?.data?.Message ||
-        "Failed to activate referral code"
+        "Failed to activate referral code",
     );
   }
-}
+};
 
-async function handleDeactivate(row) {
+const handleDeactivate = async (row) => {
   try {
     await updateReferralStatus(row.referralCode, 0);
     toast.success("Referral code deactivated successfully");
-    fetchReferrals();
+    fetchReferrals(false);
   } catch (error) {
     console.error("Error deactivating referral:", error);
     toast.error(
       error?.response?.data?.message ||
         error?.response?.data?.Message ||
-        "Failed to deactivate referral code"
+        "Failed to deactivate referral code",
     );
   }
-}
+};
 
-function handleDelete(row) {
+const handleDelete = (row) => {
   selectedReferralForDelete.value = row;
   deleteModalOpen.value = true;
-}
+};
 
-async function confirmDelete() {
+const handleAction = (action, row) => {
+  if (action === "edit") {
+    handleEdit(row);
+    return;
+  }
+
+  if (action === "activate") {
+    handleActivate(row);
+    return;
+  }
+
+  if (action === "deactivate") {
+    handleDeactivate(row);
+    return;
+  }
+
+  if (action === "delete") {
+    handleDelete(row);
+  }
+};
+
+const confirmDelete = async () => {
+  if (!selectedReferralForDelete.value?.id) return;
 
   try {
     deleteLoading.value = true;
     await deleteReferral(selectedReferralForDelete.value.id);
     toast.success("Referral code deleted successfully");
     deleteModalOpen.value = false;
-    fetchReferrals();
+    fetchReferrals(false);
   } catch (error) {
     console.error("Error deleting referral:", error);
     toast.error(
       error?.response?.data?.message ||
         error?.response?.data?.Message ||
-        "Failed to delete referral code"
+        "Failed to delete referral code",
     );
   } finally {
     deleteLoading.value = false;
   }
-}
+};
+
+watch(
+  () => searchQuery.value,
+  (value) => {
+    queryParams.ReferralCode = value;
+    debounceSearch();
+  },
+);
+
+watch(
+  () => filters.value.status,
+  (value) => {
+    queryParams.status = value === "all" ? "" : value;
+    queryParams.PageNumber = 1;
+    fetchReferrals(false);
+  },
+);
+
+onMounted(() => {
+  fetchReferrals(false);
+});
 </script>

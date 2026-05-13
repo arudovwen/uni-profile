@@ -147,6 +147,37 @@
             </p>
           </div>
 
+          <!-- Two-Factor Authentication Toggle -->
+          <div class="space-y-1 border-t pt-6">
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="block text-[14px] font-[500] text-[#2F2F2F] leading-5">
+                  Two-Factor Authentication
+                </label>
+                <p class="text-[12px] font-[350] text-[#98A2B3] leading-5 mt-1">
+                  Enable 2FA for enhanced security
+                </p>
+              </div>
+              <div class="flex items-center">
+                <button
+                  type="button"
+                  @click="formData.isTwoFactorAuthEnabled = !formData.isTwoFactorAuthEnabled"
+                  :class="[
+                    formData.isTwoFactorAuthEnabled ? 'bg-[#067647]' : 'bg-gray-200',
+                    'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none'
+                  ]"
+                >
+                  <span
+                    :class="[
+                      formData.isTwoFactorAuthEnabled ? 'translate-x-6' : 'translate-x-1',
+                      'inline-block h-4 w-4 transform rounded-full bg-white transition-transform'
+                    ]"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
           <!-- Submit Button -->
           <button
             type="submit"
@@ -178,6 +209,7 @@ interface ApplicationModalProps {
     description: string;
     iconUrl?: string;
     isDisabled: boolean;
+    isTwoFactorAuthEnabled?: boolean;
   } | null;
 }
 
@@ -186,6 +218,7 @@ interface FormData {
   url: string;
   description: string;
   isDisabled: boolean;
+  isTwoFactorAuthEnabled: boolean;
 }
 
 const props = withDefaults(defineProps<ApplicationModalProps>(), {
@@ -210,6 +243,7 @@ const formData = ref<FormData>({
   url: '',
   description: '',
   isDisabled: false,
+  isTwoFactorAuthEnabled: false,
 });
 
 const selectedStatus = ref(statusOptions[0]);
@@ -232,6 +266,7 @@ watch(
         url: newApp.url,
         description: newApp.description,
         isDisabled: newApp.isDisabled,
+        isTwoFactorAuthEnabled: newApp.isTwoFactorAuthEnabled ?? false,
       };
       selectedStatus.value = newApp.isDisabled ? statusOptions[1] : statusOptions[0];
       if (newApp.iconUrl) {
@@ -258,6 +293,7 @@ const resetForm = () => {
     url: '',
     description: '',
     isDisabled: false,
+    isTwoFactorAuthEnabled: false,
   };
   selectedStatus.value = statusOptions[0];
   logoFile.value = null;
@@ -375,7 +411,6 @@ const handleSubmit = async () => {
     const submitData = {
       ...formData.value,
       iconUrl: logoUrl,
-      isTwoFactorAuthEnabled: true,
     };
 
     if (isEditMode.value && props.app) {

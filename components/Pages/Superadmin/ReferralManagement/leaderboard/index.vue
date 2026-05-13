@@ -1,112 +1,91 @@
 <template>
-  <div v-if=" [0, 3, 4].includes(authStore.userInfo?.userCategory)" class="px-6">
-    <AppTab
-      :tabs="tabs"
-      :active="activeTab"
-      @set-active="(value) => (activeTab = value)"
+  <div class="font-Avenir overflow-hidden" :class="customClass">
+    <AppTab :tabs="tabs" :active="activeTab" @set-active="handleTabChange" />
+
+    <DashboardPageHeader
+      v-if="!hideHeader"
+      title="Referral Leaderboard"
+      subtitle="Track top performers and see who leads the referral rankings."
     />
-  </div>
-  <div class="w-full" :class="customClass">
-    <div
-      class="flex flex-col bg-white w-full border-1px rounded-[10px] border-[#F4F7FE]"
+
+    <DashboardTableFilters
+      v-model="searchQuery"
+      search-placeholder="Search leaderboard"
+      @search="handleSearch"
+      @download="handleDownload"
     >
-      <div
-        v-if="!hideHeader"
-        class="flex flex-row justify-between px-6 py-5 border-b border-[#EAECF0]"
-      >
-        <div class="flex flex-col gap-1">
-          <span
-            class="font-semibold text-[18px] leading-[28px] tracking-[0%] text-[#101828]"
-          >
-            Referral Leaderboard
-          </span>
-          <span
-            class="font-normal text-[14px] leading-[20px] tracking-[0%] text-[#475467]"
-            >Track top performers and see who leads the referral rankings.
-          </span>
-        </div>
+      <template #filters>
+        <DashboardDateRangePicker
+          v-model="filters.dateRange"
+          placeholder="Date Range"
+          @change="handleDateChange"
+        />
+      </template>
+    </DashboardTableFilters>
+
+    <div
+      v-if="rows.length > 0 || isLoading"
+      class="bg-white rounded-lg border border-[#E4E7EC] overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <DashboardDataTable
+          :columns="columns"
+          :data="rows"
+          :loading="isLoading"
+          :paginator="false"
+          body-cell-class="px-6 py-4 text-sm font-medium text-[#475467]"
+          empty-message="No leaderboard data available"
+        />
       </div>
-      <div class="flex gap-3 px-6" :class="customClass ? 'pb-4 pt-4' : ''">
+
+      <div
+        class="flex flex-col sm:flex-row relative justify-center items-center gap-3 sm:gap-0 py-3 sm:py-4 px-4 sm:px-6 border-t border-[#F2F4F7]"
+      >
         <div
-          class="!flex items-center gap-x-2.5 px-4 input-control !max-w-[320px]"
+          class="text-xs sm:text-sm text-[#344054] sm:absolute sm:left-6 font-medium"
         >
-          <span class="text-[#667085]">
-            <AppIcon icon="uil-search" icon-class="text-xl" />
-          </span>
-          <input
-            type="search"
-            placeholder="Search "
-            v-model="queryParams.search"
-            @input="debounceSearch"
-            class="flex-1 text-sm font-medium outline-none focus:outline-none"
-          />
-        </div>
-        <div class="min-w-[240px]">
-          <ClientOnly>
-            <VueDatePicker
-              auto-apply
-              v-model="date"
-              range
-              multi-calendars
-              placeholder="Select dates"
-              :time-picker="false"
-              input-class-name=""
-              no-today
-              :enable-time-picker="false"
-            />
-          </ClientOnly>
+          {{ 1 }} - {{ rows.length }}
         </div>
         <button
-          @click="exportToCSVHandler"
-          :disabled="isExporting || rows.length === 0"
-          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0066CC] text-white font-medium text-sm hover:bg-[#0052A3] disabled:bg-[#D0D5DD] disabled:text-[#98A2B3] disabled:cursor-not-allowed transition-colors"
+          @click="handleLoadMore"
+          :disabled="rows.length >= queryParams.total || isLoadingMore"
+          :class="[
+            'px-4 py-2 font-semibold text-xs sm:text-sm rounded-lg border transition-colors w-full sm:w-auto',
+            rows.length >= queryParams.total || isLoadingMore
+              ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+              : 'bg-white text-[#344054] border-[#D0D5DD] hover:bg-gray-50 hover:border-gray-400 shadow-xs shadow-[#1018280D] cursor-pointer',
+          ]"
         >
-          <span>{{ isExporting ? "Exporting..." : "Export to CSV" }}</span>
+          {{ isLoadingMore ? "Loading..." : "Load More" }}
         </button>
       </div>
-      <div class="w-full mb-6 bg-white">
-        <CustomTable
-          :columns="columns"
-          :rows="rows"
-          emptyTitle="No leaderboard data available"
-          :isLoading="loading"
-          emptyType="referral"
-          className="!rounded-0 !border-0 !shadow-none"
-          :query="queryParams"
-          @onPageChange="(value) => (queryParams.PageNumber = value)"
-        >
-          <template #table-row-status="{ row }">
-            <AppStatusButton stattype="referral" :status="row.status" />
-          </template>
-          <template #table-row-assignedUser="{ row }">
-            <span>{{ row.assignedUser }}</span>
-          </template>
-          <template #table-row-assignedUserEmail="{ row }">
-            <span>{{ row.assignedUserEmail }}</span>
-          </template>
-          <template #table-row-assignedDepartment="{ row }">
-            <span>{{ row.assignedDepartment }}</span>
-          </template>
-          <template #table-row-assignedApps="{ row }">
-            <div class="flex flex-wrap gap-1">
-              {{ row.assignedApps }}
-            </div>
-          </template>
-        </CustomTable>
-      </div>
+    </div>
+
+    <div
+      v-else
+      class="flex flex-col items-center justify-center py-10 sm:py-16 px-4 bg-white rounded-lg border border-[#E9EAEB]"
+    >
+      <p class="text-gray-600 text-base sm:text-lg font-medium text-center">
+        No leaderboard data available
+      </p>
+      <p class="text-gray-400 text-xs sm:text-sm mt-2 text-center">
+        There are no referral records to display at the moment.
+      </p>
     </div>
   </div>
 </template>
-<script setup>
-import CustomTable from "~/components/CustomTable/index.vue";
-import AppStatusButton from "~/components/AppStatusButton.vue";
-import VueDatePicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
-import { getReferralLeaderboard } from "~/services/userservices";
+
+<script setup lang="ts">
+import { ref, reactive, onMounted, watch } from "vue";
 import debounce from "lodash/debounce";
 import { toast } from "vue3-toastify";
 import moment from "moment";
+import { getReferralLeaderboard } from "~/services/userservices";
 
+interface DateRange {
+  start: Date | null;
+  end: Date | null;
+}
 
 defineProps({
   customClass: {
@@ -118,125 +97,106 @@ defineProps({
     default: false,
   },
 });
-const authStore = useAuthStore()
-const activeTab = ref("user");
+
 const tabs = [
-  {
-    title: "Users",
-    key: "user",
-  },
-  // {
-  //   title: "Departments",
-  //   key: "department",
-  // },
-  {
-    title: "Campaigns",
-    key: "campaign",
-  },
+  { title: "Users", key: "user" },
+  { title: "Campaigns", key: "campaign" },
 ];
-const date = ref(null);
+
+const refTypes: Record<string, number[]> = {
+  user: [0],
+  department: [1],
+  campaign: [2],
+};
+
+const activeTab = ref("user");
+const searchQuery = ref("");
+const isLoading = ref(false);
+const isLoadingMore = ref(false);
+const isExporting = ref(false);
+const rows = ref<any[]>([]);
+
+const filters = ref({
+  dateRange: null as DateRange | null,
+});
+
+const columns = [
+  { field: "rank", header: "Rank" },
+  { field: "userName", header: "Name" },
+  { field: "totalReferrals", header: "Total referrals" },
+  { field: "matta", header: "Matta" },
+  { field: "orbital", header: "Orbital" },
+  { field: "oxide", header: "Oxide" },
+  { field: "flux", header: "Flux" },
+];
+
 const queryParams = reactive({
   search: "",
   PageNumber: 1,
   PageSize: 10,
   status: "",
   total: 0,
-  from: null,
-  to: null,
-  referalTypes: [0],
-});
-const RefTypes = {
-  user: [0],
-  department: [1],
-  campaign: [2],
-};
-const rows = ref([]);
-const loading = ref(false);
-const isExporting = ref(false);
-const columns = [
-  {
-    header: "Rank",
-    key: "rank",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Name",
-    key: "userName",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Total referrals",
-    key: "totalReferrals",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Matta",
-    key: "matta",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Orbital",
-    key: "orbital",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Oxide",
-    key: "oxide",
-    isHtml: false,
-    isStatus: false,
-  },
-  {
-    header: "Flux",
-    key: "flux",
-    isHtml: false,
-    isStatus: false,
-  },
-];
-
-onMounted(() => {
-  fetchReferrals();
+  from: null as string | null,
+  to: null as string | null,
 });
 
-async function fetchReferrals() {
-  loading.value = true;
+const fetchReferrals = async (isLoadMore = false) => {
+  if (isLoadMore) {
+    isLoadingMore.value = true;
+  } else {
+    isLoading.value = true;
+  }
+
   try {
-    const res = await getReferralLeaderboard({
+    const res: any = await getReferralLeaderboard({
       ...queryParams,
-      referalTypes: RefTypes[activeTab.value],
+      referalTypes: refTypes[activeTab.value],
     });
-    rows.value = res.data?.data;
-    queryParams.total = res.data.totalCount || 0;
-  } catch (error) {
+
+    const newRows = res?.data?.data || [];
+    rows.value = isLoadMore ? [...rows.value, ...newRows] : newRows;
+    queryParams.total = res?.data?.totalCount || 0;
+  } catch (error: any) {
     console.error("Error fetching referrals:", error);
     toast.error(
       error?.response?.data?.message ||
         error?.response?.data?.Message ||
-        "Failed to fetch referrals"
+        "Failed to fetch referrals",
     );
   } finally {
-    loading.value = false;
+    if (isLoadMore) {
+      isLoadingMore.value = false;
+    } else {
+      isLoading.value = false;
+    }
   }
-}
-watch(date, () => {
-  if (date.value) {
-    queryParams.from = moment(date.value[0]).format("yyyy-MM-DD");
-    queryParams.to = moment(date.value[1]).format("yyyy-MM-DD");
-  } else {
-    queryParams.from = null;
-    queryParams.to = null;
-  }
-});
+};
+
 const debounceSearch = debounce(() => {
   queryParams.PageNumber = 1;
-  fetchReferrals();
+  fetchReferrals(false);
 }, 800);
 
-const exportToCSVHandler = async () => {
+const handleTabChange = (value: string) => {
+  activeTab.value = value;
+  queryParams.PageNumber = 1;
+  fetchReferrals(false);
+};
+
+const handleSearch = (query: string) => {
+  searchQuery.value = query;
+};
+
+const handleDateChange = (range: DateRange | null) => {
+  filters.value.dateRange = range;
+};
+
+const handleLoadMore = () => {
+  queryParams.PageNumber += 1;
+  fetchReferrals(true);
+};
+
+const handleDownload = async () => {
   if (rows.value.length === 0) {
     toast.error("No data to export");
     return;
@@ -244,7 +204,6 @@ const exportToCSVHandler = async () => {
 
   isExporting.value = true;
   try {
-    // Define the CSV column mapping with proper header names
     const csvColumns = [
       { header: "Rank", key: "rank" },
       { header: "User Name", key: "userName" },
@@ -255,11 +214,8 @@ const exportToCSVHandler = async () => {
       { header: "Total Onboarded Customers", key: "totalReferrals" },
     ];
 
-    // Generate filename with current date
     const today = moment().format("YYYY-MM-DD");
     const fileName = `Referral_Leaderboard_${today}`;
-
-    // Export the data
     exportToCSV(rows.value, csvColumns, fileName);
     toast.success("Leaderboard data exported successfully");
   } catch (error) {
@@ -270,11 +226,32 @@ const exportToCSVHandler = async () => {
   }
 };
 
-// Watch for pagination changes
 watch(
-  () => [queryParams.PageNumber, queryParams.from, queryParams.to, activeTab.value],
-  () => {
-    fetchReferrals();
-  }
+  () => searchQuery.value,
+  (value) => {
+    queryParams.search = value;
+    debounceSearch();
+  },
 );
+
+watch(
+  () => filters.value.dateRange,
+  (range) => {
+    if (range?.start && range?.end) {
+      queryParams.from = moment(range.start).format("YYYY-MM-DD");
+      queryParams.to = moment(range.end).format("YYYY-MM-DD");
+    } else {
+      queryParams.from = null;
+      queryParams.to = null;
+    }
+
+    queryParams.PageNumber = 1;
+    fetchReferrals(false);
+  },
+  { deep: true },
+);
+
+onMounted(() => {
+  fetchReferrals(false);
+});
 </script>

@@ -13,7 +13,7 @@
           type="text"
           :value="modelValue"
           :placeholder="searchPlaceholder"
-          class="w-full pl-10 pr-4 py-[7px] text-sm border border-[#E5E7EB] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1570EF] focus:border-transparent placeholder:text-[#9CA3AF]"
+          class="w-full pl-10 pr-4 py-[7px] text-sm border border-[#E5E7EB] rounded-lg focus:outline-none placeholder:text-[#9CA3AF]"
           @input="
             $emit('update:modelValue', ($event.target as HTMLInputElement).value)
           "
