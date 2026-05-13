@@ -22,7 +22,7 @@ export const mapBaseUrl = (
       return isAdmin ? "http://localhost:8080" : "http://localhost:5173";
     }
     if (appCode === APP_CODES.FLUX.code) {
-      return isAdmin ? "http://localhost:8081" : "http://localhost:3001";
+      return isAdmin ? "http://localhost:8080" : "http://localhost:3001";
     }
     if (appCode === APP_CODES.POLYMER.code) {
       return isAdmin ? "http://localhost:8080" : "http://localhost:3030";

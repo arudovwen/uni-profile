@@ -254,9 +254,28 @@ const navigateToApp = async (app: UserApp) => {
   }
   if (!app.url) return;
 
+  // IMPORTANT: To avoid popup blockers, window.open must be called synchronously
+  // within the user interaction handler. We open a blank window first and then
+  // redirect it once the async signup process is complete.
+  let newWindow: Window | null = null;
+
   if (app.code.includes("OXI")) {
     window.open(app.url, "_blank", "noopener,noreferrer");
     return;
+  } else {
+    newWindow = window.open("about:blank", "_blank");
+    if (newWindow) {
+      newWindow.document.write(`
+        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#475467;background-color:#f9fafb;">
+          <div style="width:40px;height:40px;border:4px solid #e5e7eb;border-top:4px solid #1570EF;border-radius:50%;animation:spin 1s linear infinite;"></div>
+          <p style="margin-top:16px;font-weight:600;">Opening <span id="app-name"></span>...</p>
+          <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+        </div>
+      `);
+      const nameEl = newWindow.document.getElementById("app-name");
+      if (nameEl) nameEl.textContent = app.name;
+      newWindow.document.title = `Opening ${app.name}...`;
+    }
   }
 
   const ssoCatetory = app.code.includes("POL")
@@ -280,11 +299,30 @@ const navigateToApp = async (app: UserApp) => {
   isNavigating.value = true;
   try {
     await getSignupFunction(app.code)?.(payload);
-    window.open(app.url, "_blank", "noopener,noreferrer");
+    if (newWindow && !newWindow.closed) {
+      const link = newWindow.document.createElement("a");
+      link.href = app.url;
+      link.rel = "noreferrer";
+      newWindow.opener = null;
+      newWindow.document.body.appendChild(link);
+      link.click();
+    } else if (!newWindow || newWindow.closed) {
+      window.open(app.url, "_blank", "noopener,noreferrer");
+    }
   } catch (err: any) {
     if (err?.response?.data?.message?.includes("Already a")) {
-      window.open(app.url, "_blank", "noopener,noreferrer");
+      if (newWindow && !newWindow.closed) {
+        const link = newWindow.document.createElement("a");
+        link.href = app.url;
+        link.rel = "noreferrer";
+        newWindow.opener = null;
+        newWindow.document.body.appendChild(link);
+        link.click();
+      } else {
+        window.open(app.url, "_blank", "noopener,noreferrer");
+      }
     } else {
+      if (newWindow && !newWindow.closed) newWindow.close();
       toast.error(
         err?.response?.data?.message ||
           "Failed to open the application. Please try again.",
