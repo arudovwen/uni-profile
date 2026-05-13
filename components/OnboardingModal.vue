@@ -77,8 +77,20 @@
               v-for="field in selectedRoleConditionalFields"
               :key="field.name"
             >
+              <OnboardingSearchableSelect
+                v-if="field.service || fieldServices?.[field.name]"
+                :label="field.label"
+                containerStyles="w-full"
+                :model-value="conditionalFieldValues[field.name]"
+                :service="fieldServices?.[field.name] || field.service"
+                :map-response="field.mapResponse!"
+                :initial-query="{ search: '', ...field.serviceQuery }"
+                :placeholder="field.placeholder || `Search ${field.label}`"
+                :required="field.required"
+                @update:model-value="updateConditionalField(field.name, $event)"
+              />
               <OnboardingCustomDropdown
-                v-if="field.type === 'select' || field.type === 'select-search'"
+                v-else-if="field.type === 'select' || field.type === 'select-search'"
                 :label="field.label"
                 containerStyles="w-full"
                 buttonClass="!w-full !rounded-[5px]"
@@ -162,7 +174,9 @@
 import { computed, ref, watch } from "vue";
 import { useAppRoles } from "@/composables/useAppRoles";
 import { useOnboarding } from "@/composables/useOnboarding";
+import { getProducts } from "~/services/productservices";
 import AppLoader from "./AppLoader.vue";
+import OnboardingSearchableSelect from "./Onboarding/OnboardingSearchableSelect.vue";
 import auth from "~/middleware/auth";
 
 interface ConditionalField {
@@ -174,6 +188,9 @@ interface ConditionalField {
   placeholder?: string;
   required?: boolean;
   defaultValue?: any;
+  service?: (query: any) => Promise<any>;
+  serviceQuery?: Record<string, any>;
+  mapResponse?: (data: any[]) => Array<{ label: string; value: any }>;
 }
 
 interface Role {
@@ -217,6 +234,9 @@ const categorySlug: Record<any, any> = {
 };
 
 const { getAvailableRoles } = useAppRoles();
+const fieldServices: Record<string, (query: any) => Promise<any>> = {
+  buyersQuestion: getProducts,
+};
 const availableRoles = computed(() =>
   getAvailableRoles(props.appCode, categorySlug[loggedUser?.userCategory]),
 );

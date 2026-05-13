@@ -100,6 +100,9 @@ const urls = {
 
   // User Apps
   GET_USER_APPS: (version) => `v${version}/Account/user-apps`,
+
+  // Products
+  GET_PRODUCTS: (version = "2") => `v${version}/MarketPlace/products`,
     
 
   // Referral Management

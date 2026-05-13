@@ -259,24 +259,24 @@ const navigateToApp = async (app: UserApp) => {
   // redirect it once the async signup process is complete.
   let newWindow: Window | null = null;
 
-  if (app.code.includes("OXI")) {
-    window.open(app.url, "_blank", "noopener,noreferrer");
-    return;
-  } else {
-    newWindow = window.open("about:blank", "_blank");
-    if (newWindow) {
-      newWindow.document.write(`
+  // if (app.code.includes("OXI")) {
+  //   window.open(app.url, "_blank", "noopener,noreferrer");
+  //   return;
+  // } else {
+  newWindow = window.open("about:blank", "_blank");
+  if (newWindow) {
+    newWindow.document.write(`
         <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#475467;background-color:#f9fafb;">
           <div style="width:40px;height:40px;border:4px solid #e5e7eb;border-top:4px solid #1570EF;border-radius:50%;animation:spin 1s linear infinite;"></div>
           <p style="margin-top:16px;font-weight:600;">Opening <span id="app-name"></span>...</p>
           <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
         </div>
       `);
-      const nameEl = newWindow.document.getElementById("app-name");
-      if (nameEl) nameEl.textContent = app.name;
-      newWindow.document.title = `Opening ${app.name}...`;
-    }
+    const nameEl = newWindow.document.getElementById("app-name");
+    if (nameEl) nameEl.textContent = app.name;
+    newWindow.document.title = `Opening ${app.name}...`;
   }
+  // }
 
   const ssoCatetory = app.code.includes("POL")
     ? authStore.userInfo?.userCategory
@@ -336,21 +336,15 @@ const navigateToApp = async (app: UserApp) => {
 const handleConfirm = async (selectedRoles: any, conditionalFields: any) => {
   if (!appToOnboard.value) return;
   isOnboarding.value = true;
-  console.log("enc", encryptedToken);
 
   try {
-    const metadata =
-      appToOnboard.value.code === APP_CODES.MATTA.code
-        ? { ...conditionalFields, accessToken: encryptedToken }
-        : conditionalFields;
-
     const payload = buildAppPayload(
       appToOnboard.value.code,
       decrypt(encryptedEmail),
       {
         appCode: appToOnboard.value.code,
         role: selectedRoles,
-        metadata: metadata,
+        metadata: conditionalFields,
       },
       slug.value,
     );

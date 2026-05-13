@@ -69,8 +69,23 @@
         class="mb-8 space-y-4"
       >
         <div v-for="field in selectedRoleConditionalFields" :key="field.name">
+          <!-- Service-based searchable select -->
+          <OnboardingSearchableSelect
+            v-if="field.service || props.fieldServices?.[field.name]"
+            :label="field.label"
+            containerStyles="w-full"
+            :model-value="conditionalFieldValues[field.name]"
+            :service="props.fieldServices?.[field.name] || field.service"
+            :map-response="field.mapResponse!"
+            :initial-query="{ search: '', ...field.serviceQuery }"
+            :placeholder="field.placeholder || `Search ${field.label}`"
+            :required="field.required"
+            @update:model-value="updateConditionalField(field.name, $event)"
+            @error="(err: any) => console.error(`Error loading ${field.name}:`, err)"
+          />
+          <!-- Static dropdown select -->
           <OnboardingCustomDropdown
-            v-if="field.type === 'select' || field.type === 'select-search'"
+            v-else-if="field.type === 'select' || field.type === 'select-search'"
             :label="field.label"
             containerStyles="w-full"
             buttonClass="!w-full !rounded-[5px]"
@@ -87,6 +102,7 @@
                 )
             "
           />
+          <!-- Checkbox field -->
           <label
             v-else-if="field.type === 'checkbox'"
             class="flex items-center gap-3 cursor-pointer select-none"
@@ -139,16 +155,22 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import UserTick from "@/assets/images/icon/UserTick.vue";
+import OnboardingSearchableSelect from "./OnboardingSearchableSelect.vue";
 
 interface ConditionalField {
   name: string;
   label: string;
   type: "select" | "select-search" | "checkbox" | "text" | "radio";
-  options?: string[];
-  optionValues?: Array<{ label: string; value: number | string }>;
   placeholder?: string;
   required?: boolean;
   defaultValue?: any;
+  // Static options
+  options?: string[];
+  optionValues?: Array<{ label: string; value: number | string }>;
+  // Service-based options
+  service?: (query: any) => Promise<any>;
+  serviceQuery?: Record<string, any>;
+  mapResponse?: (data: any[]) => Array<{ label: string; value: any }>;
 }
 
 interface Role {
@@ -167,6 +189,8 @@ interface Props {
   isSubmitting?: boolean;
   currentAppNumber: number;
   totalAppsWithRoles: number;
+  // Map of field names to service functions
+  fieldServices?: Record<string, (query: any) => Promise<any>>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -175,6 +199,7 @@ const props = withDefaults(defineProps<Props>(), {
   isSubmitting: false,
   currentAppNumber: 1,
   totalAppsWithRoles: 1,
+  fieldServices: () => ({}),
 });
 
 const emit = defineEmits<{
