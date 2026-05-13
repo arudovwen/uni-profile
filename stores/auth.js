@@ -126,7 +126,7 @@ export const useAuthStore = defineStore(
             ...i,
             url: `${i.url}/auth/validate?token=${encodeURIComponent(
               encrypt(jwToken.value)
-            )}&code=${encodeURIComponent(encrypt(authStore.refreshToken))}`,
+            )}&code=${encodeURIComponent(encrypt(refreshToken.value))}`,
             defaultUrl: i.url,
           }));
           setAppList(rows);

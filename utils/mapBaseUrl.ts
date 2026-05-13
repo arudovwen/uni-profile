@@ -28,5 +28,5 @@ export const mapBaseUrl = (
       return isAdmin ? "http://localhost:8080" : "http://localhost:3030";
     }
   }
-  return baseUrl;
+  return isAdmin ? baseUrl.replace("https://", "https://admin.") : baseUrl;
 };
