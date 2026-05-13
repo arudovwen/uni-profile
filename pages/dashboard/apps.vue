@@ -158,7 +158,10 @@ const isNavigating = ref(false);
 const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
-const allowTokenPass = new Set([APP_CODES.MATTAPEDIA.code]);
+const allowTokenPass = new Set([
+  APP_CODES.MATTAPEDIA.code,
+  APP_CODES.FLUX.code,
+]);
 
 const getUserAppsMap = async (): Promise<Record<string, any>> => {
   if (isAdmin.value) return {};
