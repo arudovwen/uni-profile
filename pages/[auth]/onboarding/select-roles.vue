@@ -11,6 +11,7 @@
           :appName="currentAppData.name"
           :appIcon="currentAppData.iconUrl"
           :roles="getAvailableRoles(currentAppData.code)"
+          :fieldServices="fieldServices"
           :modelValue="currentRoleSelection"
           :isLastApp="currentAppIndex === appsWithRoles.length - 1"
           :isSubmitting="isSubmitting"
@@ -36,6 +37,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useOnboarding } from "~/composables/useOnboarding";
 import { useAppRoles } from "~/composables/useAppRoles";
+import { getProducts } from "~/services/productservices";
 import { toast } from "vue3-toastify";
 
 interface Role {
@@ -66,6 +68,10 @@ const error = ref("");
 const currentAppIndex = ref(0);
 const currentRoleSelection = ref<string | number | null>(null);
 const currentConditionalFields = ref<Record<string, any>>({});
+
+const fieldServices = {
+  buyersQuestion: getProducts,
+};
 
 // Use app roles composable for centralized role definitions
 const { getAvailableRoles, vehicleOptions, truckSizeOptions } = useAppRoles();

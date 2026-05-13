@@ -188,14 +188,6 @@ export const useOnboarding = () => {
         return payload;
       }
 
-      case APP_CODES.MATTA.code: {
-        const accessToken = encrypt(authStore.jwToken) || null;
-        return {
-          ...basePayload,
-          accessToken,
-        };
-      }
-
       case APP_CODES.OXIDE_PRO.code: {
         // Oxide Pro has roles: Supplier, Buyer (string-based accountType)
         const accountType = roleSelection
@@ -219,19 +211,18 @@ export const useOnboarding = () => {
         };
       }
 
-      case APP_CODES.ORBITAL.code:
-      case APP_CODES.POLYMER.code:
-      case APP_CODES.OXIDE.code:
-      case APP_CODES.MATTAPEDIA.code:
-      default:
-        // Orbital, Polymer and the remaining apps don't have roles, just basic payload
-        return basePayload;
-
       case APP_CODES.MATTA.code: {
+        const encryptedToken = encrypt(authStore.jwToken || "") || "";
+        const accessToken = String(encryptedToken || authStore.jwToken || "");
         const businessUserType = Number(roleSelection?.role ?? 0);
         const allowNewsLetter = Boolean(
           roleSelection?.metadata?.allowNewsLetter ?? false,
         );
+        const rawBuyerQuestion =
+          roleSelection?.metadata?.buyersQuestion ??
+          roleSelection?.metadata?.buyerQuestion ??
+          "";
+        const buyerQuestion = String(rawBuyerQuestion).trim();
         const country =
           (authStore.userInfo as any)?.country ||
           (authStore.loggedUser as any)?.country ||
@@ -245,19 +236,28 @@ export const useOnboarding = () => {
           email: encryptedEmail,
           businessUserType,
           appCode,
-          accessToken: 0,
+          accessToken,
           ssoUserCategory,
           allowNewsLetter,
           country,
         };
 
-        // buyersQuestion only included for Buyers (businessUserType === 0)
-        if (businessUserType === 0 && roleSelection?.metadata?.buyersQuestion) {
-          payload.buyersQuestion = roleSelection.metadata.buyersQuestion;
+        // Include buyer question for Buyer role; support both key variants.
+        if (businessUserType === 0) {
+          payload.buyersQuestion = buyerQuestion;
         }
 
         return payload;
       }
+
+      case APP_CODES.ORBITAL.code:
+      case APP_CODES.POLYMER.code:
+      case APP_CODES.OXIDE.code:
+      case APP_CODES.MATTAPEDIA.code:
+
+      default:
+        // Orbital, Polymer and the remaining apps don't have roles, just basic payload
+        return basePayload;
     }
   };
 

@@ -3,11 +3,27 @@ import { useRoute } from "vue-router";
 import { useOnboarding } from "./useOnboarding";
 import { APP_CODES } from "~/utils/app-config";
 
+export interface ConditionalField {
+  name: string;
+  label: string;
+  type: 'select' | 'select-search' | 'checkbox' | 'text';
+  placeholder?: string;
+  required?: boolean;
+  defaultValue?: any;
+  // Static options
+  options?: string[];
+  optionValues?: Array<{ label: string; value: any }>;
+  // Service-based options
+  service?: (query: any) => Promise<any>;
+  serviceQuery?: Record<string, any>;
+  mapResponse?: (data: any[]) => Array<{ label: string; value: any }>;
+}
+
 export interface Role {
   value: string | number;
   label: string;
   description: string;
-  conditionalFields: any[];
+  conditionalFields: ConditionalField[];
 }
 
 // Vehicle type options for Flux
@@ -31,18 +47,6 @@ const truckSizeOptions = [
 ];
 
 // Chemical options for Matta buyers
-const mattaChemicalOptions = [
-  { label: "Acetone", value: "Acetone" },
-  { label: "Benzene", value: "Benzene" },
-  { label: "Caustic Soda", value: "Caustic Soda" },
-  { label: "Ethanol", value: "Ethanol" },
-  { label: "Hydrochloric Acid", value: "Hydrochloric Acid" },
-  { label: "Methanol", value: "Methanol" },
-  { label: "Sodium Hydroxide", value: "Sodium Hydroxide" },
-  { label: "Sulfuric Acid", value: "Sulfuric Acid" },
-  { label: "Toluene", value: "Toluene" },
-  { label: "Xylene", value: "Xylene" },
-];
 
 // Map of app codes to their available roles
 export const appRolesMap: Record<string, Role[]> = {
@@ -87,9 +91,17 @@ export const appRolesMap: Record<string, Role[]> = {
           name: "buyersQuestion",
           label: "Which chemical do you use frequently?",
           type: "select-search",
-          optionValues: mattaChemicalOptions,
           placeholder: "Search and select a chemical",
           required: true,
+          // NOTE: Service should be provided that fetches products from /v2/marketplace/products
+          // Expected: function(query: { search, page, pageSize, withZoho }) -> Promise<{ data: { data: [], totalCount } }>
+          service: undefined, // Will be set dynamically in RoleSelector
+          serviceQuery: { page: 1, pageSize: 100, withZoho: true },
+          mapResponse: (products: any[]) =>
+            (Array.isArray(products) ? products : []).map((product: any) => ({
+              label: product.title || product.name || "",
+              value: product.title || product.name || "",
+            })),
         },
         {
           name: "allowNewsLetter",
@@ -177,8 +189,6 @@ export const useAppRoles = () => {
    */
   const requiresUserRoleSelection = (appCode: string): boolean => {
     const availableRoles = getAvailableRoles(appCode);
-    console.log("AvailableRoles", appCode, availableRoles);
-    
     // Require user input if there are 2 or more role options to choose from
     return availableRoles.length >= 2;
   };
