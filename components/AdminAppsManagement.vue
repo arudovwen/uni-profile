@@ -25,7 +25,12 @@
         v-for="app in apps"
         :key="app.id"
         :app="app"
-        @click="navigateToApp"
+        @click="
+          (app) =>
+            app?.adminUrl
+              ? navigateToApp(app)
+              : toast.error('Admin URL not configured for this application')
+        "
         @edit="handleEditApp"
         @delete="handleDeleteApp"
       />
@@ -137,13 +142,13 @@ const customAppUrls: Record<string, string> = {
 };
 
 const adminUrls = {
-  [APP_CODES.OXIDE_PRO.code]: runtimeConfig.public.OXIDE_PRO_ADMIN_URL,
-  [APP_CODES.ORBITAL.code]: runtimeConfig.public.ORBITAL_ADMIN_URL,
-  [APP_CODES.OXIDE.code]: runtimeConfig.public.OXIDE_ADMIN_URL,
+  [APP_CODES.OXIDE_PRO.code]: null,
+  [APP_CODES.ORBITAL.code]: null,
+  [APP_CODES.OXIDE.code]: null,
   [APP_CODES.FLUX.code]: runtimeConfig.public.FLUX_ADMIN_URL,
   [APP_CODES.MATTA.code]: runtimeConfig.public.MATTA_ADMIN_URL,
-  [APP_CODES.MATTAPEDIA.code]: runtimeConfig.public.MATTAPEDIA_ADMIN_URL,
-  [APP_CODES.POLYMER.code]: runtimeConfig.public.POLYMER_ADMIN_URL,
+  [APP_CODES.MATTAPEDIA.code]: null,
+  [APP_CODES.POLYMER.code]: null,
 };
 
 const slug = computed(
@@ -164,7 +169,11 @@ const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
-const allowTokenPass = new Set([APP_CODES.FLUX.code, APP_CODES.ORBITAL.code, APP_CODES.OXIDE.code]);
+const allowTokenPass = new Set([
+  APP_CODES.FLUX.code,
+  APP_CODES.ORBITAL.code,
+  APP_CODES.OXIDE.code,
+]);
 
 const navigateToApp = async (app: App | any) => {
   const appToOpen = app.app || app;
@@ -240,11 +249,10 @@ const loadApps = async () => {
       apps.value = loadedApps.map((app: App) => {
         const customUrl = customAppUrls[app.code];
         const adminUrl = adminUrls[app.code];
-
         return {
           ...app,
           description: app.description || "No description available",
-          adminUrl: adminUrl ?? customUrl,
+          adminUrl,
           url: adminUrl || customUrl || app.url || "",
         };
       });
