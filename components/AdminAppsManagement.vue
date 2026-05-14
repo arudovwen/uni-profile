@@ -127,7 +127,6 @@ interface App {
 
 const toast = useToast();
 const authStore = useAuthStore();
-const runtimeConfig = useRuntimeConfig();
 const { encrypt, decrypt } = useEncryption();
 const { getSignupFunction, buildAppPayload } = useOnboarding();
 
@@ -177,21 +176,26 @@ const allowTokenPass = new Set([
 
 const navigateToApp = async (app: App | any) => {
   const appToOpen = app.app || app;
-
   if (!appToOpen.url) return;
 
-  // if (appToOpen.code.includes("OXI")) {
-  //   const authUrl = buildAuthUrl(
-  //     appToOpen.url,
-  //     appToOpen.code,
-  //     encryptedToken,
-  //     encryptedRefreshToken,
-  //     allowTokenPass,
-  //     true,
-  //   );
-  //   window.open(authUrl, "_blank", "noopener,noreferrer");
-  //   return;
-  // }
+  // IMPORTANT: To avoid popup blockers, window.open must be called synchronously
+  // within the user interaction handler. We open a blank window first and then
+  // redirect it once the async signup process is complete.
+  let newWindow: Window | null = null;
+
+  newWindow = window.open("about:blank", "_blank");
+  if (newWindow) {
+    newWindow.document.write(`
+        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;font-family:sans-serif;color:#475467;background-color:#f9fafb;">
+          <div style="width:40px;height:40px;border:4px solid #e5e7eb;border-top:4px solid #1570EF;border-radius:50%;animation:spin 1s linear infinite;"></div>
+          <p style="margin-top:16px;font-weight:600;">Opening <span id="app-name"></span>...</p>
+          <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
+        </div>
+      `);
+    const nameEl = newWindow.document.getElementById("app-name");
+    if (nameEl) nameEl.textContent = appToOpen.name;
+    newWindow.document.title = `Opening ${appToOpen.name}...`;
+  }
 
   const payload = buildAppPayload(
     appToOpen.code,
@@ -220,11 +224,38 @@ const navigateToApp = async (app: App | any) => {
       allowTokenPass,
       true,
     );
-    window.open(authUrl, "_blank", "noopener,noreferrer");
+    if (newWindow && !newWindow.closed) {
+      const link = newWindow.document.createElement("a");
+      link.href = authUrl;
+      link.rel = "noreferrer";
+      newWindow.opener = null;
+      newWindow.document.body.appendChild(link);
+      link.click();
+    } else if (!newWindow || newWindow.closed) {
+      window.open(authUrl, "_blank", "noopener,noreferrer");
+    }
   } catch (err: any) {
     if (err?.response?.data?.message?.includes("Already a")) {
-      window.open(appToOpen.url, "_blank", "noopener,noreferrer");
+      const authUrl = buildAuthUrl(
+        appToOpen.url,
+        appToOpen.code,
+        encryptedToken,
+        encryptedRefreshToken,
+        allowTokenPass,
+        true,
+      );
+      if (newWindow && !newWindow.closed) {
+        const link = newWindow.document.createElement("a");
+        link.href = authUrl;
+        link.rel = "noreferrer";
+        newWindow.opener = null;
+        newWindow.document.body.appendChild(link);
+        link.click();
+      } else {
+        window.open(authUrl, "_blank", "noopener,noreferrer");
+      }
     } else {
+      if (newWindow && !newWindow.closed) newWindow.close();
       toast.error(
         err?.response?.data?.message ||
           "Failed to open the application. Please try again.",
