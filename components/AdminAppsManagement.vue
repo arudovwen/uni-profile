@@ -154,8 +154,17 @@ const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
 const allowTokenPass = new Set([APP_CODES.FLUX.code]);
+const allowedAdminApps = [
+  APP_CODES.FLUX.code,
+  APP_CODES.MATTA.code,
+  APP_CODES.OXIDE.code,
+];
 
 const navigateToApp = async (app: App | any) => {
+  if (!allowedAdminApps.includes(app.code)) {
+    toast.info(`${app.name} Admin is not available`);
+    return;
+  }
   const appToOpen = app.app || app;
   if (!appToOpen.url) return;
 

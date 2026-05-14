@@ -40,33 +40,36 @@ const { encrypt } = useEncryption();
 const authStore = useAuthStore();
 const rows = ref([]);
 function getData() {
-  getSubApps({isDisabled: false})
-    .then(res => {
+  getSubApps({ isDisabled: false })
+    .then((res) => {
       if (res.status === 200 && res.data.data) {
-        const isAdminUser = [0, 3, 4].includes(authStore?.userInfo?.userCategory);
-        
-        rows.value = res.data.data.map(i => {
+        const isAdminUser = [0, 3, 4].includes(
+          authStore?.userInfo?.userCategory,
+        );
+
+        rows.value = res.data.data.map((i) => {
           if (!i.url) return { ...i, url: "" };
-          
+
           let baseUrl = i.url.replace(
             "https://",
-            isAdminUser ? "https://admin." : "https://"
+            isAdminUser ? "https://admin." : "https://",
           );
-          
+
           if (baseUrl.includes("app.") && isAdminUser) {
             baseUrl = baseUrl.replace("app.", "");
           }
-          
+
           const encryptedJWT = encrypt(authStore.jwToken);
           const encryptedRefresh = encrypt(authStore.refreshToken);
-          const fullUrl = `${baseUrl}/auth/validate?token=${encodeURIComponent(encryptedJWT)}&code=${encodeURIComponent(encryptedRefresh)}`;
-          
+          const fullUrl = `${baseUrl}/auth/validate?token=${encodeURIComponent(
+            encryptedJWT,
+          )}&code=${encodeURIComponent(encryptedRefresh)}`;
+
           return { ...i, url: fullUrl };
         });
       }
     })
-    .catch(error => {
-      
+    .catch((error) => {
       console.error("Error fetching sub-apps:", error);
       rows.value = []; // Clear or reset rows on error
     });
