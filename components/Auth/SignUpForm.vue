@@ -60,6 +60,16 @@
         :error="errors.businessName"
       />
 
+      <TextinputInputField
+        v-model="agentReferralCode"
+        :is-optional="true"
+        name="agentReferralCode"
+        type="text"
+        label="Referral Code"
+        placeholder="Referral Code"
+        :error="errors.agentReferralCode"
+        :disabled="isReferralCodeLocked"
+      />
       <!-- Password -->
       <TextinputInputField
         v-model="password"
@@ -70,6 +80,7 @@
         :error="errors.password"
         @toggle-password="togglePasswordVisibility"
       />
+      <!-- Referral Code (Optional) -->
 
       <!-- Agreement Checkbox -->
       <!-- <div class="flex items-start gap-3 pt-2">
@@ -130,6 +141,15 @@ const { auth } = route.params;
 const isLoading = ref(false);
 const passwordType = ref("password");
 const agreeToTerms = ref(true);
+const isReferralCodeLocked = ref(false);
+
+const REFERRAL_CODE_PATTERN = /^[A-Za-z0-9]{3,12}$/;
+
+const getRouteQueryString = (queryValue: unknown): string => {
+  if (typeof queryValue === "string") return queryValue;
+  if (Array.isArray(queryValue)) return queryValue[0] || "";
+  return "";
+};
 
 // Computed
 const loginLink = computed(() => handleRouting(route, `/${auth}/login`));
@@ -144,13 +164,22 @@ const schema = yup.object({
     .email("Please enter a valid email address"),
   phoneNumber: yup.string().required("Phone number is required"),
   businessName: yup.string().required("Business name is required"),
+  agentReferralCode: yup
+    .string()
+    .trim()
+    .optional()
+    .test(
+      "valid-referral-code",
+      "Referral code must be 3-12 alphanumeric characters",
+      (value) => !value || REFERRAL_CODE_PATTERN.test(value),
+    ),
   password: yup
     .string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters")
     .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)"
+      "Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character (@$!%*?&#)",
     ),
 });
 
@@ -162,6 +191,7 @@ const { handleSubmit, defineField, errors, meta } = useValidatedForm({
     email: "",
     phoneNumber: "",
     businessName: "",
+    agentReferralCode: "",
     password: "",
   },
   useValidatedForm: true,
@@ -173,7 +203,27 @@ const [lastName] = defineField("lastName");
 const [email] = defineField("email");
 const [phoneNumber] = defineField("phoneNumber");
 const [businessName] = defineField("businessName");
+const [agentReferralCode] = defineField("agentReferralCode");
 const [password] = defineField("password");
+
+onMounted(() => {
+  const rawReferralCode = getRouteQueryString(route.query.referral_code);
+  if (!Object.prototype.hasOwnProperty.call(route.query, "referral_code")) {
+    return;
+  }
+
+  const trimmedReferralCode = rawReferralCode.trim();
+
+  if (trimmedReferralCode && REFERRAL_CODE_PATTERN.test(trimmedReferralCode)) {
+    agentReferralCode.value = trimmedReferralCode;
+    isReferralCodeLocked.value = true;
+    return;
+  }
+
+  agentReferralCode.value = "";
+  isReferralCodeLocked.value = false;
+  toast.error("Invalid referral code in link. Please use a valid referral link.");
+});
 
 // Methods
 const togglePasswordVisibility = () => {
@@ -192,11 +242,11 @@ const onSubmit = handleSubmit(async (values) => {
       password: values.password,
       confirmPassword: values.password,
       companyName: values.businessName || "",
-      referral_code: "",
+      agentReferralCode: values.agentReferralCode || "",
+      referral_code: values.agentReferralCode || "",
       country: "Nigeria",
       agree: false,
-      subscribe: false,
-      AgentReferralCode: "",
+      subscribe: false, // Set to false to avoid subscribing users without explicit consent
     });
 
     if (response.status === 200) {

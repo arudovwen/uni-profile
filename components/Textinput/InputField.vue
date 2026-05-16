@@ -5,6 +5,12 @@
         {{ label }}
       </span>
       <span
+        v-if="isOptional"
+        class="text-xs text-[#667085] font-normal ml-1"
+      >
+        (Optional)
+      </span>
+      <span
         v-if="showAsterisk"
         :class="[asteriskClassName, 'text-[#7F56D9] text-sm font-medium ml-0.5']"
       >
@@ -116,6 +122,7 @@ interface Props {
   inputWrapperStyle?: string;
   disabled?: boolean;
   showAsterisk?: boolean;
+  isOptional?: boolean;
   asteriskClassName?: string;
   hasRightSection?: boolean;
   rightSectionText?: string;
@@ -133,6 +140,7 @@ const props = withDefaults(defineProps<Props>(), {
   hasRightIcon: false,
   disabled: false,
   showAsterisk: false,
+  isOptional: false,
   hasRightSection: false,
   hasLeftSection: false,
 });
