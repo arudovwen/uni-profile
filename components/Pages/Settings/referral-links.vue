@@ -43,7 +43,7 @@ function copyToClipboard(app) {
   const appUrl = app.defaultUrl;
 
   const refCode = props.refDetail.referralCode;
-  const text = `${path}/auth/register/${appCode}?continue=${appUrl}&referral_code=${refCode}&name=${appName}`;
+  const text = `${path}/register/${appCode}?continue=${appUrl}&referral_code=${refCode}&name=${appName}`;
   navigator.clipboard.writeText(text).then(
     () => {
       // Success feedback can be added here
