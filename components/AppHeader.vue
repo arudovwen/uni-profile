@@ -192,18 +192,20 @@
           </NuxtLink>
         </PermissionGuard>
 
-        <NuxtLink
-          :to="getTabPath('referrals')"
-          :class="[
-            'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
-            isActiveTab('referrals')
-              ? 'border-[#1570EF] text-[#1570EF]'
-              : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
-          ]"
-        >
-          <DashboardNavIcon name="users" :active="isActiveTab('referrals')" />
-          <span>Referrals</span>
-        </NuxtLink>
+        <PermissionGuard :categories="[0, 3]">
+          <NuxtLink
+            :to="getTabPath('referrals')"
+            :class="[
+              'flex items-center gap-1.5 sm:gap-2 pb-3 pt-[1px] px-2 sm:px-1 border-b-2 text-sm font-medium transition-colors whitespace-nowrap',
+              isActiveTab('referrals')
+                ? 'border-[#1570EF] text-[#1570EF]'
+                : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
+            ]"
+          >
+            <DashboardNavIcon name="users" :active="isActiveTab('referrals')" />
+            <span>Referrals</span>
+          </NuxtLink>
+        </PermissionGuard>
 
         <PermissionGuard :categories="[1]">
           <NuxtLink
@@ -215,7 +217,10 @@
                 : 'border-transparent text-[#475467] hover:text-[#2F2F2F]',
             ]"
           >
-            <DashboardNavIcon name="settings" :active="isActiveTab('settlements')" />
+            <DashboardNavIcon
+              name="settings"
+              :active="isActiveTab('settlements')"
+            />
             <span>Settlements</span>
           </NuxtLink>
         </PermissionGuard>
@@ -284,7 +289,6 @@ const getTabPath = (tab) => {
     kyc: "/dashboard/kyc",
     users: "/dashboard/users",
     logs: "/dashboard/logs",
-    referrals: "/referral-management",
     settlements: "/settlements",
     settings: "/dashboard/settings",
   };
