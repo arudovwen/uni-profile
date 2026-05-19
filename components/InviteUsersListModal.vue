@@ -58,14 +58,14 @@
                   <CustomDropdown
                     v-model="pair.role"
                     :options="
-                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]]
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0] as keyof typeof roleOptions]
                         .options
                     "
                     :placeholder="`Select role for ${
-                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]].name
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0] as keyof typeof roleOptions].name
                     }`"
                     :label="`Select role for ${
-                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0]].name
+                      roleOptions[getSelectedAppsWithRoles(pair.apps)[0] as keyof typeof roleOptions].name
                     }`"
                     :buttonClass="'w-full rounded-[5px] border-[#E2E2E2]'"
                     :showSearchFilter="false"
@@ -112,8 +112,8 @@ import { ref, reactive, watch, computed } from "vue";
 import { useToast } from "~/composables/useToast";
 import MultiSelectDropdown from "~/components/Onboarding/MultiSelectDropdown.vue";
 import CustomDropdown from "~/components/Onboarding/CustomDropdown.vue";
-import { APP_CODES } from "~/utils/app-config";
 import { sendAdminInvite, sendOwnerInvite } from "~/services/userservices";
+import { a } from "vitest/dist/suite-IbNSsUWN.js";
 
 interface Props {
   isOpen: boolean;
@@ -144,18 +144,13 @@ const appOptions = computed(() => {
   }));
 });
 
-type RoleOptionGroup = {
-  name: string;
-  options: Array<{ code: string; name: string }>;
-};
-
-const roleOptions: Record<string, RoleOptionGroup> = {
-  [APP_CODES.OXIDE_PRO.code]: {
-    name: "Oxide Pro",
+// Role options for polymer
+const roleOptions = {
+  POL628: {
+    name: "Polymer",
     options: [
-      { code: "Funder", name: "Funder" },
-      { code: "Supplier", name: "Supplier" },
-      { code: "Buyer", name: "Buyer" },
+      { code: "0", name: "Admin" },
+      { code: "2", name: "Procurement Manager" },
     ],
   },
 };
