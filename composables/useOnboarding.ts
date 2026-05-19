@@ -211,6 +211,16 @@ export const useOnboarding = () => {
         };
       }
 
+      case APP_CODES.ORBITAL.code: {
+        const encryptedToken = encrypt(authStore.jwToken || "") || "";
+        return {
+          // ...basePayload,
+          accessToken: decrypt(encryptedToken),
+          email: basePayload?.email,
+          appCode: basePayload?.appCode,
+        };
+      }
+
       case APP_CODES.MATTA.code: {
         const encryptedToken = encrypt(authStore.jwToken || "") || "";
         const accessToken = String(encryptedToken || authStore.jwToken || "");
