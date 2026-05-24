@@ -9,6 +9,14 @@ import {
   autoSettlement 
 } from '~/services/settlementservice';
 
+vi.mock('@/components/Pages/Settlements/Form.vue', () => ({
+  default: {
+    name: 'PagesSettlementsForm',
+    template: '<div id="form-stub"><button id="refresh-btn" @click="$emit(\'refresh\')"></button></div>',
+    props: ['id', 'detail']
+  }
+}));
+
 vi.mock('~/services/settlementservice', () => ({
   getAutoSettlement: vi.fn(),
   viewSettlement: vi.fn(),

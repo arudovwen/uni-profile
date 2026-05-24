@@ -253,7 +253,6 @@ const handleSearch = (query) => {
 };
 
 const handleFilterChange = () => {
-  // watcher handles refresh
 };
 
 const handleDownload = () => {

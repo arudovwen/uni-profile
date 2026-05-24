@@ -1,9 +1,20 @@
-import { it, expect, describe, vi } from "vitest";
+import { it, expect, describe, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { ref, nextTick } from "vue";
+import { reactive, nextTick } from "vue";
 import Index from "@/components/Pages/OwnerUsers/index.vue";
 
+const mockRoute = reactive({
+  path: "/users-management/members"
+});
+
+vi.stubGlobal("useRoute", () => mockRoute);
+vi.stubGlobal("definePageMeta", vi.fn());
+
 describe("OwnerUsers index.vue", () => {
+  beforeEach(() => {
+    mockRoute.path = "/users-management/members";
+  });
+
   const createWrapper = () => {
     return mount(Index, {
       global: {
@@ -31,25 +42,12 @@ describe("OwnerUsers index.vue", () => {
     expect(wrapper.find(".invites-view").exists()).toBe(false);
   });
 
-  it("switches to invites tab when event is emitted", async () => {
-    const wrapper = createWrapper();
-    const tabComponent = wrapper.find(".app-tab");
-    
-    await tabComponent.find("#invites").trigger("click");
-    await nextTick();
-
-    expect(wrapper.vm.active).toBe("invites");
-    expect(wrapper.find(".invites-view").exists()).toBe(true);
-    expect(wrapper.find(".users-table").exists()).toBe(false);
-  });
-
   it("switches back to members tab", async () => {
+    mockRoute.path = "/users-management/invites";
     const wrapper = createWrapper();
-    wrapper.vm.active = "invites";
     await nextTick();
     
-    const tabComponent = wrapper.find(".app-tab");
-    await tabComponent.find("#members").trigger("click");
+    mockRoute.path = "/users-management/members";
     await nextTick();
 
     expect(wrapper.vm.active).toBe("members");
@@ -60,7 +58,7 @@ describe("OwnerUsers index.vue", () => {
     const wrapper = createWrapper();
     const tabs = wrapper.vm.tabs;
     expect(tabs).toHaveLength(2);
-    expect(tabs[0]).toEqual({ title: "Users", key: "members" });
-    expect(tabs[1]).toEqual({ title: "Invites", key: "invites" });
+    expect(tabs[0]).toEqual({ title: "Users", key: "members", to: "/users-management/members" });
+    expect(tabs[1]).toEqual({ title: "Invites", key: "invites", to: "/users-management/invites" });
   });
 });

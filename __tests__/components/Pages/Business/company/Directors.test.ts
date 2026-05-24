@@ -5,6 +5,21 @@ import Directors from "@/components/Pages/Business/company/Directors.vue";
 import { updateCompanyProfile } from "~/services/settingservices";
 import { toast } from "vue3-toastify";
 
+vi.mock("@/components/Pages/Business/company/DirectorForm.vue", () => ({
+  default: {
+    name: "PagesBusinessCompanyDirectorForm",
+    template: "<div id=\"director-form-stub\"></div>",
+    props: ["type", "director", "id"]
+  }
+}));
+
+vi.mock("@/components/Pages/Business/company/DeleteModal.vue", () => ({
+  default: {
+    name: "PagesBusinessCompanyDeleteModal",
+    template: "<div id=\"delete-modal-stub\"><button @click=\"$emit('delete')\" id=\"confirm-del-btn\"></button></div>"
+  }
+}));
+
 vi.mock("~/services/settingservices", () => ({
   updateCompanyProfile: vi.fn(),
   updateBusinessProfile: vi.fn(),
