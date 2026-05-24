@@ -80,7 +80,7 @@ describe("MyApplications/index.vue", () => {
     const wrapper = await mountComponent();
     await flushPromises();
 
-    expect(wrapper.vm.setLoader.value).toBe(false);
+    expect(wrapper.vm.setLoader).toBe(false);
   });
 
   it("handles API error in getData", async () => {
@@ -88,8 +88,8 @@ describe("MyApplications/index.vue", () => {
     const wrapper = await mountComponent();
     await flushPromises();
 
-    expect(wrapper.vm.setLoader.value).toBe(false);
-    expect(wrapper.vm.rows.value).toEqual([]);
+    expect(wrapper.vm.setLoader).toBe(false);
+    expect(wrapper.vm.rows).toEqual([]);
   });
 
   it("triggers getData when Search changes", async () => {
@@ -129,15 +129,15 @@ describe("MyApplications/index.vue", () => {
     const wrapper = await mountComponent();
     await flushPromises();
 
-    wrapper.vm.open.value = true;
+    wrapper.vm.open = true;
     await nextTick();
-    expect(wrapper.vm.open.value).toBe(true);
+    expect(wrapper.vm.open).toBe(true);
 
     // Call the handler the @close event would trigger
-    wrapper.vm.open.value = false;
+    wrapper.vm.open = false;
     await nextTick();
 
-    expect(wrapper.vm.open.value).toBe(false);
+    expect(wrapper.vm.open).toBe(false);
   });
 
   it("handleDelete is defined and callable", async () => {

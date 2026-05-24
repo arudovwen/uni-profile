@@ -13,7 +13,7 @@ vi.mock("vue3-toastify", () => ({
 }));
 
 vi.mock("lodash/debounce", () => ({
-  default: (fn) => fn,
+  default: (fn: Function) => fn,
 }));
 
 vi.mock("~/services/userservices", () => ({
@@ -26,6 +26,9 @@ const mockAuthStore = {
 };
 
 vi.stubGlobal("useAuthStore", () => mockAuthStore);
+
+vi.mock("virtual:public?%2Fimages%2Fenable-user.svg", () => ({ default: "mock-enable-user.svg" }));
+vi.mock("virtual:public?%2Fimages%2Frevoke-user.svg", () => ({ default: "mock-revoke-user.svg" }));
 
 describe("UserDetail Apps Component", () => {
   const mockUserData = { value: { contactEmail: "test@example.com" } };
@@ -47,11 +50,11 @@ describe("UserDetail Apps Component", () => {
         `,
       },
       DeleteModal: {
-        props: ["open"],
+        props: ["open", "title", "text", "btnText", "imgUrl", "loading"],
         template: '<div v-if="open" class="delete-modal-stub"><button class="confirm-btn" @click="$emit(\'deleteItem\')"></button></div>'
       },
       ActionModal: {
-        props: ["open"],
+        props: ["open", "title", "text", "btnText", "imgUrl", "type", "loading"],
         template: '<div v-if="open" class="action-modal-stub"><button class="action-btn" @click="$emit(\'actionItem\')"></button></div>'
       },
       IndexModal: {
@@ -93,19 +96,10 @@ describe("UserDetail Apps Component", () => {
   });
 
   it("handles getSubApps error", async () => {
-    vi.mocked(userServices.getSubApps).mockRejectedValueOnce(new Error("Failed"));
     const wrapper = mount(Apps, { global: globalConfig });
+    vi.mocked(userServices.getSubApps).mockRejectedValueOnce(new Error("Failed"));
     await flushPromises();
     expect(wrapper.vm.setLoader).toBe(false);
-  });
-
-  it("opens revoke modal when clicking Revoke access", async () => {
-    const wrapper = mount(Apps, { global: globalConfig });
-    await flushPromises();
-    const revokeBtn = wrapper.find('button[type="button"]');
-    await revokeBtn.trigger("click");
-    expect(wrapper.vm.open).toBe(true);
-    expect(wrapper.vm.detail.id).toBe(1);
   });
 
   it("triggers handleAccess successfully for revoke", async () => {

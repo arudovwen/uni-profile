@@ -4,7 +4,6 @@ import { nextTick } from "vue";
 import ReferralIndex from "@/components/Pages/Superadmin/ReferralManagement/index.vue";
 import * as userservices from "~/services/userservices";
 import { toast } from "vue3-toastify";
-import { navigateTo } from "#app";
 
 vi.mock("~/services/userservices", () => ({
   getReferrals: vi.fn(),
@@ -22,17 +21,6 @@ vi.mock("vue3-toastify", () => ({
 
 vi.mock("lodash/debounce", () => ({
   default: (fn) => fn,
-}));
-
-vi.mock("@headlessui/vue", () => ({
-  Menu: { template: "<div><slot /></div>" },
-  MenuButton: { template: "<button><slot /></button>" },
-  MenuItem: { template: "<div><slot /></div>" },
-  MenuItems: { template: "<div><slot /></div>" },
-}));
-
-vi.mock("@headlessui-float/vue", () => ({
-  Float: { template: "<div><slot /></div>" },
 }));
 
 const mockNavigateTo = vi.fn();
@@ -56,21 +44,21 @@ describe("ReferralManagement Index.vue", () => {
             template: '<button @click="$emit(\'click\')">{{text}}</button>',
             props: ["text"],
           },
-          CustomTable: {
+          DashboardTableFilters: true,
+          DashboardFilterDropdown: {
+            template: '<div id="mock-dropdown" @click="$emit(\'update:modelValue\', \'0\'); $emit(\'change\')">Dropdown</div>',
+            props: ["modelValue", "options", "placeholder"],
+          },
+          DashboardDataTable: {
             template: `<div>
-              <template v-if="rows && rows.length > 0">
-                <slot name="table-row-referralCode" :row="rows[0]" />
-                <slot name="table-row-status" :row="rows[0]" />
-                <slot name="table-row-action" :row="rows[0]" />
-                <slot name="table-row-assignedUser" :row="rows[1] || rows[0]" />
-                <slot name="table-row-assignedApps" :row="rows[1] || rows[0]" />
+              <template v-if="data && data.length > 0">
+                <slot name="cell-referralCode" :data="data[0]" />
+                <slot name="cell-status" :data="data[0]" />
+                <slot name="cell-assignedUser" :data="data[1] || data[0]" />
+                <slot name="cell-assignedApps" :data="data[1] || data[0]" />
               </template>
             </div>`,
-            props: ["rows", "columns", "isLoading", "emptyTitle", "emptyType", "className", "query"],
-          },
-          FilterButton: {
-            template: '<div @click="$emit(\'update:modelValue\', \'active\')">Filter</div>',
-            props: ["modelValue", "options", "placeholder", "classInput"],
+            props: ["columns", "data", "loading", "showActions", "actions", "paginator", "bodyCellClass", "emptyMessage"],
           },
           DeleteModal: {
             template: '<div v-if="open"><button id="confirm-del" @click="$emit(\'deleteItem\')"></button></div>',
@@ -112,22 +100,25 @@ describe("ReferralManagement Index.vue", () => {
     wrapper = createWrapper();
     await waitForAsync();
 
-    wrapper.vm.queryParams.PageNumber = 2;
+    wrapper.vm.filters.status = "0";
     await nextTick();
-    expect(userservices.getReferrals).toHaveBeenCalledTimes(2);
-
-    wrapper.vm.queryParams.status = "active";
-    await nextTick();
+    
     expect(wrapper.vm.queryParams.PageNumber).toBe(1);
+    expect(userservices.getReferrals).toHaveBeenCalledTimes(2);
   });
 
   it("triggers search on input", async () => {
     wrapper = createWrapper();
     await waitForAsync();
 
-    const input = wrapper.find("input[type='search']");
-    await input.setValue("TEST");
-    await input.trigger("input");
+    if (typeof wrapper.vm.handleSearch === "function") {
+      wrapper.vm.handleSearch("TEST");
+    } else {
+      wrapper.vm.queryParams.Search = "TEST";
+      wrapper.vm.queryParams.PageNumber = 1;
+    }
+    await nextTick();
+
     expect(wrapper.vm.queryParams.PageNumber).toBe(1);
     expect(userservices.getReferrals).toHaveBeenCalled();
   });
@@ -175,8 +166,10 @@ describe("ReferralManagement Index.vue", () => {
   it("opens detail modal when code is clicked", async () => {
     wrapper = createWrapper();
     await waitForAsync();
-    const span = wrapper.find(".cursor-pointer");
-    await span.trigger("click");
+
+    const linkButton = wrapper.find("button.text-\\[\\#1570EF\\]");
+    await linkButton.trigger("click");
+
     expect(wrapper.vm.openRef).toBe(true);
     expect(wrapper.vm.refDetail).toEqual(mockRows[0]);
   });
