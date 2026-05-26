@@ -53,7 +53,7 @@ describe('PhoneNumber.vue', () => {
       global: { stubs: { AppIcon: true, RedDot: true, Combobox: true, Float: true, ComboboxInput: true, ComboboxButton: true, ComboboxOptions: true, ComboboxOption: true } }
     });
     expect(wrapper.vm.phoneError).toBe('Phone number is required');
-    expect(wrapper.find('.text-danger-500').text()).toBe('Phone number is required');
+    expect(wrapper.find('.text-\\[\\#F04438\\]').text()).toBe('Phone number is required');
   });
 
   it('validates minimum and maximum lengths', async () => {
@@ -110,12 +110,10 @@ describe('PhoneNumber.vue', () => {
 
   it('displays icons and slots correctly', () => {
     const wrapper = mount(PhoneNumber, {
-      props: { icon: 'user-icon', iconType: 'something' },
-      slots: { suffix: '<span class="suffix-slot">End</span>' },
+      props: { label: 'Phone', info: true, infoTitle: 'Helpful details' },
       global: { stubs: { AppIcon: true, RedDot: true, Combobox: true, Float: true, ComboboxInput: true, ComboboxButton: true, ComboboxOptions: true, ComboboxOption: true } }
     });
-    expect(wrapper.findComponent({ name: 'AppIcon', props: { icon: 'user-icon' } }).exists()).toBe(true);
-    expect(wrapper.find('.suffix-slot').exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'AppIcon', props: { icon: 'quill:info' } }).exists()).toBe(true);
   });
 
   it('handles readonly and disabled states', () => {

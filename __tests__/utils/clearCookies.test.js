@@ -1,7 +1,5 @@
 import { it, expect, describe, vi } from "vitest";
 import { clearCookies } from "../../utils/clearCookies";
-import { mount } from "@vue/test-utils";
-
 
 describe('clearCookies', () => {
   it('should delete all cookies if cookies exist', async () => {
@@ -10,7 +8,6 @@ describe('clearCookies', () => {
       { name: 'cookie2', path: '/', domain: 'example.com' },
     ];
 
-    // Mock the cookieStore.getAll and cookieStore.delete methods
     const getAllMock = vi.fn().mockResolvedValue(mockCookies);
     const deleteMock = vi.fn().mockResolvedValue();
 
@@ -28,22 +25,18 @@ describe('clearCookies', () => {
     });
   });
 
-  it('should log "No cookies found" if no cookies exist', async () => {
+  it('should return safely and not attempt deletion if no cookies exist', async () => {
     const getAllMock = vi.fn().mockResolvedValue([]);
+    const deleteMock = vi.fn().mockResolvedValue();
 
     global.cookieStore = {
       getAll: getAllMock,
-      delete: vi.fn(),
+      delete: deleteMock,
     };
-
-    const consoleLogMock = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await clearCookies();
 
     expect(getAllMock).toHaveBeenCalled();
-    expect(consoleLogMock).toHaveBeenCalledWith('No cookies found');
-    
-    // Clean up
-    consoleLogMock.mockRestore();
+    expect(deleteMock).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,10 @@ import { mount, flushPromises } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import UpdateForm from "@/components/Pages/Superadmin/UserDetail/UpdateForm.vue";
 
+vi.mock("virtual:public?%2Fimages%2Fenable-user.svg", () => ({ default: "mock-enable-user.svg" }));
+vi.mock("virtual:public?%2Fimages%2Frevoke-user.svg", () => ({ default: "mock-revoke-user.svg" }));
+vi.mock("@/assets/images/svgs/profile-add.svg", () => ({ default: "mock-profile-add.svg" }));
+
 describe("UpdateForm", () => {
   const globalConfig = {
     stubs: {

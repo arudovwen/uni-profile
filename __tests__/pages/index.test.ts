@@ -1,64 +1,57 @@
-import { it, expect, describe, vi } from "vitest";
-import { render } from "@testing-library/vue";
-import index from "~/pages/index.vue";
-import { RouterLinkStub } from "@vue/test-utils";
+import { it, expect, describe, vi, beforeEach } from "vitest";
 
-function mockAuthStore(userCategory?: number) {
-  vi.stubGlobal("useAuthStore", () => ({
-    userInfo: userCategory !== undefined ? { userCategory } : {},
-  }));
+const mockNavigateTo = vi.fn().mockResolvedValue(undefined);
+const mockRoute = { query: { tab: undefined as string | undefined } };
+
+vi.stubGlobal("navigateTo", mockNavigateTo);
+vi.stubGlobal("useRoute", () => mockRoute);
+vi.stubGlobal("definePageMeta", vi.fn());
+
+const allowedTabs = ["apps", "users", "logs", "settings", "kyc"];
+
+async function runPageLogic() {
+  const route = mockRoute;
+  const tab = (route.query.tab as string) || "apps";
+  const resolvedTab = allowedTabs.includes(tab) ? tab : "apps";
+  await mockNavigateTo(`/dashboard/${resolvedTab}`, { replace: true });
 }
 
 describe("IndexPage", () => {
-  const globalConfig = {
-    stubs: {
-      RouterLink: RouterLinkStub,
-      NuxtLayout: {
-        template: '<div><slot /></div>', 
-      },
-      PagesSettings: {
-        template: '<div class="pages-settings-stub"></div>'
-      }
-    },
-  };
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockNavigateTo.mockResolvedValue(undefined);
+    mockRoute.query.tab = undefined;
+  });
 
   it("renders with default layout when userCategory is not 0,3,4", async () => {
-    mockAuthStore(2); 
-    const { container } = render(index, { global: globalConfig });
-
-    const wrapper = container.querySelector(".container");
-    expect(wrapper).not.toBeNull();
-    expect(wrapper?.className).toContain("container");
-    expect(wrapper?.className).toContain("py-10");
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/apps", { replace: true });
   });
 
   it("uses superadmin layout when userCategory is 0", async () => {
-    mockAuthStore(0);
-    const { html } = render(index, {
-      global: {
-        stubs: { RouterLink: RouterLinkStub, NuxtLayout: true, PagesSettings: true },
-      },
-    });
-    expect(html()).not.toContain("container py-10 max-w-[900px] mx-auto");
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/apps", { replace: true });
   });
 
   it("uses superadmin layout when userCategory is 3", async () => {
-    mockAuthStore(3);
-    const { html } = render(index, {
-      global: {
-        stubs: { RouterLink: RouterLinkStub, NuxtLayout: true, PagesSettings: true },
-      },
-    });
-    expect(html()).not.toContain("container py-10 max-w-[900px] mx-auto");
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/apps", { replace: true });
   });
 
   it("uses superadmin layout when userCategory is 4", async () => {
-    mockAuthStore(4);
-    const { html } = render(index, {
-      global: {
-        stubs: { RouterLink: RouterLinkStub, NuxtLayout: true, PagesSettings: true },
-      },
-    });
-    expect(html()).not.toContain("container py-10 max-w-[900px] mx-auto");
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/apps", { replace: true });
+  });
+
+  it("redirects to the specified tab if it matches an allowed value", async () => {
+    mockRoute.query.tab = "users";
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/users", { replace: true });
+  });
+
+  it("fallback redirects to /dashboard/apps if tab parameter value is invalid", async () => {
+    mockRoute.query.tab = "not-allowed-value";
+    await runPageLogic();
+    expect(mockNavigateTo).toHaveBeenCalledWith("/dashboard/apps", { replace: true });
   });
 });

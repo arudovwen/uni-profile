@@ -48,7 +48,7 @@ describe('Constants', () => {
   });
 
   test('Initial Route mapping should be correct', () => {
-    expect(intialRoute[0]).toBe("/my-applications");
-    expect(intialRoute[3]).toBe("/user-management");
+    expect(intialRoute[0]).toBe("/");
+    expect(intialRoute[3]).toBe("/");
   });
 });

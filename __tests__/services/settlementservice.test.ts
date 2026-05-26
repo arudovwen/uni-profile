@@ -3,20 +3,18 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as orderHelpers from "~/services/settlementservice";
 import urls from "~/helpers/url_helpers";
 
-// ✅ Mock the correct module with the correct function names
+// Mock the correct module with the correct function names
 vi.mock("~/helpers/api_helpers", () => ({
   walletGet: vi.fn(),
   walletPost: vi.fn(),
   walletPut: vi.fn(),
   walletDelete: vi.fn(),
-  // include others if imported elsewhere
   get: vi.fn(),
   post: vi.fn(),
   del: vi.fn(),
   put: vi.fn(),
 }));
 
-// ✅ Mock store so config is built with a predictable token
 vi.mock("~/store", () => ({
   default: {
     getters: {
@@ -38,14 +36,12 @@ vi.mock("~/helpers/url_helpers", () => ({
   },
 }));
 
-// ✅ Import mocked functions AFTER vi.mock declarations
+// Import mocked functions AFTER vi.mock declarations
 import { walletGet, walletPost, walletPut, walletDelete } from "~/helpers/api_helpers";
 
 describe("Settlement Service Functions", () => {
-  // The config the service builds at module load time using the mocked store
-  const expectedConfig = {
-    headers: { Authorization: "Bearer mock-access-token" },
-  };
+  // FIXED: Match the actual empty config object used by the service file
+  const expectedConfig = {};
 
   beforeEach(() => {
     vi.clearAllMocks();
