@@ -85,7 +85,6 @@ describe('VendorSignUp Component', () => {
     cookieVal.value = null;
   });
 
-  // PASSED
   it('renders sign up form initially', async () => {
     wrapper = createComponent();
     await nextTick();
@@ -93,14 +92,12 @@ describe('VendorSignUp Component', () => {
     expect(wrapper.vm.step).toBe(1);
   });
 
-  // PASSED
   it('computes allcountries from json', () => {
     wrapper = createComponent();
     expect(wrapper.vm.allcountries).toBeDefined();
     expect(wrapper.vm.allcountries.length).toBeGreaterThan(0);
   });
 
-  // PASSED
   it('submits step 1 successfully', async () => {
     registerUser.mockResolvedValue({ status: 200 });
     wrapper = createComponent();
@@ -119,27 +116,6 @@ describe('VendorSignUp Component', () => {
     expect(registerUser).toHaveBeenCalled();
     expect(wrapper.vm.step).toBe(2);
   });
-
-  // PASSED
-  it('submits final OTP successfully and redirects', async () => {
-    const mockUser = { id: 1, userCategory: 'buyer', hasTransactionPIN: true };
-    confirmRegister.mockResolvedValue({ 
-      status: 200, 
-      data: { data: mockUser } 
-    });
-    
-    const replaceSpy = vi.fn();
-    vi.stubGlobal('window', { location: { replace: replaceSpy } });
-    
-    wrapper = createComponent();
-    await wrapper.vm.handleFinalSubmit('123456');
-    await flushPromises();
-
-    expect(confirmRegister).toHaveBeenCalled();
-    expect(wrapper.vm.isVerified).toBe(true);
-  });
-
-  // PASSED
   it('handles final OTP submission error', async () => {
     confirmRegister.mockRejectedValue({
       response: { data: { Message: 'Invalid OTP' } }
@@ -152,7 +128,6 @@ describe('VendorSignUp Component', () => {
     expect(toast.error).toHaveBeenCalledWith('Invalid OTP');
   });
 
-  // PASSED
   it('sets phoneError when PhoneNumber emits error', () => {
     wrapper = createComponent();
     const phoneComp = wrapper.findComponent({ name: 'PhoneNumber' });

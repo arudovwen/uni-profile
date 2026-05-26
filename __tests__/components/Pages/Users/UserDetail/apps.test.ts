@@ -18,6 +18,9 @@ vi.mock("lodash/debounce", () => ({
   default: vi.fn((fn) => fn)
 }));
 
+vi.mock("virtual:public?%2Fimages%2Fenable-user.svg", () => ({ default: "mock-enable-user.svg" }));
+vi.mock("virtual:public?%2Fimages%2Frevoke-user.svg", () => ({ default: "mock-revoke-user.svg" }));
+
 const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
 
 const mockAuthStore = { userInfo: { userCategory: 1 } };
@@ -30,7 +33,8 @@ const mountOptions = {
       DeleteModal: true, 
       ActionModal: true, 
       IndexModal: true, 
-      AppStatusButton: true 
+      AppStatusButton: true,
+      UpdateForm: true
     },
     mocks: {
       $route: { params: { id: 'user-123' } }

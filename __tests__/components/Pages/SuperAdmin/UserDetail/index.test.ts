@@ -1,21 +1,26 @@
 import { mount, flushPromises } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// vi.mock is hoisted by Vitest automatically, but the import of the mocked
-// module must come AFTER this call to guarantee the mock is in place first.
 vi.mock("~/services/settingservices", () => ({
   getUserDetail: vi.fn(),
 }));
 
-// Import the mocked module after vi.mock so we get the mocked version
+vi.mock("~/services/userservices", () => ({
+  getSingleInvite: vi.fn(() => Promise.resolve({ status: 200, data: { data: {} } })),
+}));
+
 import * as settingServices from "~/services/settingservices";
 
 const mockAuthStore = { userInfo: { userCategory: 1 } };
 vi.stubGlobal("useAuthStore", () => mockAuthStore);
 vi.stubGlobal("useRoute", () => ({
+  path: "/user-management/user-detail/user-456/profile",
   query: { name: "John Doe" },
   params: { id: "user-456" },
 }));
+
+vi.mock("virtual:public?%2Fimages%2Fenable-user.svg", () => ({ default: "mock-enable-user.svg" }));
+vi.mock("virtual:public?%2Fimages%2Frevoke-user.svg", () => ({ default: "mock-revoke-user.svg" }));
 
 import UserDetail from "@/components/Pages/Superadmin/UserDetail/index.vue";
 
@@ -86,7 +91,6 @@ describe("UserDetail", () => {
       data: { data: { appCodes: ["app3"], name: "Updated" } },
     } as any);
 
-    // getUserData now returns a Promise, so we can await it directly
     await wrapper.vm.getUserData();
     await flushPromises();
 

@@ -1,117 +1,111 @@
 import { mount } from "@vue/test-utils";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref, nextTick } from "vue";
+import { reactive, nextTick } from "vue";
 import AppHeader from "@/components/AppHeader.vue";
 
-const route = ref({ path: "/" });
-
+const mockRoute = reactive({ path: "/", query: { tab: undefined as string | undefined } });
 vi.mock("vue-router", () => ({
-  useRouter: () => ({
-    currentRoute: route,
-  }),
+  useRoute: () => mockRoute,
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
-vi.mock("@vueuse/core", () => ({
-  useThrottleFn: (fn: any) => fn,
+vi.stubGlobal("useEncryption", () => ({
+  decrypt: vi.fn((val: string) => val),
 }));
 
-const userInfo = {
+const loggedUser = reactive({
   firstName: "John",
   lastName: "Doe",
-  fullName: "John Doe",
   email: "john@doe.com",
-};
-
-global.useAuthStore = () => ({
-  userInfo,
+  photo: "",
+  avatar: "",
 });
 
+const userInfo = reactive({ userCategory: 1 });
+
+const authStoreState = {
+  loggedUser,
+  userInfo,
+  logOut: vi.fn(),
+};
+
+vi.mock("#imports", () => ({
+  useAuthStore: () => authStoreState,
+  useRoute: () => mockRoute,
+  useRouter: () => ({ push: vi.fn() }),
+  useEncryption: () => ({ decrypt: (v: string) => v }),
+}));
+
+vi.stubGlobal("useAuthStore", () => authStoreState);
+
 const stubs = {
-  AppLogo: { template: "<div data-test='logo' />" },
-  Textinput: { template: "<input />" },
-  AppMenu: { template: "<div data-test='menu' />" },
-  AppIcon: { template: "<span />" },
-  MultiApps: { template: "<div data-test='multiapps' />" },
-  ModalSide: {
-    props: ["isOpen"],
-    emits: ["toggle-popup"],
-    template: "<div><slot name='content' /></div>",
-  },
-  Menu: { template: "<div><slot /></div>" },
-  MenuButton: { template: "<button><slot /></button>" },
-  MenuItems: { template: "<div><slot /></div>" },
-  MenuItem: {
-    template: "<div><slot :close='() => {}' :active='false' :disabled='false' /></div>",
-  },
+  NuxtLink: { template: "<a><slot /></a>" },
+  AuthLogo: { template: "<div data-test='logo'>Logo</div>" },
+  DashboardNavIcon: { props: ["name", "active"], template: "<span />" },
+  PermissionGuard: { props: ["categories"], template: "<div><slot /></div>" },
 };
 
 describe("AppHeader.vue", () => {
   let addEventListenerSpy: any;
+  let removeEventListenerSpy: any;
 
   beforeEach(() => {
-    addEventListenerSpy = vi.spyOn(window, "addEventListener");
+    vi.clearAllMocks();
+    mockRoute.path = "/";
+    mockRoute.query.tab = undefined;
+
+    loggedUser.firstName = "John";
+    loggedUser.lastName = "Doe";
+    loggedUser.email = "john@doe.com";
+    loggedUser.photo = "";
+    loggedUser.avatar = "";
+    userInfo.userCategory = 1;
+
+    addEventListenerSpy = vi.spyOn(document, "addEventListener");
+    removeEventListenerSpy = vi.spyOn(document, "removeEventListener");
   });
 
-  it("renders logo when hideLogo is false", () => {
-    const wrapper = mount(AppHeader, {
-      props: { hideLogo: false },
-      global: { stubs },
-    });
+  it("renders the logo element via AuthLogo layout path markup", () => {
+    const wrapper = mount(AppHeader, { global: { stubs } });
     expect(wrapper.find("[data-test='logo']").exists()).toBe(true);
   });
 
-  it("does not render logo when hideLogo is true", () => {
-    const wrapper = mount(AppHeader, {
-      props: { hideLogo: true },
-      global: { stubs },
-    });
-    expect(wrapper.find("[data-test='logo']").exists()).toBe(false);
-  });
-
-  it("toggles modal with openModal", async () => {
-    const wrapper = mount(AppHeader, {
-      global: { stubs },
-    });
-    await wrapper.vm.openModal();
-    expect(wrapper.vm.isOpen).toBe(true);
-    await wrapper.vm.openModal();
-    expect(wrapper.vm.isOpen).toBe(false);
-  });
-
-  it("closes modal on route change", async () => {
-    const wrapper = mount(AppHeader, {
-      global: { stubs },
-    });
-    wrapper.vm.isOpen = true;
-    route.value = { path: "/new" };
+  it("handles empty names by defaulting initials fallback gracefully", async () => {
+    loggedUser.firstName = "";
+    loggedUser.lastName = "";
+    const wrapper = mount(AppHeader, { global: { stubs } });
     await nextTick();
-    expect(wrapper.vm.isOpen).toBe(false);
+    expect(wrapper.vm.userInitial).toBe("U");
   });
 
-  it("updates window width", () => {
-    const wrapper = mount(AppHeader, {
-      global: { stubs },
-    });
-    window.innerWidth = 900;
-    wrapper.vm.getWindowSize();
-    expect(wrapper.vm.windowWidth).toBe(900);
+  it("toggles the user profile menu open state when dropdown button is clicked", async () => {
+    const wrapper = mount(AppHeader, { global: { stubs } });
+
+    expect(wrapper.vm.isUserMenuOpen).toBe(false);
+
+    await wrapper.find("button[type='button']").trigger("click");
+    expect(wrapper.vm.isUserMenuOpen).toBe(true);
+
+    await wrapper.find("button[type='button']").trigger("click");
+    expect(wrapper.vm.isUserMenuOpen).toBe(false);
   });
 
-  it("handles scroll position", () => {
-    const wrapper = mount(AppHeader, {
-      global: { stubs },
-    });
-    Object.defineProperty(window, "pageYOffset", { value: 100, writable: true });
-    wrapper.vm.handleScroll();
-    expect(wrapper.vm.view.atTopOfPage).toBe(true);
-    Object.defineProperty(window, "pageYOffset", { value: 600 });
-    wrapper.vm.handleScroll();
-    expect(wrapper.vm.view.atTopOfPage).toBe(false);
+  it("resolves default path mappings when user is not superadmin", () => {
+    const wrapper = mount(AppHeader, { global: { stubs } });
+
+    expect(wrapper.vm.isSuperadmin).toBe(false);
+    expect(wrapper.vm.getTabPath("apps")).toBe("/dashboard/apps");
+    expect(wrapper.vm.getTabPath("settings")).toBe("/dashboard/settings");
   });
 
-  it("registers window listeners on mount", () => {
+  it("registers document outside-click click wrapper hook on layout mount", () => {
     mount(AppHeader, { global: { stubs } });
-    expect(addEventListenerSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
-    expect(addEventListenerSpy).toHaveBeenCalledWith("resize", expect.any(Function));
+    expect(addEventListenerSpy).toHaveBeenCalledWith("click", expect.any(Function));
+  });
+
+  it("cleans up layout listeners cleanly on design unmount execution blocks", () => {
+    const wrapper = mount(AppHeader, { global: { stubs } });
+    wrapper.unmount();
+    expect(removeEventListenerSpy).toHaveBeenCalledWith("click", expect.any(Function));
   });
 });

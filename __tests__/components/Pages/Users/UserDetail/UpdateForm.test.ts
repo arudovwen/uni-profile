@@ -3,6 +3,9 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { nextTick } from 'vue';
 import UpdateForm from '@/components/Pages/Users/UserDetail/UpdateForm.vue';
 
+vi.mock("virtual:public?%2Fimages%2Fenable-user.svg", () => ({ default: "mock-enable-user.svg" }));
+vi.mock("@/assets/images/svgs/profile-add.svg", () => ({ default: "mock-profile-add.svg" }));
+
 describe('UpdateForm.vue', () => {
   let wrapper;
 
