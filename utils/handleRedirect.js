@@ -71,6 +71,13 @@ export function handleRedirect(
     const encryptedRefresh = encrypt(refreshToken);
 
     const fullUrl = new URL(targetUrl);
+    
+    // Save original path and search if it's not the root or already the validate endpoint
+    if (fullUrl.pathname !== '/' && fullUrl.pathname !== '/auth/validate') {
+      const originalPathAndSearch = fullUrl.pathname + fullUrl.search;
+      fullUrl.searchParams.set("redirectUrl", originalPathAndSearch);
+    }
+
     fullUrl.pathname = "/auth/validate";
     fullUrl.searchParams.set("token", encryptedJWT);
     fullUrl.searchParams.set("code", encryptedRefresh);
