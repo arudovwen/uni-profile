@@ -12,19 +12,7 @@
         </p>
 
         <!-- Tabs -->
-        <div class="flex gap-4 border-b border-[#E9EAEB] mb-6">
-          <button
-            @click="activeTab = 'link'"
-            :class="[
-              'pb-3 text-sm font-medium transition-colors flex items-center gap-2',
-              activeTab === 'link'
-                ? 'text-primary-600 border-b-2 border-primary-600'
-                : 'text-[#667085] hover:text-[#2F2F2F]',
-            ]"
-          >
-            <CopyLink :color="activeTab === 'link' ? '#1570EF' : '#475467'" />
-            Copy invite link
-          </button>
+        <!-- <div class="flex gap-4 border-b border-[#E9EAEB] mb-6">
           <button
             @click="activeTab = 'email'"
             :class="[
@@ -37,7 +25,7 @@
             <EmailSvg :color="activeTab === 'email' ? '#1570EF' : '#475467'" />
             Invite via email
           </button>
-        </div>
+        </div> -->
 
         <!-- Tab Content -->
         <div v-if="activeTab === 'link'" class="space-y-4">
@@ -107,6 +95,20 @@
                 Remove
               </button> -->
             </div>
+
+            <div v-if="pair.role?.code === 0" class="space-y-2">
+              <label class="block text-sm font-medium text-[#2F2F2F]">
+                Select apps
+              </label>
+              <MultiSelectDropdown
+                v-model="pair.apps"
+                :options="appOptions"
+                placeholder="Select apps"
+                containerStyles="w-full"
+                buttonClass="!rounded-[6px] !bg-[#F9FAFB] !border-[#E4E7EC] w-full"
+                :showSearchFilter="false"
+              />
+            </div>
           </div>
           <p class="text-xs text-[#667085] mt-2">
             You can use commas to separate multiple email recipients.
@@ -127,7 +129,7 @@
             @click="sendInvites"
             :disabled="
               !inviteData.email.pairs.some((pair) =>
-                pair.emailAddresses.trim()
+                pair.emailAddresses.trim(),
               ) || isLoading
             "
             class="w-full px-4 py-2 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
@@ -141,9 +143,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useToast } from "~/composables/useToast";
 import CustomDropdown from "~/components/Onboarding/CustomDropdown.vue";
+import MultiSelectDropdown from "~/components/Onboarding/MultiSelectDropdown.vue";
 // import AppIcon from "~/components/Icon/AppIcon.vue";
 import AppIcon from "./AppIcon.vue";
 import CopyLink from "~/assets/images/icon/CopyLink.vue";
@@ -164,6 +167,23 @@ interface RoleOption {
   name: string;
 }
 
+interface AppOption {
+  code: string;
+  name: string;
+}
+
+interface AppUserCategoryOption {
+  code: string;
+  name: string;
+}
+
+interface InvitePair {
+  emailAddresses: string;
+  role: RoleOption;
+  apps: AppOption[];
+  appUserCategories: Record<string, AppUserCategoryOption>;
+}
+
 defineProps<Props>();
 const emit = defineEmits<Emits>();
 const toast = useToast();
@@ -175,7 +195,20 @@ const roleOptions: RoleOption[] = [
   { code: 0, name: "Platform Admin" },
 ];
 
-const activeTab = ref<"link" | "email">("link");
+const appUserCategoryOptions: AppUserCategoryOption[] = [
+  { code: "0", name: "Admin" },
+  { code: "2", name: "Procurement Manager" },
+];
+
+const appOptions = computed<AppOption[]>(() => {
+  if (!authStore.appList) return [];
+  return authStore.appList.map((app: any) => ({
+    code: app.code,
+    name: app.name || app.code,
+  }));
+});
+
+const activeTab = ref<"link" | "email">("email");
 
 const inviteData = reactive({
   link: {
@@ -186,10 +219,38 @@ const inviteData = reactive({
       {
         emailAddresses: "",
         role: roleOptions[0],
+        apps: [] as AppOption[],
+        appUserCategories: {} as Record<string, AppUserCategoryOption>,
       },
-    ],
+    ] as InvitePair[],
   },
 });
+
+const syncPairAppUserCategories = (pair: InvitePair) => {
+  const selectedCodes = new Set(pair.apps.map((app) => app.code));
+
+  Object.keys(pair.appUserCategories).forEach((appCode) => {
+    if (!selectedCodes.has(appCode)) {
+      delete pair.appUserCategories[appCode];
+    }
+  });
+
+  pair.apps.forEach((app) => {
+    if (!pair.appUserCategories[app.code]) {
+      pair.appUserCategories[app.code] = appUserCategoryOptions[0];
+    }
+  });
+};
+
+watch(
+  () => inviteData.email.pairs,
+  (pairs) => {
+    pairs.forEach((pair) => {
+      syncPairAppUserCategories(pair);
+    });
+  },
+  { deep: true },
+);
 
 const closeModal = () => {
   emit("close");
@@ -207,6 +268,8 @@ const sendInvites = async () => {
     email: string;
     role: any;
     pairIndex: number;
+    apps: AppOption[];
+    appUserCategories: Record<string, AppUserCategoryOption>;
   }
 
   const emailsToSend: EmailToSend[] = [];
@@ -221,12 +284,22 @@ const sendInvites = async () => {
         email,
         role: pair.role.code,
         pairIndex,
+        apps: pair.apps,
+        appUserCategories: pair.appUserCategories,
       });
     });
   });
 
   if (emailsToSend.length === 0) {
     toast.error("Please enter at least one email address");
+    return;
+  }
+
+  const invalidPlatformAdminPair = inviteData.email.pairs.find(
+    (pair) => pair.role.code === 0 && pair.apps.length === 0,
+  );
+  if (invalidPlatformAdminPair) {
+    toast.error("Please select at least one app for Platform Admin invites");
     return;
   }
 
@@ -242,9 +315,20 @@ const sendInvites = async () => {
     for (const item of emailsToSend) {
       try {
         // Build payload based on role
-        const payload = item.role === 1
-          ? { email: item.email, role: item.role, appCodes: appList }
-          : { email: item.email, role: item.role, appCodes: appList };
+        const payload =
+          item.role === 1
+            ? { email: item.email, role: item.role, appCodes: appList }
+            : {
+                email: item.email,
+                role: item.role,
+                appCodes: item.apps.map((app) => app.code),
+                appUserCategory: item.apps.map((app) => ({
+                  appCode: app.code,
+                  appUserCategory: parseInt(
+                    item.appUserCategories[app.code]?.code ?? "0",
+                  ),
+                })),
+              };
 
         const response = await sendAdminInvite(payload);
 
@@ -267,18 +351,20 @@ const sendInvites = async () => {
       toast.error(`Failed to send invites to: ${failedList}`);
 
       // Remove successful emails, keep only failed ones
-      inviteData.email.pairs = inviteData.email.pairs.map((pair) => {
-        const failedInPair = failedEmails.filter((email) => {
-          const pairEmails = pair.emailAddresses
-            .split(",")
-            .map((e) => e.trim());
-          return pairEmails.includes(email);
-        });
-        return {
-          ...pair,
-          emailAddresses: failedInPair.join(", "),
-        };
-      }).filter((pair) => pair.emailAddresses.trim().length > 0);
+      inviteData.email.pairs = inviteData.email.pairs
+        .map((pair) => {
+          const failedInPair = failedEmails.filter((email) => {
+            const pairEmails = pair.emailAddresses
+              .split(",")
+              .map((e) => e.trim());
+            return pairEmails.includes(email);
+          });
+          return {
+            ...pair,
+            emailAddresses: failedInPair.join(", "),
+          };
+        })
+        .filter((pair) => pair.emailAddresses.trim().length > 0);
     } else {
       // All failed
       toast.error("Failed to send all invites. Please try again.");
@@ -292,6 +378,8 @@ const addAnotherPair = () => {
   inviteData.email.pairs.push({
     emailAddresses: "",
     role: roleOptions[0],
+    apps: [],
+    appUserCategories: {},
   });
 };
 
