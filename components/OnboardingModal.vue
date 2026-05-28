@@ -222,7 +222,7 @@ const emit = defineEmits<Emits>();
 const authStore = useAuthStore();
 const toast = useToast();
 const isReady = ref(false);
-const loggedUser = (authStore?.loggedUser as any) || null;
+const loggedUser = (authStore?.userInfo as any) || null;
 
 const categorySlug: Record<any, any> = {
   1: null,

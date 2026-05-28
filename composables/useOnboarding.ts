@@ -194,7 +194,7 @@ export const useOnboarding = () => {
           ? oxideRoleToAccountType[roleSelection.role] ?? "Buyer"
           : "Buyer";
         const username =
-          (authStore.loggedUser as any)?.fullName ||
+          (authStore.userInfo as any)?.fullName ||
           (authStore.userInfo as any)?.fullName ||
           "";
         return {
@@ -235,11 +235,11 @@ export const useOnboarding = () => {
         const buyerQuestion = String(rawBuyerQuestion).trim();
         const country =
           (authStore.userInfo as any)?.country ||
-          (authStore.loggedUser as any)?.country ||
+          (authStore.userInfo as any)?.country ||
           "";
         const ssoUserCategory =
           (authStore.userInfo as any)?.userCategory ??
-          (authStore.loggedUser as any)?.userCategory ??
+          (authStore.userInfo as any)?.userCategory ??
           ssoCategory;
 
         const payload: Record<string, any> = {
@@ -291,7 +291,7 @@ export const useOnboarding = () => {
 
   const submitOnboarding = async () => {
     const userEmail =
-      (authStore.loggedUser as any)?.email ||
+      (authStore.userInfo as any)?.email ||
       (authStore.userInfo as any)?.email;
     if (!userEmail) {
       throw new Error("User email not found");

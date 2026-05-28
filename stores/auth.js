@@ -143,7 +143,7 @@ export const useAuthStore = defineStore(
         mattaAuth.value = null;
         loggedUser.value = null;
         mattaProfiles.value = null;
-        handleAppRedirect(route.params.appId);
+        handleAppRedirect(route.params.appId, route);
       });
     };
     const logOut = async () => {

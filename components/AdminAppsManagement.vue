@@ -152,7 +152,7 @@ const isDeleting = ref(false);
 const isNavigating = ref(false);
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
-const encryptedEmail = encrypt((authStore.loggedUser as any)?.email || "");
+const encryptedEmail = encrypt((authStore.userInfo as any)?.email || "");
 const allowTokenPass = new Set([APP_CODES.FLUX.code]);
 const allowedAdminApps = [
   APP_CODES.FLUX.code,

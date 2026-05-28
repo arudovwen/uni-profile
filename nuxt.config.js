@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: false,
     },
+    compatibilityDate: "2026-05-28",
   },
 
   image: {
@@ -25,7 +26,6 @@ export default defineNuxtConfig({
     "@nuxtjs/google-fonts",
     "@pinia/nuxt",
     "nuxt-vue3-google-signin",
-    "nuxt-simple-sitemap",
     "@pinia-plugin-persistedstate/nuxt",
     "@nuxt/image",
     "nuxt-security",

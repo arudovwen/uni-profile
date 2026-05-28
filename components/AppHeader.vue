@@ -254,11 +254,11 @@ const userMenuRef = ref(null);
 const isUserMenuOpen = ref(false);
 
 const userAvatar = computed(
-  () => authStore.loggedUser?.photo || authStore.loggedUser?.avatar || "",
+  () => authStore.userInfo?.photo || authStore.userInfo?.avatar || "",
 );
 const userInitial = computed(() => {
-  const firstName = authStore.loggedUser?.firstName || "";
-  const lastName = authStore.loggedUser?.lastName || "";
+  const firstName = authStore.userInfo?.firstName || "";
+  const lastName = authStore.userInfo?.lastName || "";
   if (firstName && lastName) {
     return `${firstName.charAt(0)}`.toUpperCase();
   }
@@ -266,13 +266,13 @@ const userInitial = computed(() => {
 });
 
 const userName = computed(() => {
-  const firstName = authStore.loggedUser?.firstName || "";
-  const lastName = authStore.loggedUser?.lastName || "";
+  const firstName = authStore.userInfo?.firstName || "";
+  const lastName = authStore.userInfo?.lastName || "";
   return `${firstName} ${lastName}`.trim() || "User";
 });
 
 const userEmail = computed(() => {
-  const encryptedEmail = authStore.loggedUser?.email || "";
+  const encryptedEmail = authStore.userInfo?.email || "";
   if (!encryptedEmail) return "";
   try {
     return decrypt(encryptedEmail) || encryptedEmail;

@@ -142,7 +142,7 @@ const isLoading = ref(false);
 const photo = ref("");
 
 const userInitial = computed(() => {
-  const first = authStore.loggedUser?.firstName || "";
+  const first = authStore.userInfo?.firstName || "";
   return first.charAt(0).toUpperCase() || "U";
 });
 
