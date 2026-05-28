@@ -137,7 +137,7 @@ const APP_ICONS = {
 const ADMIN_CATEGORIES = [0, 3];
 const PAGE_SIZE = 50;
 
-const userName = computed(() => authStore.loggedUser?.firstName || "User");
+const userName = computed(() => authStore.userInfo?.firstName || "User");
 const isAdmin = computed(() =>
   ADMIN_CATEGORIES.includes(authStore.userInfo?.userCategory),
 );
@@ -155,7 +155,7 @@ const showOnboardingModal = ref(false);
 const isOnboarding = ref(false);
 const isNavigating = ref(false);
 
-const encryptedEmail = encrypt(authStore.loggedUser?.email || "");
+const encryptedEmail = encrypt(authStore.userInfo?.email || "");
 const encryptedToken = encrypt(authStore.jwToken);
 const encryptedRefreshToken = encrypt(authStore.refreshToken);
 const allowTokenPass = new Set([

@@ -124,7 +124,6 @@ const appRoles: Record<string, AppRoleConfig> = {
 };
 
 const getRole = (role: string | undefined, app: any) => {
-  console.log("app = ", app);
 
   if (app.appUserCategory) {
     return (

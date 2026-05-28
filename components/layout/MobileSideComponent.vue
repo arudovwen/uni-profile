@@ -35,15 +35,15 @@
         >
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-matta-black rounded-full flex items-center justify-center">
-              <span class="text-white text-sm font-semibold">{{ authStore.loggedUser?.fullName?.charAt(0) }}</span>
+              <span class="text-white text-sm font-semibold">{{ authStore.userInfo?.fullName?.charAt(0) }}</span>
             </div>
 
             <div class="flex flex-col  w-[160px] truncate text-left">
               <p class="text-sm font-semibold text-black">
-                {{ authStore.loggedUser?.fullName }}
+                {{ authStore.userInfo?.fullName }}
               </p>
               <p class="text-sm text-gray-400 truncate">
-                {{ authStore.loggedUser?.email }}
+                {{ authStore.userInfo?.email }}
               </p>
             </div>
           </div>
