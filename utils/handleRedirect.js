@@ -125,6 +125,7 @@ export function handleResetRedirect(userCategory, app) {
   return window.location.replace(fullUrl);
 }
 
-export function handleAppRedirect(app) {
-  return window.location.replace(`/auth/login${app ? `/${app}` : ""}`);
+export function handleAppRedirect(app, route) {
+  const continueQuery = route?.query?.continue ? `?continue=${encodeURIComponent(route.query.continue)}` : "";
+  return window.location.replace(`/auth/login${app ? `/${app}` : ""}${continueQuery}`);
 }
