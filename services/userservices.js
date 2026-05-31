@@ -41,8 +41,8 @@ export async function deleteSubApp(id) {
   return await ssoDelete(`${urls.DELETE_SUBAPP(id)}`, {});
 }
 
-export async function uploadAppLogo(base64Data) {
-  return await ssoPost(`${urls.UPLOAD_FILE}`, { base64: base64Data });
+export async function uploadAppLogo(base64Data, ext) {
+  return await ssoPost(`${urls.UPLOAD_FILE}`, { base64: base64Data, ext });
 }
 
 export async function adminToggleAccess(data) {
