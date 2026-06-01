@@ -202,10 +202,16 @@ const appUserCategoryOptions: AppUserCategoryOption[] = [
 
 const appOptions = computed<AppOption[]>(() => {
   if (!authStore.appList) return [];
-  return authStore.appList.map((app: any) => ({
-    code: app.code,
-    name: app.name || app.code,
-  }));
+  return authStore.appList
+    .map((app: any) => ({
+      code: app.code,
+      name: app.name || app.code,
+    }))
+    .filter(
+      (app) =>
+        app.code !== APP_CODES.MATTAPEDIA.code &&
+        app.code !== APP_CODES.ORBITAL.code,
+    ); // Exclude the dashboard app
 });
 
 const activeTab = ref<"link" | "email">("email");
