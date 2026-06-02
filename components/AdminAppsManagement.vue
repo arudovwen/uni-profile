@@ -158,6 +158,7 @@ const allowedAdminApps = [
   APP_CODES.FLUX.code,
   APP_CODES.MATTA.code,
   APP_CODES.OXIDE.code,
+  APP_CODES.POLYMER.code
 ];
 
 const navigateToApp = async (app: App | any) => {

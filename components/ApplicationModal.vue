@@ -378,7 +378,8 @@ const handleSubmit = async () => {
     // Upload logo if a new file was selected
     if (logoFile.value) {
       try {
-        const uploadResponse = await uploadAppLogo(logoPreview.value.split("base64,")[1] || '');
+        const fileExt = logoFile.value?.name.split('.').pop() || '';
+        const uploadResponse = await uploadAppLogo(logoPreview.value.split("base64,")[1] || '', fileExt);
         
         // Check if upload was successful
         if (!uploadResponse.data?.succeeded) {
@@ -398,9 +399,12 @@ const handleSubmit = async () => {
           return;
         }
       } catch (uploadError: any) {
-        const errorMessage = uploadError.response?.data?.message || 
-                           uploadError.message || 
-                           'Failed to upload logo';
+        const validationErrors = uploadError.response?.data?.errors;
+        const errorMessage = validationErrors
+          ? Object.values(validationErrors).flat().join(', ')
+          : uploadError.response?.data?.message ||
+            uploadError.message ||
+            'Failed to upload logo';
         logoError.value = errorMessage;
         toast.error(errorMessage);
         isLoading.value = false;

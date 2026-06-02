@@ -245,13 +245,13 @@ const actions = [
     textColor: "text-[#344054]",
     condition: (data: any) => data.status === "Inactive",
   },
-  {
-    key: "delete",
-    label: "Delete User",
-    icon: markRaw(DeleteIcon),
-    iconColor: "text-[#D92D20]",
-    textColor: "text-[#D92D20]",
-  },
+  // {
+  //   key: "delete",
+  //   label: "Delete User",
+  //   icon: markRaw(DeleteIcon),
+  //   iconColor: "text-[#D92D20]",
+  //   textColor: "text-[#D92D20]",
+  // },
 ];
 
 // Helper function to map userCategory to role name
