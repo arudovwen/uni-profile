@@ -10,15 +10,15 @@
                 class="w-[180px] h-auto mx-auto mb-7"
               /> -->
   
-              <!-- <h1 class="text-4xl md:text-8xl font-bold mb-8">{{ error.statusCode }}</h1> -->
+              <h1 class="text-3xl md:text-6xl font-bold mb-4">{{ error.statusCode }}</h1>
               
-              <h1 class="text-3xl font-bold mb-8 max-w-[450px] mx-auto text-center">{{ error.message }}</h1>
+              <h1 class="text-xl font-bold mb-8 max-w-[450px] mx-auto text-center">{{ error.message }}</h1>
               
              
                 <button @click="handleError"
-                  class="text-white bg-primary-500 px-6 py-4 rounded-full hover:bg-primary-500/80 uppercase"
+                  class="text-white bg-primary-500 px-6 py-2.5 rounded-lg hover:bg-primary-500/80 capitalize flex items-center  w-max mx-auto gap-x-2"
                 >
-                  go back home
+               <AppIcon name="home" class="w-4 h-4" />   go  home
                 </button>
              
             </div>
