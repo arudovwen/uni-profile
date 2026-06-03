@@ -5,6 +5,7 @@ export const mapBaseUrl = (
   appCode: string,
   isAdmin: boolean = false,
 ) => {
+  const noPrefixApps = [APP_CODES.POLYMER.code];
   if (process.env.NODE_ENV === "development") {
     if (appCode === APP_CODES.OXIDE.code) {
       return isAdmin ? "http://localhost:8080" : "http://localhost:3005";
@@ -28,5 +29,7 @@ export const mapBaseUrl = (
       return isAdmin ? "http://localhost:8080" : "http://localhost:3030";
     }
   }
-  return isAdmin ? baseUrl.replace("https://", "https://admin.") : baseUrl;
+  return isAdmin && !noPrefixApps.includes(appCode)
+    ? baseUrl.replace("https://", "https://admin.")
+    : baseUrl;
 };
