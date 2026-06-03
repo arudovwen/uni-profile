@@ -3,9 +3,7 @@
     <div class="max-w-[406px] mx-auto">
       <!-- Header Section -->
       <div class="text-center mb-6">
-        <div
-          class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2"
-        >
+        <div class="inline-flex items-center gap-2 bg-[#F3F4F6] rounded-full px-4 py-2">
           <UserTick class="w-4 h-4 text-[#6B7280]" />
           <span class="text-sm font-medium text-[#4B5563]">Step 2 of 3</span>
         </div>
@@ -13,8 +11,8 @@
           Select your function for {{ appName }}
         </h1>
         <p class="text-base text-[#475467] font-[350]">
-          Choose your function for this application. This<br />determines your
-          permissions and available features.
+          Choose your function for this application. This<br />determines your permissions
+          and available features.
         </p>
       </div>
 
@@ -64,10 +62,7 @@
       </div>
 
       <!-- Conditional Fields -->
-      <div
-        v-if="selectedRoleConditionalFields.length > 0"
-        class="mb-8 space-y-4"
-      >
+      <div v-if="selectedRoleConditionalFields.length > 0" class="mb-8 space-y-4">
         <div v-for="field in selectedRoleConditionalFields" :key="field.name">
           <!-- Service-based searchable select -->
           <OnboardingSearchableSelect
@@ -140,11 +135,7 @@
           @click="handleNext"
         >
           {{
-            isSubmitting
-              ? "Processing..."
-              : isLastApp
-              ? "Continue"
-              : "Next Application"
+            isSubmitting ? "Processing..." : isLastApp ? "Continue" : "Next Application"
           }}
         </button>
       </div>
@@ -211,9 +202,7 @@ const emit = defineEmits<{
 
 const hasRoleSelection = computed(
   () =>
-    props.modelValue !== null &&
-    props.modelValue !== undefined &&
-    props.modelValue !== "",
+    props.modelValue !== null && props.modelValue !== undefined && props.modelValue !== ""
 );
 
 const conditionalFieldValues = ref<Record<string, any>>({});
@@ -247,9 +236,7 @@ const transformOptions = (
 
 // Get the optionValues for a given field
 const getFieldOptionValues = (fieldName: string) => {
-  const field = selectedRoleConditionalFields.value.find(
-    (f) => f.name === fieldName
-  );
+  const field = selectedRoleConditionalFields.value.find((f) => f.name === fieldName);
   return field?.optionValues;
 };
 

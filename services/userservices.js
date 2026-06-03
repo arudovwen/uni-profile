@@ -7,6 +7,8 @@ import {
   ssoGet,
   ssoPut,
   ssoDelete,
+  mattaGet,
+  fluxGet,
 } from "../helpers/api_helpers";
 
 const config = {};
@@ -134,7 +136,6 @@ export async function ownerToggleAppAccess(data) {
   return await ssoPost(`${urls.OWNER_REVOKE_ACCESS}`, data);
 }
 
-
 export async function generateReferralCode() {
   return await ssoGet(urls.GENERATE_REFERRAL_CODE, config);
 }
@@ -154,7 +155,7 @@ export async function getReferral(id) {
 export async function getReferrals(queryParams) {
   return await ssoGet(
     `${urls.GET_REFERRALS}?${new URLSearchParams(queryParams)}`,
-    {}
+    {},
   );
 }
 
@@ -167,7 +168,7 @@ export async function getReferralLeaderboard(queryParams) {
   return await ssoPost(
     `${urls.GET_REFERRAL_LEADERBOARD}`,
     cleanObject(queryParams),
-    {}
+    {},
   );
 }
 
@@ -185,9 +186,9 @@ export async function deleteReferral(id, version = "1") {
 export async function getDepartments(queryParams) {
   return await ssoGet(
     `admin/v1/referalls/department/get-all?${new URLSearchParams(
-      cleanObject(queryParams)
+      cleanObject(queryParams),
     )}`,
-    {}
+    {},
   );
 }
 
@@ -207,7 +208,7 @@ export async function getRefferralByUser() {
 }
 export async function checkReferralCodeUniqueness(
   referralCode,
-  excludeId = null
+  excludeId = null,
 ) {
   try {
     const response = await getReferrals({});
@@ -217,7 +218,7 @@ export async function checkReferralCodeUniqueness(
     const exists = codes.some(
       (item) =>
         item.referralCode?.toLowerCase() === referralCode.toLowerCase() &&
-        (!excludeId || item.id !== excludeId)
+        (!excludeId || item.id !== excludeId),
     );
 
     return !exists; // Return true if unique, false if duplicate
@@ -225,4 +226,15 @@ export async function checkReferralCodeUniqueness(
     console.error("Error checking referral code uniqueness:", error);
     return false;
   }
+}
+
+export function getVehicleCategories(params = {}) {
+  const query = new URLSearchParams({
+    ...params,
+    Search: params.search,
+    pageNumber: 1,
+    pageSize: 20,
+  }).toString();
+  const endpoint = `/v1/Vehicle/vehicle-categories`;
+  return fluxGet(endpoint, config);
 }

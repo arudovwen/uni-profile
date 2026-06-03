@@ -39,6 +39,7 @@ import { useOnboarding } from "~/composables/useOnboarding";
 import { useAppRoles } from "~/composables/useAppRoles";
 import { getProducts } from "~/services/productservices";
 import { toast } from "vue3-toastify";
+import { getVehicleCategories } from "~/services/userservices";
 
 interface Role {
   value: string | number;
@@ -71,6 +72,7 @@ const currentConditionalFields = ref<Record<string, any>>({});
 
 const fieldServices = {
   buyersQuestion: getProducts,
+  vehicleCategoryId: getVehicleCategories,
 };
 
 // Use app roles composable for centralized role definitions
@@ -81,7 +83,7 @@ const selectedApps = computed(() => state.value.selectedApps);
 // Filter apps that have roles defined (using hasRoles from API or getAvailableRoles)
 const appsWithRoles = computed(() => {
   return selectedApps.value.filter(
-    (app) => app.hasRoles || getAvailableRoles(app.code).length > 0
+    (app) => app.hasRoles || getAvailableRoles(app.code).length > 0,
   );
 });
 
@@ -115,7 +117,8 @@ const shouldAutoHandleApp = (appCode: string): boolean => {
   if (availableRoles.length !== 1) return false;
 
   const role = availableRoles[0];
-  const hasConditionalFields = role.conditionalFields && role.conditionalFields.length > 0;
+  const hasConditionalFields =
+    role.conditionalFields && role.conditionalFields.length > 0;
   return !hasConditionalFields;
 };
 
