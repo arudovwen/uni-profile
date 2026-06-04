@@ -25,6 +25,8 @@ export default defineNuxtPlugin((nuxtApp) => {
 
         authStore.setAccessToken(data.jwToken);
         authStore.setRefreshToken(data.refreshToken);
+        
+        refreshCount.value = 0; // Reset the count on successful refresh
 
         // Resolve pending requests
         pendingRequests.value.forEach((callback) => callback(data.jwToken));
@@ -55,7 +57,6 @@ export default defineNuxtPlugin((nuxtApp) => {
   const handleRefreshError = () => {
     refreshCount.value++;
     if (refreshCount.value === 3) {
-      authStore.clearAuth();
       authStore.logOut();
     }
   };

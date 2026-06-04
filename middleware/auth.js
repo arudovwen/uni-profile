@@ -1,4 +1,4 @@
-import { intialRoute, superadminRoutes, univeralRoutes } from "~/utils/constants";
+import { intialRoute, superadminRoutes, univeralRoutes, AUTH_COOKIE_NAME, defaultOptions } from "~/utils/constants";
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const authStore = useAuthStore();
@@ -35,8 +35,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
       return navigateTo("/user-management");
     }
 
-    // Redirect authenticated users away from auth-related routes
-    if (to?.name?.includes("auth") || to.path?.includes("register")) {
+    // Redirect authenticated users away from auth-related routes (except logout)
+    if ((to?.name?.includes("auth") && !to?.path?.includes("logout")) || to.path?.includes("register")) {
       const redirectPath = intialRoute[mattaAuth.value.userCategory] || "/";
       return navigateTo(redirectPath);
     }
