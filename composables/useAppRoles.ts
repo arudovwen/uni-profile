@@ -63,10 +63,10 @@ export const appRolesMap: Record<string, Role[]> = {
           options: vehicleOptions.map((opt) => opt.label),
           optionValues: vehicleOptions,
           placeholder: "Select truck type",
-          mapResponse: (values: any[]) =>
-            (Array.isArray(values) ? values : []).map((product: any) => ({
-              label: product.title || product.name || "",
-              value: product.title || product.name || "",
+          mapResponse: (vehicles) =>
+            vehicles.map((vehicle: any) => ({
+              label: vehicle.name,
+              value: vehicle.id,
             })),
         },
         {
@@ -102,10 +102,10 @@ export const appRolesMap: Record<string, Role[]> = {
           // Expected: function(query: { search, page, pageSize, withZoho }) -> Promise<{ data: { data: [], totalCount } }>
           service: undefined, // Will be set dynamically in RoleSelector
           serviceQuery: { page: 1, pageSize: 100, withZoho: true },
-          mapResponse: (vehicles) =>
-            vehicles.map((vehicle: any) => ({
-              label: vehicle.name,
-              value: vehicle.id,
+          mapResponse: (values: any[]) =>
+            (Array.isArray(values) ? values : []).map((product: any) => ({
+              label: product.title,
+              value: product.title,
             })),
         },
         {
