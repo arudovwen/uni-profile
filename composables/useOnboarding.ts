@@ -181,6 +181,10 @@ export const useOnboarding = () => {
             payload.preferredTruckType =
               roleSelection.metadata.preferredTruckType;
           }
+          if (roleSelection.metadata.vehicleCategoryId !== undefined) {
+            payload.vehicleCategoryId =
+              roleSelection.metadata.vehicleCategoryId;
+          }
           if (roleSelection.metadata.preferredSize !== undefined) {
             payload.preferredSize = roleSelection.metadata.preferredSize;
           }
@@ -291,8 +295,7 @@ export const useOnboarding = () => {
 
   const submitOnboarding = async () => {
     const userEmail =
-      (authStore.userInfo as any)?.email ||
-      (authStore.userInfo as any)?.email;
+      (authStore.userInfo as any)?.email || (authStore.userInfo as any)?.email;
     if (!userEmail) {
       throw new Error("User email not found");
     }

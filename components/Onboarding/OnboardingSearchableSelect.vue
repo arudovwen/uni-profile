@@ -16,7 +16,7 @@
     <div class="relative">
       <!-- Search Select Input -->
       <SearchSelect
-        :model-value="modelValue"
+        :model-value="displayLabel"
         :options="items"
         :placeholder="placeholder"
         @update:model-value="handleModelUpdate"
@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue';
+import { watch, computed } from 'vue';
 import SearchSelect from '~/components/Select/SearchSelect.vue';
 import { useSearchableData, type SearchQueryOptions } from '~/composables/useSearchableData';
 
@@ -79,8 +79,18 @@ const { items, isLoading, error, updateQuery } = useSearchableData({
   debounceMs: props.debounceMs,
 });
 
+// Track the display label for the selected value
+const displayLabel = computed(() => {
+  if (!props.modelValue) return '';
+  return items.value.find((item) => item.value === props.modelValue)?.label || '';
+});
+
 const handleModelUpdate = (value: any) => {
-  emit('update:modelValue', value);
+  // If the value is a label from the dropdown, find the corresponding value
+  const selectedItem = items.value.find((item) => item.label === value);
+  const actualValue = selectedItem ? selectedItem.value : value;
+  
+  emit('update:modelValue', actualValue);
   handleSearch(String(value ?? ''));
 };
 

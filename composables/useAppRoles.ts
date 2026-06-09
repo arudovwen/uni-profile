@@ -6,7 +6,7 @@ import { APP_CODES } from "~/utils/app-config";
 export interface ConditionalField {
   name: string;
   label: string;
-  type: 'select' | 'select-search' | 'checkbox' | 'text';
+  type: "select" | "select-search" | "checkbox" | "text";
   placeholder?: string;
   required?: boolean;
   defaultValue?: any;
@@ -57,12 +57,17 @@ export const appRolesMap: Record<string, Role[]> = {
       description: "Need a logistic and fulfillment partner",
       conditionalFields: [
         {
-          name: "preferredTruckType",
+          name: "vehicleCategoryId",
           label: "What kind of truck do you use the most?",
-          type: "select",
+          type: "select-search",
           options: vehicleOptions.map((opt) => opt.label),
           optionValues: vehicleOptions,
           placeholder: "Select truck type",
+          mapResponse: (vehicles) =>
+            vehicles.map((vehicle: any) => ({
+              label: vehicle.name,
+              value: vehicle.id,
+            })),
         },
         {
           name: "preferredSize",
@@ -97,10 +102,10 @@ export const appRolesMap: Record<string, Role[]> = {
           // Expected: function(query: { search, page, pageSize, withZoho }) -> Promise<{ data: { data: [], totalCount } }>
           service: undefined, // Will be set dynamically in RoleSelector
           serviceQuery: { page: 1, pageSize: 100, withZoho: true },
-          mapResponse: (products: any[]) =>
-            (Array.isArray(products) ? products : []).map((product: any) => ({
-              label: product.title || product.name || "",
-              value: product.title || product.name || "",
+          mapResponse: (values: any[]) =>
+            (Array.isArray(values) ? values : []).map((product: any) => ({
+              label: product.title,
+              value: product.title,
             })),
         },
         {
