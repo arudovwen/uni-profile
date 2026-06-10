@@ -32,7 +32,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       !univeralRoutes.includes(to.name)
     ) {
       abortNavigation();
-      return navigateTo("/user-management");
+      return navigateTo("/application-management");
     }
 
     // Redirect authenticated users away from auth-related routes (except logout)
