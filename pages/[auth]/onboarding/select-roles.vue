@@ -147,7 +147,7 @@ const completeOnboarding = async () => {
 
   isSubmitting.value = true;
   try {
-    await submitOnboarding();
+    const results = await submitOnboarding();
     toast.success("Successfully registered for selected applications");
     router.push("/");
   } catch (err: any) {

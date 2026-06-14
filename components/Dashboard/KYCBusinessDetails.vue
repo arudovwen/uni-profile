@@ -229,11 +229,15 @@ import {
   getBusinessProfile,
 } from "~/services/settingservices";
 import { toast } from "vue3-toastify";
+import handleVendorCheck from "~/utils/handleVendorCheck";
+import { useRouter } from "vue-router";
 
 // Note: businessTypes is auto-imported by Nuxt
 
 const isLoading = ref(false);
 const logo = ref("");
+const router = useRouter();
+const companyData = ref<any>(null);
 
 // Form Schema
 const formSchema = yup.object({
@@ -386,6 +390,7 @@ onMounted(() => {
       if (res.status === 200) {
         const data = res.data.data;
         // Set values individually to avoid triggering validation
+        companyData.value = data;
         handleSetValue("companyName", data.companyName || "");
         handleSetValue("dateOfIncorporation", data.dateOfIncorporation || null);
         handleSetValue("companyEmail", data.companyEmail || "");
@@ -426,6 +431,7 @@ onMounted(() => {
 const onSubmit = handleSubmit((formValues) => {
   isLoading.value = true;
   updateCompanyProfile({
+    ...companyData.value,
     ...formValues,
     country: country.value?.code || formValues.country,
     state: state.value?.code || formValues.state,
@@ -436,6 +442,7 @@ const onSubmit = handleSubmit((formValues) => {
     .then((res) => {
       if (res.status === 200) {
         toast.success("Business information saved successfully");
+        handleVendorCheck(router, () => {}, true);
         isLoading.value = false;
       }
     })

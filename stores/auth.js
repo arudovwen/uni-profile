@@ -63,8 +63,12 @@ export const useAuthStore = defineStore(
     const route = useRoute();
     const { encrypt } = useEncryption();
     const appList = ref([]);
+    const kycStatus = ref(null);
     const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
-    const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
+    const mattaProfiles = useEncryptedCookie(
+      PROFILE_COOKIE_NAME,
+      defaultOptions,
+    );
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -78,6 +82,12 @@ export const useAuthStore = defineStore(
     const userId = computed(() => mattaAuth?.value?.id);
     const businessId = computed(() => mattaAuth?.value?.businessId);
     const userInfo = computed(() => mattaAuth?.value);
+
+    function setKyCStatus(status) {
+      let userInfo = { ...loggedUser?.value, kycStatus: status };
+      setLoggedUser(userInfo);
+      kycStatus.value = status;
+    }
 
     function setAppList(data) {
       appList.value = data;
@@ -112,7 +122,7 @@ export const useAuthStore = defineStore(
     }
     function saveAuthUser(obj) {
       const exists = authUsers.value.some(
-        (existingObj) => existingObj?.jwToken === obj?.jwToken
+        (existingObj) => existingObj?.jwToken === obj?.jwToken,
       );
       if (exists) {
         return;
@@ -125,7 +135,7 @@ export const useAuthStore = defineStore(
           const rows = res.data.data.map((i) => ({
             ...i,
             url: `${i.url}/auth/validate?token=${encodeURIComponent(
-              encrypt(jwToken.value)
+              encrypt(jwToken.value),
             )}&code=${encodeURIComponent(encrypt(refreshToken.value))}`,
             defaultUrl: i.url,
           }));
@@ -135,7 +145,7 @@ export const useAuthStore = defineStore(
     }
     function removeObjectByToken(jwToken) {
       authUsers.value = authUsers?.value?.filter(
-        (obj) => obj.jwToken !== jwToken
+        (obj) => obj.jwToken !== jwToken,
       );
     }
     const clearAuth = () => {
@@ -147,7 +157,6 @@ export const useAuthStore = defineStore(
       });
     };
     const logOut = async () => {
-    
       try {
         isLoggingOut.value = true;
         const response = await logoutUser({
@@ -193,6 +202,8 @@ export const useAuthStore = defineStore(
       appList,
       setAppList,
       getAppsData,
+      setKyCStatus,
+      kycStatus,
     };
   },
   {
@@ -200,5 +211,5 @@ export const useAuthStore = defineStore(
       key: "matta_user",
       storage: encryptedStorage,
     },
-  }
+  },
 );

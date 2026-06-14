@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-6 sm:py-8 px-4 sm:px-6 lg:px-[51px] max-w-[723px]">
+  <div
+    class="bg-white rounded-lg border border-[#E4E7EC] shadow-[0px_1px_2px_rgba(16,24,40,0.05)] py-6 sm:py-8 px-4 sm:px-6 lg:px-[51px] max-w-[723px]"
+  >
     <div class="mb-6">
       <h2 class="text-sm sm:text-base font-[800] text-[#344054] leading-6">
         Business Documents
@@ -38,7 +40,9 @@
       />
 
       <!-- Form Actions -->
-      <div class="flex gap-x-4 items-center justify-end border-t border-[#E9EAEB] pt-6">
+      <div
+        class="flex gap-x-4 items-center justify-end border-t border-[#E9EAEB] pt-6"
+      >
         <AppButton
           :disabled="isLoading || !isFormValid"
           :isLoading="isLoading"
@@ -54,7 +58,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { toast } from "vue3-toastify";
-import { updateCompanyProfile, getBusinessProfile } from "~/services/settingservices";
+import {
+  updateCompanyProfile,
+  getBusinessProfile,
+} from "~/services/settingservices";
+import { useRouter } from "vue-router";
+import handleVendorCheck from "~/utils/handleVendorCheck";
 
 interface FileData {
   filename?: string;
@@ -85,6 +94,7 @@ const taxFile = ref<FileData | null>(null);
 const licenseFile = ref<FileData | null>(null);
 const isLoading = ref(false);
 const businessProfileData = ref<any>(null);
+const router = useRouter();
 
 // Form is valid if required documents are uploaded
 const isFormValid = computed(() => {
@@ -97,7 +107,8 @@ onMounted(() => {
     .then((res) => {
       if (res?.status === 200 && res.data?.data) {
         businessProfileData.value = res.data.data;
-        const companyDocuments = res.data.data.companyDocuments as CompanyDocument[];
+        const companyDocuments = res.data.data
+          .companyDocuments as CompanyDocument[];
 
         // Map documents to form fields based on documentType
         // Only populate if documents exist with valid URLs
@@ -145,7 +156,9 @@ const onSubmit = () => {
   const updatedCompanyDocuments: CompanyDocument[] = [
     {
       url: "",
-      urls: [incorporationFile.value?.url || incorporationFile.value?.filePath || ""],
+      urls: [
+        incorporationFile.value?.url || incorporationFile.value?.filePath || "",
+      ],
       documentType: DOCUMENT_TYPES.INCORPORATION,
     },
     {
@@ -172,6 +185,7 @@ const onSubmit = () => {
     .then((res) => {
       if (res?.status === 200) {
         toast.success("Documents submitted successfully");
+        handleVendorCheck(router, () => {}, true);
       }
       isLoading.value = false;
     })
@@ -180,7 +194,7 @@ const onSubmit = () => {
       toast.error(
         err?.response?.data?.message ||
           err?.response?.data?.Message ||
-          "Failed to submit documents. Please try again."
+          "Failed to submit documents. Please try again.",
       );
     });
 };
