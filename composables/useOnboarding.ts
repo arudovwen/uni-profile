@@ -175,19 +175,33 @@ export const useOnboarding = () => {
           allowNewsLetter: true,
         };
 
+        console.log("Role Selection", roleSelection);
+
         // Add conditional fields for clients role
         if (roleSelection?.role === "clients" && roleSelection.metadata) {
           if (roleSelection.metadata.preferredTruckType !== undefined) {
             payload.preferredTruckType =
               roleSelection.metadata.preferredTruckType;
           }
+          let vehicleCategoryId = null;
           if (roleSelection.metadata.vehicleCategoryId !== undefined) {
-            payload.vehicleCategoryId =
-              roleSelection.metadata.vehicleCategoryId;
+            vehicleCategoryId = roleSelection.metadata.vehicleCategoryId;
           }
+          payload.vehicleCategoryId =
+            vehicleCategoryId === null || vehicleCategoryId === ""
+              ? null
+              : vehicleCategoryId;
           if (roleSelection.metadata.preferredSize !== undefined) {
             payload.preferredSize = roleSelection.metadata.preferredSize;
           }
+        }
+        if (roleSelection?.role !== "clients") {
+          console.log(
+            `No metadata for role ${roleSelection?.role}, setting vehicleCategoryId, preferredTruckType, and preferredSize to null`,
+          );
+          payload.vehicleCategoryId = null;
+          payload.preferredTruckType = null;
+          payload.preferredSize = null;
         }
         return payload;
       }
@@ -245,6 +259,7 @@ export const useOnboarding = () => {
           (authStore.userInfo as any)?.userCategory ??
           (authStore.userInfo as any)?.userCategory ??
           ssoCategory;
+        const customerType = ["client", "vendor"][roleSelection?.role ?? 0];
 
         const payload: Record<string, any> = {
           email: encryptedEmail,
@@ -253,6 +268,7 @@ export const useOnboarding = () => {
           accessToken,
           ssoUserCategory,
           allowNewsLetter,
+          customerType,
           country,
         };
 
