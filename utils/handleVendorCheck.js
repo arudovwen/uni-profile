@@ -30,7 +30,7 @@ export default async (router, setLoading, newCheck) => {
   const customerType = userApps?.data?.data?.data?.find(
     (i) => i?.code === APP_CODES.MATTA.code,
   )?.customerType;
-
+  
   if (customerType.toLowerCase() === "supplier") {
     const businessData = await getBusinessProfile();
     if (!isKYCValid(businessData?.data?.data)) {
@@ -40,12 +40,12 @@ export default async (router, setLoading, newCheck) => {
       authStore.setKyCStatus(false);
       if (window.location.pathname !== "/dashboard/kyc") {
         router.push("/dashboard/kyc");
-        setLoading(false);
       }
+      setLoading(false);
     } else {
       authStore.setKyCStatus(true);
-      setLoading(false);
     }
+    setLoading(false);
   } else {
     authStore.setKyCStatus(true);
     setLoading(false);

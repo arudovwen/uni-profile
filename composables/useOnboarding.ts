@@ -156,13 +156,16 @@ export const useOnboarding = () => {
     slug?: string | null,
     ssoCategory: number | string = 1,
     userCategory: number | string = 1,
+    customerType: number | string = 1,
   ) => {
     const basePayload = {
       email: encryptedEmail,
       appCode,
       ssoUserCategory: ssoCategory,
       userCategory,
+      businessUserType: customerType, // For apps that use businessUserType instead of customerType
     };
+    console.log("Base Payload:", basePayload, customerType);
     switch (appCode) {
       case APP_CODES.FLUX.code: {
         // Flux requires userType, preferredSize, preferredTruckType for clients
@@ -242,7 +245,8 @@ export const useOnboarding = () => {
       case APP_CODES.MATTA.code: {
         const encryptedToken = encrypt(authStore.jwToken || "") || "";
         const accessToken = String(encryptedToken || authStore.jwToken || "");
-        const businessUserType = Number(roleSelection?.role ?? 0);
+        const businessUserType =
+          basePayload?.businessUserType ?? Number(roleSelection?.role ?? 0);
         const allowNewsLetter = Boolean(
           roleSelection?.metadata?.allowNewsLetter ?? false,
         );

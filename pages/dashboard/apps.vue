@@ -294,6 +294,7 @@ const navigateToApp = async (app: UserApp) => {
     slug.value,
     ssoCatetory,
     app.appUserCategory,
+    app?.customerType,
   );
 
   isNavigating.value = true;
