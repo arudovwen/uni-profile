@@ -26,7 +26,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     // Redirect non-superadmin users trying to access superadmin routes
     if (
-      mattaAuth.value.userCategory !== 3 &&
+      mattaAuth.value?.userCategory !== 3 &&
       superadminRoutes.includes(to.name)
     ) {
       abortNavigation();
@@ -35,7 +35,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
     // Redirect superadmin users trying to access non-superadmin routes
     if (
-      mattaAuth.value.userCategory === 3 &&
+      mattaAuth.value?.userCategory === 3 &&
       !superadminRoutes.includes(to.name) &&
       !univeralRoutes.includes(to.name)
     ) {

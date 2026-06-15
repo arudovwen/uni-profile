@@ -1,6 +1,6 @@
 <template>
   <!-- <NuxtLayout> -->
-  <NuxtPwaManifest />
+  <!-- <NuxtPwaManifest /> -->
   <NuxtPage />
   <!-- </NuxtLayout> -->
 </template>
@@ -10,7 +10,6 @@ const { encrypt } = useEncryption();
 useHead(
   {
     script: [
-   
       {
         src: "https://kit.fontawesome.com/c1a534ffdb.js",
         crossorigin: "anonymous",
