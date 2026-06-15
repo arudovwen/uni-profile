@@ -1,7 +1,7 @@
 <template>
   <div class="font-Avenir overflow-hidden">
     <div class="w-full rounded-lg overflow-hidden">
-      <div class="pt-6">
+      <div class="">
         <DashboardPageHeader
           title="Referral Management System"
           subtitle="Manage all referral codes and leaderboard"

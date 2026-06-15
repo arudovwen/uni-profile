@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout :name="layoutName">
-    <div class="container py-10">
+    <div class="container">
       <PagesUsersUserDetail />
     </div>
   </NuxtLayout>

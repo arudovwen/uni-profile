@@ -1,8 +1,12 @@
 <template>
-  <div class="max-w-[1120px] mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 font-Avenir overflow-hidden">
+  <div
+    class="max-w-[1120px] mx-auto sm:py-8 sm:px-6 lg:px-8 font-Avenir overflow-hidden"
+  >
     <!-- Page Header -->
     <div class="mb-4 sm:mb-6">
-      <h1 class="text-base sm:text-lg font-semibold text-[#101828] leading-7">KYC Verification</h1>
+      <h1 class="text-base sm:text-lg font-semibold text-[#101828] leading-7">
+        KYC Verification
+      </h1>
       <p class="text-xs sm:text-sm text-[#475467] leading-5 mt-1">
         Complete your business verification details
       </p>
@@ -11,10 +15,12 @@
     <!-- KYC Layout -->
     <SidebarLayout v-model="activeTab" :tabs="tabs">
       <template #tab-business-details>
-        <DashboardKYCBusinessDetails />
+        <DashboardKYCBusinessDetails
+          v-show="activeTab === 'business-details'"
+        />
       </template>
       <template #tab-documents>
-        <DashboardKYCDocuments />
+        <DashboardKYCDocuments v-show="activeTab === 'documents'" />
       </template>
     </SidebarLayout>
   </div>
@@ -36,7 +42,11 @@ interface Tab {
 const activeTab = ref<TabId>("business-details");
 
 const tabs: Tab[] = [
-  { id: "business-details", label: "Business Details", icon: markRaw(BuildingIcon) },
+  {
+    id: "business-details",
+    label: "Business Details",
+    icon: markRaw(BuildingIcon),
+  },
   { id: "documents", label: "Documents", icon: markRaw(DocumentIcon) },
 ];
 </script>

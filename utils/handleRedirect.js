@@ -16,7 +16,7 @@ function isAllowedRedirectUrl(url) {
     const parsed = new URL(url);
     return ALLOWED_REDIRECT_DOMAINS.some(
       (domain) =>
-        parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`)
+        parsed.hostname === domain || parsed.hostname.endsWith(`.${domain}`),
     );
   } catch {
     return false;
@@ -26,7 +26,7 @@ function isAllowedRedirectUrl(url) {
 export function handleRedirect(
   route,
   { jwToken, userCategory, refreshToken },
-  app
+  app,
 ) {
   const { encrypt } = useEncryption();
   const authStore = useAuthStore();
@@ -51,7 +51,7 @@ export function handleRedirect(
       const isAdminUser = [0, 3, 4].includes(userCategory);
       targetUrl = appInfo.defaultUrl.replace(
         "https://",
-        isAdminUser ? "https://admin." : "https://"
+        isAdminUser ? "https://admin." : "https://",
       );
 
       // Handle the app.fluxafrica case
@@ -71,9 +71,9 @@ export function handleRedirect(
     const encryptedRefresh = encrypt(refreshToken);
 
     const fullUrl = new URL(targetUrl);
-    
+
     // Save original path and search if it's not the root or already the validate endpoint
-    if (fullUrl.pathname !== '/' && fullUrl.pathname !== '/auth/validate') {
+    if (fullUrl.pathname !== "/" && fullUrl.pathname !== "/auth/validate") {
       const originalPathAndSearch = fullUrl.pathname + fullUrl.search;
       fullUrl.searchParams.set("redirectUrl", originalPathAndSearch);
     }
@@ -102,7 +102,7 @@ export function handleResetRedirect(userCategory, app) {
       const isAdminUser = [0, 3, 4].includes(parseInt(userCategory));
       targetUrl = appInfo.defaultUrl.replace(
         "https://",
-        isAdminUser ? "https://admin." : "https://"
+        isAdminUser ? "https://admin." : "https://",
       );
 
       // Handle the app.fluxafrica case
@@ -126,6 +126,10 @@ export function handleResetRedirect(userCategory, app) {
 }
 
 export function handleAppRedirect(app, route) {
-  const continueQuery = route?.query?.continue ? `?continue=${encodeURIComponent(route.query.continue)}` : "";
-  return window.location.replace(`/auth/login${app ? `/${app}` : ""}${continueQuery}`);
+  const continueQuery = route?.query?.continue
+    ? `?continue=${encodeURIComponent(route.query.continue)}`
+    : "";
+  return window.location.replace(
+    `/auth/login${app ? `/${app}` : ""}${continueQuery}`,
+  );
 }

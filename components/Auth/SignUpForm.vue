@@ -223,7 +223,9 @@ onMounted(() => {
 
   agentReferralCode.value = "";
   isReferralCodeLocked.value = false;
-  toast.error("Invalid referral code in link. Please use a valid referral link.");
+  toast.error(
+    "Invalid referral code in link. Please use a valid referral link.",
+  );
 });
 
 // Methods
@@ -242,7 +244,9 @@ const onSubmit = handleSubmit(async (values) => {
       phoneNumber: values.phoneNumber,
       password: values.password,
       confirmPassword: values.password,
-      companyName: values.businessName || "",
+      companyName: values.businessName
+        ? values.businessName
+        : `${values?.firstName} ${values?.lastName}`,
       agentReferralCode: values.agentReferralCode || "",
       referral_code: values.agentReferralCode || "",
       country: "Nigeria",

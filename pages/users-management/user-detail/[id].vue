@@ -8,7 +8,7 @@ const authStore = useAuthStore();
 
 const basePath = computed(() =>
   [0, 3, 4].includes(authStore.userInfo?.userCategory)
-    ? "/user-management/user-detail"
+    ? "/users-management/user-detail"
     : "/users-management/user-detail",
 );
 

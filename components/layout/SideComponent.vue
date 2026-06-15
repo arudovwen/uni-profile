@@ -28,7 +28,7 @@
                     :active="isActive(item)"
                   />
                   <SvgsUsersSvg
-                    v-if="item.key === 'user-management'"
+                    v-if="item.key === 'users-management'"
                     :active="isActive(item)"
                   />
                   <SvgsUsersSvg

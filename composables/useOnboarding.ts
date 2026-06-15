@@ -156,6 +156,7 @@ export const useOnboarding = () => {
     slug?: string | null,
     ssoCategory: number | string = 1,
     userCategory: number | string = 1,
+    customerType: number | string = 1,
   ) => {
     const basePayload = {
       email: encryptedEmail,
@@ -163,6 +164,7 @@ export const useOnboarding = () => {
       ssoUserCategory: ssoCategory,
       userCategory,
     };
+    console.log("Base Payload:", basePayload, customerType);
     switch (appCode) {
       case APP_CODES.FLUX.code: {
         // Flux requires userType, preferredSize, preferredTruckType for clients
@@ -175,19 +177,33 @@ export const useOnboarding = () => {
           allowNewsLetter: true,
         };
 
+        console.log("Role Selection", roleSelection);
+
         // Add conditional fields for clients role
         if (roleSelection?.role === "clients" && roleSelection.metadata) {
           if (roleSelection.metadata.preferredTruckType !== undefined) {
             payload.preferredTruckType =
               roleSelection.metadata.preferredTruckType;
           }
+          let vehicleCategoryId = null;
           if (roleSelection.metadata.vehicleCategoryId !== undefined) {
-            payload.vehicleCategoryId =
-              roleSelection.metadata.vehicleCategoryId;
+            vehicleCategoryId = roleSelection.metadata.vehicleCategoryId;
           }
+          payload.vehicleCategoryId =
+            vehicleCategoryId === null || vehicleCategoryId === ""
+              ? null
+              : vehicleCategoryId;
           if (roleSelection.metadata.preferredSize !== undefined) {
             payload.preferredSize = roleSelection.metadata.preferredSize;
           }
+        }
+        if (roleSelection?.role !== "clients") {
+          console.log(
+            `No metadata for role ${roleSelection?.role}, setting vehicleCategoryId, preferredTruckType, and preferredSize to null`,
+          );
+          payload.vehicleCategoryId = null;
+          payload.preferredTruckType = null;
+          payload.preferredSize = null;
         }
         return payload;
       }
@@ -229,6 +245,7 @@ export const useOnboarding = () => {
         const encryptedToken = encrypt(authStore.jwToken || "") || "";
         const accessToken = String(encryptedToken || authStore.jwToken || "");
         const businessUserType = Number(roleSelection?.role ?? 0);
+        const customerType = ["Buyer", "Supplier"][businessUserType] || "Buyer";
         const allowNewsLetter = Boolean(
           roleSelection?.metadata?.allowNewsLetter ?? false,
         );
@@ -253,6 +270,7 @@ export const useOnboarding = () => {
           accessToken,
           ssoUserCategory,
           allowNewsLetter,
+          customerType,
           country,
         };
 

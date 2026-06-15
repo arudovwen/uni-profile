@@ -1,8 +1,6 @@
 <template>
   <NuxtLayout>
-    <div class="py-10">
-      <PagesSettlements />
-    </div>
+    <PagesSettlements />
   </NuxtLayout>
 </template>
 

@@ -34,7 +34,7 @@
     <!-- Content Area -->
     <div class="flex-1 min-w-0">
       <div v-for="tab in tabs" :key="`content-${tab.id}`">
-        <div v-show="isActive(tab.id)">
+        <div v-if="isActive(tab.id)">
           <slot :name="`tab-${tab.id}`" />
         </div>
       </div>

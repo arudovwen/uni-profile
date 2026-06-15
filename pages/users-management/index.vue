@@ -1,15 +1,17 @@
 <template>
   <NuxtLayout :name="layoutName">
-    <div class="container py-10">
+    <div class="container ">
       <PagesOwnerUsers
         v-if="authStore?.userInfo?.userCategory === 1 && !isRedirecting"
       />
-      <PagesUsers v-else />
+      <UsersContent v-else />
     </div>
   </NuxtLayout>
 </template>
 
 <script setup>
+import UsersContent from '~/components/Dashboard/UsersContent.vue';
+
 definePageMeta({
   middleware: "auth",
 });

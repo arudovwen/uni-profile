@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout :name="layoutName">
-    <div :class=" authStore.userInfo?.userCategory === 3 ? '' : 'container py-10 max-w-[900px] mx-auto'">
+    <div :class=" authStore.userInfo?.userCategory === 3 ? '' : 'container max-w-[900px] mx-auto'">
       <PagesSettings />
     </div>
   </NuxtLayout>
