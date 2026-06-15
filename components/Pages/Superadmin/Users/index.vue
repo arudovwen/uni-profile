@@ -30,12 +30,12 @@ const tabs = [
   {
     title: "Users",
     key: "admin",
-    to: "/user-management/users",
+    to: "/users-management/members",
   },
   {
     title: "Invites",
     key: "invites",
-    to: "/user-management/invites",
+    to: "/users-management/invites",
   },
 ];
 </script>

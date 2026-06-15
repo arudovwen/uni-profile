@@ -1,6 +1,6 @@
 <template>
   <div class="font-Avenir overflow-visible max-w-[1120px] mx-auto px-4 py-4">
-    <div class="pt-6">
+    <div class="">
       <DashboardPageHeader
         title="Settlement Accounts"
         subtitle="Manage the account where your funds will be paid into."

@@ -1,7 +1,7 @@
 <template>
   <div class="w-full">
     <div class="mb-6">
-      <GoBack text="Back to User Management" url="/user-management" />
+      <GoBack text="Back to User Management" url="/users-management" />
     </div>
     <div
       class="mb-6 flex flex-col lg:flex-row lg:justify-between lg:items-center gap-y-1 lg:gap-y-0"
@@ -40,7 +40,7 @@ const tabs = computed(() => [
     title: "User Profile",
     key: "profile",
     to: {
-      path: `/user-management/user-detail/${id}/profile`,
+      path: `/users-management/user-detail/${id}/profile`,
       query: route.query,
     },
   },
@@ -48,7 +48,7 @@ const tabs = computed(() => [
     title: "Apps",
     key: "apps",
     to: {
-      path: `/user-management/user-detail/${id}/apps`,
+      path: `/users-management/user-detail/${id}/apps`,
       query: route.query,
     },
   },

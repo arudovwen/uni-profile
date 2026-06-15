@@ -296,7 +296,7 @@ const getTabPath = (tab) => {
   const superadminMap = {
     apps: "/application-management",
     kyc: "/dashboard/kyc",
-    users: "/user-management",
+    users: "/users-management",
     logs: "/audit-logs",
     referrals: "/referral-management",
     settlements: "/settlements",

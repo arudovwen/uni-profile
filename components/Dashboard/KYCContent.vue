@@ -1,6 +1,6 @@
 <template>
   <div
-    class="max-w-[1120px] mx-auto py-6 sm:py-8 px-4 sm:px-6 lg:px-8 font-Avenir overflow-hidden"
+    class="max-w-[1120px] mx-auto sm:py-8 sm:px-6 lg:px-8 font-Avenir overflow-hidden"
   >
     <!-- Page Header -->
     <div class="mb-4 sm:mb-6">

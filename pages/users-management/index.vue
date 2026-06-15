@@ -1,6 +1,6 @@
 <template>
   <NuxtLayout :name="layoutName">
-    <div class="container py-10">
+    <div class="container ">
       <PagesOwnerUsers
         v-if="authStore?.userInfo?.userCategory === 1 && !isRedirecting"
       />
