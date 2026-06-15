@@ -66,7 +66,10 @@ export const useAuthStore = defineStore(
     const kycStatus = ref(null);
     const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
     const mattaToken = useEncryptedCookie(TOKEN_COOKIE_NAME, defaultOptions);
-    const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
+    const mattaProfiles = useEncryptedCookie(
+      PROFILE_COOKIE_NAME,
+      defaultOptions,
+    );
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
     const authUsers = ref([]);
@@ -75,7 +78,7 @@ export const useAuthStore = defineStore(
 
     const isLoggedIn = computed(() => !!mattaAuth.value);
     const refreshToken = computed(() => mattaAuth?.value?.refreshToken);
-    const jwToken = computed(() => mattaAuth?.value?.jwToken);
+    const jwToken = computed(() => mattaToken.value || mattaAuth?.value?.jwToken);
     const roles = computed(() => mattaAuth?.value?.roles);
     const userId = computed(() => mattaAuth?.value?.id);
     const businessId = computed(() => mattaAuth?.value?.businessId);

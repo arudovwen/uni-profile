@@ -48,7 +48,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
       (to?.name?.includes("auth") && !to?.path?.includes("logout")) ||
       to.path?.includes("register")
     ) {
-      const redirectPath = intialRoute[mattaAuth.value.userCategory] || "/";
+      const redirectPath = intialRoute[mattaAuth.value?.userCategory] || "/";
       return navigateTo(redirectPath);
     }
   }

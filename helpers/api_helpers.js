@@ -119,12 +119,12 @@ const createAxiosInstance = (service, baseUrl) => {
     }
 
     const { encrypt } = getEncryption();
-    const mattaToken = useEncryptedCookie(TOKEN_COOKIE_NAME, defaultOptions);
+    const authStore = getAuthStore();
 
     config.headers = normalizeHeaders(config.headers);
 
-    if (mattaToken.value) {
-      config.headers.Authorization = `Bearer ${mattaToken.value}`;
+    if (authStore?.jwToken) {
+      config.headers.Authorization = `Bearer ${authStore.jwToken}`;
     }
 
     if (config.data && !(config.data instanceof FormData)) {

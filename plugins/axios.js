@@ -76,23 +76,23 @@ export default defineNuxtPlugin((nuxtApp) => {
       return config;
     });
 
-    instance.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        if (error?.response?.status === 401) {
-          try {
-            const newAccessToken = await handleTokenRefresh();
-            error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
-            return instance.request(error.config);
-          } catch (refreshError) {
-            handleRefreshError();
-            return Promise.reject(refreshError);
-          }
-        } else {
-          return Promise.reject(error);
-        }
-      }
-    );
+    // instance.interceptors.response.use(
+    //   (response) => response,
+    //   async (error) => {
+    //     if (error?.response?.status === 401) {
+    //       try {
+    //         const newAccessToken = await handleTokenRefresh();
+    //         error.config.headers["Authorization"] = `Bearer ${newAccessToken}`;
+    //         return instance.request(error.config);
+    //       } catch (refreshError) {
+    //         handleRefreshError();
+    //         return Promise.reject(refreshError);
+    //       }
+    //     } else {
+    //       return Promise.reject(error);
+    //     }
+    //   }
+    // );
 
     return instance;
   };
