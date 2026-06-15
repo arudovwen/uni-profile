@@ -19,35 +19,36 @@ const isKYCValid = (data) => {
 
 export default async (router, setLoading, newCheck) => {
   const authStore = useAuthStore();
-  if (!authStore.kycStatus && !newCheck) {
-    if (window.location.pathname !== "/dashboard/kyc") {
-      router.push("/dashboard/kyc");
-      setLoading(false);
-    }
-    return;
-  }
-  const userApps = await getUserApps("1", { PageNumber: 1, PageSize: 50 });
-  const customerType = userApps?.data?.data?.data?.find(
-    (i) => i?.code === APP_CODES.MATTA.code,
-  )?.customerType;
-  
-  if (customerType.toLowerCase() === "supplier") {
-    const businessData = await getBusinessProfile();
-    if (!isKYCValid(businessData?.data?.data)) {
-      console.warn(
-        "KYC validation failed for supplier. Redirecting to KYC page.",
-      );
-      authStore.setKyCStatus(false);
+
+  try {
+    if (!authStore.kycStatus && !newCheck) {
       if (window.location.pathname !== "/dashboard/kyc") {
         router.push("/dashboard/kyc");
       }
-      setLoading(false);
+      return;
+    }
+    const userApps = await getUserApps("1", { PageNumber: 1, PageSize: 50 });
+    const customerType = userApps?.data?.data?.data?.find(
+      (i) => i?.code === APP_CODES.MATTA.code,
+    )?.customerType;
+
+    if (customerType?.toLowerCase() === "supplier") {
+      const businessData = await getBusinessProfile();
+      if (!isKYCValid(businessData?.data?.data)) {
+        console.warn(
+          "KYC validation failed for supplier. Redirecting to KYC page.",
+        );
+        authStore.setKyCStatus(false);
+        if (window.location.pathname !== "/dashboard/kyc") {
+          router.push("/dashboard/kyc");
+        }
+      } else {
+        authStore.setKyCStatus(true);
+      }
     } else {
       authStore.setKyCStatus(true);
     }
-    setLoading(false);
-  } else {
-    authStore.setKyCStatus(true);
+  } finally {
     setLoading(false);
   }
 };

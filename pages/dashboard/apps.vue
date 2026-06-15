@@ -281,6 +281,11 @@ const navigateToApp = async (app: UserApp) => {
   const ssoCatetory = app.code.includes("POL")
     ? authStore.userInfo?.userCategory
     : 1;
+  console.log(
+    "App to navigate:",
+    app,
+    { Buyer: 0, Supplier: 1 }[app.role ?? "Buyer"] ?? 0,
+  );
   const payload = buildAppPayload(
     app.code,
     decrypt(encryptedEmail),
@@ -288,6 +293,8 @@ const navigateToApp = async (app: UserApp) => {
       appCode: app.code,
       role: app.code.includes("POL")
         ? authStore.userInfo?.userCategory
+        : app.code.includes("MAT")
+        ? { Buyer: 0, Supplier: 1 }[app.role ?? "Buyer"] ?? 0
         : app.role,
       metadata: { appCode: app.code, role: app.role },
     },

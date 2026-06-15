@@ -163,7 +163,6 @@ export const useOnboarding = () => {
       appCode,
       ssoUserCategory: ssoCategory,
       userCategory,
-      businessUserType: customerType, // For apps that use businessUserType instead of customerType
     };
     console.log("Base Payload:", basePayload, customerType);
     switch (appCode) {
@@ -245,8 +244,8 @@ export const useOnboarding = () => {
       case APP_CODES.MATTA.code: {
         const encryptedToken = encrypt(authStore.jwToken || "") || "";
         const accessToken = String(encryptedToken || authStore.jwToken || "");
-        const businessUserType =
-          basePayload?.businessUserType ?? Number(roleSelection?.role ?? 0);
+        const businessUserType = Number(roleSelection?.role ?? 0);
+        const customerType = ["Buyer", "Supplier"][businessUserType] || "Buyer";
         const allowNewsLetter = Boolean(
           roleSelection?.metadata?.allowNewsLetter ?? false,
         );
@@ -263,7 +262,6 @@ export const useOnboarding = () => {
           (authStore.userInfo as any)?.userCategory ??
           (authStore.userInfo as any)?.userCategory ??
           ssoCategory;
-        const customerType = ["client", "vendor"][roleSelection?.role ?? 0];
 
         const payload: Record<string, any> = {
           email: encryptedEmail,

@@ -17,7 +17,7 @@ export const mapBaseUrl = (
       return isAdmin ? "http://localhost:8080" : "http://localhost:4000";
     }
     if (appCode === APP_CODES.MATTA.code) {
-      return isAdmin ? "http://localhost:8080" : "http://localhost:3002";
+      return isAdmin ? "http://localhost:8080" : "http://localhost:3000";
     }
     if (appCode === APP_CODES.MATTAPEDIA.code) {
       return isAdmin ? "http://localhost:8080" : "http://localhost:5173";
