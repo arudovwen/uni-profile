@@ -1,13 +1,13 @@
 import { APP_CODES } from "./app-config";
 
 const isLocal = process.env.NODE_ENV !== "production";
-const cookieDomain = isLocal ? "localhost" : ".matta.trade";
+const cookieDomain = isLocal ? undefined : ".matta.trade";
 
 export const defaultOptions = {
   domain: cookieDomain,
   path: "/",
   secure: !isLocal,
-  sameSite: "Strict",
+  sameSite: "Lax",
   maxAge: 60 * 60 * 24 * 7, // 7 days default
   httpOnly: false, // false by default to allow JS access
 };

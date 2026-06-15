@@ -76,7 +76,7 @@ export const useAuthStore = defineStore(
     const hasPin = ref(false);
     const language = ref(window?.navigator?.language);
 
-    const isLoggedIn = computed(() => !!mattaAuth.value);
+    const isLoggedIn = computed(() => !!mattaToken.value || !!mattaAuth.value);
     const refreshToken = computed(() => mattaAuth?.value?.refreshToken);
     const jwToken = computed(() => mattaToken.value || mattaAuth?.value?.jwToken);
     const roles = computed(() => mattaAuth?.value?.roles);
@@ -104,10 +104,12 @@ export const useAuthStore = defineStore(
     function setAccessToken(value) {
       let userInfo = { ...loggedUser?.value, jwToken: value };
       setLoggedUser(userInfo);
+      if (mattaAuth.value) mattaAuth.value = { ...mattaAuth.value, jwToken: value };
     }
     function setRefreshToken(value) {
       let userInfo = { ...loggedUser?.value, refreshToken: value };
       setLoggedUser(userInfo);
+      if (mattaAuth.value) mattaAuth.value = { ...mattaAuth.value, refreshToken: value };
     }
     function updateUser(value) {
       let userInfo = { ...loggedUser?.value, fullName: value };
