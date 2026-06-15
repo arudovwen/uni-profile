@@ -1,17 +1,18 @@
 import { APP_CODES } from "./app-config";
 
-const isProduction = process.env.NODE_ENV === "production";
-const cookieDomain = isProduction ? ".matta.trade" : "localhost";
+const isLocal = process.env.NODE_ENV !== "production";
+const cookieDomain = isLocal ? "localhost" : ".matta.trade";
 
 export const defaultOptions = {
   domain: cookieDomain,
   path: "/",
-  secure: isProduction,
+  secure: !isLocal,
   sameSite: "Strict",
   maxAge: 60 * 60 * 24 * 7, // 7 days default
   httpOnly: false, // false by default to allow JS access
 };
 export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
+export const TOKEN_COOKIE_NAME = "matta_token";
 export const PROFILE_COOKIE_NAME = "mattaProfiles_Dev";
 
 export const localAppUrls = {

@@ -64,6 +64,7 @@ export const useAuthStore = defineStore(
     const { encrypt } = useEncryption();
     const appList = ref([]);
     const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
+    const mattaToken = useEncryptedCookie(TOKEN_COOKIE_NAME, defaultOptions);
     const mattaProfiles = useEncryptedCookie(PROFILE_COOKIE_NAME, defaultOptions);
     const loggedUser = ref(null);
     const isLoggingOut = ref(false);
@@ -84,6 +85,7 @@ export const useAuthStore = defineStore(
     }
     function setLoggedUser(data) {
       loggedUser.value = { ...data };
+      mattaToken.value = data.jwToken;
     }
 
     function setHasPin(data) {

@@ -252,7 +252,7 @@ const { decrypt } = useEncryption();
 
 const userMenuRef = ref(null);
 const isUserMenuOpen = ref(false);
-
+console.log('user', authStore.userInfo)
 const userAvatar = computed(
   () => authStore.userInfo?.photo || authStore.userInfo?.avatar || "",
 );
