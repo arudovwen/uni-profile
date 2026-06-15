@@ -150,6 +150,7 @@ export const useAuthStore = defineStore(
     const clearAuth = () => {
       clearCookies().then(() => {
         mattaAuth.value = null;
+        mattaToken.value = null;
         loggedUser.value = null;
         mattaProfiles.value = null;
         handleAppRedirect(route.params.appId, route);
