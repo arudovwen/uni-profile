@@ -146,27 +146,27 @@ const createAxiosInstance = (service, baseUrl) => {
       const status = error?.response?.status;
       const config = error?.config;
 
-      if (status === 403 && config) {
-        try {
-          if (isBrowser && window.location.href.includes("/auth/logout")) {
-            const authStore = getAuthStore();
-            authStore?.clearAuth?.();
-            return Promise.reject(error);
-          }
+      // if (status === 403 && config) {
+      //   try {
+      //     if (isBrowser && window.location.href.includes("/auth/logout")) {
+      //       const authStore = getAuthStore();
+      //       authStore?.clearAuth?.();
+      //       return Promise.reject(error);
+      //     }
 
-          const newAccessToken = await handleTokenRefresh();
-          config.headers = normalizeHeaders(config.headers);
-          config.headers.Authorization = `Bearer ${newAccessToken}`;
-          return instance.request(config);
-        } catch (refreshError) {
-          handleRefreshError();
-          return Promise.reject(refreshError);
-        }
-      }
+      //     const newAccessToken = await handleTokenRefresh();
+      //     config.headers = normalizeHeaders(config.headers);
+      //     config.headers.Authorization = `Bearer ${newAccessToken}`;
+      //     return instance.request(config);
+      //   } catch (refreshError) {
+      //     handleRefreshError();
+      //     return Promise.reject(refreshError);
+      //   }
+      // }
 
-      if (status === 401) {
-        toast.error(error?.response?.data?.Message || "Unauthorized access!");
-      }
+      // if (status === 401) {
+      //   toast.error(error?.response?.data?.Message || "Unauthorized access!");
+      // }
 
       return Promise.reject(error);
     },
