@@ -13,5 +13,5 @@ This project is built using Nuxt.js, a progressive JavaScript framework, focusin
 2. Open your web browser and navigate to: http://localhost:3020/
 
 ## Build
-1. Generate spa: npm run generate
+1. Generate spa: npm run generate 
 
