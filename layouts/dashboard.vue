@@ -22,6 +22,7 @@
 <script setup>
 import { onMounted } from "vue";
 import handleVendorCheck from "~/utils/handleVendorCheck";
+
 const router = useRouter();
 const isLoading = ref(false);
 const setLoading = (value) => {
