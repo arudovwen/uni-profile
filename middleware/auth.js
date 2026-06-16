@@ -9,10 +9,12 @@ import {
 
 export default defineNuxtRouteMiddleware((to, from) => {
   const mattaAuth = useEncryptedCookie(AUTH_COOKIE_NAME, defaultOptions);
+  console.log("🚀 ~ mattaAuth:", mattaAuth)
   const mattaToken = useEncryptedCookie(TOKEN_COOKIE_NAME, defaultOptions);
+  console.log("🚀 ~ mattaToken:", mattaToken)
 
   // Check if the user is authenticated
-  const isAuthenticated = !!mattaToken.value;
+  const isAuthenticated = !!mattaToken.value || !!mattaAuth.value;
   console.log("🚀 ~ isAuthenticated:", isAuthenticated);
 
   // Handle authenticated user logic
