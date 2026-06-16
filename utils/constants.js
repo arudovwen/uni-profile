@@ -1,7 +1,7 @@
 import { APP_CODES } from "./app-config";
 
 const isLocal = process.env.NODE_ENV !== "production";
-const cookieDomain = isLocal ? undefined : ".matta.trade";
+const cookieDomain = isLocal ? undefined : ".vercel.app";
 
 export const defaultOptions = {
   domain: cookieDomain,
