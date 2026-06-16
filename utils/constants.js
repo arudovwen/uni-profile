@@ -4,12 +4,6 @@ const isLocal = process.env.NODE_ENV !== "production";
 const cookieDomain = isLocal ? undefined : ".vercel.app";
 
 export const defaultOptions = {
-  domain: cookieDomain,
-  path: "/",
-  secure: !isLocal,
-  sameSite: "Lax",
-  maxAge: 60 * 60 * 24 * 7, // 7 days default
-  httpOnly: false, // false by default to allow JS access
 };
 export const AUTH_COOKIE_NAME = "mattaAuth_Dev";
 export const TOKEN_COOKIE_NAME = "matta_token";
